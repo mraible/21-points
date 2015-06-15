@@ -1,0 +1,16 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+apply plugin: 'com.moowork.node'
+apply plugin: 'grunt'
+
+task bower(type: Exec) {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'cmd', '/c', 'bower', 'install'
+    }else{
+        commandLine 'bower', 'install'
+    }
+}
+
+
+bower.onlyIf { !project.hasProperty('skipBower') }
+processResources.dependsOn 'bower'
+
