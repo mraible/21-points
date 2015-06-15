@@ -9,11 +9,9 @@ spring:
         active: dev
     datasource:
         dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
-        url: 
-        databaseName: 21points
-        serverName: localhost
-        username: 21points
-        password: 
+        url: jdbc:postgresql://localhost/health
+        username: health
+        password: health
 
     jpa:
         database-platform: org.hibernate.dialect.PostgreSQL82Dialect
@@ -36,7 +34,7 @@ spring:
             properties:
                 path:
                   logs: target/elasticsearch/log
-                  data: target/elasticsearch/data 
+                  data: target/elasticsearch/data
     messages:
         cache-seconds: 1
     thymeleaf:
