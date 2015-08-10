@@ -1,6 +1,6 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 apply plugin: 'com.moowork.node'
-apply plugin: 'grunt'
+apply plugin: 'com.moowork.grunt'
 
 task bower(type: Exec) {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {

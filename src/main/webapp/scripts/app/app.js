@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprecht.translate', 
-    'ngResource', 'ui.router', 'ngCookies', 'ngCacheBuster', 'infinite-scroll'])
+angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprecht.translate',
+               'ui.bootstrap', // for modal dialogs
+    'ngResource', 'ui.router', 'ngCookies', 'ngCacheBuster', 'ngFileUpload', 'infinite-scroll'])
 
     .run(function ($rootScope, $location, $window, $http, $state, $translate, Language, Auth, Principal, ENV, VERSION) {
         $rootScope.ENV = ENV;
@@ -13,12 +14,12 @@ angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
             if (Principal.isIdentityResolved()) {
                 Auth.authorize();
             }
-            
+
             // Update the language
             Language.getCurrent().then(function (language) {
                 $translate.use(language);
             });
-            
+
         });
 
         $rootScope.$on('$stateChangeSuccess',  function(event, toState, toParams, fromState, fromParams) {
@@ -31,12 +32,12 @@ angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
             if (toState.data.pageTitle) {
                 titleKey = toState.data.pageTitle;
             }
-            
+
             $translate(titleKey).then(function (title) {
                 // Change window title with translated one
                 $window.document.title = title;
             });
-            
+
         });
 
         $rootScope.back = function() {
@@ -54,11 +55,11 @@ angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
             request: function (config) {
                 config.headers = config.headers || {};
                 var token = localStorageService.get('token');
-                
+
                 if (token && token.expires && token.expires > new Date().getTime()) {
                   config.headers['x-auth-token'] = token.token;
                 }
-                
+
                 return config;
             }
         };
@@ -90,8 +91,11 @@ angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
             }
         });
 
+        $httpProvider.interceptors.push('errorHandlerInterceptor');
+        $httpProvider.interceptors.push('authExpiredInterceptor');
         $httpProvider.interceptors.push('authInterceptor');
-        
+        $httpProvider.interceptors.push('notificationInterceptor');
+
         // Initialize angular-translate
         $translateProvider.useLoader('$translatePartialLoader', {
             urlTemplate: 'i18n/{lang}/{part}.json'
@@ -100,9 +104,10 @@ angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
         $translateProvider.preferredLanguage('en');
         $translateProvider.useCookieStorage();
         $translateProvider.useSanitizeValueStrategy('escaped');
+        $translateProvider.addInterpolation('$translateMessageFormatInterpolation');
 
         tmhDynamicLocaleProvider.localeLocationPattern('bower_components/angular-i18n/angular-locale_{{locale}}.js');
         tmhDynamicLocaleProvider.useCookieStorage();
         tmhDynamicLocaleProvider.storageKey('NG_TRANSLATE_LANG_KEY');
-        
+
     });

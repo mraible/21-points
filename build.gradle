@@ -4,11 +4,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath('org.springframework.boot:spring-boot-gradle-plugin:1.2.4.RELEASE')
-        classpath('com.moowork.gradle:gradle-node-plugin:0.8')
-        
-        classpath('com.moowork.gradle:gradle-grunt-plugin:0.6')
-        
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE')
+        classpath('com.moowork.gradle:gradle-node-plugin:0.10')
+        classpath('com.moowork.gradle:gradle-grunt-plugin:0.10')
     }
 }
 
@@ -128,11 +126,11 @@ dependencies {
     compile group: 'org.springframework.security', name: 'spring-security-data', version: spring_security_version
     compile group: 'org.springframework.security', name: 'spring-security-web', version: spring_security_version
     compile group: 'org.springframework.security', name: 'spring-security-messaging', version: spring_security_version 
-    compile(group: 'com.mangofactory', name: 'swagger-springmvc', version: swagger_springmvc_version) {
-        exclude(module: 'jackson-module-scala_2.10')
-        exclude(module: 'scalap')
-        exclude(module: 'scala-compiler')
+    compile(group: 'io.springfox', name: 'springfox-swagger-ui', version: springfox_version)
+    compile(group: 'io.springfox', name: 'springfox-swagger2', version: springfox_version){
+        exclude module: 'org.mapstruct.mapstruct'
     }
+    
     compile group: 'org.postgresql', name: 'postgresql', version: postgresql_version
     compile group: 'fr.ippon.spark.metrics', name: 'metrics-spark-reporter', version: metrics_spark_reporter_version
     compile group: 'org.mapstruct', name: 'mapstruct-jdk8', version: mapstruct_version
@@ -140,7 +138,7 @@ dependencies {
     testCompile group: 'com.jayway.jsonpath', name: 'json-path'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-jetty'
-    testCompile group: 'org.assertj', name: 'assertj-core-java8', version: assertj_core_version
+	testCompile group: 'org.assertj', name: 'assertj-core', version: assertj_core_version
     testCompile group: 'junit', name: 'junit'
     testCompile group: 'org.mockito', name: 'mockito-core'
     testCompile group: 'com.mattbertolini', name: 'liquibase-slf4j', version: liquibase_slf4j_version
@@ -152,7 +150,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.5'
 }
 
 task stage(dependsOn: 'bootRepackage') {
