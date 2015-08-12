@@ -1,0 +1,62 @@
+{
+    "relationships": [
+        {
+            "relationshipId": 1,
+            "relationshipName": "entry",
+            "relationshipNameCapitalized": "Entry",
+            "relationshipFieldName": "entry",
+            "otherEntityName": "entry",
+            "relationshipType": "many-to-many",
+            "otherEntityNameCapitalized": "Entry",
+            "ownerSide": false
+        },
+        {
+            "relationshipId": 2,
+            "relationshipName": "goal",
+            "relationshipNameCapitalized": "Goal",
+            "relationshipFieldName": "goal",
+            "otherEntityName": "goal",
+            "relationshipType": "many-to-many",
+            "otherEntityNameCapitalized": "Goal",
+            "ownerSide": false
+        }
+    ],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldNameCapitalized": "Name",
+            "fieldNameUnderscored": "name",
+            "fieldInJavaBeanMethod": "Name",
+            "fieldValidate": true,
+            "fieldValidateRules": [
+                "required",
+                "minlength"
+            ],
+            "fieldValidateRulesMinlength": "2"
+        },
+        {
+            "fieldId": 2,
+            "fieldName": "amount",
+            "fieldType": "String",
+            "fieldNameCapitalized": "Amount",
+            "fieldNameUnderscored": "amount",
+            "fieldInJavaBeanMethod": "Amount",
+            "fieldValidate": true,
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "fieldsContainOwnerManyToMany": false,
+    "fieldsContainOneToMany": false,
+    "fieldsContainLocalDate": false,
+    "fieldsContainCustomTime": false,
+    "fieldsContainBigDecimal": false,
+    "fieldsContainDateTime": false,
+    "fieldsContainDate": false,
+    "changelogDate": "20150811181512",
+    "pagination": "pagination",
+    "validation": true
+}
