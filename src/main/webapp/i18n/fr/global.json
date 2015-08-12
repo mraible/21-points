@@ -6,6 +6,9 @@
             "home": "Accueil",
             "entities": {
                 "main": "Entités",
+                "goal": "Goal",
+                "metric": "Metric",
+                "entry": "Entry",
                 "additionalEntity": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {
