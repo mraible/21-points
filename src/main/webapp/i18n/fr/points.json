@@ -1,0 +1,24 @@
+{
+    "21pointsApp": {
+        "points" : {
+            "home": {
+                "title": "Pointss",
+                "createLabel": "Créer un nouveau Points",
+                "createOrEditLabel": "Créer ou éditer un Points"
+            },
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Points {{ id }} ?"
+            },
+            "detail": {
+                "title": "Points"
+            },
+            "date": "Date",
+            "exercise": "Exercise",
+            "meals": "Meals",
+            "alcohol": "Alcohol",
+            "notes": "Notes",
+            "user": "user"
+        }
+    }
+}
+

@@ -1,0 +1,46 @@
+
+<div>
+    <h2><span translate="21pointsApp.weight.detail.title">Weight</span> {{weight.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th translate="entity.detail.field">Field</th>
+                <th translate="entity.detail.value">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.weight.timestamp">Timestamp</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{weight.timestamp}}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.weight.weight">Weight</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{weight.weight}}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.weight.user">user</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{weight.user.login}}" readonly>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            ui-sref="weight"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span translate="entity.action.back"> Back</span>
+    </button>
+</div>

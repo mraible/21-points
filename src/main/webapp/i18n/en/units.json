@@ -1,0 +1,9 @@
+{
+    "21pointsApp": {
+        "Units" : {
+            "SELECT": "{VALUE, select, kg{kg} lb{lb} other{}}",
+            "kg": "kg",
+            "lb": "lb"
+        }
+    }
+}

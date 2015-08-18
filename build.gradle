@@ -21,6 +21,10 @@ bootRepackage {
    mainClass = 'org.jhipster.health.Application'
 }
 
+clean {
+    delete "target"
+}
+
 springBoot {
     mainClass = 'org.jhipster.health.Application'
 }
@@ -81,7 +85,7 @@ dependencies {
     compile (group: 'com.ryantenney.metrics', name: 'metrics-spring', version: metrics_spring_version) {
         exclude(module: 'metrics-core')
         exclude(module: 'metrics-healthchecks')
-    } 
+    }
     compile(group: 'com.zaxxer', name: 'HikariCP') {
         exclude(module: 'tools')
     }
@@ -125,12 +129,12 @@ dependencies {
     compile group: 'org.springframework.security', name: 'spring-security-config', version: spring_security_version
     compile group: 'org.springframework.security', name: 'spring-security-data', version: spring_security_version
     compile group: 'org.springframework.security', name: 'spring-security-web', version: spring_security_version
-    compile group: 'org.springframework.security', name: 'spring-security-messaging', version: spring_security_version 
+    compile group: 'org.springframework.security', name: 'spring-security-messaging', version: spring_security_version
     compile(group: 'io.springfox', name: 'springfox-swagger-ui', version: springfox_version)
     compile(group: 'io.springfox', name: 'springfox-swagger2', version: springfox_version){
         exclude module: 'org.mapstruct.mapstruct'
     }
-    
+
     compile group: 'org.postgresql', name: 'postgresql', version: postgresql_version
     compile group: 'fr.ippon.spark.metrics', name: 'metrics-spark-reporter', version: metrics_spark_reporter_version
     compile group: 'org.mapstruct', name: 'mapstruct-jdk8', version: mapstruct_version
@@ -144,7 +148,7 @@ dependencies {
     testCompile group: 'com.mattbertolini', name: 'liquibase-slf4j', version: liquibase_slf4j_version
     testCompile group: 'org.hamcrest', name: 'hamcrest-library'
     testCompile group: 'io.gatling.highcharts', name: 'gatling-charts-highcharts', version: gatling_version
-    
+
     testCompile group: 'com.h2database', name: 'h2'
 
 }

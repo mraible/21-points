@@ -1,0 +1,85 @@
+{
+    "relationships": [
+        {
+            "relationshipId": 1,
+            "relationshipName": "goal",
+            "relationshipNameCapitalized": "Goal",
+            "relationshipFieldName": "goal",
+            "otherEntityName": "goal",
+            "relationshipType": "many-to-one",
+            "otherEntityNameCapitalized": "Goal",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipId": 2,
+            "relationshipName": "metric",
+            "relationshipNameCapitalized": "Metric",
+            "relationshipFieldName": "metric",
+            "otherEntityName": "metric",
+            "relationshipType": "many-to-many",
+            "otherEntityNameCapitalized": "Metric",
+            "otherEntityField": "name",
+            "ownerSide": true
+        }
+    ],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "date",
+            "fieldType": "LocalDate",
+            "fieldNameCapitalized": "Date",
+            "fieldNameUnderscored": "date",
+            "fieldInJavaBeanMethod": "Date",
+            "fieldValidate": true,
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldId": 2,
+            "fieldName": "exercise",
+            "fieldType": "Integer",
+            "fieldNameCapitalized": "Exercise",
+            "fieldNameUnderscored": "exercise",
+            "fieldInJavaBeanMethod": "Exercise",
+            "fieldValidate": false
+        },
+        {
+            "fieldId": 3,
+            "fieldName": "meals",
+            "fieldType": "Integer",
+            "fieldNameCapitalized": "Meals",
+            "fieldNameUnderscored": "meals",
+            "fieldInJavaBeanMethod": "Meals",
+            "fieldValidate": false
+        },
+        {
+            "fieldId": 4,
+            "fieldName": "alcohol",
+            "fieldType": "Integer",
+            "fieldNameCapitalized": "Alcohol",
+            "fieldNameUnderscored": "alcohol",
+            "fieldInJavaBeanMethod": "Alcohol",
+            "fieldValidate": false
+        },
+        {
+            "fieldId": 5,
+            "fieldName": "notes",
+            "fieldType": "String",
+            "fieldNameCapitalized": "Notes",
+            "fieldNameUnderscored": "notes",
+            "fieldInJavaBeanMethod": "Notes",
+            "fieldValidate": false
+        }
+    ],
+    "fieldsContainOwnerManyToMany": true,
+    "fieldsContainOneToMany": false,
+    "fieldsContainLocalDate": true,
+    "fieldsContainCustomTime": true,
+    "fieldsContainBigDecimal": false,
+    "fieldsContainDateTime": false,
+    "fieldsContainDate": false,
+    "changelogDate": "20150811182320",
+    "pagination": "infinite-scroll",
+    "validation": true
+}

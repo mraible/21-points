@@ -1,0 +1,46 @@
+
+<div>
+    <h2><span translate="21pointsApp.goal.detail.title">Goal</span> {{goal.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th translate="entity.detail.field">Field</th>
+                <th translate="entity.detail.value">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.goal.name">Name</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{goal.name}}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.goal.description">Description</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{goal.description}}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.goal.user">user</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{goal.user.login}}" readonly>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            ui-sref="goal"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span translate="entity.action.back"> Back</span>
+    </button>
+</div>

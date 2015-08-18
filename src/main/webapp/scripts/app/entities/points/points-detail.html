@@ -1,0 +1,70 @@
+
+<div>
+    <h2><span translate="21pointsApp.points.detail.title">Points</span> {{points.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th translate="entity.detail.field">Field</th>
+                <th translate="entity.detail.value">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.points.date">Date</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{points.date}}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.points.exercise">Exercise</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{points.exercise}}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.points.meals">Meals</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{points.meals}}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.points.alcohol">Alcohol</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{points.alcohol}}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.points.notes">Notes</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{points.notes}}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span translate="21pointsApp.points.user">user</span>
+                </td>
+                <td>
+                    <input type="text" class="input-sm form-control" value="{{points.user.login}}" readonly>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            ui-sref="points"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span translate="entity.action.back"> Back</span>
+    </button>
+</div>
