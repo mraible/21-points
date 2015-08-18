@@ -1,0 +1,65 @@
+
+<form name="editForm" role="form" novalidate ng-submit="save()" show-validation>
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                ng-click="clear()">&times;</button>
+        <h4 class="modal-title" id="myPreferencesLabel" translate="21pointsApp.preferences.home.createOrEditLabel">Create or edit a Preferences</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="id" translate="global.field.id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                    ng-model="preferences.id" readonly>
+        </div>
+
+        <div class="form-group">
+            <label translate="21pointsApp.preferences.weekly_goal" for="field_weekly_goal">Weekly_goal</label>
+            <input type="number" class="form-control" name="weekly_goal" id="field_weekly_goal"
+                    ng-model="preferences.weekly_goal"
+                    required min="10" max="21">
+
+            <div ng-show="editForm.weekly_goal.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.weekly_goal.$error.required" translate="entity.validation.required">
+                    This field is required.
+                </p>
+                <p class="help-block"
+                    ng-show="editForm.weekly_goal.$error.min" translate="entity.validation.min" translate-value-min="10">
+                    This field should be more than 10.
+                </p>
+                <p class="help-block"
+                    ng-show="editForm.weekly_goal.$error.max" translate="entity.validation.max" translate-value-max="21">
+                    This field cannot be more than 21.
+                </p>
+                <p class="help-block"
+                    ng-show="editForm.weekly_goal.$error.number" translate="entity.validation.number">
+                    This field should be a number.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label translate="21pointsApp.preferences.weight_units" for="field_weight_units">Weight_units</label>
+            <select class="form-control" name="weight_units" ng-model="preferences.weight_units" id="field_weight_units" required>
+               <option value="kg" translate="21pointsApp.Units.kg">kg</option>
+               <option value="lb" translate="21pointsApp.Units.lb">lb</option>
+            </select>
+
+            <div ng-show="editForm.weight_units.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.weight_units.$error.required" translate="entity.validation.required">
+                    This field is required.
+                </p>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
+            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span translate="entity.action.cancel">Cancel</span>
+        </button>
+        <button type="submit" ng-disabled="editForm.$invalid || editForm.$submitted" class="btn btn-primary">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;<span translate="entity.action.save">Save</span>
+        </button>
+    </div>
+</form>

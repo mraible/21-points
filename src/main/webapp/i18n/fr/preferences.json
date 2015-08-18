@@ -1,0 +1,21 @@
+{
+    "21pointsApp": {
+        "preferences" : {
+            "home": {
+                "title": "Preferencess",
+                "createLabel": "Créer un nouveau Preferences",
+                "createOrEditLabel": "Créer ou éditer un Preferences"
+            },
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Preferences {{ id }} ?"
+            },
+            "detail": {
+                "title": "Preferences"
+            },
+            "weekly_goal": "Weekly_goal",
+            "weight_units": "Weight_units",
+            "user": "user"
+        }
+    }
+}
+
