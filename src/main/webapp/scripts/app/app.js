@@ -86,7 +86,6 @@ angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
                 ],
                 translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
                     $translatePartialLoader.addPart('global');
-                    $translatePartialLoader.addPart('language');
                 }]
             }
         });

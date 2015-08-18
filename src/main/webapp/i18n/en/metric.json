@@ -1,0 +1,21 @@
+{
+    "21pointsApp": {
+        "metric" : {
+            "home": {
+                "title": "Metrics",
+                "createLabel": "Create a new Metric",
+                "createOrEditLabel": "Create or edit a Metric"
+            },
+            "delete": {
+                "question": "Are you sure you want to delete Metric {{ id }}?"
+            },
+            "detail": {
+                "title": "Metric"
+            },
+            "name": "Name",
+            "amount": "Amount",
+            "entry": "entry",
+            "goal": "goal"
+        }
+    }
+}

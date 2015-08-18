@@ -16,10 +16,8 @@ describe('Services Tests ', function () {
             $httpBackend.whenGET('scripts/app/main/main.html').respond({});
             $httpBackend.whenGET('scripts/components/navbar/navbar.html').respond({});
             var globalJson = new RegExp('i18n\/.*\/global.json');
-            var languageJson = new RegExp('i18n\/.*\/language.json');
             var mainJson = new RegExp('i18n\/.*\/main.json');
             $httpBackend.whenGET(globalJson).respond({});
-            $httpBackend.whenGET(languageJson).respond({});
             $httpBackend.whenGET(mainJson).respond({});
           }));
         //make sure no expectations were missed in your tests.

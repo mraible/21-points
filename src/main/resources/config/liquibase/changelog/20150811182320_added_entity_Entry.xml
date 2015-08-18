@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+
+    <!--
+        Added the entity Entry.
+    -->
+    <changeSet id="20150811182320" author="jhipster">
+        <createTable tableName="ENTRY">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="exercise" type="integer"/>
+            <column name="meals" type="integer"/>
+            <column name="alcohol" type="integer"/>
+            <column name="notes" type="varchar(255)"/>
+            <column name="goal_id" type="bigint"/>
+        </createTable>
+        
+        <addForeignKeyConstraint baseColumnNames="goal_id"
+                                 baseTableName="ENTRY"
+                                 constraintName="fk_entry_goal_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="GOAL"/>
+
+        <createTable tableName="ENTRY_METRIC">
+            <column name="metrics_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entrys_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="entrys_id, metrics_id" tableName="ENTRY_METRIC"/>
+
+        <addForeignKeyConstraint baseColumnNames="entrys_id"
+                                 baseTableName="ENTRY_METRIC"
+                                 constraintName="fk_entry_metric_metric_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="ENTRY"/>
+
+        <addForeignKeyConstraint baseColumnNames="metrics_id"
+                                 baseTableName="ENTRY_METRIC"
+                                 constraintName="fk_metric_metric_entry_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="METRIC"/>
+        
+    </changeSet>
+</databaseChangeLog>
