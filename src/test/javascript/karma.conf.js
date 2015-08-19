@@ -68,8 +68,22 @@ module.exports = function (config) {
         // - IE (only Windows)
         browsers: ['PhantomJS'],
 
+        plugins: [
+            'karma-chrome-launcher',
+            'karma-phantomjs-launcher',
+            'karma-jasmine',
+            'karma-junit-reporter'
+        ],
+
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
-        singleRun: false
+        singleRun: false,
+
+        reporters: ['dots', 'junit'],
+
+        junitReporter: {
+            outputFile: '../build/test-results/TEST-javascript-results.xml',
+            suite: 'unit'
+        }
     });
 };
