@@ -111,5 +111,5 @@
         "serverNotReachable" : "Server not reachable",
         "NotNull" : "Field {{fieldName}} cannot be empty!"
     },
-    "footer": "<strong>21 Point Health</strong> | An application developed for a better life and <a href='http://jhipster-book.com' target='_blank'>The JHipster Mini-Book</a>. By <a href='http://raibledesigns.com' target='_blank'>Matt Raible</a>"
+    "footer": "<strong>21 Point Health</strong> | An application developed for a better life and <a href='http://jhipster-book.com' target='_blank'>The JHipster Mini-Book</a> | By <a href='http://raibledesigns.com' target='_blank'>Matt Raible</a>"
 }
