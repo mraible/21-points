@@ -196,6 +196,10 @@ body {
     padding-bottom: 80px;
 }
 
+.modal-title {
+    margin-bottom: 10px;
+}
+
 .footer {
     bottom: 0;
     left: 0;

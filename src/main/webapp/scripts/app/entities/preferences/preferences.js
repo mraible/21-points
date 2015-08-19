@@ -20,13 +20,14 @@ angular.module('21pointsApp')
                     translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
                         $translatePartialLoader.addPart('preferences');
                         $translatePartialLoader.addPart('global');
+                        $translatePartialLoader.addPart('units');
                         return $translate.refresh();
                     }]
                 }
             })
             .state('preferences.detail', {
                 parent: 'entity',
-                url: '/preferences/{id}',
+                url: '/preferences/{id:int}',
                 data: {
                     roles: ['ROLE_USER'],
                     pageTitle: '21pointsApp.preferences.detail.title'
@@ -52,7 +53,7 @@ angular.module('21pointsApp')
                 parent: 'preferences',
                 url: '/new',
                 data: {
-                    roles: ['ROLE_USER'],
+                    roles: ['ROLE_USER']
                 },
                 onEnter: ['$stateParams', '$state', '$modal', function($stateParams, $state, $modal) {
                     $modal.open({

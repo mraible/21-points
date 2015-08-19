@@ -26,7 +26,7 @@ angular.module('21pointsApp')
             })
             .state('points.detail', {
                 parent: 'entity',
-                url: '/points/{id}',
+                url: '/points/{id:int}',
                 data: {
                     roles: ['ROLE_USER'],
                     pageTitle: '21pointsApp.points.detail.title'
@@ -51,7 +51,7 @@ angular.module('21pointsApp')
                 parent: 'points',
                 url: '/new',
                 data: {
-                    roles: ['ROLE_USER'],
+                    roles: ['ROLE_USER']
                 },
                 onEnter: ['$stateParams', '$state', '$modal', function($stateParams, $state, $modal) {
                     $modal.open({
@@ -74,7 +74,7 @@ angular.module('21pointsApp')
                 parent: 'points',
                 url: '/{id}/edit',
                 data: {
-                    roles: ['ROLE_USER'],
+                    roles: ['ROLE_USER']
                 },
                 onEnter: ['$stateParams', '$state', '$modal', function($stateParams, $state, $modal) {
                     $modal.open({

@@ -3,8 +3,8 @@
         "preferences" : {
             "home": {
                 "title": "Preferences",
-                "createLabel": "Create Preferences",
-                "createOrEditLabel": "Create or edit a Preferences"
+                "createLabel": "Add Preferences",
+                "createOrEditLabel": "Edit Preferences"
             },
             "created": "Added Successfully!",
             "updated": "Updated Successfully!",
