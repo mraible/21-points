@@ -1,17 +1,17 @@
 'use strict';
 
 angular.module('21pointsApp')
-    .controller('PreferencesController', function ($scope, Preferences, PreferencesSearch) {
-        $scope.preferencess = [];
-        $scope.loadAll = function() {
-            Preferences.query(function(result) {
-               $scope.preferencess = result;
+    .controller('PreferencesController', function ($scope, $state, Preferences, PreferencesSearch) {
+        $scope.preferences = [];
+        $scope.loadAll = function () {
+            Preferences.query(function (result) {
+                $scope.preferences = result;
             });
         };
         $scope.loadAll();
 
         $scope.delete = function (id) {
-            Preferences.get({id: id}, function(result) {
+            Preferences.get({id: id}, function (result) {
                 $scope.preferences = result;
                 $('#deletePreferencesConfirmation').modal('show');
             });
@@ -27,10 +27,10 @@ angular.module('21pointsApp')
         };
 
         $scope.search = function () {
-            PreferencesSearch.query({query: $scope.searchQuery}, function(result) {
-                $scope.preferencess = result;
-            }, function(response) {
-                if(response.status === 404) {
+            PreferencesSearch.query({query: $scope.searchQuery}, function (result) {
+                $scope.preferences = result;
+            }, function (response) {
+                if (response.status === 404) {
                     $scope.loadAll();
                 }
             });
@@ -42,6 +42,6 @@ angular.module('21pointsApp')
         };
 
         $scope.clear = function () {
-            $scope.preferences = {weekly_goal: null, weight_units: null, id: null};
+            $scope.preferences = {weeklyGoal: null, weightUnits: null, id: null};
         };
     });

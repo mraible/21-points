@@ -42,9 +42,9 @@ public class PointsResource {
     private PointsSearchRepository pointsSearchRepository;
 
     /**
-     * POST  /pointss -> Create a new points.
+     * POST  /points -> Create a new points.
      */
-    @RequestMapping(value = "/pointss",
+    @RequestMapping(value = "/points",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -55,15 +55,15 @@ public class PointsResource {
         }
         Points result = pointsRepository.save(points);
         pointsSearchRepository.save(result);
-        return ResponseEntity.created(new URI("/api/pointss/" + result.getId()))
+        return ResponseEntity.created(new URI("/api/points/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert("points", result.getId().toString()))
                 .body(result);
     }
 
     /**
-     * PUT  /pointss -> Updates an existing points.
+     * PUT  /points -> Updates an existing points.
      */
-    @RequestMapping(value = "/pointss",
+    @RequestMapping(value = "/points",
         method = RequestMethod.PUT,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -80,9 +80,9 @@ public class PointsResource {
     }
 
     /**
-     * GET  /pointss -> get all the pointss.
+     * GET  /points -> get all the points.
      */
-    @RequestMapping(value = "/pointss",
+    @RequestMapping(value = "/points",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -90,14 +90,14 @@ public class PointsResource {
                                   @RequestParam(value = "per_page", required = false) Integer limit)
         throws URISyntaxException {
         Page<Points> page = pointsRepository.findAll(PaginationUtil.generatePageRequest(offset, limit));
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/pointss", offset, limit);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/points", offset, limit);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
-     * GET  /pointss/:id -> get the "id" points.
+     * GET  /points/:id -> get the "id" points.
      */
-    @RequestMapping(value = "/pointss/{id}",
+    @RequestMapping(value = "/points/{id}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -111,9 +111,9 @@ public class PointsResource {
     }
 
     /**
-     * DELETE  /pointss/:id -> delete the "id" points.
+     * DELETE  /points/:id -> delete the "id" points.
      */
-    @RequestMapping(value = "/pointss/{id}",
+    @RequestMapping(value = "/points/{id}",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
@@ -125,10 +125,10 @@ public class PointsResource {
     }
 
     /**
-     * SEARCH  /_search/pointss/:query -> search for the points corresponding
+     * SEARCH  /_search/points/:query -> search for the points corresponding
      * to the query.
      */
-    @RequestMapping(value = "/_search/pointss/{query}",
+    @RequestMapping(value = "/_search/points/{query}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed

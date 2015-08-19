@@ -2,7 +2,7 @@
     "21pointsApp": {
         "points" : {
             "home": {
-                "title": "Pointss",
+                "title": "Points",
                 "createLabel": "Créer un nouveau Points",
                 "createOrEditLabel": "Créer ou éditer un Points"
             },

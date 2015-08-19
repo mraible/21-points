@@ -178,3 +178,33 @@ ul#strengthBar {
     background-color: #eee;
     opacity: 1;
 }
+
+/* New CSS classes and modifications */
+.m-n {
+    margin: 0;
+}
+
+.p-r {
+    padding-right: 10px;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+body {
+    padding-bottom: 80px;
+}
+
+.footer {
+    bottom: 0;
+    left: 0;
+    color: #666;
+    background: #eee;
+    border-top: 1px solid silver;
+    position: fixed;
+    width: 100%;
+    padding: 10px;
+    padding-bottom: 0;
+    text-align: center;
+}

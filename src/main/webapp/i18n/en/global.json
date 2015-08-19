@@ -8,7 +8,7 @@
                 "main": "Entities",
                 "points": "Points",
                 "weight": "Weight",
-                "bloodPressure": "BloodPressure",
+                "bloodPressure": "Blood Pressure",
                 "preferences": "Preferences",
                 "additionalEntity": "JHipster will add additional entities here (do not translate!)"
             },
@@ -111,5 +111,5 @@
         "serverNotReachable" : "Server not reachable",
         "NotNull" : "Field {{fieldName}} cannot be empty!"
     },
-    "footer": "This is your footer"
+    "footer": "<strong>21 Point Health</strong> | An application developed for a better life and <a href='http://jhipster-book.com' target='_blank'>The JHipster Mini-Book</a>. By <a href='http://raibledesigns.com' target='_blank'>Matt Raible</a>"
 }

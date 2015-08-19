@@ -1,21 +1,15 @@
 
 <div>
-    <h2><span translate="21pointsApp.points.detail.title">Points</span> {{points.id}}</h2>
+    <h2><span translate="21pointsApp.points.detail.title">Points</span></h2>
     <div class="table-responsive">
         <table class="table table-striped">
-            <thead>
-            <tr>
-                <th translate="entity.detail.field">Field</th>
-                <th translate="entity.detail.value">Value</th>
-            </tr>
-            </thead>
             <tbody>
             <tr>
                 <td>
                     <span translate="21pointsApp.points.date">Date</span>
                 </td>
                 <td>
-                    <input type="text" class="input-sm form-control" value="{{points.date}}" readonly>
+                    <input type="text" class="input-sm form-control" value="{{points.date | date}}" readonly>
                 </td>
             </tr>
             <tr>

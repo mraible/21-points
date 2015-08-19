@@ -5,14 +5,14 @@ angular.module('21pointsApp')
         $stateProvider
             .state('points', {
                 parent: 'entity',
-                url: '/pointss',
+                url: '/points',
                 data: {
                     roles: ['ROLE_USER'],
                     pageTitle: '21pointsApp.points.home.title'
                 },
                 views: {
                     'content@': {
-                        templateUrl: 'scripts/app/entities/points/pointss.html',
+                        templateUrl: 'scripts/app/entities/points/points.html',
                         controller: 'PointsController'
                     }
                 },

@@ -5,6 +5,7 @@ angular.module('21pointsApp')
         $scope.weight = entity;
         $scope.load = function (id) {
             Weight.get({id: id}, function(result) {
+                console.log(result);
                 $scope.weight = result;
             });
         };

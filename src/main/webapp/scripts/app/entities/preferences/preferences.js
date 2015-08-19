@@ -5,21 +5,20 @@ angular.module('21pointsApp')
         $stateProvider
             .state('preferences', {
                 parent: 'entity',
-                url: '/preferencess',
+                url: '/preferences',
                 data: {
                     roles: ['ROLE_USER'],
                     pageTitle: '21pointsApp.preferences.home.title'
                 },
                 views: {
                     'content@': {
-                        templateUrl: 'scripts/app/entities/preferences/preferencess.html',
+                        templateUrl: 'scripts/app/entities/preferences/preferences.html',
                         controller: 'PreferencesController'
                     }
                 },
                 resolve: {
                     translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
                         $translatePartialLoader.addPart('preferences');
-                        $translatePartialLoader.addPart('');
                         $translatePartialLoader.addPart('global');
                         return $translate.refresh();
                     }]
@@ -41,7 +40,7 @@ angular.module('21pointsApp')
                 resolve: {
                     translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
                         $translatePartialLoader.addPart('preferences');
-                        $translatePartialLoader.addPart('');
+                        $translatePartialLoader.addPart('units');
                         return $translate.refresh();
                     }],
                     entity: ['$stateParams', 'Preferences', function($stateParams, Preferences) {
@@ -62,7 +61,7 @@ angular.module('21pointsApp')
                         size: 'lg',
                         resolve: {
                             entity: function () {
-                                return {weekly_goal: null, weight_units: null, id: null};
+                                return {weeklyGoal: null, weightUnits: null, id: null};
                             }
                         }
                     }).result.then(function(result) {
@@ -76,7 +75,7 @@ angular.module('21pointsApp')
                 parent: 'preferences',
                 url: '/{id}/edit',
                 data: {
-                    roles: ['ROLE_USER'],
+                    roles: ['ROLE_USER']
                 },
                 onEnter: ['$stateParams', '$state', '$modal', function($stateParams, $state, $modal) {
                     $modal.open({

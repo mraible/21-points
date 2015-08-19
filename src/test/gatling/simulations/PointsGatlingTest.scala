@@ -62,13 +62,13 @@ class PointsGatlingTest extends Simulation {
         .check(status.is(200)))
         .pause(10)
         .repeat(2) {
-            exec(http("Get all pointss")
-            .get("/api/pointss")
+            exec(http("Get all points")
+            .get("/api/points")
             .headers(headers_http_authenticated)
             .check(status.is(200)))
             .pause(10 seconds, 20 seconds)
             .exec(http("Create new points")
-            .post("/api/pointss")
+            .post("/api/points")
             .headers(headers_http_authenticated)
             .body(StringBody("""{"id":null, "date":"2020-01-01T00:00:00.000Z", "exercise":"0", "meals":"0", "alcohol":"0", "notes":"SAMPLE_TEXT"}""")).asJSON
             .check(status.is(201))

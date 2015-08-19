@@ -1,7 +1,7 @@
 <div>
     <div class="row">
         <div class="col-sm-7">
-            <h2 translate="21pointsApp.bloodPressure.home.title">Blood Pressures</h2>
+            <h2 translate="21pointsApp.preferences.home.title">Preferences</h2>
         </div>
         <div class="col-sm-5 text-right">
             <form name="searchForm" class="form-inline">
@@ -9,24 +9,24 @@
                     <input type="text" class="form-control" ng-model="searchQuery" id="searchQuery" placeholder="Search">
                 </div>
                 <button class="btn btn-info btn-sm" ng-click="search()"><span class="glyphicon glyphicon-search"></span></button>
-                <button class="btn btn-primary btn-sm" ui-sref="bloodPressure.new">
+                <button class="btn btn-primary btn-sm" ui-sref="preferences.new">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
             </form>
         </div>
     </div>
 
-    <div class="modal fade" id="deleteBloodPressureConfirmation">
+    <div class="modal fade" id="deletePreferencesConfirmation">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form name="deleteForm" ng-submit="confirmDelete(bloodPressure.id)">
+                <form name="deleteForm" ng-submit="confirmDelete(preferences.id)">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                                 ng-click="clear()">&times;</button>
                         <h4 class="modal-title" translate="entity.delete.title">Confirm delete operation</h4>
                     </div>
                     <div class="modal-body">
-                        <p translate="21pointsApp.bloodPressure.delete.question" translate-values="{id: '{{bloodPressure.id}}'}">Are you sure you want to delete this BloodPressure?</p>
+                        <p translate="21pointsApp.preferences.delete.question" translate-values="{id: '{{preferences.id}}'}">Are you sure you want to delete this Preferences?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
@@ -45,35 +45,33 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th translate="21pointsApp.bloodPressure.timestamp">Timestamp</th>
-                    <th translate="21pointsApp.bloodPressure.systolic">Systolic</th>
-                    <th translate="21pointsApp.bloodPressure.diastolic">Diastolic</th>
-                    <th translate="21pointsApp.bloodPressure.user">user</th>
-                    <th translate="21pointsApp.bloodPressure.actions" class="col-md-2">Actions</th>
+                    <th translate="global.field.id">ID</th>
+                    <th translate="21pointsApp.preferences.weeklyGoal">weeklyGoal</th>
+                    <th translate="21pointsApp.preferences.weightUnits">weightUnits</th>
+                    <th translate="21pointsApp.preferences.actions" class="col-md-3">Actions</th>
                 </tr>
             </thead>
-            <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
-                <tr ng-repeat="bloodPressure in bloodPressures">
-                    <td><a ui-sref="bloodPressure.detail({id:bloodPressure.id})">{{bloodPressure.timestamp | date: 'short'}}</a></td>
-                    <td>{{bloodPressure.systolic}}</td>
-                    <td>{{bloodPressure.diastolic}}</td>
-                    <td>{{bloodPressure.user.login}}</td>
+            <tbody>
+                <tr ng-repeat="preferences in preferences">
+                    <td><a ui-sref="preferences.detail({id:preferences.id})">{{preferences.id}}</a></td>
+                    <td>{{preferences.weeklyGoal}}</td>
+                    <td>{{preferences.weightUnits}}</td>
                     <td>
                         <div class="btn-group m-n">
                             <button type="submit"
-                                    ui-sref="bloodPressure.detail({id:bloodPressure.id})"
+                                    ui-sref="preferences.detail({id:preferences.id})"
                                     class="btn btn-info btn-xs">
-                                <span class="glyphicon glyphicon-eye-open"></span>
+                                <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span translate="entity.action.view"> View</span>
                             </button>
                             <button type="submit"
-                                    ui-sref="bloodPressure.edit({id:bloodPressure.id})"
+                                    ui-sref="preferences.edit({id:preferences.id})"
                                     class="btn btn-primary btn-xs">
-                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="glyphicon glyphicon-pencil"></span>&nbsp;<span translate="entity.action.edit"> Edit</span>
                             </button>
                             <button type="submit"
-                                    ng-click="delete(bloodPressure.id)"
+                                    ng-click="delete(preferences.id)"
                                     class="btn btn-danger btn-xs">
-                                <span class="glyphicon glyphicon-remove-circle"></span>
+                                <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span translate="entity.action.delete"> Delete</span>
                             </button>
                         </div>
                     </td>

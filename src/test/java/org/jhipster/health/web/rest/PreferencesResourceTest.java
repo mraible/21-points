@@ -2,13 +2,12 @@ package org.jhipster.health.web.rest;
 
 import org.jhipster.health.Application;
 import org.jhipster.health.domain.Preferences;
+import org.jhipster.health.domain.enumeration.Units;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -26,10 +25,9 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import org.jhipster.health.domain.enumeration.Units;
 
 /**
  * Test class for the PreferencesResource REST controller.
@@ -74,8 +72,8 @@ public class PreferencesResourceTest {
     @Before
     public void initTest() {
         preferences = new Preferences();
-        preferences.setWeekly_goal(DEFAULT_WEEKLY_GOAL);
-        preferences.setWeight_units(DEFAULT_WEIGHT_UNITS);
+        preferences.setWeeklyGoal(DEFAULT_WEEKLY_GOAL);
+        preferences.setWeightUnits(DEFAULT_WEIGHT_UNITS);
     }
 
     @Test
@@ -85,68 +83,68 @@ public class PreferencesResourceTest {
 
         // Create the Preferences
 
-        restPreferencesMockMvc.perform(post("/api/preferencess")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(preferences)))
-                .andExpect(status().isCreated());
+        restPreferencesMockMvc.perform(post("/api/preferences")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preferences)))
+            .andExpect(status().isCreated());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencess = preferencesRepository.findAll();
-        assertThat(preferencess).hasSize(databaseSizeBeforeCreate + 1);
-        Preferences testPreferences = preferencess.get(preferencess.size() - 1);
-        assertThat(testPreferences.getWeekly_goal()).isEqualTo(DEFAULT_WEEKLY_GOAL);
-        assertThat(testPreferences.getWeight_units()).isEqualTo(DEFAULT_WEIGHT_UNITS);
+        List<Preferences> preferences = preferencesRepository.findAll();
+        assertThat(preferences).hasSize(databaseSizeBeforeCreate + 1);
+        Preferences testPreferences = preferences.get(preferences.size() - 1);
+        assertThat(testPreferences.getWeeklyGoal()).isEqualTo(DEFAULT_WEEKLY_GOAL);
+        assertThat(testPreferences.getWeightUnits()).isEqualTo(DEFAULT_WEIGHT_UNITS);
     }
 
     @Test
     @Transactional
-    public void checkWeekly_goalIsRequired() throws Exception {
+    public void checkWeeklyGoalIsRequired() throws Exception {
         int databaseSizeBeforeTest = preferencesRepository.findAll().size();
         // set the field null
-        preferences.setWeekly_goal(null);
+        preferences.setWeeklyGoal(null);
 
         // Create the Preferences, which fails.
 
-        restPreferencesMockMvc.perform(post("/api/preferencess")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(preferences)))
-                .andExpect(status().isBadRequest());
+        restPreferencesMockMvc.perform(post("/api/preferences")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preferences)))
+            .andExpect(status().isBadRequest());
 
-        List<Preferences> preferencess = preferencesRepository.findAll();
-        assertThat(preferencess).hasSize(databaseSizeBeforeTest);
+        List<Preferences> preferences = preferencesRepository.findAll();
+        assertThat(preferences).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     @Transactional
-    public void checkWeight_unitsIsRequired() throws Exception {
+    public void checkWeightUnitsIsRequired() throws Exception {
         int databaseSizeBeforeTest = preferencesRepository.findAll().size();
         // set the field null
-        preferences.setWeight_units(null);
+        preferences.setWeightUnits(null);
 
         // Create the Preferences, which fails.
 
-        restPreferencesMockMvc.perform(post("/api/preferencess")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(preferences)))
-                .andExpect(status().isBadRequest());
+        restPreferencesMockMvc.perform(post("/api/preferences")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preferences)))
+            .andExpect(status().isBadRequest());
 
-        List<Preferences> preferencess = preferencesRepository.findAll();
-        assertThat(preferencess).hasSize(databaseSizeBeforeTest);
+        List<Preferences> preferences = preferencesRepository.findAll();
+        assertThat(preferences).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     @Transactional
-    public void getAllPreferencess() throws Exception {
+    public void getAllPreferences() throws Exception {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
 
-        // Get all the preferencess
-        restPreferencesMockMvc.perform(get("/api/preferencess"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().intValue())))
-                .andExpect(jsonPath("$.[*].weekly_goal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
-                .andExpect(jsonPath("$.[*].weight_units").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
+        // Get all the preferences
+        restPreferencesMockMvc.perform(get("/api/preferences"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().intValue())))
+            .andExpect(jsonPath("$.[*].weeklyGoal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
+            .andExpect(jsonPath("$.[*].weightUnits").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
     }
 
     @Test
@@ -156,20 +154,20 @@ public class PreferencesResourceTest {
         preferencesRepository.saveAndFlush(preferences);
 
         // Get the preferences
-        restPreferencesMockMvc.perform(get("/api/preferencess/{id}", preferences.getId()))
+        restPreferencesMockMvc.perform(get("/api/preferences/{id}", preferences.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(preferences.getId().intValue()))
-            .andExpect(jsonPath("$.weekly_goal").value(DEFAULT_WEEKLY_GOAL))
-            .andExpect(jsonPath("$.weight_units").value(DEFAULT_WEIGHT_UNITS.toString()));
+            .andExpect(jsonPath("$.weeklyGoal").value(DEFAULT_WEEKLY_GOAL))
+            .andExpect(jsonPath("$.weightUnits").value(DEFAULT_WEIGHT_UNITS.toString()));
     }
 
     @Test
     @Transactional
     public void getNonExistingPreferences() throws Exception {
         // Get the preferences
-        restPreferencesMockMvc.perform(get("/api/preferencess/{id}", Long.MAX_VALUE))
-                .andExpect(status().isNotFound());
+        restPreferencesMockMvc.perform(get("/api/preferences/{id}", Long.MAX_VALUE))
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -178,24 +176,23 @@ public class PreferencesResourceTest {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
 
-		int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
 
         // Update the preferences
-        preferences.setWeekly_goal(UPDATED_WEEKLY_GOAL);
-        preferences.setWeight_units(UPDATED_WEIGHT_UNITS);
-        
+        preferences.setWeeklyGoal(UPDATED_WEEKLY_GOAL);
+        preferences.setWeightUnits(UPDATED_WEIGHT_UNITS);
 
-        restPreferencesMockMvc.perform(put("/api/preferencess")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(preferences)))
-                .andExpect(status().isOk());
+        restPreferencesMockMvc.perform(put("/api/preferences")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(preferences)))
+            .andExpect(status().isOk());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencess = preferencesRepository.findAll();
-        assertThat(preferencess).hasSize(databaseSizeBeforeUpdate);
-        Preferences testPreferences = preferencess.get(preferencess.size() - 1);
-        assertThat(testPreferences.getWeekly_goal()).isEqualTo(UPDATED_WEEKLY_GOAL);
-        assertThat(testPreferences.getWeight_units()).isEqualTo(UPDATED_WEIGHT_UNITS);
+        List<Preferences> preferences = preferencesRepository.findAll();
+        assertThat(preferences).hasSize(databaseSizeBeforeUpdate);
+        Preferences testPreferences = preferences.get(preferences.size() - 1);
+        assertThat(testPreferences.getWeeklyGoal()).isEqualTo(UPDATED_WEEKLY_GOAL);
+        assertThat(testPreferences.getWeightUnits()).isEqualTo(UPDATED_WEIGHT_UNITS);
     }
 
     @Test
@@ -204,15 +201,15 @@ public class PreferencesResourceTest {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
 
-		int databaseSizeBeforeDelete = preferencesRepository.findAll().size();
+        int databaseSizeBeforeDelete = preferencesRepository.findAll().size();
 
         // Get the preferences
-        restPreferencesMockMvc.perform(delete("/api/preferencess/{id}", preferences.getId())
-                .accept(TestUtil.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk());
+        restPreferencesMockMvc.perform(delete("/api/preferences/{id}", preferences.getId())
+            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk());
 
         // Validate the database is empty
-        List<Preferences> preferencess = preferencesRepository.findAll();
-        assertThat(preferencess).hasSize(databaseSizeBeforeDelete - 1);
+        List<Preferences> preferences = preferencesRepository.findAll();
+        assertThat(preferences).hasSize(databaseSizeBeforeDelete - 1);
     }
 }

@@ -7,7 +7,7 @@
         <h4 class="modal-title" id="myBloodPressureLabel" translate="21pointsApp.bloodPressure.home.createOrEditLabel">Create or edit a BloodPressure</h4>
     </div>
     <div class="modal-body">
-        <div class="form-group">
+        <div class="form-group" ng-show="bloodPressure.id">
             <label for="id" translate="global.field.id">ID</label>
             <input type="text" class="form-control" id="id" name="id"
                     ng-model="bloodPressure.id" readonly>

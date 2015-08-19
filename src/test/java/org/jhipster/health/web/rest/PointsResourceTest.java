@@ -4,11 +4,10 @@ import org.jhipster.health.Application;
 import org.jhipster.health.domain.Points;
 import org.jhipster.health.repository.PointsRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
-
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -23,10 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import org.joda.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -96,15 +95,15 @@ public class PointsResourceTest {
 
         // Create the Points
 
-        restPointsMockMvc.perform(post("/api/pointss")
+        restPointsMockMvc.perform(post("/api/points")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(points)))
                 .andExpect(status().isCreated());
 
         // Validate the Points in the database
-        List<Points> pointss = pointsRepository.findAll();
-        assertThat(pointss).hasSize(databaseSizeBeforeCreate + 1);
-        Points testPoints = pointss.get(pointss.size() - 1);
+        List<Points> points = pointsRepository.findAll();
+        assertThat(points).hasSize(databaseSizeBeforeCreate + 1);
+        Points testPoints = points.get(points.size() - 1);
         assertThat(testPoints.getDate()).isEqualTo(DEFAULT_DATE);
         assertThat(testPoints.getExercise()).isEqualTo(DEFAULT_EXERCISE);
         assertThat(testPoints.getMeals()).isEqualTo(DEFAULT_MEALS);
@@ -121,23 +120,23 @@ public class PointsResourceTest {
 
         // Create the Points, which fails.
 
-        restPointsMockMvc.perform(post("/api/pointss")
+        restPointsMockMvc.perform(post("/api/points")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(points)))
                 .andExpect(status().isBadRequest());
 
-        List<Points> pointss = pointsRepository.findAll();
-        assertThat(pointss).hasSize(databaseSizeBeforeTest);
+        List<Points> points = pointsRepository.findAll();
+        assertThat(points).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
     @Transactional
-    public void getAllPointss() throws Exception {
+    public void getAllPoints() throws Exception {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
 
-        // Get all the pointss
-        restPointsMockMvc.perform(get("/api/pointss"))
+        // Get all the points
+        restPointsMockMvc.perform(get("/api/points"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(points.getId().intValue())))
@@ -155,7 +154,7 @@ public class PointsResourceTest {
         pointsRepository.saveAndFlush(points);
 
         // Get the points
-        restPointsMockMvc.perform(get("/api/pointss/{id}", points.getId()))
+        restPointsMockMvc.perform(get("/api/points/{id}", points.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(points.getId().intValue()))
@@ -170,7 +169,7 @@ public class PointsResourceTest {
     @Transactional
     public void getNonExistingPoints() throws Exception {
         // Get the points
-        restPointsMockMvc.perform(get("/api/pointss/{id}", Long.MAX_VALUE))
+        restPointsMockMvc.perform(get("/api/points/{id}", Long.MAX_VALUE))
                 .andExpect(status().isNotFound());
     }
 
@@ -188,17 +187,17 @@ public class PointsResourceTest {
         points.setMeals(UPDATED_MEALS);
         points.setAlcohol(UPDATED_ALCOHOL);
         points.setNotes(UPDATED_NOTES);
-        
 
-        restPointsMockMvc.perform(put("/api/pointss")
+
+        restPointsMockMvc.perform(put("/api/points")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(points)))
                 .andExpect(status().isOk());
 
         // Validate the Points in the database
-        List<Points> pointss = pointsRepository.findAll();
-        assertThat(pointss).hasSize(databaseSizeBeforeUpdate);
-        Points testPoints = pointss.get(pointss.size() - 1);
+        List<Points> points = pointsRepository.findAll();
+        assertThat(points).hasSize(databaseSizeBeforeUpdate);
+        Points testPoints = points.get(points.size() - 1);
         assertThat(testPoints.getDate()).isEqualTo(UPDATED_DATE);
         assertThat(testPoints.getExercise()).isEqualTo(UPDATED_EXERCISE);
         assertThat(testPoints.getMeals()).isEqualTo(UPDATED_MEALS);
@@ -215,12 +214,12 @@ public class PointsResourceTest {
 		int databaseSizeBeforeDelete = pointsRepository.findAll().size();
 
         // Get the points
-        restPointsMockMvc.perform(delete("/api/pointss/{id}", points.getId())
+        restPointsMockMvc.perform(delete("/api/points/{id}", points.getId())
                 .accept(TestUtil.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
 
         // Validate the database is empty
-        List<Points> pointss = pointsRepository.findAll();
-        assertThat(pointss).hasSize(databaseSizeBeforeDelete - 1);
+        List<Points> points = pointsRepository.findAll();
+        assertThat(points).hasSize(databaseSizeBeforeDelete - 1);
     }
 }

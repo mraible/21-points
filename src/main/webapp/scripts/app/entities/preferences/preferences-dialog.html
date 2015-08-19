@@ -14,33 +14,33 @@
         </div>
 
         <div class="form-group">
-            <label translate="21pointsApp.preferences.weekly_goal" for="field_weekly_goal">Weekly_goal</label>
-            <input type="number" class="form-control" name="weekly_goal" id="field_weekly_goal"
-                    ng-model="preferences.weekly_goal"
+            <label translate="21pointsApp.preferences.weeklyGoal" for="field_weekly_goal">Weekly_goal</label>
+            <input type="number" class="form-control" name="weeklyGoal" id="field_weekly_goal"
+                    ng-model="preferences.weeklyGoal"
                     required min="10" max="21">
 
-            <div ng-show="editForm.weekly_goal.$invalid">
+            <div ng-show="editForm.weeklyGoal.$invalid">
                 <p class="help-block"
-                    ng-show="editForm.weekly_goal.$error.required" translate="entity.validation.required">
+                    ng-show="editForm.weeklyGoal.$error.required" translate="entity.validation.required">
                     This field is required.
                 </p>
                 <p class="help-block"
-                    ng-show="editForm.weekly_goal.$error.min" translate="entity.validation.min" translate-value-min="10">
+                    ng-show="editForm.weeklyGoal.$error.min" translate="entity.validation.min" translate-value-min="10">
                     This field should be more than 10.
                 </p>
                 <p class="help-block"
-                    ng-show="editForm.weekly_goal.$error.max" translate="entity.validation.max" translate-value-max="21">
+                    ng-show="editForm.weeklyGoal.$error.max" translate="entity.validation.max" translate-value-max="21">
                     This field cannot be more than 21.
                 </p>
                 <p class="help-block"
-                    ng-show="editForm.weekly_goal.$error.number" translate="entity.validation.number">
+                    ng-show="editForm.weeklyGoal.$error.number" translate="entity.validation.number">
                     This field should be a number.
                 </p>
             </div>
         </div>
         <div class="form-group">
-            <label translate="21pointsApp.preferences.weight_units" for="field_weight_units">Weight_units</label>
-            <select class="form-control" name="weight_units" ng-model="preferences.weight_units" id="field_weight_units" required>
+            <label translate="21pointsApp.preferences.weightUnits" for="field_weight_units">Weight_units</label>
+            <select class="form-control" name="weight_units" ng-model="preferences.weightUnits" id="field_weight_units" required>
                <option value="kg" translate="21pointsApp.Units.kg">kg</option>
                <option value="lb" translate="21pointsApp.Units.lb">lb</option>
             </select>

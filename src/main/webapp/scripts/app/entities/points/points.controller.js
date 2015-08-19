@@ -2,19 +2,19 @@
 
 angular.module('21pointsApp')
     .controller('PointsController', function ($scope, Points, PointsSearch, ParseLinks) {
-        $scope.pointss = [];
+        $scope.points = [];
         $scope.page = 1;
         $scope.loadAll = function() {
             Points.query({page: $scope.page, per_page: 20}, function(result, headers) {
                 $scope.links = ParseLinks.parse(headers('link'));
                 for (var i = 0; i < result.length; i++) {
-                    $scope.pointss.push(result[i]);
+                    $scope.points.push(result[i]);
                 }
             });
         };
         $scope.reset = function() {
             $scope.page = 1;
-            $scope.pointss = [];
+            $scope.points = [];
             $scope.loadAll();
         };
         $scope.loadPage = function(page) {
@@ -41,7 +41,7 @@ angular.module('21pointsApp')
 
         $scope.search = function () {
             PointsSearch.query({query: $scope.searchQuery}, function(result) {
-                $scope.pointss = result;
+                $scope.points = result;
             }, function(response) {
                 if(response.status === 404) {
                     $scope.loadAll();

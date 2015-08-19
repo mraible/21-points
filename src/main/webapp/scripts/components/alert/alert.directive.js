@@ -7,7 +7,7 @@ angular.module('21pointsApp')
             template: '<div class="alerts" ng-cloak="">' +
 			                '<alert ng-cloak="" ng-repeat="alert in alerts" type="{{alert.type}}" close="alert.close()"><pre>{{ alert.msg }}</pre></alert>' +
 			            '</div>',
-			controller: ['$scope', 
+			controller: ['$scope',
 	            function($scope) {
 	                $scope.alerts = AlertService.get();
 

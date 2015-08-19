@@ -2,7 +2,7 @@
 
 angular.module('21pointsApp')
     .factory('Points', function ($resource, DateUtils) {
-        return $resource('api/pointss/:id', {}, {
+        return $resource('api/points/:id', {}, {
             'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',

@@ -1,30 +1,24 @@
 
 <div>
-    <h2><span translate="21pointsApp.preferences.detail.title">Preferences</span> {{preferences.id}}</h2>
+    <h2><span translate="21pointsApp.preferences.detail.title">Preferences</span></h2>
     <div class="table-responsive">
         <table class="table table-striped">
-            <thead>
-            <tr>
-                <th translate="entity.detail.field">Field</th>
-                <th translate="entity.detail.value">Value</th>
-            </tr>
-            </thead>
             <tbody>
             <tr>
                 <td>
-                    <span translate="21pointsApp.preferences.weekly_goal">Weekly_goal</span>
+                    <span translate="21pointsApp.preferences.weeklyGoal">Weekly Goal</span>
                 </td>
                 <td>
-                    <input type="text" class="input-sm form-control" value="{{preferences.weekly_goal}}" readonly>
+                    <input type="text" class="input-sm form-control" value="{{preferences.weeklyGoal}}" readonly>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <span translate="21pointsApp.preferences.weight_units">Weight_units</span>
+                    <span translate="21pointsApp.preferences.weightUnits">Weight Units</span>
                 </td>
                 <td>
                     <span class="input-sm form-control readonly" translate="21pointsApp.Units.SELECT"
-                          translate-interpolation="messageformat" translate-values="{ VALUE: preferences.weight_units }"></span>
+                          translate-interpolation="messageformat" translate-values="{ VALUE: preferences.weightUnits }"></span>
                 </td>
             </tr>
             </tbody>

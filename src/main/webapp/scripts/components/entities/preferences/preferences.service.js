@@ -2,7 +2,7 @@
 
 angular.module('21pointsApp')
     .factory('Preferences', function ($resource, DateUtils) {
-        return $resource('api/preferencess/:id', {}, {
+        return $resource('api/preferences/:id', {}, {
             'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',

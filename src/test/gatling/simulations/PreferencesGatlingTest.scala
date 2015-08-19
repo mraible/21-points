@@ -62,13 +62,13 @@ class PreferencesGatlingTest extends Simulation {
         .check(status.is(200)))
         .pause(10)
         .repeat(2) {
-            exec(http("Get all preferencess")
-            .get("/api/preferencess")
+            exec(http("Get all preferences")
+            .get("/api/preferences")
             .headers(headers_http_authenticated)
             .check(status.is(200)))
             .pause(10 seconds, 20 seconds)
             .exec(http("Create new preferences")
-            .post("/api/preferencess")
+            .post("/api/preferences")
             .headers(headers_http_authenticated)
             .body(StringBody("""{"id":null, "weekly_goal":"0", "weight_units":null}""")).asJSON
             .check(status.is(201))
