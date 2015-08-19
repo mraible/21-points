@@ -41,13 +41,13 @@
                 </li>
                 <li ng-class="{active: $state.includes('account')}" class="dropdown pointer">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="">
-                                <span>
-                                    <span class="glyphicon glyphicon-user"></span>
-                                    <span class="hidden-tablet" translate="global.menu.account.main">
-                                        Account
-                                    </span>
-                                    <b class="caret"></b>
-                                </span>
+                        <span>
+                            <span class="glyphicon glyphicon-user"></span>
+                            <span class="hidden-tablet" translate="global.menu.account.main">
+                                Account
+                            </span>
+                            <b class="caret"></b>
+                        </span>
                     </a>
                     <ul class="dropdown-menu">
                         <li ui-sref-active="active" ng-switch-when="true"><a ui-sref="settings"><span class="glyphicon glyphicon-wrench"></span>
@@ -65,11 +65,11 @@
                 </li>
                 <li ng-class="{active: $state.includes('admin')}"  ng-switch-when="true" has-role="ROLE_ADMIN" class="dropdown pointer">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="">
-                                <span>
-                                    <span class="glyphicon glyphicon-tower"></span>
-                                    <span class="hidden-tablet" translate="global.menu.admin.main">Administration</span>
-                                    <b class="caret"></b>
-                                </span>
+                        <span>
+                            <span class="glyphicon glyphicon-tower"></span>
+                            <span class="hidden-tablet" translate="global.menu.admin.main">Administration</span>
+                            <b class="caret"></b>
+                        </span>
                     </a>
                     <ul class="dropdown-menu">
                         <li ui-sref-active="active"><a ui-sref="tracker"><span class="glyphicon glyphicon-eye-open"></span>
@@ -88,20 +88,6 @@
                             &#xA0;<span translate="global.menu.admin.apidocs">API</span></a></li>
                     </ul>
                 </li>
-                <!--<li ui-sref-active="active" class="dropdown pointer" ng-controller="LanguageController">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="">
-                                <span>
-                                    <span class="glyphicon glyphicon-flag"></span>
-                                    <span class="hidden-tablet" translate="global.menu.language">Language</span>
-                                    <b class="caret"></b>
-                                </span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li active-menu="{{language}}" ng-repeat="language in languages">
-                            <a href="" ng-click="changeLanguage(language)">{{language | findLanguageFromKey}}</a>
-                        </li>
-                    </ul>
-                </li>-->
             </ul>
         </div>
     </div>
