@@ -23,7 +23,7 @@ angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
         });
 
         $rootScope.$on('$stateChangeSuccess',  function(event, toState, toParams, fromState, fromParams) {
-            var titleKey = 'global.title' ;
+            var titleKey = 'global.title';
 
             $rootScope.previousStateName = fromState.name;
             $rootScope.previousStateParams = fromParams;
@@ -35,7 +35,11 @@ angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
 
             $translate(titleKey).then(function (title) {
                 // Change window title with translated one
-                $window.document.title = title;
+                $translate('global.title').then(function(appname) {
+                    if (title !== appname) {
+                        $window.document.title = title + " | " + appname;
+                    }
+                });
             });
 
         });
