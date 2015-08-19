@@ -262,7 +262,11 @@ module.exports = function (grunt) {
         karma: {
             unit: {
                 configFile: 'src/test/javascript/karma.conf.js',
-                singleRun: true
+                singleRun: true,
+                reporters : ['dots', 'junit'],
+                junitReporter : {
+                    outputFile: '../target/surefire-reports/TEST-javascript-results.xml'
+                }
             }
         },
         ngAnnotate: {
