@@ -9,11 +9,11 @@ spring:
         active: prod
     datasource:
         dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
-        url: 
+        url:
         databaseName: 21points
         serverName: localhost
         username: 21points
-        password: 
+        password:
 
     jpa:
         database-platform: org.hibernate.dialect.PostgreSQL82Dialect
@@ -29,11 +29,18 @@ spring:
             hibernate.cache.use_query_cache: false
             hibernate.generate_statistics: false
             hibernate.cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
-            
+
+    # configure prod to use ElasticSearch in-memory. Cost is $10 for cheapest Bonsai search add-on
+    # http://stackoverflow.com/questions/12416738/how-to-use-herokus-ephemeral-filesystem
+    # Also might try https://devcenter.heroku.com/articles/searchbox
     data:
         elasticsearch:
             cluster-name:
-            cluster-nodes: localhost:9200
+            cluster-nodes:
+            properties:
+                path:
+                  logs: /tmp/elasticsearch/log
+                  data: /tmp/elasticsearch/data
     thymeleaf:
         mode: XHTML
         cache: true
