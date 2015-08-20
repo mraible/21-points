@@ -4,6 +4,16 @@ server:
 liquibase:
     context: prod
 
+mail:
+    host: smtp.sendgrid.net
+    port: 587
+    username: ${SENDGRID_USERNAME}
+    password: ${SENDGRID_PASSWORD}
+    protocol: smtp
+    tls: false
+    auth: false
+    from: app@21-points.com
+
 spring:
     profiles:
         active: prod
