@@ -11,7 +11,7 @@ mail:
     password: ${SENDGRID_PASSWORD}
     protocol: smtp
     tls: false
-    auth: false
+    auth: true
     from: app@21-points.com
 
 spring:
