@@ -1,22 +1,22 @@
 'use strict';
 
 angular.module('21pointsApp')
-    .factory('AlertService', function ($timeout, $sce,$translate) {
+    .factory('AlertService', function ($timeout, $sce, $translate) {
         var exports = {
-            factory: factory,
-            add: addAlert,
-            closeAlert: closeAlert,
-            closeAlertByIndex: closeAlertByIndex,
-            clear: clear,
-            get: get,
-            success: success,
-            error: error,
-            info: info,
-            warning : warning
-        },
-        alertId = 0, // unique id for each alert. Starts from 0.
-        alerts = [],
-        timeout = 5000; // default timeout
+                factory: factory,
+                add: addAlert,
+                closeAlert: closeAlert,
+                closeAlertByIndex: closeAlertByIndex,
+                clear: clear,
+                get: get,
+                success: success,
+                error: error,
+                info: info,
+                warning: warning
+            },
+            alertId = 0, // unique id for each alert. Starts from 0.
+            alerts = [],
+            timeout = 5000; // default timeout
 
         function clear() {
             alerts = [];
@@ -36,21 +36,25 @@ angular.module('21pointsApp')
         }
 
         function error(msg, params) {
-            this.add({
-                type: "danger",
-                msg: msg,
-                params: params,
-                timeout: timeout
-            });
+            if (msg) {
+                this.add({
+                    type: "danger",
+                    msg: msg,
+                    params: params,
+                    timeout: timeout
+                });
+            }
         }
 
         function warning(msg, params) {
-            this.add({
-                type: "warning",
-                msg: msg,
-                params: params,
-                timeout: timeout
-            });
+            if (msg) {
+                this.add({
+                    type: "warning",
+                    msg: msg,
+                    params: params,
+                    timeout: timeout
+                });
+            }
         }
 
         function info(msg, params) {

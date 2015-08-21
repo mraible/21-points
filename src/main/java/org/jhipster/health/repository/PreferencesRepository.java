@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface PreferencesRepository extends JpaRepository<Preferences,Long> {
 
+    @Query("select preferences from Preferences preferences where preferences.user.login = ?#{principal.username}")
+    List<Preferences> findAllForCurrentUser();
 }

@@ -31,16 +31,9 @@
         </createTable>
     </changeSet>
 
-    <!-- Added the preferences field to User -->
-    <changeSet author="mraible (generated)" id="1439916664921-1">
-        <addColumn tableName="JHI_USER">
-            <column name="preferences_id" type="int8"/>
+    <changeSet author="mraible (generated)" id="1440175484117-1">
+        <addColumn tableName="PREFERENCES">
+            <column name="user_id" type="int4"/>
         </addColumn>
-    </changeSet>
-    <changeSet author="mraible (generated)" id="1439916664921-2">
-        <addForeignKeyConstraint baseColumnNames="preferences_id" baseTableName="JHI_USER"
-                                 constraintName="FK_1r5e40mq4hwtlyd9lemghc8su" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="PREFERENCES"/>
     </changeSet>
 </databaseChangeLog>

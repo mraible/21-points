@@ -83,7 +83,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Authority> authorities = new HashSet<>();
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private Preferences preferences;
 
@@ -224,6 +224,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
                 ", activated='" + activated + '\'' +
                 ", langKey='" + langKey + '\'' +
                 ", activationKey='" + activationKey + '\'' +
+                ", preferences='" + preferences + '\'' +
                 "}";
     }
 }

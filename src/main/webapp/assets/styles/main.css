@@ -212,3 +212,45 @@ body {
     padding-bottom: 0;
     text-align: center;
 }
+
+.heart {
+    display: inline-block;
+    width: 347px;
+    height: 347px;
+    background: url("../images/21-points-logo.jpg") no-repeat center top;
+    background-size: contain;
+}
+
+/* wait autoprefixer update to allow simple generation of high pixel density media query */
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (   min--moz-device-pixel-ratio: 2),
+only screen and (     -o-min-device-pixel-ratio: 2/1),
+only screen and (        min-device-pixel-ratio: 2),
+only screen and (                min-resolution: 192dpi),
+only screen and (                min-resolution: 2dppx) {
+    .heart {
+        background: url("../images/21-points-logo2x.jpg") no-repeat center top;
+        background-size: contain;
+    }
+}
+
+.progress-lg {
+    height: 20px;
+}
+
+.m-n {
+    margin: 0;
+}
+
+.m-b-xs {
+    margin-bottom: 5px;
+}
+
+.m-t-sm {
+    margin-top: 10px;
+}
+
+.m-t-md {
+    margin-top: 15px;
+}

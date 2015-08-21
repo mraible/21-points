@@ -3,7 +3,10 @@ package org.jhipster.health.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.BloodPressure;
 import org.jhipster.health.repository.BloodPressureRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
+import org.jhipster.health.security.AuthoritiesConstants;
+import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -24,7 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.queryString;
 
 /**
  * REST controller for managing BloodPressure.
@@ -41,6 +44,9 @@ public class BloodPressureResource {
     @Inject
     private BloodPressureSearchRepository bloodPressureSearchRepository;
 
+    @Inject
+    private UserRepository userRepository;
+
     /**
      * POST  /bloodPressures -> Create a new bloodPressure.
      */
@@ -52,6 +58,10 @@ public class BloodPressureResource {
         log.debug("REST request to save BloodPressure : {}", bloodPressure);
         if (bloodPressure.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new bloodPressure cannot already have an ID").body(null);
+        }
+        if (bloodPressure.getUser() == null || bloodPressure.getUser().getId() == null) {
+            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentLogin());
+            bloodPressure.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get());
         }
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(result);
@@ -89,7 +99,12 @@ public class BloodPressureResource {
     public ResponseEntity<List<BloodPressure>> getAll(@RequestParam(value = "page" , required = false) Integer offset,
                                   @RequestParam(value = "per_page", required = false) Integer limit)
         throws URISyntaxException {
-        Page<BloodPressure> page = bloodPressureRepository.findAll(PaginationUtil.generatePageRequest(offset, limit));
+        Page<BloodPressure> page;
+        if (SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
+            page = bloodPressureRepository.findAll(PaginationUtil.generatePageRequest(offset, limit));
+        } else {
+            page = bloodPressureRepository.findAllForCurrentUser(PaginationUtil.generatePageRequest(offset, limit));
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/bloodPressures", offset, limit);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

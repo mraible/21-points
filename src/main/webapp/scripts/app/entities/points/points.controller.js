@@ -25,7 +25,7 @@ angular.module('21pointsApp')
 
         $scope.delete = function (id) {
             Points.get({id: id}, function(result) {
-                $scope.points = result;
+                //$scope.points = result;
                 $('#deletePointsConfirmation').modal('show');
             });
         };

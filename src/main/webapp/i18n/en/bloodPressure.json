@@ -2,9 +2,9 @@
     "21pointsApp": {
         "bloodPressure" : {
             "home": {
-                "title": "Blood Pressure Measurements",
+                "title": "Blood Pressure",
                 "createLabel": "Add Reading",
-                "createOrEditLabel": "Add or edit a measurement"
+                "createOrEditLabel": "Add/Edit a Reading"
             },
             "created": "Added Successfully!",
             "updated": "Updated Successfully!",

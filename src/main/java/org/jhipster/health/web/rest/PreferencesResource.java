@@ -2,8 +2,11 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Preferences;
+import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
+import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,9 @@ public class PreferencesResource {
     @Inject
     private PreferencesSearchRepository preferencesSearchRepository;
 
+    @Inject
+    private UserRepository userRepository;
+
     /**
      * POST  /preferences -> Create a new preferences.
      */
@@ -50,8 +56,16 @@ public class PreferencesResource {
         if (preferences.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new preferences cannot already have an ID").body(null);
         }
+
+        if (preferences.getUser() == null || preferences.getUser().getId() == null) {
+            log.debug("No user passed in, settings preferences for current user: {}", SecurityUtils.getCurrentLogin());
+            User user = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get();
+            preferences.setUser(user);
+        }
+
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.save(result);
+
         return ResponseEntity.created(new URI("/api/preferences/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert("preferences", result.getId().toString()))
                 .body(result);
@@ -94,6 +108,32 @@ public class PreferencesResource {
 
         log.debug("REST request to get all Preferences");
         return preferencesRepository.findAll();
+    }
+
+    /**
+     * GET  /preferences/:id -> get the "id" preferences.
+     */
+    @RequestMapping(value = "/my-preferences",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Preferences> getUserPreferences() {
+        log.debug("REST request to get Preferences : {}", SecurityUtils.getCurrentLogin());
+        // todo: Fix this so it saves the preferences associated with the user
+        List<Preferences> userPreferences = preferencesRepository.findAllForCurrentUser();
+        if (userPreferences.size() > 1) {
+            log.warn("Multiple preferences found for user!");
+        }
+        if (userPreferences.size() == 0) {
+            Preferences preferences = new Preferences();
+            preferences.setWeeklyGoal(10); // default
+            userPreferences.add(preferences);
+        }
+        return Optional.ofNullable(userPreferences.get(0))
+            .map(preferences -> new ResponseEntity<>(
+                preferences,
+                HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
