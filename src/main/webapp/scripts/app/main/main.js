@@ -21,6 +21,8 @@ angular.module('21pointsApp')
                         $translatePartialLoader.addPart('weight');
                         $translatePartialLoader.addPart('points');
                         $translatePartialLoader.addPart('bloodPressure');
+                        $translatePartialLoader.addPart('preferences');
+                        $translatePartialLoader.addPart('units');
                         return $translate.refresh();
                     }]
                 }
@@ -85,6 +87,29 @@ angular.module('21pointsApp')
                         resolve: {
                             entity: function () {
                                 return {timestamp: null, systolic: null, diastolic: null, id: null};
+                            }
+                        }
+                    }).result.then(function(result) {
+                            $state.go('home', null, { reload: true });
+                        }, function() {
+                            $state.go('home');
+                        })
+                }]
+            })
+            .state('preferences.add', {
+                parent: 'home',
+                url: '/add/preferences',
+                data: {
+                    roles: ['ROLE_USER']
+                },
+                onEnter: ['$stateParams', '$state', '$modal', function($stateParams, $state, $modal) {
+                    $modal.open({
+                        templateUrl: 'scripts/app/entities/preferences/preferences-dialog.html',
+                        controller: 'PreferencesDialogController',
+                        size: 'lg',
+                        resolve: {
+                            entity: function (Preferences) {
+                                return Preferences.user().$promise;
                             }
                         }
                     }).result.then(function(result) {

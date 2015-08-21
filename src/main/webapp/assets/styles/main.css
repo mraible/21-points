@@ -243,6 +243,10 @@ only screen and (                min-resolution: 2dppx) {
     margin: 0;
 }
 
+.m-l-sm {
+    margin-left: 10px;
+}
+
 .m-b-xs {
     margin-bottom: 5px;
 }

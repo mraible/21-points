@@ -57,14 +57,13 @@ public class PreferencesResource {
             return ResponseEntity.badRequest().header("Failure", "A new preferences cannot already have an ID").body(null);
         }
 
-        if (preferences.getUser() == null || preferences.getUser().getId() == null) {
-            log.debug("No user passed in, settings preferences for current user: {}", SecurityUtils.getCurrentLogin());
-            User user = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get();
-            preferences.setUser(user);
-        }
-
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.save(result);
+
+        log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentLogin());
+        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get();
+        user.setPreferences(result);
+        userRepository.save(user);
 
         return ResponseEntity.created(new URI("/api/preferences/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert("preferences", result.getId().toString()))
@@ -97,15 +96,7 @@ public class PreferencesResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Preferences> getAll(@RequestParam(required = false) String filter) {
-        if ("user-is-null".equals(filter)) {
-            log.debug("REST request to get all Preferences where user is null");
-            return StreamSupport
-                .stream(preferencesRepository.findAll().spliterator(), false)
-                .filter(preferences -> preferences.getUser() == null)
-                .collect(Collectors.toList());
-        }
-
+    public List<Preferences> getAll() {
         log.debug("REST request to get all Preferences");
         return preferencesRepository.findAll();
     }
@@ -119,21 +110,15 @@ public class PreferencesResource {
     @Timed
     public ResponseEntity<Preferences> getUserPreferences() {
         log.debug("REST request to get Preferences : {}", SecurityUtils.getCurrentLogin());
-        // todo: Fix this so it saves the preferences associated with the user
-        List<Preferences> userPreferences = preferencesRepository.findAllForCurrentUser();
-        if (userPreferences.size() > 1) {
-            log.warn("Multiple preferences found for user!");
-        }
-        if (userPreferences.size() == 0) {
-            Preferences preferences = new Preferences();
-            preferences.setWeeklyGoal(10); // default
-            userPreferences.add(preferences);
-        }
-        return Optional.ofNullable(userPreferences.get(0))
-            .map(preferences -> new ResponseEntity<>(
-                preferences,
+        Optional<User> userPreferences = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin());
+        Preferences defaultPreferences = new Preferences();
+        defaultPreferences.setWeeklyGoal(10); // default
+
+        return Optional.ofNullable(userPreferences.get())
+            .map(user -> new ResponseEntity<>(
+                user.getPreferences(),
                 HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .orElse(new ResponseEntity<>(defaultPreferences, HttpStatus.OK));
     }
 
     /**
@@ -161,6 +146,13 @@ public class PreferencesResource {
     @Timed
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.debug("REST request to delete Preferences : {}", id);
+
+        if (SecurityUtils.getCurrentLogin() != null) {
+            User user = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get();
+            user.setPreferences(null);
+            userRepository.save(user);
+        }
+
         preferencesRepository.delete(id);
         preferencesSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("preferences", id.toString())).build();

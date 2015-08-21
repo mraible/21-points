@@ -7,7 +7,7 @@
         <h4 class="modal-title" id="myPreferencesLabel" translate="21pointsApp.preferences.home.createOrEditLabel">Create or edit a Preferences</h4>
     </div>
     <div class="modal-body">
-        <div class="form-group" ng-show="preferences.id">
+        <div class="form-group" ng-hide="preferences.id">
             <label for="id" translate="global.field.id">ID</label>
             <input type="text" class="form-control" id="id" name="id"
                     ng-model="preferences.id" readonly>

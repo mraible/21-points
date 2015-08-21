@@ -19,21 +19,27 @@
     -->
     <changeSet id="20150818155956" author="jhipster">
         <createTable tableName="PREFERENCES">
-            <column name="id" type="bigint" autoIncrement="${autoIncrement}" >
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="weekly_goal" type="integer">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="weight_units" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
-    <changeSet author="mraible (generated)" id="1440175484117-1">
-        <addColumn tableName="PREFERENCES">
-            <column name="user_id" type="int4"/>
+    <changeSet author="mraible (generated)" id="1440176725177-1">
+        <addColumn tableName="JHI_USER">
+            <column name="preferences_id" type="int8"/>
         </addColumn>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1440176725177-2">
+        <addForeignKeyConstraint baseColumnNames="preferences_id" baseTableName="JHI_USER"
+                                 constraintName="FK_1r5e40mq4hwtlyd9lemghc8su" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="PREFERENCES"/>
     </changeSet>
 </databaseChangeLog>

@@ -36,10 +36,6 @@ public class Preferences implements Serializable {
     @Column(name = "weight_units", nullable = false)
     private Units weightUnits;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn(name = "user_id")
-    private User user;
-
     public Long getId() {
         return id;
     }
@@ -62,14 +58,6 @@ public class Preferences implements Serializable {
 
     public void setWeightUnits(Units weightUnits) {
         this.weightUnits = weightUnits;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     @Override
@@ -99,7 +87,6 @@ public class Preferences implements Serializable {
                 "id=" + id +
                 ", weeklyGoal='" + weeklyGoal + "'" +
                 ", weightUnits='" + weightUnits + "'" +
-                ", user='" + user + "'" +
                 '}';
     }
 }

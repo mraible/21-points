@@ -111,7 +111,6 @@ public class PreferencesResourceTest {
         Preferences testPreferences = preferences.get(preferences.size() - 1);
         assertThat(testPreferences.getWeeklyGoal()).isEqualTo(DEFAULT_WEEKLY_GOAL);
         assertThat(testPreferences.getWeightUnits()).isEqualTo(DEFAULT_WEIGHT_UNITS);
-        assertThat(testPreferences.getUser().getLogin()).isEqualTo("user");
     }
 
     @Test

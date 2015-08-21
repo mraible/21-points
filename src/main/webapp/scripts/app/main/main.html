@@ -31,10 +31,14 @@
                                                 'progress-bar-warning': pointsThisWeek.count > 10 && pointsThisWeek.count < preferences.weeklyGoal}"
                                      aria-valuenow="{{pointsThisWeek.count}}"
                                      aria-valuemin="0" aria-valuemax="21" style="width: {{pointsPercentage}}%">
-                                    <span ng-show="pointsThisWeek.count">{{pointsThisWeek.count}} /</span> Goal:
-                                    {{preferences.weeklyGoal}}
+                                    <span ng-show="pointsThisWeek.count">
+                                        {{pointsThisWeek.count}} / Goal: {{preferences.weeklyGoal}}
+                                    </span>
                                     <span class="sr-only">{{pointsPercentage}} points this week</span>
                                 </div>
+                                <span ng-hide="pointsThisWeek.count" class="m-l-sm text-danger">
+                                    No points yet this week, better get moving!
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -66,7 +70,12 @@
                         </div>
                     </div>
 
-                    <p class="m-t-md"><a href="">View History</a></p>
+                    <div class="row">
+                        <p class="m-t-md col-md-10">
+                            <a ui-sref="preferences.add" class="pull-right">Edit Preferences</a>
+                            <a href="">View History</a>
+                        </p>
+                    </div>
 
                     <p translate="main.logged.message" translate-values="{username: '{{account.login}}'}"
                        style="border-top: 1px solid silver; padding-top: 5px; margin-top: 40px">
