@@ -2,10 +2,14 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Weight;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.WeightRepository;
 import org.jhipster.health.repository.search.WeightSearchRepository;
+import org.jhipster.health.security.AuthoritiesConstants;
+import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,7 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.queryString;
 
 /**
  * REST controller for managing Weight.
@@ -41,6 +45,9 @@ public class WeightResource {
     @Inject
     private WeightSearchRepository weightSearchRepository;
 
+    @Inject
+    private UserRepository userRepository;
+
     /**
      * POST  /weights -> Create a new weight.
      */
@@ -52,6 +59,13 @@ public class WeightResource {
         log.debug("REST request to save Weight : {}", weight);
         if (weight.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new weight cannot already have an ID").body(null);
+        }
+        if (weight.getUser() == null || weight.getUser().getId() == null) {
+            log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentLogin());
+            weight.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get());
+        }
+        if (weight.getTimestamp() == null) {
+            weight.setTimestamp(new DateTime());
         }
         Weight result = weightRepository.save(weight);
         weightSearchRepository.save(result);
@@ -89,7 +103,12 @@ public class WeightResource {
     public ResponseEntity<List<Weight>> getAll(@RequestParam(value = "page" , required = false) Integer offset,
                                   @RequestParam(value = "per_page", required = false) Integer limit)
         throws URISyntaxException {
-        Page<Weight> page = weightRepository.findAll(PaginationUtil.generatePageRequest(offset, limit));
+        Page<Weight> page;
+        if (SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
+            page = weightRepository.findAll(PaginationUtil.generatePageRequest(offset, limit));
+        } else {
+            page = weightRepository.findAllForCurrentUser(PaginationUtil.generatePageRequest(offset, limit));
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/weights", offset, limit);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

@@ -4,11 +4,11 @@
             "home": {
                 "title": "Weigh-Ins",
                 "createLabel": "Add Weight",
-                "createOrEditLabel": "Add or edit your weight"
+                "createOrEditLabel": "Add/Edit your weight"
             },
-            "created": "Added Successfully!",
-            "updated": "Updated Successfully!",
-            "deleted": "Deleted Successfully!",
+            "created": "Weight added successfully.",
+            "updated": "Weight updated successfully.",
+            "deleted": "Weight deleted.",
             "delete": {
                 "question": "Are you sure you want to delete this?"
             },

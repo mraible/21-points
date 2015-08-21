@@ -53,8 +53,8 @@
                 </tr>
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
-                <tr ng-repeat="weight in weights">
-                    <td><a ui-sref="weight.detail({id:weight.id})">{{weight.timestamp | date: 'short'}}</a></td>
+                <tr ng-repeat="weight in weights | orderBy: '-timestamp'">
+                    <td><a ui-sref="weight.detail({id:weight.id})">{{weight.timestamp | date: 'medium'}}</a></td>
                     <td>{{weight.weight}}</td>
                     <td>{{weight.user.login}}</td>
                     <td>

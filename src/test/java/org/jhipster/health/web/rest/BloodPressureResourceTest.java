@@ -3,33 +3,38 @@ package org.jhipster.health.web.rest;
 import org.jhipster.health.Application;
 import org.jhipster.health.domain.BloodPressure;
 import org.jhipster.health.repository.BloodPressureRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
-
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -46,7 +51,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BloodPressureResourceTest {
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
 
     private static final DateTime DEFAULT_TIMESTAMP = new DateTime(0L, DateTimeZone.UTC);
     private static final DateTime UPDATED_TIMESTAMP = new DateTime(DateTimeZone.UTC).withMillisOfSecond(0);
@@ -65,11 +69,17 @@ public class BloodPressureResourceTest {
     private BloodPressureSearchRepository bloodPressureSearchRepository;
 
     @Inject
+    private UserRepository userRepository;
+
+    @Inject
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     private MockMvc restBloodPressureMockMvc;
 
     private BloodPressure bloodPressure;
+
+    @Autowired
+    private WebApplicationContext context;
 
     @PostConstruct
     public void setup() {
@@ -77,6 +87,7 @@ public class BloodPressureResourceTest {
         BloodPressureResource bloodPressureResource = new BloodPressureResource();
         ReflectionTestUtils.setField(bloodPressureResource, "bloodPressureRepository", bloodPressureRepository);
         ReflectionTestUtils.setField(bloodPressureResource, "bloodPressureSearchRepository", bloodPressureSearchRepository);
+        ReflectionTestUtils.setField(bloodPressureResource, "userRepository", userRepository);
         this.restBloodPressureMockMvc = MockMvcBuilders.standaloneSetup(bloodPressureResource).setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -93,12 +104,18 @@ public class BloodPressureResourceTest {
     public void createBloodPressure() throws Exception {
         int databaseSizeBeforeCreate = bloodPressureRepository.findAll().size();
 
-        // Create the BloodPressure
+        // create security-aware mockMvc
+        restBloodPressureMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
 
+        // Create the BloodPressure
         restBloodPressureMockMvc.perform(post("/api/bloodPressures")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
-                .andExpect(status().isCreated());
+            .with(user("user"))
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
+            .andExpect(status().isCreated());
 
         // Validate the BloodPressure in the database
         List<BloodPressure> bloodPressures = bloodPressureRepository.findAll();
@@ -117,11 +134,10 @@ public class BloodPressureResourceTest {
         bloodPressure.setTimestamp(null);
 
         // Create the BloodPressure, which fails.
-
         restBloodPressureMockMvc.perform(post("/api/bloodPressures")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
-                .andExpect(status().isBadRequest());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
+            .andExpect(status().isBadRequest());
 
         List<BloodPressure> bloodPressures = bloodPressureRepository.findAll();
         assertThat(bloodPressures).hasSize(databaseSizeBeforeTest);
@@ -135,11 +151,10 @@ public class BloodPressureResourceTest {
         bloodPressure.setSystolic(null);
 
         // Create the BloodPressure, which fails.
-
         restBloodPressureMockMvc.perform(post("/api/bloodPressures")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
-                .andExpect(status().isBadRequest());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
+            .andExpect(status().isBadRequest());
 
         List<BloodPressure> bloodPressures = bloodPressureRepository.findAll();
         assertThat(bloodPressures).hasSize(databaseSizeBeforeTest);
@@ -153,11 +168,10 @@ public class BloodPressureResourceTest {
         bloodPressure.setDiastolic(null);
 
         // Create the BloodPressure, which fails.
-
         restBloodPressureMockMvc.perform(post("/api/bloodPressures")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
-                .andExpect(status().isBadRequest());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
+            .andExpect(status().isBadRequest());
 
         List<BloodPressure> bloodPressures = bloodPressureRepository.findAll();
         assertThat(bloodPressures).hasSize(databaseSizeBeforeTest);
@@ -165,18 +179,25 @@ public class BloodPressureResourceTest {
 
     @Test
     @Transactional
+    @WithMockUser(username = "admin", roles = "ADMIN")
     public void getAllBloodPressures() throws Exception {
-        // Initialize the database
+        // Setup security
         bloodPressureRepository.saveAndFlush(bloodPressure);
 
+        restBloodPressureMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
         // Get all the bloodPressures
-        restBloodPressureMockMvc.perform(get("/api/bloodPressures"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
-                .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP_STR)))
-                .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
-                .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
+        restBloodPressureMockMvc.perform(get("/api/bloodPressures")
+            .with(user("admin").roles("ADMIN")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
+            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP_STR)))
+            .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
+            .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
     }
 
     @Test
@@ -200,7 +221,7 @@ public class BloodPressureResourceTest {
     public void getNonExistingBloodPressure() throws Exception {
         // Get the bloodPressure
         restBloodPressureMockMvc.perform(get("/api/bloodPressures/{id}", Long.MAX_VALUE))
-                .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -209,18 +230,18 @@ public class BloodPressureResourceTest {
         // Initialize the database
         bloodPressureRepository.saveAndFlush(bloodPressure);
 
-		int databaseSizeBeforeUpdate = bloodPressureRepository.findAll().size();
+        int databaseSizeBeforeUpdate = bloodPressureRepository.findAll().size();
 
         // Update the bloodPressure
         bloodPressure.setTimestamp(UPDATED_TIMESTAMP);
         bloodPressure.setSystolic(UPDATED_SYSTOLIC);
         bloodPressure.setDiastolic(UPDATED_DIASTOLIC);
-        
+
 
         restBloodPressureMockMvc.perform(put("/api/bloodPressures")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
-                .andExpect(status().isOk());
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
+            .andExpect(status().isOk());
 
         // Validate the BloodPressure in the database
         List<BloodPressure> bloodPressures = bloodPressureRepository.findAll();
@@ -237,12 +258,12 @@ public class BloodPressureResourceTest {
         // Initialize the database
         bloodPressureRepository.saveAndFlush(bloodPressure);
 
-		int databaseSizeBeforeDelete = bloodPressureRepository.findAll().size();
+        int databaseSizeBeforeDelete = bloodPressureRepository.findAll().size();
 
         // Get the bloodPressure
         restBloodPressureMockMvc.perform(delete("/api/bloodPressures/{id}", bloodPressure.getId())
-                .accept(TestUtil.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk());
+            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk());
 
         // Validate the database is empty
         List<BloodPressure> bloodPressures = bloodPressureRepository.findAll();

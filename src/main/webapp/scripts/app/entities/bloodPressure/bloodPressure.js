@@ -5,7 +5,7 @@ angular.module('21pointsApp')
         $stateProvider
             .state('bloodPressure', {
                 parent: 'entity',
-                url: '/bloodPressures',
+                url: '/blood-pressure',
                 data: {
                     roles: ['ROLE_USER'],
                     pageTitle: '21pointsApp.bloodPressure.home.title'
@@ -26,7 +26,7 @@ angular.module('21pointsApp')
             })
             .state('bloodPressure.detail', {
                 parent: 'entity',
-                url: '/bloodPressure/{id}',
+                url: '/blood-pressure/{id:int}',
                 data: {
                     roles: ['ROLE_USER'],
                     pageTitle: '21pointsApp.bloodPressure.detail.title'

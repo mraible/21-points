@@ -50,7 +50,7 @@ if (project.hasProperty('prod')) {
 }
 
 group = 'org.jhipster.health'
-version = '0.1-SNAPSHOT'
+version = '1.0 Alpha'
 
 description = ''
 
@@ -142,7 +142,8 @@ dependencies {
     testCompile group: 'com.jayway.jsonpath', name: 'json-path'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-jetty'
-	testCompile group: 'org.assertj', name: 'assertj-core', version: assertj_core_version
+    testCompile group: 'org.springframework.security', name: 'spring-security-test', version: spring_security_version
+    testCompile group: 'org.assertj', name: 'assertj-core', version: assertj_core_version
     testCompile group: 'junit', name: 'junit'
     testCompile group: 'org.mockito', name: 'mockito-core'
     testCompile group: 'com.mattbertolini', name: 'liquibase-slf4j', version: liquibase_slf4j_version
