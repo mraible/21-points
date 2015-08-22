@@ -6,9 +6,9 @@
                 "createLabel": "Add Reading",
                 "createOrEditLabel": "Add/Edit a Reading"
             },
-            "created": "Added Successfully!",
-            "updated": "Updated Successfully!",
-            "deleted": "Deleted Successfully!",
+            "created": "Blood pressure added successfully.",
+            "updated": "Blood pressure updated successfully.",
+            "deleted": "Blood pressure deleted.",
             "delete": {
                 "question": "Are you sure you want to delete this?"
             },
