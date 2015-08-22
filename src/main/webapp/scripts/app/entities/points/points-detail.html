@@ -17,24 +17,24 @@
                     <span translate="21pointsApp.points.exercise">Exercise</span>
                 </td>
                 <td>
-                    <input type="text" class="input-sm form-control" value="{{points.exercise}}" readonly>
-                </td>
+                    <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.exercise,
+                                                    'glyphicon-remove text-danger': !points.exercise}"></i>                </td>
             </tr>
             <tr>
                 <td>
                     <span translate="21pointsApp.points.meals">Meals</span>
                 </td>
                 <td>
-                    <input type="text" class="input-sm form-control" value="{{points.meals}}" readonly>
-                </td>
+                    <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.meals,
+                                                    'glyphicon-remove text-danger': !points.meals}"></i>                </td>
             </tr>
             <tr>
                 <td>
                     <span translate="21pointsApp.points.alcohol">Alcohol</span>
                 </td>
                 <td>
-                    <input type="text" class="input-sm form-control" value="{{points.alcohol}}" readonly>
-                </td>
+                    <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.alcohol,
+                                                    'glyphicon-remove text-danger': !points.alcohol}"></i>                </td>
             </tr>
             <tr>
                 <td>

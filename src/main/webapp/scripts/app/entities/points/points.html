@@ -6,9 +6,11 @@
         <div class="col-sm-5 text-right">
             <form name="searchForm" class="form-inline">
                 <div class="form-group p-r">
-                    <input type="text" class="form-control" ng-model="searchQuery" id="searchQuery" placeholder="Search">
+                    <input type="text" class="form-control" ng-model="searchQuery" id="searchQuery"
+                           placeholder="Search">
                 </div>
-                <button class="btn btn-info btn-sm" ng-click="search()"><i class="glyphicon glyphicon-search"></i></button>
+                <button class="btn btn-info btn-sm" ng-click="search()"><i class="glyphicon glyphicon-search"></i>
+                </button>
                 <button class="btn btn-primary btn-sm" ui-sref="points.new">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
@@ -58,20 +60,19 @@
             </tr>
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
-            <tr ng-repeat="points in points">
-                <td><a ui-sref="points.detail({id:points.id})">{{points.date}}</a></td>
+            <tr ng-repeat="points in pointsList">
+                <td><a ui-sref="points.detail({id:points.id})">{{points.date | date}}</a></td>
                 <td class="text-center">
-                    <!-- todo: directive for check vs x -->
-                    <i ng-show="points.exercise" class="glyphicon glyphicon-ok text-success"></i>
-                    <i ng-show="points.exercise === 0" class="glyphicon glyphicon-remove text-danger"></i>
+                    <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.exercise,
+                                                    'glyphicon-remove text-danger': !points.exercise}"></i>
                 </td>
                 <td class="text-center">
-                    <i ng-show="points.meals" class="glyphicon glyphicon-ok text-success"></i>
-                    <i ng-show="points.meals === 0" class="glyphicon glyphicon-remove text-danger"></i>
+                    <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.meals,
+                                                    'glyphicon-remove text-danger': !points.meals}"></i>
                 </td>
                 <td class="text-center">
-                    <i ng-show="points.alcohol" class="glyphicon glyphicon-ok text-success"></i>
-                    <i ng-show="points.alcohol === 0" class="glyphicon glyphicon-remove text-danger"></i>
+                    <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.alcohol,
+                                                    'glyphicon-remove text-danger': !points.alcohol}"></i>
                 </td>
                 <td>{{points.notes}}</td>
                 <td>{{points.user.login}}</td>

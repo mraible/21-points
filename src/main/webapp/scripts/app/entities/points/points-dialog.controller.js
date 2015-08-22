@@ -14,7 +14,6 @@ angular.module('21pointsApp').controller('PointsDialogController',
 
             $scope.points = entity;
             $scope.users = User.query();
-            console.log(entity);
 
             var onSaveFinished = function (result) {
                 $scope.$emit('21pointsApp:pointsUpdate', result);

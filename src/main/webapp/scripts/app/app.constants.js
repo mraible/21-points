@@ -4,6 +4,6 @@ angular.module('21pointsApp')
 
 .constant('ENV', 'dev')
 
-.constant('VERSION', '1.0 Alpha')
+.constant('VERSION', '1.0-alpha')
 
 ;
