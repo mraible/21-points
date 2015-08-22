@@ -102,15 +102,16 @@ public class PreferencesResource {
     }
 
     /**
-     * GET  /preferences/:id -> get the "id" preferences.
+     * GET  /my-preferences -> get the current user's preferences.
      */
     @RequestMapping(value = "/my-preferences",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Preferences> getUserPreferences() {
-        log.debug("REST request to get Preferences : {}", SecurityUtils.getCurrentLogin());
-        Optional<User> userPreferences = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin());
+        String username = SecurityUtils.getCurrentLogin();
+        log.debug("REST request to get Preferences : {}", username);
+        Optional<User> userPreferences = userRepository.findOneByLogin(username);
         Preferences defaultPreferences = new Preferences();
         defaultPreferences.setWeeklyGoal(10); // default
 
