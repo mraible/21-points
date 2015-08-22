@@ -7,11 +7,14 @@
             <form name="searchForm" class="form-inline">
                 <div class="form-group p-r">
                     <input type="text" class="form-control" ng-model="searchQuery" id="searchQuery"
-                           placeholder="Search">
+                           placeholder="{{'entity.action.search' | translate}}">
                 </div>
-                <button class="btn btn-info btn-sm" ng-click="search()"><i class="glyphicon glyphicon-search"></i>
+                <button class="btn btn-info btn-sm" ng-click="search()"
+                        tooltip="{{'entity.action.search' | translate}}">
+                    <i class="glyphicon glyphicon-search"></i>
                 </button>
-                <button class="btn btn-primary btn-sm" ui-sref="points.new">
+                <button class="btn btn-primary btn-sm" ui-sref="points.new"
+                        tooltip="{{'entity.action.new' | translate}}">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
             </form>
@@ -78,19 +81,16 @@
                 <td>{{points.user.login}}</td>
                 <td>
                     <div class="btn-group m-n">
-                        <button type="submit"
-                                ui-sref="points.detail({id:points.id})"
-                                class="btn btn-info btn-xs">
+                        <button type="submit" tooltip="{{'entity.action.view' | translate}}"
+                                ui-sref="points.detail({id:points.id})" class="btn btn-info btn-xs">
                             <span class="glyphicon glyphicon-eye-open"></span>
                         </button>
-                        <button type="submit"
-                                ui-sref="points.edit({id:points.id})"
-                                class="btn btn-primary btn-xs">
+                        <button type="submit" tooltip="{{'entity.action.edit' | translate}}"
+                                ui-sref="points.edit({id:points.id})" class="btn btn-primary btn-xs">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </button>
-                        <button type="submit"
-                                ng-click="delete(points.id)"
-                                class="btn btn-danger btn-xs">
+                        <button type="submit" tooltip="{{'entity.action.delete' | translate}}"
+                                ng-click="delete(points.id)" class="btn btn-danger btn-xs">
                             <span class="glyphicon glyphicon-remove-circle"></span>
                         </button>
                     </div>

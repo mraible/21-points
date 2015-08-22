@@ -84,6 +84,8 @@
             "cancel": "Cancel",
             "delete": "Delete",
             "edit": "Edit",
+            "new": "Add",
+            "search": "Search",
             "save": "Save",
             "view": "View"
         },

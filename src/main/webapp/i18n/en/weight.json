@@ -4,7 +4,7 @@
             "home": {
                 "title": "Weigh-Ins",
                 "createLabel": "Add Weight",
-                "createOrEditLabel": "Add/Edit your weight"
+                "createOrEditLabel": "Edit your weight"
             },
             "created": "Weight added successfully.",
             "updated": "Weight updated successfully.",

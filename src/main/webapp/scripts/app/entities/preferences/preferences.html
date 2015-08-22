@@ -5,11 +5,16 @@
         </div>
         <div class="col-sm-5 text-right">
             <form name="searchForm" class="form-inline">
-                <div class="form-group">
-                    <input type="text" class="form-control" ng-model="searchQuery" id="searchQuery" placeholder="Search">
+                <div class="form-group p-r">
+                    <input type="text" class="form-control" ng-model="searchQuery" id="searchQuery"
+                           placeholder="{{'entity.action.search' | translate}}">
                 </div>
-                <button class="btn btn-info btn-sm" ng-click="search()"><span class="glyphicon glyphicon-search"></span></button>
-                <button class="btn btn-primary btn-sm" ui-sref="preferences.new" ng-hide="preferences.length">
+                <button class="btn btn-info btn-sm" ng-click="search()"
+                        tooltip="{{'entity.action.search' | translate}}">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+                <button class="btn btn-primary btn-sm" ui-sref="preferences.new" ng-hide="preferences.length"
+                        tooltip="{{'entity.action.new' | translate}}">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
             </form>
@@ -58,20 +63,17 @@
                     <td>{{preferences.weightUnits}}</td>
                     <td>
                         <div class="btn-group m-n">
-                            <button type="submit"
-                                    ui-sref="preferences.detail({id:preferences.id})"
-                                    class="btn btn-info btn-xs">
-                                <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span translate="entity.action.view"> View</span>
+                            <button type="submit" tooltip="{{'entity.action.view' | translate}}"
+                                    ui-sref="preferences.detail({id:preferences.id})" class="btn btn-info btn-xs">
+                                <span class="glyphicon glyphicon-eye-open"></span>
                             </button>
-                            <button type="submit"
-                                    ui-sref="preferences.edit({id:preferences.id})"
-                                    class="btn btn-primary btn-xs">
-                                <span class="glyphicon glyphicon-pencil"></span>&nbsp;<span translate="entity.action.edit"> Edit</span>
+                            <button type="submit" tooltip="{{'entity.action.edit' | translate}}"
+                                    ui-sref="preferences.edit({id:preferences.id})" class="btn btn-primary btn-xs">
+                                <span class="glyphicon glyphicon-pencil"></span>
                             </button>
-                            <button type="submit"
-                                    ng-click="delete(preferences.id)"
-                                    class="btn btn-danger btn-xs">
-                                <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span translate="entity.action.delete"> Delete</span>
+                            <button type="submit" tooltip="{{'entity.action.delete' | translate}}"
+                                    ng-click="delete(preferences.id)" class="btn btn-danger btn-xs">
+                                <span class="glyphicon glyphicon-remove-circle"></span>
                             </button>
                         </div>
                     </td>
