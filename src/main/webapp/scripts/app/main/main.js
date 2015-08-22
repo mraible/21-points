@@ -24,7 +24,13 @@ angular.module('21pointsApp')
                         $translatePartialLoader.addPart('preferences');
                         $translatePartialLoader.addPart('units');
                         return $translate.refresh();
-                    }]
+                    }],
+                    points: function(Points) {
+                        return Points.thisWeek().$promise;
+                    },
+                    preferences: function(Preferences) {
+                        return Preferences.user().$promise;
+                    }
                 }
             })
             .state('points.add', {
