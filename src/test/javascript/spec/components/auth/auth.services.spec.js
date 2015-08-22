@@ -13,6 +13,8 @@ describe('Services Tests ', function () {
             authService = Auth;
             spiedAuthServerProvider = AuthServerProvider;
             //Request on app init
+            $httpBackend.whenGET(/api\/points-this-week\?cacheBuster=\d+/).respond({});
+            $httpBackend.whenGET(/api\/my-preferences\?cacheBuster=\d+/).respond({});
             $httpBackend.whenGET('scripts/app/main/main.html').respond({});
             $httpBackend.whenGET('scripts/components/navbar/navbar.html').respond({});
             var globalJson = new RegExp('i18n\/.*\/global.json');

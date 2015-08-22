@@ -263,6 +263,11 @@ module.exports = function (grunt) {
             unit: {
                 configFile: 'src/test/javascript/karma.conf.js',
                 singleRun: true
+            },
+            zone: {
+                configFile: 'src/test/javascript/karma.conf.js',
+                singleRun: false,
+                autoWatch: true
             }
         },
         ngAnnotate: {
