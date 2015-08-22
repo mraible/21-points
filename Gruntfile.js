@@ -339,7 +339,7 @@ module.exports = function (grunt) {
         'clean:server',
         'wiredep:test',
         'ngconstant:dev',
-        'karma'
+        'karma:unit'
     ]);
 
     grunt.registerTask('build', [
