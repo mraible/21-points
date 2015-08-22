@@ -2,8 +2,11 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Preferences;
+import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
+import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,9 @@ public class PreferencesResource {
     @Inject
     private PreferencesSearchRepository preferencesSearchRepository;
 
+    @Inject
+    private UserRepository userRepository;
+
     /**
      * POST  /preferences -> Create a new preferences.
      */
@@ -50,8 +56,15 @@ public class PreferencesResource {
         if (preferences.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new preferences cannot already have an ID").body(null);
         }
+
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.save(result);
+
+        log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentLogin());
+        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get();
+        user.setPreferences(result);
+        userRepository.save(user);
+
         return ResponseEntity.created(new URI("/api/preferences/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert("preferences", result.getId().toString()))
                 .body(result);
@@ -83,17 +96,29 @@ public class PreferencesResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public List<Preferences> getAll(@RequestParam(required = false) String filter) {
-        if ("user-is-null".equals(filter)) {
-            log.debug("REST request to get all Preferences where user is null");
-            return StreamSupport
-                .stream(preferencesRepository.findAll().spliterator(), false)
-                .filter(preferences -> preferences.getUser() == null)
-                .collect(Collectors.toList());
-        }
-
+    public List<Preferences> getAll() {
         log.debug("REST request to get all Preferences");
         return preferencesRepository.findAll();
+    }
+
+    /**
+     * GET  /preferences/:id -> get the "id" preferences.
+     */
+    @RequestMapping(value = "/my-preferences",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<Preferences> getUserPreferences() {
+        log.debug("REST request to get Preferences : {}", SecurityUtils.getCurrentLogin());
+        Optional<User> userPreferences = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin());
+        Preferences defaultPreferences = new Preferences();
+        defaultPreferences.setWeeklyGoal(10); // default
+
+        return Optional.ofNullable(userPreferences.get())
+            .map(user -> new ResponseEntity<>(
+                user.getPreferences(),
+                HttpStatus.OK))
+            .orElse(new ResponseEntity<>(defaultPreferences, HttpStatus.OK));
     }
 
     /**
@@ -121,6 +146,13 @@ public class PreferencesResource {
     @Timed
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.debug("REST request to delete Preferences : {}", id);
+
+        if (SecurityUtils.getCurrentLogin() != null) {
+            User user = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get();
+            user.setPreferences(null);
+            userRepository.save(user);
+        }
+
         preferencesRepository.delete(id);
         preferencesSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("preferences", id.toString())).build();

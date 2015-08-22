@@ -2,19 +2,18 @@ package org.jhipster.health.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.jhipster.health.domain.util.CustomLocalDateSerializer;
-import org.jhipster.health.domain.util.ISO8601LocalDateDeserializer;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
+import org.jhipster.health.domain.util.CustomLocalDateSerializer;
+import org.jhipster.health.domain.util.ISO8601LocalDateDeserializer;
 import org.joda.time.LocalDate;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
 
 
@@ -31,33 +30,23 @@ public class Points implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull    
-
-    
+    @NotNull
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     @JsonSerialize(using = CustomLocalDateSerializer.class)
     @JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-
-    
     @Column(name = "exercise")
     private Integer exercise;
 
-
-    
     @Column(name = "meals")
     private Integer meals;
 
-
-    
     @Column(name = "alcohol")
     private Integer alcohol;
 
-    @Size(max = 140)    
-
-    
+    @Size(max = 140)
     @Column(name = "notes", length = 140)
     private String notes;
 

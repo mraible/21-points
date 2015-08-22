@@ -1,37 +1,115 @@
 <div ng-cloak>
     <div class="row">
         <div class="col-md-4">
-            <span class="hipster img-responsive img-rounded"></span>
+            <span class="heart img-responsive img-rounded m-t-md"></span>
         </div>
         <div class="col-md-8">
-            <h1 translate="main.title">Welcome, Java Hipster!</h1>
+            <h1 ng-show="isAuthenticated()" translate="main.title"
+                translate-values="{name: '{{account.firstName}}'}">Welcome, Java Hipster!</h1>
+
+            <h1 ng-hide="isAuthenticated()">Welcome!</h1>
+
             <p class="lead" translate="main.subtitle">This is your homepage</p>
 
             <div ng-switch="isAuthenticated()">
-                <div class="alert alert-success" ng-switch-when="true" translate="main.logged.message" translate-values="{username: '{{account.login}}'}">
-                    You are logged in as user "{{account.login}}".
+                <div ng-switch-when="true">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 translate="main.points.thisWeek" class="m-t-sm">Points for the week of
+                                {{pointsThisWeek.week | date: 'longDate'}}:</h4>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a ui-sref="points.add" class="btn btn-primary btn-raised m-n m-b-xs">Add Points</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="progress progress-lg" style="min-width: 300px">
+                                <div class="progress-bar progress-bar-striped" role="progressbar"
+                                     ng-class="{'progress-bar-success': pointsThisWeek.count >= preferences.weeklyGoal,
+                                                'progress-bar-danger': pointsThisWeek.count < 10,
+                                                'progress-bar-warning': pointsThisWeek.count > 10 && pointsThisWeek.count < preferences.weeklyGoal}"
+                                     aria-valuenow="{{pointsThisWeek.count}}"
+                                     aria-valuemin="0" aria-valuemax="21" style="width: {{pointsPercentage}}%">
+                                    <span ng-show="pointsThisWeek.count">
+                                        {{pointsThisWeek.count}} / Goal: {{preferences.weeklyGoal}}
+                                    </span>
+                                    <span class="sr-only">{{pointsPercentage}} points this week</span>
+                                </div>
+                                <span ng-hide="pointsThisWeek.count" class="m-l-sm text-danger">
+                                    No points yet this week, better get moving!
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="m-t-md">Weight:</h4>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a ui-sref="weight.add" class="btn btn-default btn-sm btn-raised">Add Weight</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <img src="http://placehold.it/700x150?text=Weight Graph" class="img-responsive">
+                        </div>
+                    </div>
+                    <div class="row m-t-sm">
+                        <div class="col-md-6">
+                            <h4 class="m-t-md">Blood Pressure:</h4>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a ui-sref="bloodPressure.add" class="btn btn-default btn-sm btn-raised">
+                                Add Blood Pressure</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <img src="http://placehold.it/700x150?text=Blood Pressure Graph" class="img-responsive">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <p class="m-t-md col-md-10">
+                            <a ui-sref="preferences.add" class="pull-right">Edit Preferences</a>
+                            <a ui-sref="points">View History</a>
+                        </p>
+                    </div>
+
+                    <p translate="main.logged.message" translate-values="{username: '{{account.login}}'}"
+                       style="border-top: 1px solid silver; padding-top: 5px; margin-top: 40px">
+                        You are logged in as user "{{account.login}}".
+                    </p>
                 </div>
 
-                <div class="alert alert-warning" ng-switch-when="false" translate="global.messages.info.register">
-                    You don't have an account yet? <a href="#/register">Register a new account</a>
+                <div ng-switch-when="false">
+                    <p><strong>
+                        To get started, please
+                        <a ui-sref="login"><span class="glyphicon glyphicon-log-in"></span>
+                            &#xA0;<span translate="global.menu.account.login">Authenticate</span>.</a>
+                        </strong>
+                    </p>
+
+                    <p translate="main.question">
+                        If you have any question on JHipster:
+                    </p>
+
+                    <ul>
+                        <li><a href="http://www.jhipster-book.com" target="_blank" translate="main.link.homepage">JHipster
+                            homepage</a></li>
+                        <li><a href="http://stackoverflow.com/tags/jhipster-mini-book/info" target="_blank"
+                               translate="main.link.stackoverflow">JHipster Mini-Book on Stack Overflow</a></li>
+                        <li><a href="https://twitter.com/jhipster_book" target="_blank" translate="main.link.contact">contact
+                            @java_hipster on Twitter</a></li>
+                    </ul>
+
+                    <p translate="global.messages.info.register">
+                        Don't have an account yet? <a href="#/register">Register a new account</a>.
                 </div>
             </div>
-
-            <p translate="main.question">
-                If you have any question on JHipster:
-            </p>
-
-            <ul>
-                <li><a href="http://jhipster.github.io/" target="_blank" translate="main.link.homepage">JHipster homepage</a></li>
-                <li><a href="http://stackoverflow.com/tags/jhipster/info" target="_blank" translate="main.link.stackoverflow">JHipster on Stack Overflow</a></li>
-                <li><a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" translate="main.link.bugtracker">JHipster bug tracker</a></li>
-                <li><a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" translate="main.link.chat">JHipster public chat room</a></li>
-                <li><a href="https://twitter.com/java_hipster" target="_blank"  translate="main.link.contact">contact @java_hipster on Twitter</a></li>
-            </ul>
-
-            <p>
-             <span translate="main.like">If you like JHipster, don't forget to give it a star on </span>&nbsp;<a href="https://github.com/jhipster/generator-jhipster" target="_blank" translate="main.github">Github</a>!
-            </p>
         </div>
     </div>
+</div>
+</div>
 </div>

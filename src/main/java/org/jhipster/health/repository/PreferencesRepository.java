@@ -1,9 +1,7 @@
 package org.jhipster.health.repository;
 
 import org.jhipster.health.domain.Preferences;
-import org.springframework.data.jpa.repository.*;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * Spring Data JPA repository for the Preferences entity.

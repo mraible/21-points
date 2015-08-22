@@ -3,12 +3,14 @@ package org.jhipster.health.web.rest;
 import org.jhipster.health.Application;
 import org.jhipster.health.domain.Points;
 import org.jhipster.health.repository.PointsRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
@@ -19,6 +21,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -26,6 +29,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -40,7 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @IntegrationTest
 public class PointsResourceTest {
-
 
     private static final LocalDate DEFAULT_DATE = new LocalDate(0L);
     private static final LocalDate UPDATED_DATE = new LocalDate();
@@ -63,11 +67,17 @@ public class PointsResourceTest {
     private PointsSearchRepository pointsSearchRepository;
 
     @Inject
+    private UserRepository userRepository;
+
+    @Inject
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     private MockMvc restPointsMockMvc;
 
     private Points points;
+
+    @Autowired
+    private WebApplicationContext context;
 
     @PostConstruct
     public void setup() {
@@ -75,6 +85,7 @@ public class PointsResourceTest {
         PointsResource pointsResource = new PointsResource();
         ReflectionTestUtils.setField(pointsResource, "pointsRepository", pointsRepository);
         ReflectionTestUtils.setField(pointsResource, "pointsSearchRepository", pointsSearchRepository);
+        ReflectionTestUtils.setField(pointsResource, "userRepository", userRepository);
         this.restPointsMockMvc = MockMvcBuilders.standaloneSetup(pointsResource).setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -93,9 +104,15 @@ public class PointsResourceTest {
     public void createPoints() throws Exception {
         int databaseSizeBeforeCreate = pointsRepository.findAll().size();
 
-        // Create the Points
+        // create security-aware mockMvc
+        restPointsMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
 
+        // Create the Points
         restPointsMockMvc.perform(post("/api/points")
+                .with(user("user"))
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(points)))
                 .andExpect(status().isCreated());
@@ -135,16 +152,23 @@ public class PointsResourceTest {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
 
+        // create security-aware mockMvc
+        restPointsMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
         // Get all the points
-        restPointsMockMvc.perform(get("/api/points"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(points.getId().intValue())))
-                .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
-                .andExpect(jsonPath("$.[*].exercise").value(hasItem(DEFAULT_EXERCISE)))
-                .andExpect(jsonPath("$.[*].meals").value(hasItem(DEFAULT_MEALS)))
-                .andExpect(jsonPath("$.[*].alcohol").value(hasItem(DEFAULT_ALCOHOL)))
-                .andExpect(jsonPath("$.[*].notes").value(hasItem(DEFAULT_NOTES.toString())));
+        restPointsMockMvc.perform(get("/api/points")
+            .with(user("admin").roles("ADMIN")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(points.getId().intValue())))
+            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
+            .andExpect(jsonPath("$.[*].exercise").value(hasItem(DEFAULT_EXERCISE)))
+            .andExpect(jsonPath("$.[*].meals").value(hasItem(DEFAULT_MEALS)))
+            .andExpect(jsonPath("$.[*].alcohol").value(hasItem(DEFAULT_ALCOHOL)))
+            .andExpect(jsonPath("$.[*].notes").value(hasItem(DEFAULT_NOTES.toString())));
     }
 
     @Test

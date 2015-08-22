@@ -9,7 +9,7 @@
                     <input type="text" class="form-control" ng-model="searchQuery" id="searchQuery" placeholder="Search">
                 </div>
                 <button class="btn btn-info btn-sm" ng-click="search()"><span class="glyphicon glyphicon-search"></span></button>
-                <button class="btn btn-primary btn-sm" ui-sref="preferences.new">
+                <button class="btn btn-primary btn-sm" ui-sref="preferences.new" ng-hide="preferences.length">
                     <span class="glyphicon glyphicon-plus"></span>
                 </button>
             </form>
@@ -52,7 +52,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="preferences in preferences">
+                <tr ng-repeat="preferences in preferencesList">
                     <td><a ui-sref="preferences.detail({id:preferences.id})">{{preferences.id}}</a></td>
                     <td>{{preferences.weeklyGoal}}</td>
                     <td>{{preferences.weightUnits}}</td>

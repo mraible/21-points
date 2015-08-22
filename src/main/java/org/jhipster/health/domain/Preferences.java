@@ -1,6 +1,5 @@
 package org.jhipster.health.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jhipster.health.domain.enumeration.Units;
@@ -37,10 +36,6 @@ public class Preferences implements Serializable {
     @Column(name = "weight_units", nullable = false)
     private Units weightUnits;
 
-    @OneToOne(mappedBy = "preferences")
-    @JsonIgnore
-    private User user;
-
     public Long getId() {
         return id;
     }
@@ -61,16 +56,8 @@ public class Preferences implements Serializable {
         return weightUnits;
     }
 
-    public void setWeightUnits(Units weight_units) {
-        this.weightUnits = weight_units;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setWeightUnits(Units weightUnits) {
+        this.weightUnits = weightUnits;
     }
 
     @Override
@@ -99,7 +86,7 @@ public class Preferences implements Serializable {
         return "Preferences{" +
                 "id=" + id +
                 ", weeklyGoal='" + weeklyGoal + "'" +
-                ", weight_units='" + weightUnits + "'" +
+                ", weightUnits='" + weightUnits + "'" +
                 '}';
     }
 }

@@ -2,10 +2,10 @@
 
 angular.module('21pointsApp')
     .controller('PreferencesController', function ($scope, $state, Preferences, PreferencesSearch) {
-        $scope.preferences = [];
+        $scope.preferencesList = [];
         $scope.loadAll = function () {
             Preferences.query(function (result) {
-                $scope.preferences = result;
+                $scope.preferencesList = result;
             });
         };
         $scope.loadAll();
@@ -28,7 +28,7 @@ angular.module('21pointsApp')
 
         $scope.search = function () {
             PreferencesSearch.query({query: $scope.searchQuery}, function (result) {
-                $scope.preferences = result;
+                $scope.preferencesList = result;
             }, function (response) {
                 if (response.status === 404) {
                     $scope.loadAll();
