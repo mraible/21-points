@@ -50,7 +50,7 @@ if (project.hasProperty('prod')) {
 }
 
 group = 'org.jhipster.health'
-version = '1.0 Alpha'
+version = '1.0-alpha'
 
 description = ''
 
