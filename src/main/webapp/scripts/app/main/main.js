@@ -25,11 +25,8 @@ angular.module('21pointsApp')
                         $translatePartialLoader.addPart('units');
                         return $translate.refresh();
                     }],
-                    points: function(Points, $timeout) {
-                        function takeAWhile() {
-                            return Points.thisWeek().$promise;
-                        }
-                        return $timeout(takeAWhile, 5000);
+                    points: function(Points) {
+                        return Points.thisWeek().$promise;
                     },
                     preferences: function(Preferences) {
                         return Preferences.user().$promise;
