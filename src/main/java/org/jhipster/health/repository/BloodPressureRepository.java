@@ -11,7 +11,8 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface BloodPressureRepository extends JpaRepository<BloodPressure,Long> {
 
-    @Query("select bloodPressure from BloodPressure bloodPressure where bloodPressure.user.login = ?#{principal.username}")
+    @Query("select bloodPressure from BloodPressure bloodPressure where bloodPressure.user.login = ?#{principal.username} order by bloodPressure.timestamp desc")
     Page<BloodPressure> findAllForCurrentUser(Pageable pageable);
 
+    Page<BloodPressure> findAllByOrderByTimestampDesc(Pageable pageable);
 }

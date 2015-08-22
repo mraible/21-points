@@ -105,7 +105,7 @@ public class WeightResource {
         throws URISyntaxException {
         Page<Weight> page;
         if (SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
-            page = weightRepository.findAll(PaginationUtil.generatePageRequest(offset, limit));
+            page = weightRepository.findAllByOrderByTimestampDesc(PaginationUtil.generatePageRequest(offset, limit));
         } else {
             page = weightRepository.findAllForCurrentUser(PaginationUtil.generatePageRequest(offset, limit));
         }

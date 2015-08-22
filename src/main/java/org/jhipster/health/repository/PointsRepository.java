@@ -14,9 +14,11 @@ import java.util.List;
  */
 public interface PointsRepository extends JpaRepository<Points,Long> {
 
-    @Query("select points from Points points where points.user.login = ?#{principal.username}")
+    @Query("select points from Points points where points.user.login = ?#{principal.username} order by points.date desc")
     Page<Points> findAllForCurrentUser(Pageable pageable);
 
     @Query(value = "select * from points where date > current_date - interval '7 days'", nativeQuery = true)
     List<Points> findAllThisWeek();
+
+    Page<Points> findAllByOrderByDateDesc(Pageable pageable);
 }

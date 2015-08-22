@@ -104,7 +104,7 @@ public class PointsResource {
         throws URISyntaxException {
         Page<Points> page;
         if (SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
-            page = pointsRepository.findAll(PaginationUtil.generatePageRequest(offset, limit));
+            page = pointsRepository.findAllByOrderByDateDesc(PaginationUtil.generatePageRequest(offset, limit));
         } else {
             page = pointsRepository.findAllForCurrentUser(PaginationUtil.generatePageRequest(offset, limit));
         }

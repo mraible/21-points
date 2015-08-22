@@ -11,7 +11,8 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface WeightRepository extends JpaRepository<Weight,Long> {
 
-    @Query("select weight from Weight weight where weight.user.login = ?#{principal.username}")
+    @Query("select weight from Weight weight where weight.user.login = ?#{principal.username} order by weight.timestamp desc")
     Page<Weight> findAllForCurrentUser(Pageable pageable);
 
+    Page<Weight> findAllByOrderByTimestampDesc(Pageable pageable);
 }

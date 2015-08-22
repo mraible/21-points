@@ -101,7 +101,7 @@ public class BloodPressureResource {
         throws URISyntaxException {
         Page<BloodPressure> page;
         if (SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
-            page = bloodPressureRepository.findAll(PaginationUtil.generatePageRequest(offset, limit));
+            page = bloodPressureRepository.findAllByOrderByTimestampDesc(PaginationUtil.generatePageRequest(offset, limit));
         } else {
             page = bloodPressureRepository.findAllForCurrentUser(PaginationUtil.generatePageRequest(offset, limit));
         }
