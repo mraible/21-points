@@ -3,7 +3,6 @@ package org.jhipster.health.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Points;
 import org.jhipster.health.repository.PointsRepository;
-import org.jhipster.health.repository.PointsThisWeek;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
@@ -15,6 +14,7 @@ import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -113,15 +113,27 @@ public class PointsResource {
     }
 
     /**
-     * GET  /points -> get all the points.
+     * GET  /points -> get all the points for the current week.
      */
     @RequestMapping(value = "/points-this-week",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<PointsThisWeek> getPointsThisWeek() throws URISyntaxException {
-        List<Points> points = pointsRepository.findAllThisWeek();
+    public ResponseEntity<PointsPerWeek> getPointsThisWeek() {
+        // Get current date
+        LocalDate now = new LocalDate();
 
+        // Get first day of week
+        LocalDate startOfWeek = now.withDayOfWeek(DateTimeConstants.MONDAY);
+        // Get last day of week
+        LocalDate endOfWeek = now.withDayOfWeek(DateTimeConstants.SUNDAY);
+        log.debug("Looking for points between: {} and {}", startOfWeek, endOfWeek);
+
+        List<Points> points = pointsRepository.findAllByDateBetween(startOfWeek, endOfWeek);
+        return calculatePoints(startOfWeek, points);
+    }
+
+    private ResponseEntity<PointsPerWeek> calculatePoints(LocalDate startOfWeek, List<Points> points) {
         Integer numPoints = 0;
         // todo: use Java 8 streams/filters
         String currentLogin = SecurityUtils.getCurrentLogin();
@@ -132,11 +144,21 @@ public class PointsResource {
             }
         }
 
-        LocalDate now = LocalDate.now();
-        LocalDate weekStart = now.withDayOfWeek(DateTimeConstants.MONDAY);
-        PointsThisWeek count = new PointsThisWeek(weekStart, numPoints);
-
+        PointsPerWeek count = new PointsPerWeek(startOfWeek, numPoints);
         return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+    /**
+     * GET  /points -> get all the points for a particular current week.
+     */
+    @RequestMapping(value = "/points-by-week/{startDate}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate startDate) {
+        // Get last day of week
+        LocalDate endOfWeek = startDate.withDayOfWeek(DateTimeConstants.SUNDAY);
+        List<Points> points = pointsRepository.findAllByDateBetween(startDate, endOfWeek);
+        return calculatePoints(startDate, points);
     }
 
     /**

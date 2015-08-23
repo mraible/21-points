@@ -1,10 +1,13 @@
 package org.jhipster.health.repository;
 
 import org.jhipster.health.domain.BloodPressure;
+import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 /**
  * Spring Data JPA repository for the BloodPressure entity.
@@ -13,6 +16,8 @@ public interface BloodPressureRepository extends JpaRepository<BloodPressure,Lon
 
     @Query("select bloodPressure from BloodPressure bloodPressure where bloodPressure.user.login = ?#{principal.username} order by bloodPressure.timestamp desc")
     Page<BloodPressure> findAllForCurrentUser(Pageable pageable);
+
+    List<BloodPressure> findAllByTimestampBetween(DateTime firstDate, DateTime secondDate);
 
     Page<BloodPressure> findAllByOrderByTimestampDesc(Pageable pageable);
 }

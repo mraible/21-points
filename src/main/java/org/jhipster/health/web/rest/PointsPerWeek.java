@@ -1,4 +1,4 @@
-package org.jhipster.health.repository;
+package org.jhipster.health.web.rest;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -7,23 +7,23 @@ import org.jhipster.health.domain.util.ISO8601LocalDateDeserializer;
 
 import org.joda.time.LocalDate;
 
-public class PointsThisWeek {
+public class PointsPerWeek {
     private LocalDate week;
-    private Integer count;
+    private Integer points;
 
-    public PointsThisWeek() {}
+    public PointsPerWeek() {}
 
-    public PointsThisWeek(LocalDate week, Integer count) {
+    public PointsPerWeek(LocalDate week, Integer points) {
         this.week = week;
-        this.count = count;
+        this.points = points;
     }
 
-    public Integer getCount() {
-        return count;
+    public Integer getPoints() {
+        return points;
     }
 
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setPoints(Integer points) {
+        this.points = points;
     }
 
     @JsonSerialize(using = CustomLocalDateSerializer.class)
@@ -39,7 +39,7 @@ public class PointsThisWeek {
     @Override
     public String toString() {
         return "PointsThisWeek{" +
-            "count=" + count +
+            "points=" + points +
             ", week=" + week +
             '}';
     }

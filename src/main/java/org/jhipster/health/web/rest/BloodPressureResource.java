@@ -9,9 +9,13 @@ import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,8 +55,8 @@ public class BloodPressureResource {
      * POST  /bloodPressures -> Create a new bloodPressure.
      */
     @RequestMapping(value = "/bloodPressures",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<BloodPressure> create(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
         log.debug("REST request to save BloodPressure : {}", bloodPressure);
@@ -66,8 +70,8 @@ public class BloodPressureResource {
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/bloodPressures/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert("bloodPressure", result.getId().toString()))
-                .body(result);
+            .headers(HeaderUtil.createEntityCreationAlert("bloodPressure", result.getId().toString()))
+            .body(result);
     }
 
     /**
@@ -85,19 +89,19 @@ public class BloodPressureResource {
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(bloodPressure);
         return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert("bloodPressure", bloodPressure.getId().toString()))
-                .body(result);
+            .headers(HeaderUtil.createEntityUpdateAlert("bloodPressure", bloodPressure.getId().toString()))
+            .body(result);
     }
 
     /**
      * GET  /bloodPressures -> get all the bloodPressures.
      */
     @RequestMapping(value = "/bloodPressures",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<List<BloodPressure>> getAll(@RequestParam(value = "page" , required = false) Integer offset,
-                                  @RequestParam(value = "per_page", required = false) Integer limit)
+    public ResponseEntity<List<BloodPressure>> getAll(@RequestParam(value = "page", required = false) Integer offset,
+                                                      @RequestParam(value = "per_page", required = false) Integer limit)
         throws URISyntaxException {
         Page<BloodPressure> page;
         if (SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
@@ -110,11 +114,50 @@ public class BloodPressureResource {
     }
 
     /**
+     * GET  /bp-by-days -> get all the blood pressure readings by last x days.
+     */
+    @RequestMapping(value = "/bp-by-days/{days}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<BloodPressureByPeriod> getByDays(@PathVariable int days) {
+        LocalDate today = new LocalDate();
+        LocalDate previousDate = today.minusDays(days);
+        DateTime daysAgo = previousDate.toDateTimeAtCurrentTime();
+        DateTime rightNow = today.toDateTimeAtCurrentTime();
+
+        List<BloodPressure> readings = bloodPressureRepository.findAllByTimestampBetween(daysAgo, rightNow);
+        BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", readings);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /bp-by-days -> get all the blood pressure readings for a particular month.
+     */
+    @RequestMapping(value = "/bp-by-month/{date}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<BloodPressureByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern="yyyy-MM") LocalDate date) {
+        LocalDate firstDay = date.dayOfMonth().withMinimumValue();
+        LocalDate lastDay = date.dayOfMonth().withMaximumValue();
+
+        List<BloodPressure> readings = bloodPressureRepository.
+            findAllByTimestampBetween(firstDay.toDateTimeAtStartOfDay(), lastDay.plusDays(1).toDateTimeAtStartOfDay());
+
+        DateTimeFormatter fmt = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM");
+        String yearAndMonth = fmt.print(firstDay);
+
+        BloodPressureByPeriod response = new BloodPressureByPeriod(yearAndMonth, readings);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
      * GET  /bloodPressures/:id -> get the "id" bloodPressure.
      */
     @RequestMapping(value = "/bloodPressures/{id}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<BloodPressure> get(@PathVariable Long id) {
         log.debug("REST request to get BloodPressure : {}", id);
@@ -129,8 +172,8 @@ public class BloodPressureResource {
      * DELETE  /bloodPressures/:id -> delete the "id" bloodPressure.
      */
     @RequestMapping(value = "/bloodPressures/{id}",
-            method = RequestMethod.DELETE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        method = RequestMethod.DELETE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.debug("REST request to delete BloodPressure : {}", id);

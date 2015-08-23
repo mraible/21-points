@@ -26,17 +26,17 @@
                         <div class="col-md-10">
                             <div class="progress progress-lg" style="min-width: 300px">
                                 <div class="progress-bar progress-bar-striped" role="progressbar"
-                                     ng-class="{'progress-bar-success': pointsThisWeek.count >= preferences.weeklyGoal,
-                                                'progress-bar-danger': pointsThisWeek.count < 10,
-                                                'progress-bar-warning': pointsThisWeek.count > 10 && pointsThisWeek.count < preferences.weeklyGoal}"
-                                     aria-valuenow="{{pointsThisWeek.count}}"
+                                     ng-class="{'progress-bar-success': pointsThisWeek.points >= preferences.weeklyGoal,
+                                                'progress-bar-danger': pointsThisWeek.points < 10,
+                                                'progress-bar-warning': pointsThisWeek.points > 10 && pointsThisWeek.points < preferences.weeklyGoal}"
+                                     aria-valuenow="{{pointsThisWeek.points}}"
                                      aria-valuemin="0" aria-valuemax="21" style="width: {{pointsPercentage}}%">
-                                    <span ng-show="pointsThisWeek.count">
-                                        {{pointsThisWeek.count}} / Goal: {{preferences.weeklyGoal}}
+                                    <span ng-show="pointsThisWeek.points">
+                                        {{pointsThisWeek.points}} / Goal: {{preferences.weeklyGoal}}
                                     </span>
                                     <span class="sr-only">{{pointsPercentage}} points this week</span>
                                 </div>
-                                <span ng-hide="pointsThisWeek.count" class="m-l-sm text-danger">
+                                <span ng-hide="pointsThisWeek.points" class="m-l-sm text-danger">
                                     No points yet this week, better get moving!
                                 </span>
                             </div>

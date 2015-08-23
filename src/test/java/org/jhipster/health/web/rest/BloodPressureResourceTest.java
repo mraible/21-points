@@ -2,6 +2,7 @@ package org.jhipster.health.web.rest;
 
 import org.jhipster.health.Application;
 import org.jhipster.health.domain.BloodPressure;
+import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.BloodPressureRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
@@ -33,9 +34,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -268,5 +271,77 @@ public class BloodPressureResourceTest {
         // Validate the database is empty
         List<BloodPressure> bloodPressures = bloodPressureRepository.findAll();
         assertThat(bloodPressures).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    private void createBloodPressureByMonth(DateTime firstOfMonth, DateTime firstDayOfLastMonth) {
+        User user = userRepository.findOneByLogin("user").get();
+        // this month
+        bloodPressureRepository.saveAndFlush(new BloodPressure(firstOfMonth, 120, 80, user));
+        bloodPressureRepository.saveAndFlush(new BloodPressure(firstOfMonth.plusDays(10), 125, 75, user));
+        bloodPressureRepository.saveAndFlush(new BloodPressure(firstOfMonth.plusDays(20), 100, 69, user));
+
+        // last month
+        bloodPressureRepository.saveAndFlush(new BloodPressure(firstDayOfLastMonth, 130, 90, user));
+        bloodPressureRepository.saveAndFlush(new BloodPressure(firstDayOfLastMonth.plusDays(11), 135, 85, user));
+        bloodPressureRepository.saveAndFlush(new BloodPressure(firstDayOfLastMonth.plusDays(23), 130, 75, user));
+    }
+
+    @Test
+    @Transactional
+    public void getBloodPressureForLast30Days() throws Exception {
+        DateTime now = new DateTime();
+        DateTime firstOfMonth = now.withDayOfMonth(1);
+        DateTime firstDayOfLastMonth = firstOfMonth.minusMonths(1);
+        createBloodPressureByMonth(firstOfMonth, firstDayOfLastMonth);
+
+        // create security-aware mockMvc
+        restBloodPressureMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
+        // Get all the blood pressure readings
+        restBloodPressureMockMvc.perform(get("/api/bloodPressures")
+            .with(user("user").roles("USER")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$", hasSize(6)));
+
+        // Get the blood pressure readings for the last 30 days
+        restBloodPressureMockMvc.perform(get("/api/bp-by-days/{days}", 30)
+            .with(user("user").roles("USER")))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.period").value("Last 30 Days"))
+            .andExpect(jsonPath("$.readings.[*].systolic").value(hasItem(120)))
+            .andExpect(jsonPath("$.readings.[*].diastolic").value(hasItem(69)));
+    }
+
+    @Test
+    @Transactional
+    public void getBloodPressureByMonth() throws Exception {
+        DateTime now = new DateTime();
+        DateTime firstOfMonth = now.withDayOfMonth(1);
+        DateTime firstDayOfLastMonth = firstOfMonth.minusMonths(1);
+        createBloodPressureByMonth(firstOfMonth, firstDayOfLastMonth);
+
+        // create security-aware mockMvc
+        restBloodPressureMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
+        DateTimeFormatter fmt = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM");
+
+        // Get the points for last week
+        restBloodPressureMockMvc.perform(get("/api/bp-by-month/{yearAndMonth}", fmt.print(firstDayOfLastMonth))
+            .with(user("user").roles("USER")))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.period").value(fmt.print(firstDayOfLastMonth)))
+            .andExpect(jsonPath("$.readings.[*].systolic").value(hasItem(130)))
+            .andExpect(jsonPath("$.readings.[*].diastolic").value(hasItem(90)));
     }
 }
