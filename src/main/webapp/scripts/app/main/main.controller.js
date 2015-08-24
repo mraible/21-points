@@ -16,28 +16,34 @@ angular.module('21pointsApp')
             $scope.bpOptions = angular.copy(Chart.getBpChartConfig());
             $scope.bpOptions.title.text = bpReadings.period;
             $scope.bpOptions.chart.yAxis.axisLabel = "Blood Pressure";
-            $scope.systolics = [];
-            $scope.diastolics = [];
+            var systolics, diastolics, upperValues, lowerValues;
+            systolics = [];
+            diastolics = [];
+            upperValues = [];
+            lowerValues = [];
             bpReadings.readings.forEach(function (item) {
-                $scope.systolics.push({
+                systolics.push({
                     x: new Date(item.timestamp),
                     y: item.systolic
                 });
-                $scope.diastolics.push({
+                diastolics.push({
                     x: new Date(item.timestamp),
                     y: item.diastolic
                 });
+                upperValues.push(item.systolic);
+                lowerValues.push(item.diastolic);
             });
-
             $scope.bpData = [{
-                values: $scope.systolics,
+                values: systolics,
                 key: 'Systolic',
-                color: '#f44336'
+                color: '#673ab7'
             }, {
-                values: $scope.diastolics,
+                values: diastolics,
                 key: 'Diastolic',
                 color: '#03a9f4'
             }];
+            // set y scale to be 10 more than max and min
+            $scope.bpOptions.chart.yDomain = [Math.min.apply(Math, lowerValues) - 10, Math.max.apply(Math, upperValues) + 10]
         }
 
         $scope.weights = weights;
@@ -46,11 +52,13 @@ angular.module('21pointsApp')
             $scope.weightOptions.title.text = weights.period;
             $scope.weightOptions.chart.yAxis.axisLabel = "Weight";
             var weightValues = [];
+            var values = [];
             weights.weighIns.forEach(function (item) {
                 weightValues.push({
                     x: new Date(item.timestamp),
                     y: item.weight
                 });
+                values.push(item.weight);
             });
             $scope.weightData = [{
                 values: weightValues,
@@ -58,5 +66,7 @@ angular.module('21pointsApp')
                 color: '#ffeb3b',
                 area: true
             }];
+            // set y scale to be 10 more than max and min
+            $scope.weightOptions.chart.yDomain = [Math.min.apply(Math, values) - 10, Math.max.apply(Math, values) + 10];
         }
     });
