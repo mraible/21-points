@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -120,13 +121,12 @@ public class PointsResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<PointsPerWeek> getPointsThisWeek() {
-        // todo: get timezone from user's browser
-        DateTimeZone timeZone = DateTimeZone.forID("America/Denver");
-        log.debug("Getting points for week with timezone: {}", timeZone);
+    public ResponseEntity<PointsPerWeek> getPointsThisWeek(TimeZone timeZone) {
+        DateTimeZone usersTimeZone = DateTimeZone.forID(timeZone.getID());
+        log.debug("Getting points for week with timezone: {}", usersTimeZone);
 
         // Get current date
-        LocalDate now = new LocalDate();
+        LocalDate now = new LocalDate(usersTimeZone);
         // Get first day of week
         LocalDate startOfWeek = now.withDayOfWeek(DateTimeConstants.MONDAY);
         // Get last day of week
