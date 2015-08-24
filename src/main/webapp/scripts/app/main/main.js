@@ -30,6 +30,9 @@ angular.module('21pointsApp')
                     },
                     preferences: function(Preferences) {
                         return Preferences.user().$promise;
+                    },
+                    bpReadings: function(BloodPressure) {
+                        return BloodPressure.last30Days().$promise;
                     }
                 }
             })

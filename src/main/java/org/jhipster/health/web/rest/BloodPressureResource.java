@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryString;
@@ -127,7 +128,7 @@ public class BloodPressureResource {
         DateTime rightNow = today.toDateTimeAtCurrentTime();
 
         List<BloodPressure> readings = bloodPressureRepository.findAllByTimestampBetween(daysAgo, rightNow);
-        BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", readings);
+        BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", filterByUser(readings));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -138,7 +139,7 @@ public class BloodPressureResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<BloodPressureByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern="yyyy-MM") LocalDate date) {
+    public ResponseEntity<BloodPressureByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") LocalDate date) {
         LocalDate firstDay = date.dayOfMonth().withMinimumValue();
         LocalDate lastDay = date.dayOfMonth().withMaximumValue();
 
@@ -148,8 +149,14 @@ public class BloodPressureResource {
         DateTimeFormatter fmt = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM");
         String yearAndMonth = fmt.print(firstDay);
 
-        BloodPressureByPeriod response = new BloodPressureByPeriod(yearAndMonth, readings);
+        BloodPressureByPeriod response = new BloodPressureByPeriod(yearAndMonth, filterByUser(readings));
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private List<BloodPressure> filterByUser(List<BloodPressure> readings) {
+        Stream<BloodPressure> userReadings = readings.stream()
+            .filter(bp -> bp.getUser().getLogin().equals(SecurityUtils.getCurrentLogin()));
+        return userReadings.collect(Collectors.toList());
     }
 
     /**

@@ -36,6 +36,9 @@ module.exports = function (config) {
             'main/webapp/bower_components/ng-file-upload/ng-file-upload.js',
             'main/webapp/bower_components/bootstrap-material-design/dist/js/material.js',
             'main/webapp/bower_components/bootstrap-material-design/dist/js/ripples.js',
+            'main/webapp/bower_components/d3/d3.js',
+            'main/webapp/bower_components/nvd3/nv.d3.js',
+            'main/webapp/bower_components/angular-nvd3/dist/angular-nvd3.min.js',
             'main/webapp/bower_components/angular-mocks/angular-mocks.js',
             // endbower
             'main/webapp/scripts/app/app.js',

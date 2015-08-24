@@ -42,19 +42,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 class="m-t-md">Weight:</h4>
-                        </div>
-                        <div class="col-md-4 text-right">
-                            <a ui-sref="weight.add" class="btn btn-default btn-sm btn-raised">Add Weight</a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <img src="http://placehold.it/700x150?text=Weight Graph" class="img-responsive">
-                        </div>
-                    </div>
+
                     <div class="row m-t-sm">
                         <div class="col-md-6">
                             <h4 class="m-t-md">Blood Pressure:</h4>
@@ -66,7 +54,25 @@
                     </div>
                     <div class="row">
                         <div class="col-md-10">
-                            <img src="http://placehold.it/700x150?text=Blood Pressure Graph" class="img-responsive">
+                            <span ng-if="bpReadings.readings.length">
+                                <nvd3 options="bpOptions" data="bpData" class="with-3d-shadow with-transitions"></nvd3>
+                            </span>
+                            <span ng-if="!bpReadings.readings.length">
+                                <alert type="info">No blood pressure readings found.</alert>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="m-t-md">Weight:</h4>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a ui-sref="weight.add" class="btn btn-default btn-sm btn-raised">Add Weight</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <img src="http://placehold.it/700x150?text=Weight Graph" class="img-responsive">
                         </div>
                     </div>
 
