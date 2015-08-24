@@ -131,7 +131,7 @@ public class WeightResource {
         DateTime daysAgo = previousDate.toDateTimeAtCurrentTime();
         DateTime rightNow = today.toDateTimeAtCurrentTime();
 
-        List<Weight> weighIns = weightRepository.findAllByTimestampBetween(daysAgo, rightNow);
+        List<Weight> weighIns = weightRepository.findAllByTimestampBetweenOrderByTimestampDesc(daysAgo, rightNow);
         WeightByPeriod response = new WeightByPeriod("Last " + days + " Days", filterByUser(weighIns));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -148,7 +148,8 @@ public class WeightResource {
         LocalDate lastDay = date.dayOfMonth().withMaximumValue();
 
         List<Weight> weighIns = weightRepository.
-            findAllByTimestampBetween(firstDay.toDateTimeAtStartOfDay(), lastDay.plusDays(1).toDateTimeAtStartOfDay());
+            findAllByTimestampBetweenOrderByTimestampDesc(firstDay.toDateTimeAtStartOfDay(),
+                lastDay.plusDays(1).toDateTimeAtStartOfDay());
 
         DateTimeFormatter fmt = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM");
         String yearAndMonth = fmt.print(firstDay);
