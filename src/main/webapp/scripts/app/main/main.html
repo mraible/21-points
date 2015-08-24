@@ -4,7 +4,7 @@
             <span class="heart img-responsive img-rounded m-t-md"></span>
         </div>
         <div class="col-md-8">
-            <h1 ng-show="isAuthenticated()" translate="main.title"
+            <h1 ng-show="isAuthenticated() && account.firstName" translate="main.title"
                 translate-values="{name: '{{account.firstName}}'}">Welcome, Java Hipster!</h1>
 
             <h1 ng-hide="isAuthenticated()">Welcome!</h1>
