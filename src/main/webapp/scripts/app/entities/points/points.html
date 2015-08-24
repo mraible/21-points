@@ -64,7 +64,9 @@
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
             <tr ng-repeat="points in pointsList">
-                <td><a ui-sref="points.detail({id:points.id})">{{points.date | date}}</a></td>
+                <td class="text-nowrap">
+                    <a ui-sref="points.detail({id:points.id})">{{points.date | date}}</a>
+                </td>
                 <td class="text-center">
                     <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.exercise,
                                                     'glyphicon-remove text-danger': !points.exercise}"></i>
@@ -77,7 +79,9 @@
                     <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.alcohol,
                                                     'glyphicon-remove text-danger': !points.alcohol}"></i>
                 </td>
-                <td>{{points.notes}}</td>
+                <td>
+                    <div class="truncate cursor" popover="{{points.notes}}">{{points.notes}}</div>
+                </td>
                 <td>{{points.user.login}}</td>
                 <td>
                     <div class="btn-group m-n">
