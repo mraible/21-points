@@ -16,6 +16,7 @@ describe('Services Tests ', function () {
             $httpBackend.whenGET(/api\/points-this-week\?cacheBuster=\d+/).respond({});
             $httpBackend.whenGET(/api\/my-preferences\?cacheBuster=\d+/).respond({});
             $httpBackend.whenGET(/api\/bp-by-days\/30\?cacheBuster=\d+/).respond({});
+            $httpBackend.whenGET(/api\/weight-by-days\/30\?cacheBuster=\d+/).respond({});
             $httpBackend.whenGET('scripts/app/main/main.html').respond({});
             $httpBackend.whenGET('scripts/components/navbar/navbar.html').respond({});
             var globalJson = new RegExp('i18n\/.*\/global.json');
