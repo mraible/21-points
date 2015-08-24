@@ -28,14 +28,12 @@ angular.module('21pointsApp')
                 });
             });
 
-            $scope.bpData = [
-                {
-                    values: $scope.systolics,
-                    key: 'Systolic'
-                }, {
-                    values: $scope.diastolics,
-                    key: 'Diastolic'
-                }
-            ];
+            $scope.bpData = [{
+                values: $scope.systolics,
+                key: 'Systolic'
+            }, {
+                values: $scope.diastolics,
+                key: 'Diastolic'
+            }];
         }
     });
