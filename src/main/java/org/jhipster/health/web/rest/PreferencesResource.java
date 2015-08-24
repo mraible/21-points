@@ -111,15 +111,15 @@ public class PreferencesResource {
     public ResponseEntity<Preferences> getUserPreferences() {
         String username = SecurityUtils.getCurrentLogin();
         log.debug("REST request to get Preferences : {}", username);
-        Optional<User> userPreferences = userRepository.findOneByLogin(username);
-        Preferences defaultPreferences = new Preferences();
-        defaultPreferences.setWeeklyGoal(10); // default
+        User user = userRepository.findOneByLogin(username).get();
 
-        return Optional.ofNullable(userPreferences.get())
-            .map(user -> new ResponseEntity<>(
-                user.getPreferences(),
-                HttpStatus.OK))
-            .orElse(new ResponseEntity<>(defaultPreferences, HttpStatus.OK));
+        if (user.getPreferences() != null) {
+            return new ResponseEntity<>(user.getPreferences(), HttpStatus.OK);
+        } else {
+            Preferences defaultPreferences = new Preferences();
+            defaultPreferences.setWeeklyGoal(10); // default
+            return new ResponseEntity<>(defaultPreferences, HttpStatus.OK);
+        }
     }
 
     /**

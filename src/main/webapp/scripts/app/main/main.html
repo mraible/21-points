@@ -24,7 +24,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-10">
-                            <div class="progress progress-lg" style="min-width: 300px">
+                            <div class="progress progress-lg" ng-show="pointsThisWeek.points">
                                 <div class="progress-bar progress-bar-striped" role="progressbar"
                                      ng-class="{'progress-bar-success': pointsThisWeek.points >= preferences.weeklyGoal,
                                                 'progress-bar-danger': pointsThisWeek.points < 10,
@@ -36,10 +36,10 @@
                                     </span>
                                     <span class="sr-only">{{pointsPercentage}} points this week</span>
                                 </div>
-                                <span ng-hide="pointsThisWeek.points" class="m-l-sm text-danger">
-                                    No points yet this week, better get moving!
-                                </span>
                             </div>
+                            <alert type="info" ng-hide="pointsThisWeek.points">
+                                No points yet this week, better get moving!
+                            </alert>
                         </div>
                     </div>
 
