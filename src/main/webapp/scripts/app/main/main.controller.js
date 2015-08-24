@@ -11,7 +11,6 @@ angular.module('21pointsApp')
         $scope.pointsPercentage = (points.points / 21) * 100;
         $scope.preferences = preferences;
 
-
         $scope.bpReadings = bpReadings;
         if (bpReadings.readings.length) {
             $scope.bpOptions = Chart.getBpChartConfig();
@@ -19,17 +18,14 @@ angular.module('21pointsApp')
             $scope.systolics = [];
             $scope.diastolics = [];
             bpReadings.readings.forEach(function (item) {
-                $scope.systolics.push(
-                    {
-                        x: new Date(item.timestamp),
-                        y: item.systolic
-                    });
-                $scope.diastolics.push(
-                    {
-                        x: new Date(item.timestamp),
-                        y: item.diastolic
-                    }
-                );
+                $scope.systolics.push({
+                    x: new Date(item.timestamp),
+                    y: item.systolic
+                });
+                $scope.diastolics.push({
+                    x: new Date(item.timestamp),
+                    y: item.diastolic
+                });
             });
 
             $scope.bpData = [
@@ -41,8 +37,5 @@ angular.module('21pointsApp')
                     key: 'Diastolic'
                 }
             ];
-
-            console.log(JSON.stringify($scope.bpData));
         }
-
     });
