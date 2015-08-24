@@ -214,7 +214,7 @@ body {
 }
 
 .butterbar .bar {
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 0;
     text-indent: -9999px;

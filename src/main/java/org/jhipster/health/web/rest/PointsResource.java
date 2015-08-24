@@ -122,7 +122,9 @@ public class PointsResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<PointsPerWeek> getPointsThisWeek(TimeZone timeZone) {
-        DateTimeZone usersTimeZone = DateTimeZone.forID(timeZone.getID());
+        // TODO: allow user to set timezone in preferences.
+        // On Heroku, timeZone.getID() is "Etc/UTC"
+        DateTimeZone usersTimeZone = DateTimeZone.forID("America/Denver");
         log.debug("Getting points for week with timezone: {}", usersTimeZone);
 
         // Get current date
