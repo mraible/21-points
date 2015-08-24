@@ -20,13 +20,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -119,9 +122,11 @@ public class PointsResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<PointsPerWeek> getPointsThisWeek() {
+    public ResponseEntity<PointsPerWeek> getPointsThisWeek(HttpServletRequest request) {
+        TimeZone timeZone = (TimeZone) request.getAttribute(CookieLocaleResolver.TIME_ZONE_REQUEST_ATTRIBUTE_NAME);
+        log.debug("Getting points for week with timezone: {}", timeZone);
         // Get current date
-        LocalDate now = new LocalDate();
+        LocalDate now = new LocalDate(timeZone);
 
         // Get first day of week
         LocalDate startOfWeek = now.withDayOfWeek(DateTimeConstants.MONDAY);
@@ -134,15 +139,10 @@ public class PointsResource {
     }
 
     private ResponseEntity<PointsPerWeek> calculatePoints(LocalDate startOfWeek, List<Points> points) {
-        Integer numPoints = 0;
-        // todo: use Java 8 streams/filters
-        String currentLogin = SecurityUtils.getCurrentLogin();
-        for (Points p : points) {
-            // only count if points belongs to the current user
-            if (p.getUser() != null && p.getUser().getLogin().equals(currentLogin)) {
-                numPoints += p.getExercise() + p.getMeals() + p.getAlcohol();
-            }
-        }
+        Integer numPoints = points.stream()
+            .filter(p -> p.getUser().getLogin().equals(SecurityUtils.getCurrentLogin()))
+            .mapToInt(p -> p.getExercise() + p.getMeals() + p.getAlcohol())
+            .sum();
 
         PointsPerWeek count = new PointsPerWeek(startOfWeek, numPoints);
         return new ResponseEntity<>(count, HttpStatus.OK);

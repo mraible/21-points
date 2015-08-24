@@ -318,4 +318,35 @@ public class PointsResourceTest {
             .andExpect(jsonPath("$.week").value(aPreviousMonday.toString()))
             .andExpect(jsonPath("$.points").value(3));
     }
+
+    @Test
+    @Transactional
+    public void getPointsOnSunday() throws Exception {
+        LocalDate today = new LocalDate();
+        LocalDate sunday = today.withDayOfWeek(DateTimeConstants.SUNDAY);
+        User user = userRepository.findOneByLogin("user").get();
+        points = new Points(sunday, 1, 1, 0, user);
+        pointsRepository.saveAndFlush(points);
+
+        // create security-aware mockMvc
+        restPointsMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
+        // Get all the points
+        restPointsMockMvc.perform(get("/api/points")
+            .with(user("user").roles("USER")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$", hasSize(1)));
+
+        // Get the points for this week only
+        restPointsMockMvc.perform(get("/api/points-this-week")
+            .with(user("user").roles("USER")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.week").value(sunday.withDayOfWeek(DateTimeConstants.MONDAY).toString()))
+            .andExpect(jsonPath("$.points").value(2));
+    }
 }
