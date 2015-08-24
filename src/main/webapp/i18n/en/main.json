@@ -14,7 +14,11 @@
         "like": "If you like JHipster, don't forget to give it a star on",
         "github": "GitHub",
         "points": {
-            "thisWeek": "Points this week:"
-        }
+            "thisWeek": "Points this week:",
+            "thisWeekMobile": "Points:"
+        },
+        "bloodPressure": "Blood Pressure",
+        "bloodPressureMobile": "BP",
+        "weight": "Weight"
     }
 }

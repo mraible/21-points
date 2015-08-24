@@ -14,9 +14,13 @@
             <div ng-switch="isAuthenticated()">
                 <div ng-switch-when="true">
                     <div class="row">
-                        <div class="col-md-6 col-xs-6">
-                            <h4 translate="main.points.thisWeek" class="m-t-sm">Points for the week of
-                                {{pointsThisWeek.week | date: 'longDate'}}:</h4>
+                        <div class="col-md-6 col-xs-5">
+                            <h4 translate="main.points.thisWeek" class="m-t-sm xs-hidden">
+                                Points for the week of {{pointsThisWeek.week | date: 'longDate'}}:
+                            </h4>
+                            <h4 translate="main.points.thisWeekMobile" class="m-t-sm xs-visible">
+                                Points for {{pointsThisWeek.week | date: 'longDate'}}:
+                            </h4>
                         </div>
                         <div class="col-md-4 text-right">
                             <a ui-sref="points.add" class="btn btn-primary btn-raised m-n m-b-xs">Add Points</a>
@@ -44,8 +48,9 @@
                     </div>
 
                     <div class="row m-t-sm">
-                        <div class="col-md-6 col-xs-5 text-nowrap">
-                            <h4 class="m-t-md">Blood Pressure:</h4>
+                        <div class="col-md-6 col-xs-3 text-nowrap">
+                            <h4 class="m-t-md xs-hidden" translate="main.bloodPressure">Blood Pressure:</h4>
+                            <h4 class="m-t-md xs-visible" translate="main.bloodPressureMobile">BP:</h4>
                         </div>
                         <div class="col-md-4 text-right">
                             <a ui-sref="bloodPressure.add" class="btn btn-default btn-sm btn-raised">
@@ -64,7 +69,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-xs-6">
-                            <h4 class="m-t-md">Weight:</h4>
+                            <h4 class="m-t-md" translate="main.weight">Weight:</h4>
                         </div>
                         <div class="col-md-4 text-right">
                             <a ui-sref="weight.add" class="btn btn-default btn-sm btn-raised">Add Weight</a>
