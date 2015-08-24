@@ -14,7 +14,7 @@
             <div ng-switch="isAuthenticated()">
                 <div ng-switch-when="true">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-xs-6">
                             <h4 translate="main.points.thisWeek" class="m-t-sm">Points for the week of
                                 {{pointsThisWeek.week | date: 'longDate'}}:</h4>
                         </div>
@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="row m-t-sm">
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-xs-5 text-nowrap">
                             <h4 class="m-t-md">Blood Pressure:</h4>
                         </div>
                         <div class="col-md-4 text-right">
@@ -63,7 +63,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-xs-6">
                             <h4 class="m-t-md">Weight:</h4>
                         </div>
                         <div class="col-md-4 text-right">
