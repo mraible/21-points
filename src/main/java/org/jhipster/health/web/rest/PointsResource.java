@@ -10,6 +10,7 @@ import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,16 +21,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -122,12 +120,13 @@ public class PointsResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<PointsPerWeek> getPointsThisWeek(HttpServletRequest request) {
-        TimeZone timeZone = (TimeZone) request.getAttribute(CookieLocaleResolver.TIME_ZONE_REQUEST_ATTRIBUTE_NAME);
+    public ResponseEntity<PointsPerWeek> getPointsThisWeek() {
+        // todo: get timezone from user's browser
+        DateTimeZone timeZone = DateTimeZone.forID("America/Denver");
         log.debug("Getting points for week with timezone: {}", timeZone);
-        // Get current date
-        LocalDate now = new LocalDate(timeZone);
 
+        // Get current date
+        LocalDate now = new LocalDate();
         // Get first day of week
         LocalDate startOfWeek = now.withDayOfWeek(DateTimeConstants.MONDAY);
         // Get last day of week
