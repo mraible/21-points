@@ -7,12 +7,16 @@ import org.jhipster.health.repository.WeightRepository;
 import org.jhipster.health.repository.search.WeightSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.dto.WeightByPeriod;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +30,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryString;
@@ -52,8 +57,8 @@ public class WeightResource {
      * POST  /weights -> Create a new weight.
      */
     @RequestMapping(value = "/weights",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        method = RequestMethod.POST,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Weight> create(@Valid @RequestBody Weight weight) throws URISyntaxException {
         log.debug("REST request to save Weight : {}", weight);
@@ -70,8 +75,8 @@ public class WeightResource {
         Weight result = weightRepository.save(weight);
         weightSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/weights/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert("weight", result.getId().toString()))
-                .body(result);
+            .headers(HeaderUtil.createEntityCreationAlert("weight", result.getId().toString()))
+            .body(result);
     }
 
     /**
@@ -89,19 +94,19 @@ public class WeightResource {
         Weight result = weightRepository.save(weight);
         weightSearchRepository.save(weight);
         return ResponseEntity.ok()
-                .headers(HeaderUtil.createEntityUpdateAlert("weight", weight.getId().toString()))
-                .body(result);
+            .headers(HeaderUtil.createEntityUpdateAlert("weight", weight.getId().toString()))
+            .body(result);
     }
 
     /**
      * GET  /weights -> get all the weights.
      */
     @RequestMapping(value = "/weights",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<List<Weight>> getAll(@RequestParam(value = "page" , required = false) Integer offset,
-                                  @RequestParam(value = "per_page", required = false) Integer limit)
+    public ResponseEntity<List<Weight>> getAll(@RequestParam(value = "page", required = false) Integer offset,
+                                               @RequestParam(value = "per_page", required = false) Integer limit)
         throws URISyntaxException {
         Page<Weight> page;
         if (SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
@@ -114,11 +119,56 @@ public class WeightResource {
     }
 
     /**
+     * GET  /bp-by-days -> get all the weigh-ins by last x days.
+     */
+    @RequestMapping(value = "/weight-by-days/{days}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<WeightByPeriod> getByDays(@PathVariable int days) {
+        LocalDate today = new LocalDate();
+        LocalDate previousDate = today.minusDays(days);
+        DateTime daysAgo = previousDate.toDateTimeAtCurrentTime();
+        DateTime rightNow = today.toDateTimeAtCurrentTime();
+
+        List<Weight> weighIns = weightRepository.findAllByTimestampBetween(daysAgo, rightNow);
+        WeightByPeriod response = new WeightByPeriod("Last " + days + " Days", filterByUser(weighIns));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /bp-by-days -> get all the blood pressure readings for a particular month.
+     */
+    @RequestMapping(value = "/weight-by-month/{date}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<WeightByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") LocalDate date) {
+        LocalDate firstDay = date.dayOfMonth().withMinimumValue();
+        LocalDate lastDay = date.dayOfMonth().withMaximumValue();
+
+        List<Weight> weighIns = weightRepository.
+            findAllByTimestampBetween(firstDay.toDateTimeAtStartOfDay(), lastDay.plusDays(1).toDateTimeAtStartOfDay());
+
+        DateTimeFormatter fmt = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM");
+        String yearAndMonth = fmt.print(firstDay);
+
+        WeightByPeriod response = new WeightByPeriod(yearAndMonth, filterByUser(weighIns));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private List<Weight> filterByUser(List<Weight> readings) {
+        Stream<Weight> userReadings = readings.stream()
+            .filter(bp -> bp.getUser().getLogin().equals(SecurityUtils.getCurrentLogin()));
+        return userReadings.collect(Collectors.toList());
+    }
+
+    /**
      * GET  /weights/:id -> get the "id" weight.
      */
     @RequestMapping(value = "/weights/{id}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Weight> get(@PathVariable Long id) {
         log.debug("REST request to get Weight : {}", id);
@@ -133,8 +183,8 @@ public class WeightResource {
      * DELETE  /weights/:id -> delete the "id" weight.
      */
     @RequestMapping(value = "/weights/{id}",
-            method = RequestMethod.DELETE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        method = RequestMethod.DELETE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.debug("REST request to delete Weight : {}", id);

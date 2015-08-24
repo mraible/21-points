@@ -7,6 +7,7 @@ import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.dto.BloodPressureByPeriod;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import org.joda.time.DateTime;

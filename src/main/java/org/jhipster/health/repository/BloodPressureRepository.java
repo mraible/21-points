@@ -17,7 +17,7 @@ public interface BloodPressureRepository extends JpaRepository<BloodPressure,Lon
     @Query("select bloodPressure from BloodPressure bloodPressure where bloodPressure.user.login = ?#{principal.username} order by bloodPressure.timestamp desc")
     Page<BloodPressure> findAllForCurrentUser(Pageable pageable);
 
-    List<BloodPressure> findAllByTimestampBetween(DateTime firstDate, DateTime secondDate);
-
     Page<BloodPressure> findAllByOrderByTimestampDesc(Pageable pageable);
+
+    List<BloodPressure> findAllByTimestampBetween(DateTime firstDate, DateTime secondDate);
 }

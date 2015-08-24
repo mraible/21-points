@@ -33,6 +33,9 @@ angular.module('21pointsApp')
                     },
                     bpReadings: function(BloodPressure) {
                         return BloodPressure.last30Days().$promise;
+                    },
+                    weights: function(Weight) {
+                        return Weight.last30Days().$promise;
                     }
                 }
             })

@@ -7,6 +7,7 @@ import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.dto.PointsPerWeek;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import org.joda.time.DateTimeConstants;

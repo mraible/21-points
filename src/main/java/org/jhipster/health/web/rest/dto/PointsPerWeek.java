@@ -1,4 +1,4 @@
-package org.jhipster.health.web.rest;
+package org.jhipster.health.web.rest.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

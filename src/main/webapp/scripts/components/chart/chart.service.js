@@ -30,11 +30,11 @@ var bpChartConfig = {
             showMaxMin: false,
             tickFormat: function(d){
                 return d3.time.format("%b %d")(new Date(d));
-            },
+            }
         },
-        xDomain: [priorDate, today],
+        "xDomain": [priorDate, today],
         "yAxis": {
-            "axisLabel": "Blood Pressure",
+            "axisLabel": "",
             "axisLabelDistance": 30
         },
         "transitionDuration": 250

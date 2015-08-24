@@ -83,6 +83,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/points-by-week/**").permitAll()
             .antMatchers("/api/blood-pressure").permitAll()
             .antMatchers("/api/bp-by-days/**").permitAll()
+            .antMatchers("/api/weight-by-days/**").permitAll()
             .antMatchers("/api/weight").permitAll()
             .antMatchers("/api/logs/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/api/audits/**").hasAuthority(AuthoritiesConstants.ADMIN)

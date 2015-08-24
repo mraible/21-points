@@ -1,4 +1,4 @@
-package org.jhipster.health.web.rest;
+package org.jhipster.health.web.rest.dto;
 
 import org.jhipster.health.domain.BloodPressure;
 

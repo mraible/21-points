@@ -4,6 +4,11 @@ angular.module('21pointsApp')
     .factory('Weight', function ($resource, DateUtils) {
         return $resource('api/weights/:id', {}, {
             'query': { method: 'GET', isArray: true},
+            'last30Days': {
+                method: 'GET',
+                isArray: false,
+                url: 'api/weight-by-days/30'
+            },
             'get': {
                 method: 'GET',
                 transformResponse: function (data) {
