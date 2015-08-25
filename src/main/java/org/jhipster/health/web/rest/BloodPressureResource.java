@@ -118,9 +118,7 @@ public class BloodPressureResource {
     /**
      * GET  /bp-by-days -> get all the blood pressure readings by last x days.
      */
-    @RequestMapping(value = "/bp-by-days/{days}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/bp-by-days/{days}")
     @Timed
     public ResponseEntity<BloodPressureByPeriod> getByDays(@PathVariable int days) {
         LocalDate today = new LocalDate();
@@ -136,9 +134,7 @@ public class BloodPressureResource {
     /**
      * GET  /bp-by-days -> get all the blood pressure readings for a particular month.
      */
-    @RequestMapping(value = "/bp-by-month/{date}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/bp-by-month/{date}")
     @Timed
     public ResponseEntity<BloodPressureByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") LocalDate date) {
         LocalDate firstDay = date.dayOfMonth().withMinimumValue();

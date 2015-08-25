@@ -118,9 +118,7 @@ public class PointsResource {
     /**
      * GET  /points -> get all the points for the current week.
      */
-    @RequestMapping(value = "/points-this-week",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/points-this-week")
     @Timed
     public ResponseEntity<PointsPerWeek> getPointsThisWeek(TimeZone timeZone) {
         // TODO: allow user to set timezone in preferences.
@@ -152,9 +150,7 @@ public class PointsResource {
     /**
      * GET  /points -> get all the points for a particular current week.
      */
-    @RequestMapping(value = "/points-by-week/{startDate}",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/points-by-week/{startDate}")
     @Timed
     public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate startDate) {
         // Get last day of week

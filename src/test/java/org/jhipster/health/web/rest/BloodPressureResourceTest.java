@@ -276,14 +276,20 @@ public class BloodPressureResourceTest {
     private void createBloodPressureByMonth(DateTime firstOfMonth, DateTime firstDayOfLastMonth) {
         User user = userRepository.findOneByLogin("user").get();
         // this month
-        bloodPressureRepository.saveAndFlush(new BloodPressure(firstOfMonth, 120, 80, user));
-        bloodPressureRepository.saveAndFlush(new BloodPressure(firstOfMonth.plusDays(10), 125, 75, user));
-        bloodPressureRepository.saveAndFlush(new BloodPressure(firstOfMonth.plusDays(20), 100, 69, user));
+        bloodPressure = new BloodPressure(firstOfMonth, 120, 80, user);
+        bloodPressureRepository.saveAndFlush(bloodPressure);
+        bloodPressure = new BloodPressure(firstOfMonth.plusDays(10), 125, 75, user);
+        bloodPressureRepository.saveAndFlush(bloodPressure);
+        bloodPressure = new BloodPressure(firstOfMonth.plusDays(20), 100, 69, user);
+        bloodPressureRepository.saveAndFlush(bloodPressure);
 
         // last month
-        bloodPressureRepository.saveAndFlush(new BloodPressure(firstDayOfLastMonth, 130, 90, user));
-        bloodPressureRepository.saveAndFlush(new BloodPressure(firstDayOfLastMonth.plusDays(11), 135, 85, user));
-        bloodPressureRepository.saveAndFlush(new BloodPressure(firstDayOfLastMonth.plusDays(23), 130, 75, user));
+        bloodPressure = new BloodPressure(firstDayOfLastMonth, 130, 90, user);
+        bloodPressureRepository.saveAndFlush(bloodPressure);
+        bloodPressure = new BloodPressure(firstDayOfLastMonth.plusDays(11), 135, 85, user);
+        bloodPressureRepository.saveAndFlush(bloodPressure);
+        bloodPressure = new BloodPressure(firstDayOfLastMonth.plusDays(23), 130, 75, user);
+        bloodPressureRepository.saveAndFlush(bloodPressure);
     }
 
     @Test
@@ -312,7 +318,7 @@ public class BloodPressureResourceTest {
             .with(user("user").roles("USER")))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.period").value("Last 30 Days"))
             .andExpect(jsonPath("$.readings.[*].systolic").value(hasItem(120)))
             .andExpect(jsonPath("$.readings.[*].diastolic").value(hasItem(69)));
@@ -339,7 +345,7 @@ public class BloodPressureResourceTest {
             .with(user("user").roles("USER")))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.period").value(fmt.print(firstDayOfLastMonth)))
             .andExpect(jsonPath("$.readings.[*].systolic").value(hasItem(130)))
             .andExpect(jsonPath("$.readings.[*].diastolic").value(hasItem(90)));

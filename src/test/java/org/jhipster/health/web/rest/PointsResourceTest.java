@@ -291,7 +291,7 @@ public class PointsResourceTest {
         restPointsMockMvc.perform(get("/api/points-this-week")
             .with(user("user").roles("USER")))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.week").value(thisMonday.toString()))
             .andExpect(jsonPath("$.points").value(5));
     }
@@ -314,7 +314,7 @@ public class PointsResourceTest {
         restPointsMockMvc.perform(get("/api/points-by-week/{startDate}", aPreviousMonday.toString())
             .with(user("user").roles("USER")))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.week").value(aPreviousMonday.toString()))
             .andExpect(jsonPath("$.points").value(3));
     }
@@ -338,14 +338,14 @@ public class PointsResourceTest {
         restPointsMockMvc.perform(get("/api/points")
             .with(user("user").roles("USER")))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)));
 
         // Get the points for this week only
         restPointsMockMvc.perform(get("/api/points-this-week")
             .with(user("user").roles("USER")))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.week").value(sunday.withDayOfWeek(DateTimeConstants.MONDAY).toString()))
             .andExpect(jsonPath("$.points").value(2));
     }
