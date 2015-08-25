@@ -71,16 +71,16 @@ module.exports = function (config) {
         // - IE (only Windows)
         browsers: ['PhantomJS'],
 
+        // Continuous Integration mode
+        // if true, it capture browsers, run tests and exit
+        singleRun: false,
+
         plugins: [
             'karma-chrome-launcher',
             'karma-phantomjs-launcher',
             'karma-jasmine',
             'karma-junit-reporter'
         ],
-
-        // Continuous Integration mode
-        // if true, it capture browsers, run tests and exit
-        singleRun: false,
 
         reporters: ['dots', 'junit'],
 
