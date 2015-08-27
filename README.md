@@ -50,26 +50,26 @@ To setup this project in Jenkins, use the following configuration:
 
 * Project name: `21-points`
 * Source Code Management
-** Git Repository: `git@bitbucket.org:mraible/21-points.git`
-** Branches to build: `*/master`
-** Additional Behaviours: `Wipe out repository & force clone`
+  * Git Repository: `git@bitbucket.org:mraible/21-points.git`
+  * Branches to build: `*/master`
+  * Additional Behaviours: `Wipe out repository & force clone`
 * Build Triggers
-** Poll SCM / Schedule: `H/5 * * * *`
+  * Poll SCM / Schedule: `H/5 * * * *`
 * Build
-** Invoke Gradle script / Use Gradle Wrapper / Tasks: `-Pprod clean test bootRepackage`
+  * Invoke Gradle script / Use Gradle Wrapper / Tasks: `-Pprod clean test bootRepackage`
 * Post-build Actions
-** Build other projects: `21-points-deploy`
-** Publish JUnit test result report / Test Report XMLs: `build/test-results/*.xml`
+  * Build other projects: `21-points-deploy`
+  * Publish JUnit test result report / Test Report XMLs: `build/test-results/*.xml`
 
 Then create another job to deploy to Heroku.
 
 * Project name: `21-points-deploy`
 * Source Code Management
-** Git Repository: `git@bitbucket.org:mraible/21-points.git`
-** Branches to build: `*/master`
+  * Git Repository: `git@bitbucket.org:mraible/21-points.git`
+  * Branches to build: `*/master`
 * Build
-** Invoke Gradle script / Use Gradle Wrapper / Tasks: `-Pprod bootRepackage -x test`
-** Execute Shell / Command: `heroku deploy:jar --jar build/libs/*.war --app health-by-points`
+  * Invoke Gradle script / Use Gradle Wrapper / Tasks: `-Pprod bootRepackage -x test`
+  * Execute Shell / Command: `heroku deploy:jar --jar build/libs/*.war --app health-by-points`
 
 [Node.js]: https://nodejs.org/
 [Bower]: http://bower.io/
