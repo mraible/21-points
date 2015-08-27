@@ -16,7 +16,7 @@ We use [Grunt][] as our build system. Install the grunt command-line tool global
 Run the following commands in two separate terminals to create a blissful development experience where your browser 
 auto-refreshes when files change on your hard drive.
 
-    ./gradlew
+    gradlew
     grunt
 
 Bower is used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by 
