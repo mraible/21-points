@@ -414,3 +414,26 @@ only screen and (                min-resolution: 2dppx) {
     text-overflow: ellipsis;
     cursor: pointer;
 }
+
+.navbar {
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+}
+
+.development {
+    position: fixed;
+}
+
+body > .container {
+    padding-top: 80px;
+}
+
+/* Smartphones */
+@media handheld and (max-width: 480px), screen and (max-device-width: 480px), screen and (max-width: 1000px) {
+    .navbar, .development {
+        position: absolute;
+    }
+
+
+}
