@@ -131,4 +131,17 @@ angular.module('21pointsApp')
                         })
                 }]
             })
+            .state('history', {
+                parent: 'home',
+                url: 'history',
+                data: {
+                    roles: ['ROLE_USER']
+                },
+                views: {
+                    'content@': {
+                        templateUrl: 'scripts/app/main/history.html',
+                        controller: 'CalendarController'
+                    }
+                }
+            })
     });
