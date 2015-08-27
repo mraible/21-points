@@ -65,11 +65,11 @@ Then create another job to deploy to Heroku.
 
 * Project name: `21-points-deploy`
 * Source Code Management
-  * Git Repository: `git@bitbucket.org:mraible/21-points.git`
-  * Branches to build: `*/master`
+    * Git Repository: `git@bitbucket.org:mraible/21-points.git`
+    * Branches to build: `*/master`
 * Build
-  * Invoke Gradle script / Use Gradle Wrapper / Tasks: `-Pprod bootRepackage -x test`
-  * Execute Shell / Command: `heroku deploy:jar --jar build/libs/*.war --app health-by-points`
+    * Invoke Gradle script / Use Gradle Wrapper / Tasks: `-Pprod bootRepackage -x test`
+    * Execute Shell / Command: `heroku deploy:jar --jar build/libs/*.war --app health-by-points`
 
 [Node.js]: https://nodejs.org/
 [Bower]: http://bower.io/
