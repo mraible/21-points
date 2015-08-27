@@ -392,8 +392,5 @@ module.exports = function (grunt) {
         'buildcontrol:openshift'
     ]);
 
-    grunt.registerTask('default', [
-        'test',
-        'build'
-    ]);
+    grunt.registerTask('default', ['serve']);
 };

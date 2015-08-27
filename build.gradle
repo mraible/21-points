@@ -16,6 +16,7 @@ targetCompatibility=1.8
 apply plugin: 'maven'
 apply plugin: 'spring-boot'
 apply plugin: 'war'
+defaultTasks 'bootRun'
 
 bootRepackage {
    mainClass = 'org.jhipster.health.Application'
@@ -34,11 +35,8 @@ bootRun {
 }
 
 apply from: 'yeoman.gradle'
-
-
 apply from: 'liquibase.gradle'
 apply from: 'gatling.gradle'
-
 apply from: 'mapstruct.gradle'
 
 if (project.hasProperty('prod')) {
