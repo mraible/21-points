@@ -39,6 +39,7 @@ module.exports = function (config) {
             'main/webapp/bower_components/d3/d3.js',
             'main/webapp/bower_components/nvd3/nv.d3.js',
             'main/webapp/bower_components/angular-nvd3/dist/angular-nvd3.min.js',
+            'main/webapp/bower_components/angular-loading-bar/build/loading-bar.js',
             'main/webapp/bower_components/angular-mocks/angular-mocks.js',
             // endbower
             'main/webapp/scripts/app/app.js',

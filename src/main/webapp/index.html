@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/material.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css" />
     <link rel="stylesheet" href="bower_components/nvd3/src/nv.d3.css" />
+    <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css assets/styles/main.css -->
@@ -25,7 +26,6 @@
     your browser</a> to improve your experience.</p>
 <![endif]-->
 
-<div ui-butterbar></div>
 <div ng-show="{{ENV === 'dev'}}" class="development" ng-cloak=""></div>
 <div ui-view="navbar" ng-cloak="">
     <div class="navbar navbar-default shadow-z-2"></div>
@@ -79,6 +79,7 @@
 <script src="bower_components/d3/d3.js"></script>
 <script src="bower_components/nvd3/nv.d3.js"></script>
 <script src="bower_components/angular-nvd3/dist/angular-nvd3.min.js"></script>
+<script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 
@@ -114,7 +115,6 @@
 <script src="scripts/components/alert/alert.directive.js"></script>
 <script src="scripts/components/util/parse-links.service.js"></script>
 <script src="scripts/components/util/dateutil.service.js"></script>
-<script src="scripts/components/ui/ui-butterbar.js"></script>
 <script src="scripts/app/account/account.js"></script>
 <script src="scripts/app/account/activate/activate.js"></script>
 <script src="scripts/app/account/activate/activate.controller.js"></script>
