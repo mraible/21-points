@@ -17,11 +17,9 @@ angular.module('21pointsApp')
         /* event source that contains custom events on the scope */
         $scope.events = [];
         Points.byMonth({month: toJSONLocal(date)}, function (data) {
-            console.log(JSON.stringify(data));
             data.points.forEach(function (item) {
-                $scope.events.push({title: 'Points', start: new Date(item.date), allDay: false})
-            })
-            console.log(JSON.stringify($scope.events));
+                $scope.events.push({title: item.exercise + item.meals + item.alcohol + ' Points', start: new Date(item.date), allDay: false})
+            });
         });
 
         /*{title: 'All Day Event', start: new Date(y, m, 1)},
