@@ -32,6 +32,8 @@ module.exports = function (config) {
             'main/webapp/bower_components/angular-dynamic-locale/src/tmhDynamicLocale.js',
             'main/webapp/bower_components/angular-local-storage/dist/angular-local-storage.js',
             'main/webapp/bower_components/angular-cache-buster/angular-cache-buster.js',
+            'main/webapp/bower_components/angular-animate/angular-animate.js',
+            'main/webapp/bower_components/angularjs-toaster/toaster.js',
             'main/webapp/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
             'main/webapp/bower_components/ng-file-upload/ng-file-upload.js',
             'main/webapp/bower_components/bootstrap-material-design/dist/js/material.js',
@@ -42,6 +44,7 @@ module.exports = function (config) {
             'main/webapp/bower_components/moment/moment.js',
             'main/webapp/bower_components/fullcalendar/dist/fullcalendar.js',
             'main/webapp/bower_components/angular-ui-calendar/src/calendar.js',
+            'main/webapp/bower_components/angular-loading-bar/build/loading-bar.js',
             'main/webapp/bower_components/angular-mocks/angular-mocks.js',
             // endbower
             'main/webapp/scripts/app/app.js',

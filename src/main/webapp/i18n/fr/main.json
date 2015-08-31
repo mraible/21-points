@@ -1,17 +1,16 @@
 {
     "main": {
         "title": "Bienvenue, Java Hipster !",
-        "subtitle": "Ceci est votre page d'accueil",
+        "subtitle": "21 Points est ici pour le suivi de votre santé et améliorer votre vie.",
         "logged": {
             "message": "Vous êtes connecté en tant que \"{{username}}\"."
         },
-        "question": "Si vous avez des questions à propos de JHipster:",
+        "question": "Si vous avez des questions au sujet de la JHipster Mini-Book ou 21 Points:",
         "link": {
-            "homepage": "Page d'accueil de JHipster",
-            "stackoverflow": "JHipster sur Stack Overflow",
-            "bugtracker": "JHipster bug tracker",
-            "chat": "JHipster public chat room",
-            "contact": "Contactez-nous sur Twitter @java_hipster"
+            "homepage": "JHipster Mini-Book Blog",
+            "stackoverflow": "JHipster Mini-Book sur Stack Overflow",
+            "contact": "Contactez-nous sur Twitter @jhipster_book",
+            "issues": "Signaler un problème avec 21 Points"
         },
         "like": "Si vous aimez JHipster, donnez nous une étoile sur",
         "github": "Github"

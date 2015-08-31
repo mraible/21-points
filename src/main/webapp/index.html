@@ -10,9 +10,11 @@
     <!-- build:css assets/styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/angularjs-toaster/toaster.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/material.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css" />
     <link rel="stylesheet" href="bower_components/nvd3/src/nv.d3.css" />
+    <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
     <link rel="stylesheet" href="bower_components/fullcalendar/dist/fullcalendar.css" />
     <!-- endbower -->
     <!-- endbuild -->
@@ -26,7 +28,6 @@
     your browser</a> to improve your experience.</p>
 <![endif]-->
 
-<div ui-butterbar></div>
 <div ng-show="{{ENV === 'dev'}}" class="development" ng-cloak=""></div>
 <div ui-view="navbar" ng-cloak="">
     <div class="navbar navbar-default shadow-z-2"></div>
@@ -40,15 +41,16 @@
     </div>
 </div>
 
-<!-- Google Analytics: uncomment and change UA-XXXXX-X to be your site's ID.
 <script>
-    (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-    function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-    e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-    e.src='//www.google-analytics.com/analytics.js';
-    r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-    ga('create','UA-XXXXX-X');ga('send','pageview');
-</script>-->
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-66855820-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
 
 <!-- build:js scripts/vendor.js -->
 <!-- bower:js -->
@@ -72,6 +74,8 @@
 <script src="bower_components/angular-dynamic-locale/src/tmhDynamicLocale.js"></script>
 <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
 <script src="bower_components/angular-cache-buster/angular-cache-buster.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angularjs-toaster/toaster.js"></script>
 <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
 <script src="bower_components/ng-file-upload/ng-file-upload.js"></script>
 <script src="bower_components/bootstrap-material-design/dist/js/material.js"></script>
@@ -79,6 +83,7 @@
 <script src="bower_components/d3/d3.js"></script>
 <script src="bower_components/nvd3/nv.d3.js"></script>
 <script src="bower_components/angular-nvd3/dist/angular-nvd3.min.js"></script>
+<script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
 <script src="bower_components/moment/moment.js"></script>
 <script src="bower_components/fullcalendar/dist/fullcalendar.js"></script>
 <script src="bower_components/angular-ui-calendar/src/calendar.js"></script>
@@ -117,7 +122,6 @@
 <script src="scripts/components/alert/alert.directive.js"></script>
 <script src="scripts/components/util/parse-links.service.js"></script>
 <script src="scripts/components/util/dateutil.service.js"></script>
-<script src="scripts/components/ui/ui-butterbar.js"></script>
 <script src="scripts/app/account/account.js"></script>
 <script src="scripts/app/account/activate/activate.js"></script>
 <script src="scripts/app/account/activate/activate.controller.js"></script>

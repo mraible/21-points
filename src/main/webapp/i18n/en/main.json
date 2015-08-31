@@ -5,11 +5,12 @@
         "logged": {
             "message": "You are logged in as user {{username}}."
         },
-        "question": "If you have any question on the JHipster Mini-Book or 21 Points:",
+        "question": "If you have any questions about the JHipster Mini-Book or 21 Points:",
         "link": {
             "homepage": "JHipster Mini-Book Blog",
             "stackoverflow": "JHipster Mini-Book on Stack Overflow",
-            "contact": "contact @jhipster_book on Twitter"
+            "contact": "Contact @jhipster_book on Twitter",
+            "issues": "Report an issue with 21 Points"
         },
         "like": "If you like JHipster, don't forget to give it a star on",
         "github": "GitHub",
