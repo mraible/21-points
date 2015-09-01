@@ -377,7 +377,7 @@ public class PointsResourceTest {
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.month").value(firstOfMonth.toString()))
-            .andExpect(jsonPath("$.[*].points.[*].date").value(hasItem("2015-08-04")))
-            .andExpect(jsonPath("$.[*].points.[*].date").value(hasItem("2015-08-05")));
+            .andExpect(jsonPath("$.[*].points.[*].date").value(hasItem(firstOfMonth.plusDays(3).toString())))
+            .andExpect(jsonPath("$.[*].points.[*].date").value(hasItem(firstOfMonth.plusDays(4).toString())));
     }
 }

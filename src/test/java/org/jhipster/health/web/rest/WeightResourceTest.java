@@ -1,5 +1,6 @@
 package org.jhipster.health.web.rest;
 
+
 import org.jhipster.health.Application;
 import org.jhipster.health.domain.User;
 import org.jhipster.health.domain.Weight;
@@ -8,12 +9,15 @@ import org.jhipster.health.repository.WeightRepository;
 import org.jhipster.health.repository.search.WeightSearchRepository;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -52,6 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @IntegrationTest
 public class WeightResourceTest {
 
+    private final Logger log = LoggerFactory.getLogger(WeightResourceTest.class);
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private static final DateTime DEFAULT_TIMESTAMP = new DateTime(0L, DateTimeZone.UTC);
     private static final DateTime UPDATED_TIMESTAMP = new DateTime(DateTimeZone.UTC).withMillisOfSecond(0);
@@ -247,6 +252,7 @@ public class WeightResourceTest {
     }
 
     private void createByMonth(DateTime firstOfMonth, DateTime firstDayOfLastMonth) {
+        log.debug("firstOfMonth: {}, firstOfLastMonth: {}", firstOfMonth.toString(), firstDayOfLastMonth.toString());
         User user = userRepository.findOneByLogin("user").get();
         // this month
         weightRepository.saveAndFlush(new Weight(firstOfMonth, 205D, user));
@@ -264,6 +270,12 @@ public class WeightResourceTest {
     public void getForLast30Days() throws Exception {
         DateTime now = new DateTime();
         DateTime firstOfMonth = now.withDayOfMonth(1);
+        // make sure firstOfMonth - 20 days is still w/in 30 days
+        Duration duration = new Duration(firstOfMonth, now);
+        log.debug("Difference between now and firstOfMonth: {}", duration.getStandardDays());
+        if (duration.getStandardDays() < 20) {
+            firstOfMonth = firstOfMonth.minusMonths(1);
+        }
         DateTime firstDayOfLastMonth = firstOfMonth.minusMonths(1);
         createByMonth(firstOfMonth, firstDayOfLastMonth);
 
@@ -295,6 +307,12 @@ public class WeightResourceTest {
     public void getByLastMonth() throws Exception {
         DateTime now = new DateTime();
         DateTime firstOfMonth = now.withDayOfMonth(1);
+        // make sure firstOfMonth - 20 days is still w/in 30 days
+        Duration duration = new Duration(firstOfMonth, now);
+        log.debug("Difference between now and firstOfMonth: {}", duration.getStandardDays());
+        if (duration.getStandardDays() < 20) {
+            firstOfMonth = now;
+        }
         DateTime firstDayOfLastMonth = firstOfMonth.minusMonths(1);
         createByMonth(firstOfMonth, firstDayOfLastMonth);
 

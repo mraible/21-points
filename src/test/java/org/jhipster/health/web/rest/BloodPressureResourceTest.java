@@ -8,6 +8,7 @@ import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
@@ -297,6 +298,11 @@ public class BloodPressureResourceTest {
     public void getBloodPressureForLast30Days() throws Exception {
         DateTime now = new DateTime();
         DateTime firstOfMonth = now.withDayOfMonth(1);
+        // make sure firstOfMonth - 20 days is still w/in 30 days
+        Duration duration = new Duration(firstOfMonth, now);
+        if (duration.getStandardDays() < 20) {
+            firstOfMonth = now.minusMonths(1).plusDays(2);
+        }
         DateTime firstDayOfLastMonth = firstOfMonth.minusMonths(1);
         createBloodPressureByMonth(firstOfMonth, firstDayOfLastMonth);
 
