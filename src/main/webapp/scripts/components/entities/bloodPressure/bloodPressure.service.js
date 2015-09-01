@@ -4,6 +4,7 @@ angular.module('21pointsApp')
     .factory('BloodPressure', function ($resource, DateUtils) {
         return $resource('api/bloodPressures/:id', {}, {
             'query': { method: 'GET', isArray: true},
+            'byMonth': { method: 'GET', isArray: false, url: 'api/bp-by-month/:month'},
             'last30Days': { method: 'GET', isArray: false, url: 'api/bp-by-days/30'},
             'get': {
                 method: 'GET',

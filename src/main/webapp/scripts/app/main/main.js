@@ -144,4 +144,73 @@ angular.module('21pointsApp')
                     }
                 }
             })
+            .state('history.points', {
+                parent: 'history',
+                url: '/points/{id}',
+                data: {
+                    roles: ['ROLE_USER']
+                },
+                onEnter: ['$stateParams', '$state', '$modal', function($stateParams, $state, $modal) {
+                    $modal.open({
+                        templateUrl: 'scripts/app/entities/points/points-dialog.html',
+                        controller: 'PointsDialogController',
+                        size: 'lg',
+                        resolve: {
+                            entity: ['Points', function(Points) {
+                                return Points.get({id : $stateParams.id});
+                            }]
+                        }
+                    }).result.then(function(result) {
+                            $state.go('history', null, { reload: true });
+                        }, function() {
+                            $state.go('^');
+                        })
+                }]
+            })
+            .state('history.bp', {
+                parent: 'history',
+                url: '/bp/{id}',
+                data: {
+                    roles: ['ROLE_USER']
+                },
+                onEnter: ['$stateParams', '$state', '$modal', function($stateParams, $state, $modal) {
+                    $modal.open({
+                        templateUrl: 'scripts/app/entities/bloodPressure/bloodPressure-dialog.html',
+                        controller: 'BloodPressureDialogController',
+                        size: 'lg',
+                        resolve: {
+                            entity: ['BloodPressure', function(BloodPressure) {
+                                return BloodPressure.get({id : $stateParams.id});
+                            }]
+                        }
+                    }).result.then(function(result) {
+                            $state.go('history', null, { reload: true });
+                        }, function() {
+                            $state.go('^');
+                        })
+                }]
+            })
+            .state('history.weight', {
+                parent: 'history',
+                url: '/weight/{id}',
+                data: {
+                    roles: ['ROLE_USER']
+                },
+                onEnter: ['$stateParams', '$state', '$modal', function($stateParams, $state, $modal) {
+                    $modal.open({
+                        templateUrl: 'scripts/app/entities/weight/weight-dialog.html',
+                        controller: 'WeightDialogController',
+                        size: 'lg',
+                        resolve: {
+                            entity: ['Weight', function(Weight) {
+                                return Weight.get({id : $stateParams.id});
+                            }]
+                        }
+                    }).result.then(function(result) {
+                            $state.go('history', null, { reload: true });
+                        }, function() {
+                            $state.go('^');
+                        })
+                }]
+            });
     });

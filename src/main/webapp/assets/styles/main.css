@@ -287,3 +287,23 @@ body > .container {
         position: absolute;
     }
 }
+
+/* Events in Calendar */
+.fc-event.label {
+    display: inline-block;
+    padding: 1px 4px;
+    float: right;
+    border: 0;
+}
+
+.fc-event.label-primary {
+    background-color: #009688;
+}
+
+.fc-event.label-info {
+    background-color: #03a9f4;
+}
+
+.fc-event.label-success {
+    background-color: #4caf50;
+}
