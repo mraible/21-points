@@ -7,6 +7,7 @@ import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.dto.PointsPerMonth;
 import org.jhipster.health.web.rest.dto.PointsPerWeek;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
@@ -134,13 +135,12 @@ public class PointsResource {
         LocalDate endOfWeek = now.withDayOfWeek(DateTimeConstants.SUNDAY);
         log.debug("Looking for points between: {} and {}", startOfWeek, endOfWeek);
 
-        List<Points> points = pointsRepository.findAllByDateBetween(startOfWeek, endOfWeek);
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startOfWeek, endOfWeek, SecurityUtils.getCurrentLogin());
         return calculatePoints(startOfWeek, points);
     }
 
     private ResponseEntity<PointsPerWeek> calculatePoints(LocalDate startOfWeek, List<Points> points) {
         Integer numPoints = points.stream()
-            .filter(p -> p.getUser().getLogin().equals(SecurityUtils.getCurrentLogin()))
             .mapToInt(p -> p.getExercise() + p.getMeals() + p.getAlcohol())
             .sum();
 
@@ -148,15 +148,28 @@ public class PointsResource {
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
     /**
-     * GET  /points -> get all the points for a particular current week.
+     * GET  /points -> get all the points for a particular week.
      */
     @RequestMapping(value = "/points-by-week/{startDate}")
     @Timed
     public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate startDate) {
         // Get last day of week
         LocalDate endOfWeek = startDate.withDayOfWeek(DateTimeConstants.SUNDAY);
-        List<Points> points = pointsRepository.findAllByDateBetween(startDate, endOfWeek);
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startDate, endOfWeek, SecurityUtils.getCurrentLogin());
         return calculatePoints(startDate, points);
+    }
+
+    /**
+     * GET  /points -> get all the points for a particular current month.
+     */
+    @RequestMapping(value = "/points-by-month/{yearWithMonth}")
+    @Timed
+    public ResponseEntity<PointsPerMonth> getPointsByMonth(@PathVariable @DateTimeFormat(pattern="yyyy-MM") LocalDate yearWithMonth) {
+        // Get ast day of the month
+        LocalDate endOfMonth = yearWithMonth.dayOfMonth().withMaximumValue();
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(yearWithMonth, endOfMonth, SecurityUtils.getCurrentLogin());
+        PointsPerMonth pointsPerMonth = new PointsPerMonth(yearWithMonth, points);
+        return new ResponseEntity<>(pointsPerMonth, HttpStatus.OK);
     }
 
     /**

@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprecht.translate',
-    'ui.bootstrap', // for modal dialogs
-    'ngResource', 'ui.router', 'ngCookies', 'ngCacheBuster', 'ngFileUpload', 'infinite-scroll', 'nvd3', 'toaster'])
+    'ui.bootstrap', 'ui.calendar', 'ngResource', 'ui.router', 'ngCookies', 'ngCacheBuster',
+    'ngFileUpload', 'infinite-scroll', 'nvd3', 'toaster'])
 
     .run(function ($rootScope, $location, $window, $http, $state, $translate, Language, Auth, Principal, ENV, VERSION) {
         $rootScope.ENV = ENV;

@@ -8,6 +8,8 @@ import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +37,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -348,5 +351,33 @@ public class PointsResourceTest {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.week").value(sunday.withDayOfWeek(DateTimeConstants.MONDAY).toString()))
             .andExpect(jsonPath("$.points").value(2));
+    }
+
+    @Test
+    @Transactional
+    public void getPointsByMonth() throws Exception {
+        LocalDate today = new LocalDate();
+        LocalDate firstOfMonth = today.dayOfMonth().withMinimumValue();
+        LocalDate endOfMonth = today.dayOfMonth().withMaximumValue();
+        createPointsByWeek(endOfMonth, firstOfMonth);
+
+        // create security-aware mockMvc
+        restPointsMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
+        // Get the points for last week
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM");
+        String startDate = fmt.print(firstOfMonth);
+
+        restPointsMockMvc.perform(get("/api/points-by-month/{yearWithMonth}", startDate)
+            .with(user("user").roles("USER")))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.month").value(firstOfMonth.toString()))
+            .andExpect(jsonPath("$.[*].points.[*].date").value(hasItem("2015-08-04")))
+            .andExpect(jsonPath("$.[*].points.[*].date").value(hasItem("2015-08-05")));
     }
 }
