@@ -308,3 +308,21 @@ body > .container {
 .fc-event.label-success {
     background-color: #4caf50;
 }
+
+/* Loading bar color */
+#loading-bar .bar {
+    background: #76ff03;
+}
+
+/* Fancy blur effect */
+#loading-bar .peg {
+    -moz-box-shadow: #76ff03 1px 0 6px 1px;
+    -ms-box-shadow: #76ff03 1px 0 6px 1px;
+    -webkit-box-shadow: #76ff03 1px 0 6px 1px;
+    box-shadow: #76ff03 1px 0 6px 1px;
+}
+
+#loading-bar-spinner .spinner-icon {
+    border-top-color:  #76ff03;
+    border-left-color: #76ff03;
+}
