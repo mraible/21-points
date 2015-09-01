@@ -15,18 +15,7 @@ angular.module('21pointsApp')
                 }
             },
             'update': {
-                method: 'PUT',
-                transformRequest: function (data) {
-                    data.date = DateUtils.convertLocaleDateToServer(data.date);
-                    return angular.toJson(data);
-                }
-            },
-            'save': {
-                method: 'POST',
-                transformRequest: function (data) {
-                    data.date = DateUtils.convertLocaleDateToServer(data.date);
-                    return angular.toJson(data);
-                }
+                method: 'PUT'
             }
         });
     });
