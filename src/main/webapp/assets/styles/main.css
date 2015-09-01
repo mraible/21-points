@@ -271,7 +271,7 @@ only screen and (                min-resolution: 2dppx) {
 .navbar {
     position: fixed;
     width: 100%;
-    z-index: 2;
+    z-index: 5;
 }
 
 .development {
