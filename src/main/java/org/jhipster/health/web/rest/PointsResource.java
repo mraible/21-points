@@ -66,7 +66,7 @@ public class PointsResource {
         if (points.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new points cannot already have an ID").body(null);
         }
-        if (points.getUser() == null || points.getUser().getId() == null) {
+        if (!SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentLogin());
             points.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get());
         }
