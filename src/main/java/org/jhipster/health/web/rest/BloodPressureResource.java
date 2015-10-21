@@ -65,7 +65,7 @@ public class BloodPressureResource {
         if (bloodPressure.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new bloodPressure cannot already have an ID").body(null);
         }
-        if (bloodPressure.getUser() == null || bloodPressure.getUser().getId() == null) {
+        if (!SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentLogin());
             bloodPressure.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get());
         }

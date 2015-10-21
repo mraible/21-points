@@ -65,7 +65,7 @@ public class WeightResource {
         if (weight.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new weight cannot already have an ID").body(null);
         }
-        if (weight.getUser() == null || weight.getUser().getId() == null) {
+        if (!SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentLogin());
             weight.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get());
         }
