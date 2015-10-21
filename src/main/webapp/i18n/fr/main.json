@@ -1,18 +1,25 @@
 {
     "main": {
-        "title": "Bienvenue, Java Hipster !",
-        "subtitle": "21 Points est ici pour le suivi de votre santé et améliorer votre vie.",
+        "title": "Bonjour, {{name}}!",
+        "subtitle": "21-Points est là pour suivre votre état de santé et améliorer votre vie. :)",
         "logged": {
-            "message": "Vous êtes connecté en tant que \"{{username}}\"."
+            "message": "Vous êtes authentifié en tant que {{username}}."
         },
-        "question": "Si vous avez des questions au sujet de la JHipster Mini-Book ou 21 Points:",
+        "question": "Si vous avez des questions sur le JHipster Mini-Book ou sur 21-Points:",
         "link": {
             "homepage": "JHipster Mini-Book Blog",
-            "stackoverflow": "JHipster Mini-Book sur Stack Overflow",
-            "contact": "Contactez-nous sur Twitter @jhipster_book",
-            "issues": "Signaler un problème avec 21 Points"
+            "stackoverflow": "JHipster Mini-Book on Stack Overflow",
+            "contact": "Contactez @jhipster_book sur Twitter",
+            "issues": "Remontez un bug sur 21-Points"
         },
-        "like": "Si vous aimez JHipster, donnez nous une étoile sur",
-        "github": "Github"
+        "like": "Si vous aimez JHipster, n'oubliez pas de lui donner une étoile sur",
+        "github": "GitHub",
+        "points": {
+            "thisWeek": "Points pour la semaine {{date}}:",
+            "thisWeekMobile": "Points:"
+        },
+        "bloodPressure": "Pression sanguine:",
+        "bloodPressureMobile": "PS:",
+        "weight": "Poids:"
     }
 }

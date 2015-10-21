@@ -1,11 +1,11 @@
 {
     "main": {
         "title": "Hello, {{name}}!",
-        "subtitle": "21 Points is here to track your health and improve your life. :)",
+        "subtitle": "21-Points is here to track your health and improve your life. :)",
         "logged": {
             "message": "You are logged in as user {{username}}."
         },
-        "question": "If you have any questions about the JHipster Mini-Book or 21 Points:",
+        "question": "If you have any questions about the JHipster Mini-Book or 21-Points:",
         "link": {
             "homepage": "JHipster Mini-Book Blog",
             "stackoverflow": "JHipster Mini-Book on Stack Overflow",
