@@ -1,7 +1,7 @@
 {
     "main": {
         "title": "Bonjour, {{name}}!",
-        "subtitle": "21-Points est là pour suivre votre état de santé et améliorer votre vie. :)",
+        "subtitle": "21-Points est là pour suivre votre état de santé et améliorer votre vie. &#128522;",
         "logged": {
             "message": "Vous êtes authentifié en tant que {{username}}."
         },

@@ -1,7 +1,8 @@
 <div ng-cloak>
     <div class="row">
         <div class="col-md-4">
-            <span class="heart img-responsive img-rounded m-t-md hidden-xs"></span>
+            <span class="heart img-responsive img-rounded m-t-md hidden-xs" 
+                  tooltip="The greatest wealth is Health"></span>
         </div>
         <div class="col-md-8">
             <h1 ng-show="isAuthenticated() && account.firstName" translate="main.title"
@@ -106,6 +107,12 @@
                         <a ui-sref="login"><span class="glyphicon glyphicon-log-in"></span>
                             &#xA0;<span translate="global.menu.account.login">Authenticate</span>.</a>
                     </strong>
+                    </p>
+
+                    <p>
+                        <a ui-sref="about" class="btn btn-info">
+                            Learn more about 21-Points Health
+                            <div class="ripple-wrapper"></div></a>
                     </p>
 
                     <p translate="main.question">
