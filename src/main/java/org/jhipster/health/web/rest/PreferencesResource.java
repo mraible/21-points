@@ -6,6 +6,7 @@ import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
+import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,7 +100,17 @@ public class PreferencesResource {
     @Timed
     public List<Preferences> getAll() {
         log.debug("REST request to get all Preferences");
-        return preferencesRepository.findAll();
+        List<Preferences> preferences = new ArrayList<>();
+        if (SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
+            preferences = preferencesRepository.findAll();
+        } else {
+            Preferences userPreferences = getUserPreferences().getBody();
+            // don't return default value of 10 points in this method
+            if (userPreferences.getId() != null) {
+                preferences.add(userPreferences);
+            }
+        }
+        return preferences;
     }
 
     /**
