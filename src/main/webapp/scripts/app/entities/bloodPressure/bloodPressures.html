@@ -59,7 +59,7 @@
             </thead>
             <tbody infinite-scroll="loadPage(page + 1)" infinite-scroll-disabled="links['last'] == page">
                 <tr ng-repeat="bloodPressure in bloodPressures">
-                    <td><a ui-sref="bloodPressure.detail({id:bloodPressure.id})">{{bloodPressure.timestamp | date: 'short'}}</a></td>
+                    <td><a ui-sref="bloodPressure.detail({id:bloodPressure.id})">{{bloodPressure.timestamp | date: 'short': 'UTC'}}</a></td>
                     <td>{{bloodPressure.systolic}}</td>
                     <td>{{bloodPressure.diastolic}}</td>
                     <td>{{bloodPressure.user.login}}</td>

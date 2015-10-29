@@ -15,7 +15,7 @@
                     <span translate="21pointsApp.weight.timestamp">Timestamp</span>
                 </td>
                 <td>
-                    <input type="text" class="input-sm form-control" value="{{weight.timestamp | date: 'short'}}" readonly>
+                    <input type="text" class="input-sm form-control" value="{{weight.timestamp | date: 'short': 'UTC'}}" readonly>
                 </td>
             </tr>
             <tr>
