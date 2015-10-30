@@ -6,8 +6,7 @@ angular.module('21pointsApp').controller('PointsDialogController',
 
             // defaults for new entries
             if (!entity.id) {
-                var now = new Date();
-                entity.date = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+                entity.date = new Date();
                 entity.exercise = 1;
                 entity.meals = 1;
                 entity.alcohol = 1;
