@@ -1,9 +1,15 @@
 {
-  "name": "21points",
+  "name": "21-Points",
   "version": "0.0.0",
-  "description": "Description for 21points",
+  "description": "21-Points Health is an app you can use to monitor your health.",
   "private": true,
+  "cacheDirectories": [
+    "node_modules",
+    "src/main/webapp/bower_components"
+  ],
   "dependencies": {
+    "bower": "^1.6.3",
+    "protractor": "^2.5.1"
   },
   "devDependencies": {
     "grunt": "0.4.5",
@@ -14,6 +20,7 @@
     "grunt-contrib-copy": "0.8.0",
     "grunt-contrib-clean": "0.6.0",
     "grunt-contrib-concat": "0.5.1",
+    "grunt-contrib-connect": "0.11.2",
     "grunt-contrib-cssmin": "0.11.0",
     "grunt-contrib-htmlmin": "0.4.0",
     "grunt-contrib-imagemin": "0.9.3",
@@ -23,11 +30,12 @@
     "grunt-modernizr": "0.6.0",
     "grunt-ng-annotate": "0.10.0",
     "grunt-ng-constant": "1.1.0",
+    "grunt-protractor-runner": "2.1.0",
     "grunt-rev": "0.1.0",
     "grunt-svgmin": "2.0.1",
     "grunt-text-replace": "0.4.0",
     "grunt-usemin": "3.0.0",
-    "grunt-angular-templates":"0.5.7",
+    "grunt-angular-templates": "0.5.7",
     "load-grunt-tasks": "3.1.0",
     "grunt-karma": "0.11.0",
     "time-grunt": "1.1.0",
@@ -42,6 +50,7 @@
     "karma-requirejs": "0.2.2",
     "karma-phantomjs-launcher": "0.2.0",
     "phantomjs": "1.9.17",
+    "protractor-jasmine2-screenshot-reporter": "0.1.7",
     "karma": "0.12.35",
     "generator-jhipster": "2.19.0",
     "lodash": "3.3.1",
@@ -52,6 +61,9 @@
     "wiredep": "2.2.2"
   },
   "engines": {
-    "node": ">=0.12.0"
+    "node": "^0.12 || ^4.2"
+  },
+  "scripts": {
+    "postinstall": "bower install && webdriver-manager update"
   }
 }

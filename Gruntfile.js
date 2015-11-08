@@ -270,6 +270,40 @@ module.exports = function (grunt) {
                 autoWatch: true
             }
         },
+        connect: {
+            options: {
+                port: 3000,
+                hostname: 'localhost'
+            },
+            test: {
+            }
+        },
+        protractor: {
+            options: {
+                // Location of your protractor config file
+                configFile: 'src/test/javscript/protractor.conf.js',
+
+                // Do you want the output to use fun colors?
+                noColor: true,
+
+                // Set to true if you would like to use the Protractor command line debugging tool
+                // debug: true,
+
+                // Additional arguments that are passed to the webdriver command
+                args: {}
+            },
+            e2e: {
+                options: {
+                    // Stops Grunt process if a test fails
+                    keepAlive: false
+                }
+            },
+            continuous: {
+                options: {
+                    keepAlive: true
+                }
+            }
+        },
         ngAnnotate: {
             dist: {
                 files: [{
@@ -382,7 +416,7 @@ module.exports = function (grunt) {
     grunt.registerTask('buildOpenshift', [
         'test',
         'build',
-        'copy:generateOpenshiftDirectory',
+        'copy:generateOpenshiftDirectory'
     ]);
 
     grunt.registerTask('deployOpenshift', [
@@ -391,6 +425,8 @@ module.exports = function (grunt) {
         'copy:generateOpenshiftDirectory',
         'buildcontrol:openshift'
     ]);
+
+    grunt.registerTask('itest', ['connect:test', 'protractor:continuous']);
 
     grunt.registerTask('default', ['serve']);
 };
