@@ -270,6 +270,17 @@ module.exports = function (grunt) {
                 autoWatch: true
             }
         },
+        plato: {
+            options: {
+                title: '21-Points',
+                jshint: grunt.file.readJSON('.jshintrc')
+            },
+            metrics: {
+                files: {
+                    'build/reports/metrics': ['src/main/webapp/scripts/**/*.js']
+                }
+            }
+        },
         protractor: {
             options: {
                 // Location of your protractor config file
@@ -410,7 +421,6 @@ module.exports = function (grunt) {
         'build',
         'copy:generateOpenshiftDirectory'
     ]);
-
     grunt.registerTask('deployOpenshift', [
         'test',
         'build',
@@ -419,6 +429,6 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('itest', ['protractor:continuous']);
-
+    grunt.registerTask('jenkins', ['build', 'test', 'itest', 'plato']);
     grunt.registerTask('default', ['serve']);
 };
