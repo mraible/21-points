@@ -385,7 +385,7 @@ module.exports = function (grunt) {
         'ngconstant:prod',
         'useminPrepare',
         'ngtemplates',
-        'imagemin',
+        //'imagemin',
         'svgmin',
         'concat',
         'copy:fonts',
