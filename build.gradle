@@ -19,7 +19,7 @@ apply plugin: 'war'
 defaultTasks 'bootRun'
 
 bootRepackage {
-   mainClass = 'org.jhipster.health.Application'
+    mainClass = 'org.jhipster.health.Application'
 }
 
 clean {
