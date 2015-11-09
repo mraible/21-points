@@ -36,7 +36,7 @@ describe('account', function () {
         expect(element(by.css('h2')).getText()).toMatch(/User settings for \[admin\]/);
         element(by.css('button[type=submit]')).click();
 
-        var message = $('.alert').getText();
+        var message = $('.alert-success').getText();
         expect(message).toMatch(/Settings saved!/);
     });
 
@@ -49,7 +49,7 @@ describe('account', function () {
         element(by.model('confirmPassword')).sendKeys('newpassword');
         element(by.css('button[type=submit]')).click();
 
-        var message = $('.alert').getText();
+        var message = $('.alert-success').getText();
         expect(message).toMatch(/Password changed!/);
         element(by.id('account-menu')).click();
         element(by.id('logout')).click();
