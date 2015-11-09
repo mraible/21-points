@@ -429,6 +429,6 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('itest', ['protractor:continuous']);
-    grunt.registerTask('jenkins', ['test', 'itest', 'plato']);
+    grunt.registerTask('jenkins', ['itest', 'plato']);
     grunt.registerTask('default', ['serve']);
 };
