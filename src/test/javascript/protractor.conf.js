@@ -16,7 +16,7 @@ exports.config = {
         'phantomjs.ghostdriver.cli.args': ['--loglevel=DEBUG']
     },
 
-    baseUrl: 'http://localhost:3000/',
+    baseUrl: 'http://localhost:8080/',
 
     framework: 'jasmine2',
 
@@ -28,11 +28,11 @@ exports.config = {
     onPrepare: function() {
         browser.driver.manage().window().setSize(1280, 1024);
         jasmine.getEnv().addReporter(new JasmineReporters.JUnitXmlReporter({
-            savePath: 'build/tests',
+            savePath: 'build/reports/e2e',
             consolidateAll: false
         }));
         jasmine.getEnv().addReporter(new HtmlScreenshotReporter({
-            dest: "build/tests/screenshots"
+            dest: "build/reports/e2e/screenshots"
         }));
     }
 };

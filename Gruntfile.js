@@ -184,7 +184,7 @@ module.exports = function (grunt) {
         ngtemplates:    {
             dist: {
                 cwd: 'src/main/webapp',
-                src: ['scripts/app/**/*.html', 'scripts/components/**/*.html',],
+                src: ['scripts/app/**/*.html', 'scripts/components/**/*.html'],
                 dest: '.tmp/templates/templates.js',
                 options: {
                     module: '21pointsApp',
@@ -270,18 +270,10 @@ module.exports = function (grunt) {
                 autoWatch: true
             }
         },
-        connect: {
-            options: {
-                port: 3000,
-                hostname: 'localhost'
-            },
-            test: {
-            }
-        },
         protractor: {
             options: {
                 // Location of your protractor config file
-                configFile: 'src/test/javscript/protractor.conf.js',
+                configFile: 'src/test/javascript/protractor.conf.js',
 
                 // Do you want the output to use fun colors?
                 noColor: true,
@@ -426,7 +418,7 @@ module.exports = function (grunt) {
         'buildcontrol:openshift'
     ]);
 
-    grunt.registerTask('itest', ['connect:test', 'protractor:continuous']);
+    grunt.registerTask('itest', ['protractor:continuous']);
 
     grunt.registerTask('default', ['serve']);
 };
