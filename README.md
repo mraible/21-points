@@ -49,7 +49,7 @@ running the tests (grunt itest) in a second one.
 
 If you want to run all JavaScript tests and generate a code metrics report, run:
 
-grunt jenkins
+    grunt jenkins
 
 To learn more about how Protractor was integrated into this project, see
 [Adding Protractor Tests and Automating with Jenkins](http://www.jhipster-book.com/#!/news/entry/adding-protractor-tests).
