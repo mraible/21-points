@@ -68,12 +68,13 @@ To setup this project in Jenkins, use the following configuration:
 * Build
     * Invoke Gradle script / Use Gradle Wrapper / Tasks: `-Pprod clean test bootRepackage`
     * Execute Shell / Command:
-    
+        ```
         ./gradlew bootRun &
         bootPid=$!
         sleep 30s
         grunt jenkins
         kill $bootPid
+        ```
 
 * Post-build Actions
     * Build other projects: `21-points-deploy`
