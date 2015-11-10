@@ -6,7 +6,11 @@
     <title>21-Points Health</title>
     <meta name="description" content="21-Points Health is an app to monitor your health. You can get up to three points per day, by eating right, drinking less alcohol and exercising. It also lets you track your blood pressure and weight. Written as the sample application for the JHipster Mini-Book.">
     <meta name="viewport" content="width=device-width,user-scalable=no">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <style type="text/css">
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+            display: none !important;
+        }
+    </style>
     <!-- build:css assets/styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
@@ -28,11 +32,11 @@
     your browser</a> to improve your experience.</p>
 <![endif]-->
 
-<div ng-show="{{ENV === 'dev'}}" class="development" ng-cloak=""></div>
-<div ui-view="navbar" ng-cloak="">
+<div ng-show="{{ENV === 'dev'}}" class="development" ng-cloak></div>
+<div ui-view="navbar" ng-cloak>
     <div class="navbar navbar-default shadow-z-2"></div>
 </div>
-<div class="container">
+<div class="container" ng-cloak>
     <jh-alert-toast></jh-alert-toast>
     <div class="well" ui-view="content"></div>
 

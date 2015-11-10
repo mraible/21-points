@@ -163,7 +163,7 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     cwd: 'src/main/webapp/assets/images',
-                    src: '**/*.{jpg,jpeg}', // we don't optimize PNG files as it doesn't work on Linux. If you are not on Linux, feel free to use '**/*.{png,jpg,jpeg}'
+                    src: '**/*.{jpg}', // we don't optimize PNG files as it doesn't work on Linux. If you are not on Linux, feel free to use '**/*.{png,jpg,jpeg}'
                     dest: '<%= yeoman.dist %>/assets/images'
                 }]
             }
@@ -184,7 +184,7 @@ module.exports = function (grunt) {
         ngtemplates:    {
             dist: {
                 cwd: 'src/main/webapp',
-                src: ['scripts/app/**/*.html', 'scripts/components/**/*.html',],
+                src: ['scripts/app/**/*.html', 'scripts/components/**/*.html'],
                 dest: '.tmp/templates/templates.js',
                 options: {
                     module: '21pointsApp',
@@ -268,6 +268,43 @@ module.exports = function (grunt) {
                 configFile: 'src/test/javascript/karma.conf.js',
                 singleRun: false,
                 autoWatch: true
+            }
+        },
+        plato: {
+            options: {
+                title: '21-Points',
+                jshint: grunt.file.readJSON('.jshintrc')
+            },
+            metrics: {
+                files: {
+                    'build/reports/metrics': ['src/main/webapp/scripts/**/*.js']
+                }
+            }
+        },
+        protractor: {
+            options: {
+                // Location of your protractor config file
+                configFile: 'src/test/javascript/protractor.conf.js',
+
+                // Do you want the output to use fun colors?
+                noColor: true,
+
+                // Set to true if you would like to use the Protractor command line debugging tool
+                // debug: true,
+
+                // Additional arguments that are passed to the webdriver command
+                args: {}
+            },
+            e2e: {
+                options: {
+                    // Stops Grunt process if a test fails
+                    keepAlive: false
+                }
+            },
+            continuous: {
+                options: {
+                    keepAlive: true
+                }
             }
         },
         ngAnnotate: {
@@ -382,9 +419,8 @@ module.exports = function (grunt) {
     grunt.registerTask('buildOpenshift', [
         'test',
         'build',
-        'copy:generateOpenshiftDirectory',
+        'copy:generateOpenshiftDirectory'
     ]);
-
     grunt.registerTask('deployOpenshift', [
         'test',
         'build',
@@ -392,5 +428,7 @@ module.exports = function (grunt) {
         'buildcontrol:openshift'
     ]);
 
+    grunt.registerTask('itest', ['protractor:continuous']);
+    grunt.registerTask('jenkins', ['itest', 'plato']);
     grunt.registerTask('default', ['serve']);
 };

@@ -48,8 +48,8 @@
                         <!-- JHipster will add entities to the menu here -->
                     </ul>
                 </li>
-                <li ng-class="{active: $state.includes('admin')}"  ng-switch-when="true" has-role="ROLE_ADMIN" class="dropdown pointer">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="">
+                <li ng-class="{active: $state.includes('admin')}" ng-switch-when="true" has-role="ROLE_ADMIN" class="dropdown pointer">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="" id="admin-menu">
                         <span>
                             <span class="glyphicon glyphicon-tower"></span>
                             <span class="hidden-tablet" translate="global.menu.admin.main">Administration</span>
@@ -74,7 +74,7 @@
                     </ul>
                 </li>
                 <li ng-class="{active: $state.includes('account')}" class="dropdown pointer">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="" id="account-menu">
                         <span>
                             <span class="glyphicon glyphicon-user"></span>
                             <span class="hidden-tablet" translate="global.menu.account.main">
@@ -88,7 +88,7 @@
                             &#xA0;<span translate="global.menu.account.settings">Settings</span></a></li>
                         <li ui-sref-active="active" ng-switch-when="true"><a ui-sref="password"><span class="glyphicon glyphicon-lock"></span>
                             &#xA0;<span translate="global.menu.account.password">Password</span></a></li>
-                        <li ui-sref-active="active" ng-switch-when="true"><a href="" ng-click="logout()"><span class="glyphicon glyphicon-log-out"></span>
+                        <li ui-sref-active="active" ng-switch-when="true"><a href="" ng-click="logout()" id="logout"><span class="glyphicon glyphicon-log-out"></span>
                             &#xA0;<span translate="global.menu.account.logout">Log out</span></a></li>
                         <li ui-sref-active="active" ng-switch-when="false"><a ui-sref="login"><span class="glyphicon glyphicon-log-in"></span>
                             &#xA0;<span translate="global.menu.account.login">Authenticate</span></a></li>

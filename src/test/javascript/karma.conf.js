@@ -50,12 +50,14 @@ module.exports = function (config) {
             'main/webapp/scripts/app/app.js',
             'main/webapp/scripts/app/**/*.js',
             'main/webapp/scripts/components/**/*.{js,html}',
-            'test/javascript/**/!(karma.conf).js'
+            'test/javascript/**/!(karma.conf|protractor.conf).js'
         ],
 
 
         // list of files / patterns to exclude
-        exclude: [],
+        exclude: [
+            'test/javascript/e2e/**'
+        ],
 
         // web server port
         port: 9876,
