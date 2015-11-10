@@ -60,7 +60,7 @@ To setup this project in Jenkins, use the following configuration:
 
 * Project name: `21-points`
 * Source Code Management
-    * Git Repository: `git@bitbucket.org:mraible/21-points.git`
+    * Git Repository: `git@github.com:mraible/21-points.git`
     * Branches to build: `*/master`
     * Additional Behaviours: `Wipe out repository & force clone`
 * Build Triggers
@@ -90,7 +90,7 @@ Then create another job to deploy to Heroku.
 
 * Project name: `21-points-deploy`
 * Source Code Management
-    * Git Repository: `git@bitbucket.org:mraible/21-points.git`
+    * Git Repository: `git@github.com:mraible/21-points.git`
     * Branches to build: `*/master`
 * Build
     * Invoke Gradle script / Use Gradle Wrapper / Tasks: `-Pprod bootRepackage -x test`
