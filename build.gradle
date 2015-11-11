@@ -48,9 +48,9 @@ if (project.hasProperty('prod')) {
 }
 
 group = 'org.jhipster.health'
-version = '1.0-alpha'
+version = '1.0-beta'
 
-description = ''
+description = '21-Points Health is an app to monitor your health.'
 
 configurations {
     providedRuntime
