@@ -19,11 +19,9 @@ spring:
         active: prod
     datasource:
         dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
-        url:
-        databaseName: 21points
-        serverName: localhost
-        username: 21points
-        password:
+        url: jdbc:postgresql://localhost/health
+        username: health
+        password: health
 
     jpa:
         database-platform: org.hibernate.dialect.PostgreSQL82Dialect
