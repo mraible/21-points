@@ -7,5 +7,6 @@ install:
   - set -ev
   - npm install -g bower
   - npm install -g grunt-cli
+  - gradle assemble
 script:
-  - ./gradlew test
+  - gradle check
