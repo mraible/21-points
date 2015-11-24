@@ -1,10 +1,12 @@
-language: node_js
+language: java
 node_js:
   - "4.2.1"
 jdk:
   - oraclejdk8
 install:
   - set -ev
+  - java -version
+  - ./gradlew --version
   - npm install -g bower
   - npm install -g grunt-cli
   - ./gradlew assemble
