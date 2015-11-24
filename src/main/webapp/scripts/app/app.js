@@ -113,4 +113,6 @@ angular.module('21pointsApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
         tmhDynamicLocaleProvider.useCookieStorage();
         tmhDynamicLocaleProvider.storageKey('NG_TRANSLATE_LANG_KEY');
 
+        // Initialize theme
+        $.material.init();
     });
