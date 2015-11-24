@@ -287,6 +287,10 @@ body > .container {
     .navbar, .development {
         position: absolute;
     }
+
+    #resources li {
+        padding: 5px 0
+    }
 }
 
 /* Events in Calendar */

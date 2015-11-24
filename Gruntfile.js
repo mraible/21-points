@@ -155,7 +155,12 @@ module.exports = function (grunt) {
                         [/(assets\/images\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the JS to reference our revved images']
                     ]
                 },
-                dirs: ['<%= yeoman.dist %>']
+                dirs: ['<%= yeoman.dist %>'],
+                blockReplacements: {
+                    js: function (block){
+                        return '<script defer src="' + block.dest + '"><\/script>';
+                    }
+                }
             }
         },
         imagemin: {
