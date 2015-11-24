@@ -1,3 +1,9 @@
-language: java
+language: node_js
+node_js:
+  - "4.2.1"
 jdk:
   - oraclejdk8
+install:
+  - set -ev
+  - npm install -g bower
+  - npm install -g grunt-cli
