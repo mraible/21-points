@@ -3,9 +3,6 @@
 angular.module('21pointsApp')
     .controller('CalendarController', function ($scope, $state, $compile, $log, uiCalendarConfig, Points, BloodPressure, Weight) {
 
-        var thisMonth = moment().format('YYYY-MM');
-        //getEvents(thisMonth);
-
         /* event source that calls a function on every view switch */
         $scope.eventSource = function getEvents(start, end, timezone, callback) {
             // start and end are for displayed calendar, so see if end is in current month before subtracting a month
