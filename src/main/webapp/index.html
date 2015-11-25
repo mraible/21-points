@@ -203,5 +203,27 @@
 <script src="scripts/components/entities/preferences/preferences.search.service.js"></script>
 <!-- endbuild -->
 
+<script>
+    function filterNone() {
+        return NodeFilter.FILTER_ACCEPT;
+    }
+    function activateCssLinks(rootElem) {
+        var iterator = document.createNodeIterator(rootElem, NodeFilter.SHOW_COMMENT, filterNone, false),
+            curNode, regex = /assets\/styles\/\w+\.\w+\.css/i;
+        while (curNode = iterator.nextNode()) {
+            var filename = curNode.nodeValue.match(regex);
+            if (filename) {
+                var linkElem = document.createElement("link");
+                linkElem.setAttribute("rel", "stylesheet");
+                linkElem.setAttribute("href", filename)
+                document.head.appendChild(linkElem);
+            }
+        }
+    }
+    window.addEventListener("load", function () {
+        activateCssLinks(document.head);
+    });
+</script>
+
 </body>
 </html>
