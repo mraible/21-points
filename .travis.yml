@@ -3,13 +3,9 @@ node_js:
   - "4.2.1"
 jdk:
   - oraclejdk8
-install:
-  - set -ev
-  - java -version
-  - ./gradlew --version
+before_install:
   - npm install -g bower
   - npm install -g grunt-cli
-  - ./gradlew assemble
 script:
   - ./gradlew check
   - export DISPLAY=:99.0
