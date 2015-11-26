@@ -3,12 +3,16 @@ node_js:
   - "4.2.1"
 jdk:
   - oraclejdk8
-install:
-  - set -ev
-  - java -version
-  - ./gradlew --version
+before_install:
   - npm install -g bower
   - npm install -g grunt-cli
   - ./gradlew assemble
 script:
   - ./gradlew check
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - ./gradlew bootRun &
+  - bootPid=$!
+  - sleep 120s
+  - npm install -g grunt-cli
+  - grunt itest
