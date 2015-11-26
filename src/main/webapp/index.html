@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="assets/styles/main.css">
     <!-- endbuild -->
 </head>
-<body ng-app="21pointsApp">
+<body ng-app="21pointsApp" style="display:none">
 <!--[if lt IE 9]>
 <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
     your browser</a> to improve your experience.</p>
@@ -215,14 +215,15 @@
             if (filename) {
                 var linkElem = document.createElement("link");
                 linkElem.setAttribute("rel", "stylesheet");
-                linkElem.setAttribute("href", filename)
+                linkElem.setAttribute("href", filename);
                 document.head.appendChild(linkElem);
             }
         }
+        document.body.style.removeProperty('display');
     }
-    window.addEventListener("load", function () {
+    document.onreadystatechange = function () {
         activateCssLinks(document.head);
-    });
+    };
 </script>
 
 </body>
