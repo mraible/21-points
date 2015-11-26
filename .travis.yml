@@ -13,4 +13,5 @@ script:
   - ./gradlew bootRun &
   - bootPid=$!
   - sleep 30s
+  - npm install -g grunt-cli
   - grunt itest
