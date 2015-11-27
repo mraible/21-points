@@ -1,0 +1,11 @@
+21points-dev-postgresql:
+  container_name: 21points-dev-postgresql
+  image: postgres:9.4.5
+  # volumes:
+  # - ~/volumes/jhipster/21points/dev-postgresql/:/var/lib/postgresql/
+  environment:
+  - POSTGRES_USER=health
+  - POSTGRES_PASSWORD=health
+  ports:
+  - "5432:5432"
+
