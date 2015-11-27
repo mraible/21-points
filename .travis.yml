@@ -1,7 +1,7 @@
 os:
   - linux
 services:
-  - dockeri
+  - docker
 language: java
 node_js:
   - "4.2.1"
@@ -10,7 +10,6 @@ jdk:
 before_install:
   - sudo /etc/init.d/postgresql stop
 install:
-  - set -ev
   - java -version
   - ./gradlew --version
   - npm install -g bower
