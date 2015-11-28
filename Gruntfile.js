@@ -157,9 +157,6 @@ module.exports = function (grunt) {
                 },
                 dirs: ['<%= yeoman.dist %>'],
                 blockReplacements: {
-                    css: function (block) {
-                        return '<!-- <link rel="stylesheet" href="' + block.dest + '"> -->';
-                    },
                     js: function (block){
                         return '<script defer src="' + block.dest + '"><\/script>';
                     }
