@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="assets/styles/main.css">
     <!-- endbuild -->
 </head>
-<body ng-app="21pointsApp">
+<body ng-app="21pointsApp" style="display:none">
 <!--[if lt IE 9]>
 <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
     your browser</a> to improve your experience.</p>
@@ -202,6 +202,29 @@
 <script src="scripts/components/entities/preferences/preferences.service.js"></script>
 <script src="scripts/components/entities/preferences/preferences.search.service.js"></script>
 <!-- endbuild -->
+
+<script>
+    function filterNone() {
+        return NodeFilter.FILTER_ACCEPT;
+    }
+    function activateCssLinks(rootElem) {
+        var iterator = document.createNodeIterator(rootElem, NodeFilter.SHOW_COMMENT, filterNone, false),
+            curNode, regex = /assets\/styles\/\w+\.\w+\.css/i;
+        while (curNode = iterator.nextNode()) {
+            var filename = curNode.nodeValue.match(regex);
+            if (filename) {
+                var linkElem = document.createElement("link");
+                linkElem.setAttribute("rel", "stylesheet");
+                linkElem.setAttribute("href", filename);
+                document.head.appendChild(linkElem);
+            }
+        }
+        document.body.style.removeProperty('display');
+    }
+    document.onreadystatechange = function () {
+        activateCssLinks(document.head);
+    };
+</script>
 
 </body>
 </html>
