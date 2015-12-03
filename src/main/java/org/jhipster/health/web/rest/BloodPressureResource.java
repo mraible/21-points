@@ -126,8 +126,8 @@ public class BloodPressureResource {
         DateTime daysAgo = previousDate.toDateTimeAtCurrentTime();
         DateTime rightNow = today.toDateTimeAtCurrentTime();
 
-        List<BloodPressure> readings = bloodPressureRepository.findAllByTimestampBetweenOrderByTimestampDesc(daysAgo, rightNow);
-        BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", filterByUser(readings));
+        List<BloodPressure> readings = bloodPressureRepository.findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(daysAgo, rightNow, SecurityUtils.getCurrentLogin());
+        BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", readings);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -141,13 +141,13 @@ public class BloodPressureResource {
         LocalDate lastDay = date.dayOfMonth().withMaximumValue();
 
         List<BloodPressure> readings = bloodPressureRepository.
-            findAllByTimestampBetweenOrderByTimestampDesc(firstDay.toDateTimeAtStartOfDay(),
-                                                          lastDay.plusDays(1).toDateTimeAtStartOfDay());
+            findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(firstDay.toDateTimeAtStartOfDay(),
+                lastDay.plusDays(1).toDateTimeAtStartOfDay(), SecurityUtils.getCurrentLogin());
 
         DateTimeFormatter fmt = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM");
         String yearAndMonth = fmt.print(firstDay);
 
-        BloodPressureByPeriod response = new BloodPressureByPeriod(yearAndMonth, filterByUser(readings));
+        BloodPressureByPeriod response = new BloodPressureByPeriod(yearAndMonth, readings);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
