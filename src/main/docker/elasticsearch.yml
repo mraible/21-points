@@ -1,0 +1,10 @@
+version: '2'
+services:
+    21points-elasticsearch:
+        container_name: 21points-elasticsearch
+        image: elasticsearch:1.7.5
+        # volumes:
+        #     - ~/volumes/jhipster/21points/elasticsearch/:/usr/share/elasticsearch/data/
+        ports:
+            - 9200:9200
+            - 9300:9300
