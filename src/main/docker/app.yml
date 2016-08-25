@@ -1,0 +1,22 @@
+version: '2'
+services:
+    21points-app:
+        image: 21points
+        external_links:
+            - 21points-postgresql:postgresql
+            - 21points-elasticsearch:elasticsearch
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod,swagger
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/21points
+            - JHIPSTER_SLEEP=10 # gives time for the database to boot before the application
+            - SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES=elasticsearch:9300
+        ports:
+            - 8080:8080
+    21points-postgresql:
+        extends:
+            file: postgresql.yml
+            service: 21points-postgresql
+    21points-elasticsearch:
+        extends:
+            file: elasticsearch.yml
+            service: 21points-elasticsearch
