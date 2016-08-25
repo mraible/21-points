@@ -8,8 +8,8 @@ import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.service.MailService;
 import org.jhipster.health.service.UserService;
-import org.jhipster.health.web.rest.dto.ManagedUserDTO;
-import org.jhipster.health.web.rest.dto.UserDTO;
+import org.jhipster.health.service.dto.UserDTO;
+import org.jhipster.health.web.rest.vm.ManagedUserVM;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -140,7 +140,7 @@ public class AccountResourceIntTest {
     @Test
     @Transactional
     public void testRegisterValid() throws Exception {
-        ManagedUserDTO validUser = new ManagedUserDTO(
+        ManagedUserVM validUser = new ManagedUserVM(
             null,                   // id
             "joe",                  // login
             "password",             // password
@@ -168,7 +168,7 @@ public class AccountResourceIntTest {
     @Test
     @Transactional
     public void testRegisterInvalidLogin() throws Exception {
-        ManagedUserDTO invalidUser = new ManagedUserDTO(
+        ManagedUserVM invalidUser = new ManagedUserVM(
             null,                   // id
             "funky-log!n",          // login <-- invalid
             "password",             // password
@@ -196,7 +196,7 @@ public class AccountResourceIntTest {
     @Test
     @Transactional
     public void testRegisterInvalidEmail() throws Exception {
-        ManagedUserDTO invalidUser = new ManagedUserDTO(
+        ManagedUserVM invalidUser = new ManagedUserVM(
             null,               // id
             "bob",              // login
             "password",         // password
@@ -224,7 +224,7 @@ public class AccountResourceIntTest {
     @Test
     @Transactional
     public void testRegisterInvalidPassword() throws Exception {
-        ManagedUserDTO invalidUser = new ManagedUserDTO(
+        ManagedUserVM invalidUser = new ManagedUserVM(
             null,               // id
             "bob",              // login
             "123",              // password with only 3 digits
@@ -253,7 +253,7 @@ public class AccountResourceIntTest {
     @Transactional
     public void testRegisterDuplicateLogin() throws Exception {
         // Good
-        ManagedUserDTO validUser = new ManagedUserDTO(
+        ManagedUserVM validUser = new ManagedUserVM(
             null,                   // id
             "alice",                // login
             "password",             // password
@@ -269,7 +269,7 @@ public class AccountResourceIntTest {
         );
 
         // Duplicate login, different e-mail
-        ManagedUserDTO duplicatedUser = new ManagedUserDTO(validUser.getId(), validUser.getLogin(), validUser.getPassword(), validUser.getLogin(), validUser.getLastName(),
+        ManagedUserVM duplicatedUser = new ManagedUserVM(validUser.getId(), validUser.getLogin(), validUser.getPassword(), validUser.getLogin(), validUser.getLastName(),
             "alicejr@example.com", true, validUser.getLangKey(), validUser.getAuthorities(), validUser.getCreatedDate(), validUser.getLastModifiedBy(), validUser.getLastModifiedDate());
 
         // Good user
@@ -294,7 +294,7 @@ public class AccountResourceIntTest {
     @Transactional
     public void testRegisterDuplicateEmail() throws Exception {
         // Good
-        ManagedUserDTO validUser = new ManagedUserDTO(
+        ManagedUserVM validUser = new ManagedUserVM(
             null,                   // id
             "john",                 // login
             "password",             // password
@@ -310,7 +310,7 @@ public class AccountResourceIntTest {
         );
 
         // Duplicate e-mail, different login
-        ManagedUserDTO duplicatedUser = new ManagedUserDTO(validUser.getId(), "johnjr", validUser.getPassword(), validUser.getLogin(), validUser.getLastName(),
+        ManagedUserVM duplicatedUser = new ManagedUserVM(validUser.getId(), "johnjr", validUser.getPassword(), validUser.getLogin(), validUser.getLastName(),
             validUser.getEmail(), true, validUser.getLangKey(), validUser.getAuthorities(), validUser.getCreatedDate(), validUser.getLastModifiedBy(), validUser.getLastModifiedDate());
 
         // Good user
@@ -334,7 +334,7 @@ public class AccountResourceIntTest {
     @Test
     @Transactional
     public void testRegisterAdminIsIgnored() throws Exception {
-        ManagedUserDTO validUser = new ManagedUserDTO(
+        ManagedUserVM validUser = new ManagedUserVM(
             null,                   // id
             "badguy",               // login
             "password",             // password

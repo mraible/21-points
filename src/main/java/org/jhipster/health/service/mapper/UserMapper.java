@@ -1,8 +1,8 @@
-package org.jhipster.health.web.rest.mapper;
+package org.jhipster.health.service.mapper;
 
 import org.jhipster.health.domain.Authority;
 import org.jhipster.health.domain.User;
-import org.jhipster.health.web.rest.dto.UserDTO;
+import org.jhipster.health.service.dto.UserDTO;
 import org.mapstruct.*;
 
 import java.util.List;

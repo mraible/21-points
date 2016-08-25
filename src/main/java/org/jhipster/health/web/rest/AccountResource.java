@@ -1,32 +1,32 @@
 package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-
+import org.apache.commons.lang.StringUtils;
 import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.service.MailService;
 import org.jhipster.health.service.UserService;
-import org.jhipster.health.web.rest.dto.KeyAndPasswordDTO;
-import org.jhipster.health.web.rest.dto.ManagedUserDTO;
-import org.jhipster.health.web.rest.dto.UserDTO;
+import org.jhipster.health.service.dto.UserDTO;
 import org.jhipster.health.web.rest.util.HeaderUtil;
-
-import org.apache.commons.lang.StringUtils;
+import org.jhipster.health.web.rest.vm.KeyAndPasswordVM;
+import org.jhipster.health.web.rest.vm.ManagedUserVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.*;
+import java.util.Optional;
 
 /**
  * REST controller for managing the current user's account.
@@ -49,7 +49,7 @@ public class AccountResource {
     /**
      * POST  /register : register the user.
      *
-     * @param managedUserDTO the managed user DTO
+     * @param managedUserVM the managed user View Model
      * @param request the HTTP request
      * @return the ResponseEntity with status 201 (Created) if the user is registered or 400 (Bad Request) if the login or e-mail is already in use
      */
@@ -57,19 +57,19 @@ public class AccountResource {
                     method = RequestMethod.POST,
                     produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     @Timed
-    public ResponseEntity<?> registerAccount(@Valid @RequestBody ManagedUserDTO managedUserDTO, HttpServletRequest request) {
+    public ResponseEntity<?> registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM, HttpServletRequest request) {
 
         HttpHeaders textPlainHeaders = new HttpHeaders();
         textPlainHeaders.setContentType(MediaType.TEXT_PLAIN);
 
-        return userRepository.findOneByLogin(managedUserDTO.getLogin().toLowerCase())
+        return userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase())
             .map(user -> new ResponseEntity<>("login already in use", textPlainHeaders, HttpStatus.BAD_REQUEST))
-            .orElseGet(() -> userRepository.findOneByEmail(managedUserDTO.getEmail())
+            .orElseGet(() -> userRepository.findOneByEmail(managedUserVM.getEmail())
                 .map(user -> new ResponseEntity<>("e-mail address already in use", textPlainHeaders, HttpStatus.BAD_REQUEST))
                 .orElseGet(() -> {
-                    User user = userService.createUserInformation(managedUserDTO.getLogin(), managedUserDTO.getPassword(),
-                    managedUserDTO.getFirstName(), managedUserDTO.getLastName(), managedUserDTO.getEmail().toLowerCase(),
-                    managedUserDTO.getLangKey());
+                    User user = userService.createUser(managedUserVM.getLogin(), managedUserVM.getPassword(),
+                    managedUserVM.getFirstName(), managedUserVM.getLastName(), managedUserVM.getEmail().toLowerCase(),
+                    managedUserVM.getLangKey());
                     String baseUrl = request.getScheme() + // "http"
                     "://" +                                // "://"
                     request.getServerName() +              // "myhost"
@@ -147,7 +147,7 @@ public class AccountResource {
         return userRepository
             .findOneByLogin(SecurityUtils.getCurrentUserLogin())
             .map(u -> {
-                userService.updateUserInformation(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+                userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
                     userDTO.getLangKey());
                 return new ResponseEntity<String>(HttpStatus.OK);
             })
@@ -208,7 +208,7 @@ public class AccountResource {
         method = RequestMethod.POST,
         produces = MediaType.TEXT_PLAIN_VALUE)
     @Timed
-    public ResponseEntity<String> finishPasswordReset(@RequestBody KeyAndPasswordDTO keyAndPassword) {
+    public ResponseEntity<String> finishPasswordReset(@RequestBody KeyAndPasswordVM keyAndPassword) {
         if (!checkPasswordLength(keyAndPassword.getNewPassword())) {
             return new ResponseEntity<>("Incorrect password", HttpStatus.BAD_REQUEST);
         }
@@ -219,7 +219,7 @@ public class AccountResource {
 
     private boolean checkPasswordLength(String password) {
         return (!StringUtils.isEmpty(password) &&
-            password.length() >= ManagedUserDTO.PASSWORD_MIN_LENGTH &&
-            password.length() <= ManagedUserDTO.PASSWORD_MAX_LENGTH);
+            password.length() >= ManagedUserVM.PASSWORD_MIN_LENGTH &&
+            password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH);
     }
 }
