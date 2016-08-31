@@ -1,0 +1,43 @@
+
+<div>
+    <h2><span translate="21PointsApp.points.detail.title">Points</span> {{vm.points.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="dl-horizontal jh-entity-details">
+        <dt><span translate="21PointsApp.points.date">Date</span></dt>
+        <dd>
+            <span>{{vm.points.date | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span translate="21PointsApp.points.exercise">Exercise</span></dt>
+        <dd>
+            <span>{{vm.points.exercise}}</span>
+        </dd>
+        <dt><span translate="21PointsApp.points.meals">Meals</span></dt>
+        <dd>
+            <span>{{vm.points.meals}}</span>
+        </dd>
+        <dt><span translate="21PointsApp.points.alcohol">Alcohol</span></dt>
+        <dd>
+            <span>{{vm.points.alcohol}}</span>
+        </dd>
+        <dt><span translate="21PointsApp.points.notes">Notes</span></dt>
+        <dd>
+            <span>{{vm.points.notes}}</span>
+        </dd>
+        <dt><span translate="21PointsApp.points.user">User</span></dt>
+        <dd>
+            {{vm.points.user.login}}
+        </dd>
+    </dl>
+
+    <button type="submit"
+            ui-sref="{{ vm.previousState }}"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span translate="entity.action.back"> Back</span>
+    </button>
+
+    <button type="button" ui-sref="points-detail.edit({id:vm.points.id})" class="btn btn-primary">
+        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="hidden-xs hidden-sm" translate="entity.action.edit"> Edit</span>
+    </button>
+</div>

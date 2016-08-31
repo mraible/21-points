@@ -1,0 +1,37 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipName": "user",
+            "otherEntityName": "user",
+            "relationshipType": "one-to-one",
+            "ownerSide": true
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "weekly_goal",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required",
+                "min",
+                "max"
+            ],
+            "fieldValidateRulesMin": "10",
+            "fieldValidateRulesMax": "21"
+        },
+        {
+            "fieldName": "weight_units",
+            "fieldType": "Units",
+            "fieldValues": "kg,lb",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20160831021015",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "preferences",
+    "pagination": "no"
+}
