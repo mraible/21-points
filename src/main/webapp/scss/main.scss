@@ -12,7 +12,7 @@ Hide ng-cloak on page load, https://docs.angularjs.org/api/ng/directive/ngCloak
 }
 
 /* ==========================================================================
-Developement Ribbon
+Development Ribbon
 ========================================================================== */
 .ribbon {
     background-color: #a00;
@@ -44,6 +44,14 @@ Developement Ribbon
         text-shadow: 0 0 5px #444;
         pointer-events: none;
     }
+}
+
+.navbar-default .navbar-brand,
+.navbar-default .navbar-nav > li > a,
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > .active > a {
+    color: white;
+    background: none;
 }
 
 /* ==========================================================================
@@ -341,12 +349,5 @@ ui bootstrap tweaks
     outline: none;
 }
 
-
-/* ==========================================================================
-Fix error field display
-========================================================================== */
-.form-group .help-block {
-    position: static;
-}
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */

@@ -8,7 +8,7 @@ import org.jhipster.health.repository.search.UserSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.service.util.RandomUtil;
-import org.jhipster.health.web.rest.dto.ManagedUserDTO;
+import org.jhipster.health.web.rest.vm.ManagedUserVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,7 +31,6 @@ public class UserService {
 
     @Inject
     private PasswordEncoder passwordEncoder;
-
 
     @Inject
     private UserRepository userRepository;
@@ -84,7 +83,7 @@ public class UserService {
             });
     }
 
-    public User createUserInformation(String login, String password, String firstName, String lastName, String email,
+    public User createUser(String login, String password, String firstName, String lastName, String email,
         String langKey) {
 
         User newUser = new User();
@@ -110,20 +109,20 @@ public class UserService {
         return newUser;
     }
 
-    public User createUser(ManagedUserDTO managedUserDTO) {
+    public User createUser(ManagedUserVM managedUserVM) {
         User user = new User();
-        user.setLogin(managedUserDTO.getLogin());
-        user.setFirstName(managedUserDTO.getFirstName());
-        user.setLastName(managedUserDTO.getLastName());
-        user.setEmail(managedUserDTO.getEmail());
-        if (managedUserDTO.getLangKey() == null) {
+        user.setLogin(managedUserVM.getLogin());
+        user.setFirstName(managedUserVM.getFirstName());
+        user.setLastName(managedUserVM.getLastName());
+        user.setEmail(managedUserVM.getEmail());
+        if (managedUserVM.getLangKey() == null) {
             user.setLangKey("en"); // default language
         } else {
-            user.setLangKey(managedUserDTO.getLangKey());
+            user.setLangKey(managedUserVM.getLangKey());
         }
-        if (managedUserDTO.getAuthorities() != null) {
+        if (managedUserVM.getAuthorities() != null) {
             Set<Authority> authorities = new HashSet<>();
-            managedUserDTO.getAuthorities().stream().forEach(
+            managedUserVM.getAuthorities().stream().forEach(
                 authority -> authorities.add(authorityRepository.findOne(authority))
             );
             user.setAuthorities(authorities);
@@ -139,7 +138,7 @@ public class UserService {
         return user;
     }
 
-    public void updateUserInformation(String firstName, String lastName, String email, String langKey) {
+    public void updateUser(String firstName, String lastName, String email, String langKey) {
         userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).ifPresent(u -> {
             u.setFirstName(firstName);
             u.setLastName(lastName);
@@ -151,7 +150,28 @@ public class UserService {
         });
     }
 
-    public void deleteUserInformation(String login) {
+    public void updateUser(Long id, String login, String firstName, String lastName, String email,
+        boolean activated, String langKey, Set<String> authorities) {
+
+        userRepository
+            .findOneById(id)
+            .ifPresent(u -> {
+                u.setLogin(login);
+                u.setFirstName(firstName);
+                u.setLastName(lastName);
+                u.setEmail(email);
+                u.setActivated(activated);
+                u.setLangKey(langKey);
+                Set<Authority> managedAuthorities = u.getAuthorities();
+                managedAuthorities.clear();
+                authorities.stream().forEach(
+                    authority -> managedAuthorities.add(authorityRepository.findOne(authority))
+                );
+                log.debug("Changed Information for User: {}", u);
+            });
+    }
+
+    public void deleteUser(String login) {
         userRepository.findOneByLogin(login).ifPresent(u -> {
             userRepository.delete(u);
             userSearchRepository.delete(u);
@@ -189,6 +209,7 @@ public class UserService {
         user.getAuthorities().size(); // eagerly load the association
         return user;
     }
+
 
     /**
      * Not activated users should be automatically deleted after 3 days.
