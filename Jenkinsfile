@@ -36,5 +36,5 @@ node {
     sh "./gradlew bootRepackage -Pprod -x test"
 
     stage 'deploying'
-    sh "heroku deploy:jar --jar build/libs/*.war --app health-by-points2"
+    sh "heroku deploy:jar --jar build/libs/*.war --app health-by-points-2"
 }
