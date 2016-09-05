@@ -27,7 +27,7 @@ node {
     stage 'protractor tests'
     sh '''./gradlew bootRun &
     bootPid=$!
-    sleep 30s
+    sleep 45s
     gulp itest
     kill $bootPid
     '''
