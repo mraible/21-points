@@ -1,7 +1,7 @@
 node {
-    // uncomment these 2 lines and edit the name 'node-4.4.7' according to what you choose in configuration
-    // def nodeHome = tool name: 'node-4.4.7', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
-    // env.PATH = "${nodeHome}/bin:${env.PATH}"
+    // uncomment these 2 lines and edit the name 'node-4.4.5' according to what you choose in configuration
+    def nodeHome = tool name: 'node-4.4.5', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
+    env.PATH = "${nodeHome}/bin:${env.PATH}"
 
     stage 'check tools'
     sh "node -v"
@@ -24,6 +24,17 @@ node {
     stage 'frontend tests'
     sh "gulp test"
 
+    stage 'protractor tests'
+    sh '''./gradlew bootRun &
+    bootPid=$!
+    sleep 30s
+    gulp itest
+    kill $bootPid
+    '''
+
     stage 'packaging'
     sh "./gradlew bootRepackage -Pprod -x test"
+
+    stage 'deploying'
+    sh "heroku deploy:jar --jar build/libs/*.war --app health-by-points2"
 }
