@@ -23,13 +23,17 @@ describe('Preferences e2e test', function () {
     it('should load Preferences', function () {
         entityMenu.click();
         element(by.css('[ui-sref="preferences"]')).click().then(function() {
-            expect(element.all(by.css('h2')).first().getText()).toMatch(/Preferences/);
+            element.all(by.css('h2')).first().getAttribute('data-translate').then(function (value) {
+                expect(value).toMatch(/21PointsApp.preferences.home.title/);
+            });
         });
     });
 
     it('should load create Preferences dialog', function () {
         element(by.css('[ui-sref="preferences.new"]')).click().then(function() {
-            expect(element(by.css('h4.modal-title')).getAttribute("translate")).toMatch(/21PointsApp.preferences.home.createOrEditLabel/);
+            element(by.css('h4.modal-title')).getAttribute('data-translate').then(function (value) {
+                expect(value).toMatch(/21PointsApp.preferences.home.createOrEditLabel/);
+            });
             element(by.css('button.close')).click();
         });
     });

@@ -1,12 +1,12 @@
 <div>
-    <h2 translate="21PointsApp.preferences.home.title">Preferences</h2>
+    <h2 data-translate="21PointsApp.preferences.home.title">Preferences</h2>
     <jhi-alert></jhi-alert>
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-4 no-padding-left">
                 <button class="btn btn-primary" ui-sref="preferences.new" >
                     <span class="glyphicon glyphicon-plus"></span>
-                    <span class="hidden-xs"  translate="21PointsApp.preferences.home.createLabel">
+                    <span class="hidden-xs"  data-translate="21PointsApp.preferences.home.createLabel">
                         Create new Preferences
                     </span>
                 </button>
@@ -35,10 +35,10 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr>
-                    <th><span translate="global.field.id">ID</span></th>
-                    <th><span translate="21PointsApp.preferences.weekly_goal">Weekly Goal</span></th>
-                    <th><span translate="21PointsApp.preferences.weight_units">Weight Units</span></th>
-                    <th><span translate="21PointsApp.preferences.user">User</span></th>
+                    <th><span data-translate="global.field.id">ID</span></th>
+                    <th><span data-translate="21PointsApp.preferences.weekly_goal">Weekly Goal</span></th>
+                    <th><span data-translate="21PointsApp.preferences.weight_units">Weight Units</span></th>
+                    <th><span data-translate="21PointsApp.preferences.user">User</span></th>
                     <th></th>
                 </tr>
             </thead>
@@ -46,7 +46,7 @@
                 <tr ng-repeat="preferences in vm.preferences track by preferences.id">
                     <td><a ui-sref="preferences-detail({id:preferences.id})">{{preferences.id}}</a></td>
                     <td>{{preferences.weekly_goal}}</td>
-                    <td translate="{{'21PointsApp.Units.' + preferences.weight_units}}">{{preferences.weight_units}}</td>
+                    <td data-translate="{{'21PointsApp.Units.' + preferences.weight_units}}">{{preferences.weight_units}}</td>
                     <td>
                         {{preferences.user.undefined}}
                     </td>
@@ -56,19 +56,19 @@
                                     ui-sref="preferences-detail({id:preferences.id})"
                                     class="btn btn-info btn-sm">
                                 <span class="glyphicon glyphicon-eye-open"></span>
-                                <span class="hidden-xs hidden-sm" translate="entity.action.view"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.view"></span>
                             </button>
                             <button type="submit"
                                     ui-sref="preferences.edit({id:preferences.id})"
                                     class="btn btn-primary btn-sm">
                                 <span class="glyphicon glyphicon-pencil"></span>
-                                <span class="hidden-xs hidden-sm" translate="entity.action.edit"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"></span>
                             </button>
                             <button type="submit"
                                     ui-sref="preferences.delete({id:preferences.id})"
                                     class="btn btn-danger btn-sm">
                                 <span class="glyphicon glyphicon-remove-circle"></span>
-                                <span class="hidden-xs hidden-sm" translate="entity.action.delete"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.delete"></span>
                             </button>
                         </div>
                     </td>

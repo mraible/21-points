@@ -1,12 +1,12 @@
 <div>
-    <h2 translate="21PointsApp.points.home.title">Points</h2>
+    <h2 data-translate="21PointsApp.points.home.title">Points</h2>
     <jhi-alert></jhi-alert>
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-4 no-padding-left">
                 <button class="btn btn-primary" ui-sref="points.new" >
                     <span class="glyphicon glyphicon-plus"></span>
-                    <span class="hidden-xs"  translate="21PointsApp.points.home.createLabel">
+                    <span class="hidden-xs"  data-translate="21PointsApp.points.home.createLabel">
                         Create new Points
                     </span>
                 </button>
@@ -35,13 +35,13 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr jh-sort="vm.predicate" ascending="vm.reverse" callback="vm.reset()">
-                    <th jh-sort-by="id"><span translate="global.field.id">ID</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="date"><span translate="21PointsApp.points.date">Date</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="exercise"><span translate="21PointsApp.points.exercise">Exercise</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="meals"><span translate="21PointsApp.points.meals">Meals</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="alcohol"><span translate="21PointsApp.points.alcohol">Alcohol</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="notes"><span translate="21PointsApp.points.notes">Notes</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="user.login"><span translate="21PointsApp.points.user">User</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="id"><span data-translate="global.field.id">ID</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="date"><span data-translate="21PointsApp.points.date">Date</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="exercise"><span data-translate="21PointsApp.points.exercise">Exercise</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="meals"><span data-translate="21PointsApp.points.meals">Meals</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="alcohol"><span data-translate="21PointsApp.points.alcohol">Alcohol</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="notes"><span data-translate="21PointsApp.points.notes">Notes</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="user.login"><span data-translate="21PointsApp.points.user">User</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th></th>
                 </tr>
             </thead>
@@ -62,19 +62,19 @@
                                     ui-sref="points-detail({id:points.id})"
                                     class="btn btn-info btn-sm">
                                 <span class="glyphicon glyphicon-eye-open"></span>
-                                <span class="hidden-xs hidden-sm" translate="entity.action.view"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.view"></span>
                             </button>
                             <button type="submit"
                                     ui-sref="points.edit({id:points.id})"
                                     class="btn btn-primary btn-sm">
                                 <span class="glyphicon glyphicon-pencil"></span>
-                                <span class="hidden-xs hidden-sm" translate="entity.action.edit"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"></span>
                             </button>
                             <button type="submit"
                                     ui-sref="points.delete({id:points.id})"
                                     class="btn btn-danger btn-sm">
                                 <span class="glyphicon glyphicon-remove-circle"></span>
-                                <span class="hidden-xs hidden-sm" translate="entity.action.delete"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.delete"></span>
                             </button>
                         </div>
                     </td>

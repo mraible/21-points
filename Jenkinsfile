@@ -25,7 +25,7 @@ node {
     sh "gulp test"
 
     stage 'protractor tests'
-    sh '''./gradlew bootRun &
+    sh '''./gradlew &
     bootPid=$!
     sleep 45s
     gulp itest

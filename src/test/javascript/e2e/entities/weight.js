@@ -23,13 +23,17 @@ describe('Weight e2e test', function () {
     it('should load Weights', function () {
         entityMenu.click();
         element(by.css('[ui-sref="weight"]')).click().then(function() {
-            expect(element.all(by.css('h2')).first().getText()).toMatch(/Weights/);
+            element.all(by.css('h2')).first().getAttribute('data-translate').then(function (value) {
+                expect(value).toMatch(/21PointsApp.weight.home.title/);
+            });
         });
     });
 
     it('should load create Weight dialog', function () {
         element(by.css('[ui-sref="weight.new"]')).click().then(function() {
-            expect(element(by.css('h4.modal-title')).getAttribute("translate")).toMatch(/21PointsApp.weight.home.createOrEditLabel/);
+            element(by.css('h4.modal-title')).getAttribute('data-translate').then(function (value) {
+                expect(value).toMatch(/21PointsApp.weight.home.createOrEditLabel/);
+            });
             element(by.css('button.close')).click();
         });
     });

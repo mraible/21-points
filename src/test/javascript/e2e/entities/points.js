@@ -23,13 +23,17 @@ describe('Points e2e test', function () {
     it('should load Points', function () {
         entityMenu.click();
         element(by.css('[ui-sref="points"]')).click().then(function() {
-            expect(element.all(by.css('h2')).first().getText()).toMatch(/Points/);
+            element.all(by.css('h2')).first().getAttribute('data-translate').then(function (value) {
+                expect(value).toMatch(/21PointsApp.points.home.title/);
+            });
         });
     });
 
     it('should load create Points dialog', function () {
         element(by.css('[ui-sref="points.new"]')).click().then(function() {
-            expect(element(by.css('h4.modal-title')).getAttribute("translate")).toMatch(/21PointsApp.points.home.createOrEditLabel/);
+            element(by.css('h4.modal-title')).getAttribute('data-translate').then(function (value) {
+                expect(value).toMatch(/21PointsApp.points.home.createOrEditLabel/);
+            });
             element(by.css('button.close')).click();
         });
     });
