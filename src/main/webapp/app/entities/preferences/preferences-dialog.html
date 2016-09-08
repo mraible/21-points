@@ -14,38 +14,38 @@
                     ng-model="vm.preferences.id" readonly />
         </div>
         <div class="form-group">
-            <label class="control-label" data-translate="21PointsApp.preferences.weekly_goal" for="field_weekly_goal">Weekly Goal</label>
-            <input type="number" class="form-control" name="weekly_goal" id="field_weekly_goal"
-                    ng-model="vm.preferences.weekly_goal"
+            <label class="control-label" data-translate="21PointsApp.preferences.weeklyGoal" for="field_weeklyGoal">Weekly Goal</label>
+            <input type="number" class="form-control" name="weeklyGoal" id="field_weeklyGoal"
+                    ng-model="vm.preferences.weeklyGoal"
                     required min="10" max="21" />
-            <div ng-show="editForm.weekly_goal.$invalid">
+            <div ng-show="editForm.weeklyGoal.$invalid">
                 <p class="help-block"
-                    ng-show="editForm.weekly_goal.$error.required" data-translate="entity.validation.required">
+                    ng-show="editForm.weeklyGoal.$error.required" data-translate="entity.validation.required">
                     This field is required.
                 </p>
                 <p class="help-block"
-                    ng-show="editForm.weekly_goal.$error.min" data-translate="entity.validation.min" translate-value-min="10">
+                    ng-show="editForm.weeklyGoal.$error.min" data-translate="entity.validation.min" translate-value-min="10">
                     This field should be more than 10.
                 </p>
                 <p class="help-block"
-                    ng-show="editForm.weekly_goal.$error.max" data-translate="entity.validation.max" translate-value-max="21">
+                    ng-show="editForm.weeklyGoal.$error.max" data-translate="entity.validation.max" translate-value-max="21">
                     This field cannot be more than 21.
                 </p>
                 <p class="help-block"
-                    ng-show="editForm.weekly_goal.$error.number" data-translate="entity.validation.number">
+                    ng-show="editForm.weeklyGoal.$error.number" data-translate="entity.validation.number">
                     This field should be a number.
                 </p>
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label" data-translate="21PointsApp.preferences.weight_units" for="field_weight_units">Weight Units</label>
-            <select class="form-control" name="weight_units" ng-model="vm.preferences.weight_units" id="field_weight_units" required>
+            <label class="control-label" data-translate="21PointsApp.preferences.weightUnits" for="field_weightUnits">Weight Units</label>
+            <select class="form-control" name="weightUnits" ng-model="vm.preferences.weightUnits" id="field_weightUnits" required>
                 <option value="kg" data-translate="21PointsApp.Units.kg">kg</option>
                 <option value="lb" data-translate="21PointsApp.Units.lb">lb</option>
             </select>
-            <div ng-show="editForm.weight_units.$invalid">
+            <div ng-show="editForm.weightUnits.$invalid">
                 <p class="help-block"
-                    ng-show="editForm.weight_units.$error.required" data-translate="entity.validation.required">
+                    ng-show="editForm.weightUnits.$error.required" data-translate="entity.validation.required">
                     This field is required.
                 </p>
             </div>

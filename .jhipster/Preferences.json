@@ -10,7 +10,7 @@
     ],
     "fields": [
         {
-            "fieldName": "weekly_goal",
+            "fieldName": "weeklyGoal",
             "fieldType": "Integer",
             "fieldValidateRules": [
                 "required",
@@ -21,7 +21,7 @@
             "fieldValidateRulesMax": "21"
         },
         {
-            "fieldName": "weight_units",
+            "fieldName": "weightUnits",
             "fieldType": "Units",
             "fieldValues": "kg,lb",
             "fieldValidateRules": [

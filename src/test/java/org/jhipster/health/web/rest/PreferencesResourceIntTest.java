@@ -2,18 +2,17 @@ package org.jhipster.health.web.rest;
 
 import org.jhipster.health.Application;
 import org.jhipster.health.domain.Preferences;
+import org.jhipster.health.domain.enumeration.Units;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,10 +25,14 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import org.jhipster.health.domain.enumeration.Units;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 /**
  * Test class for the PreferencesResource REST controller.
  *
@@ -84,8 +87,8 @@ public class PreferencesResourceIntTest {
     public static Preferences createEntity(EntityManager em) {
         Preferences preferences = new Preferences();
         preferences = new Preferences()
-                .weekly_goal(DEFAULT_WEEKLY_GOAL)
-                .weight_units(DEFAULT_WEIGHT_UNITS);
+                .weeklyGoal(DEFAULT_WEEKLY_GOAL)
+                .weightUnits(DEFAULT_WEIGHT_UNITS);
         return preferences;
     }
 
@@ -111,7 +114,7 @@ public class PreferencesResourceIntTest {
         List<Preferences> preferences = preferencesRepository.findAll();
         assertThat(preferences).hasSize(databaseSizeBeforeCreate + 1);
         Preferences testPreferences = preferences.get(preferences.size() - 1);
-        assertThat(testPreferences.getWeekly_goal()).isEqualTo(DEFAULT_WEEKLY_GOAL);
+        assertThat(testPreferences.getWeeklyGoal()).isEqualTo(DEFAULT_WEEKLY_GOAL);
         assertThat(testPreferences.getWeight_units()).isEqualTo(DEFAULT_WEIGHT_UNITS);
 
         // Validate the Preferences in ElasticSearch
@@ -121,10 +124,10 @@ public class PreferencesResourceIntTest {
 
     @Test
     @Transactional
-    public void checkWeekly_goalIsRequired() throws Exception {
+    public void checkWeeklyGoalIsRequired() throws Exception {
         int databaseSizeBeforeTest = preferencesRepository.findAll().size();
         // set the field null
-        preferences.setWeekly_goal(null);
+        preferences.setWeeklyGoal(null);
 
         // Create the Preferences, which fails.
 
@@ -166,8 +169,8 @@ public class PreferencesResourceIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().intValue())))
-                .andExpect(jsonPath("$.[*].weekly_goal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
-                .andExpect(jsonPath("$.[*].weight_units").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
+                .andExpect(jsonPath("$.[*].weeklyGoal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
+                .andExpect(jsonPath("$.[*].weightUnits").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
     }
 
     @Test
@@ -181,8 +184,8 @@ public class PreferencesResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(preferences.getId().intValue()))
-            .andExpect(jsonPath("$.weekly_goal").value(DEFAULT_WEEKLY_GOAL))
-            .andExpect(jsonPath("$.weight_units").value(DEFAULT_WEIGHT_UNITS.toString()));
+            .andExpect(jsonPath("$.weeklyGoal").value(DEFAULT_WEEKLY_GOAL))
+            .andExpect(jsonPath("$.weightUnits").value(DEFAULT_WEIGHT_UNITS.toString()));
     }
 
     @Test
@@ -204,8 +207,8 @@ public class PreferencesResourceIntTest {
         // Update the preferences
         Preferences updatedPreferences = preferencesRepository.findOne(preferences.getId());
         updatedPreferences
-                .weekly_goal(UPDATED_WEEKLY_GOAL)
-                .weight_units(UPDATED_WEIGHT_UNITS);
+                .weeklyGoal(UPDATED_WEEKLY_GOAL)
+                .weightUnits(UPDATED_WEIGHT_UNITS);
 
         restPreferencesMockMvc.perform(put("/api/preferences")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -216,7 +219,7 @@ public class PreferencesResourceIntTest {
         List<Preferences> preferences = preferencesRepository.findAll();
         assertThat(preferences).hasSize(databaseSizeBeforeUpdate);
         Preferences testPreferences = preferences.get(preferences.size() - 1);
-        assertThat(testPreferences.getWeekly_goal()).isEqualTo(UPDATED_WEEKLY_GOAL);
+        assertThat(testPreferences.getWeeklyGoal()).isEqualTo(UPDATED_WEEKLY_GOAL);
         assertThat(testPreferences.getWeight_units()).isEqualTo(UPDATED_WEIGHT_UNITS);
 
         // Validate the Preferences in ElasticSearch
@@ -258,7 +261,7 @@ public class PreferencesResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().intValue())))
-            .andExpect(jsonPath("$.[*].weekly_goal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
-            .andExpect(jsonPath("$.[*].weight_units").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
+            .andExpect(jsonPath("$.[*].weeklyGoal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
+            .andExpect(jsonPath("$.[*].weightUnits").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
     }
 }

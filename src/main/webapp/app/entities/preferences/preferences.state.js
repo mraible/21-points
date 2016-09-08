@@ -106,8 +106,8 @@
                     resolve: {
                         entity: function () {
                             return {
-                                weekly_goal: null,
-                                weight_units: null,
+                                weeklyGoal: null,
+                                weightUnits: null,
                                 id: null
                             };
                         }
