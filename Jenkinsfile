@@ -3,34 +3,34 @@ node {
     // def nodeHome = tool name: 'node-4.4.7', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
     // env.PATH = "${nodeHome}/bin:${env.PATH}"
 
-    stage 'check tools' {
+    stage('check tools') {
         sh "node -v"
         sh "npm -v"
         sh "bower -v"
         sh "gulp -v"
     }
 
-    stage 'checkout' {
+    stage('checkout') {
         checkout scm
     }
 
-    stage 'npm install' {
+    stage('npm install') {
         sh "npm install"
     }
 
-    stage 'clean' {
+    stage('clean') {
         sh "./gradlew clean"
     }
 
-    stage 'backend tests' {
+    stage('backend tests') {
         sh "./gradlew test"
     }
 
-    stage 'frontend tests' {
+    stage('frontend tests') {
         sh "gulp test"
     }
 
-    stage 'protractor tests' {
+    stage('protractor tests') {
         sh '''./gradlew &
         bootPid=$!
         sleep 45s
@@ -39,11 +39,11 @@ node {
         '''
     }
 
-    stage 'packaging' {
+    stage('packaging') {
         sh "./gradlew bootRepackage -Pprod -x test"
     }
 
-    stage 'deploying' {
+    stage('deploying') {
         sh "heroku deploy:jar --jar build/libs/*.war --app health-by-points-2"
     }
 }
