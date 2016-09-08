@@ -72,7 +72,7 @@ public class Preferences implements Serializable {
         this.weeklyGoal = weeklyGoal;
     }
 
-    public Units getWeight_units() {
+    public Units getWeightUnits() {
         return weightUnits;
     }
 
@@ -81,7 +81,7 @@ public class Preferences implements Serializable {
         return this;
     }
 
-    public void setWeight_units(Units weightUnits) {
+    public void setWeightUnits(Units weightUnits) {
         this.weightUnits = weightUnits;
     }
 
@@ -107,7 +107,7 @@ public class Preferences implements Serializable {
             return false;
         }
         Preferences preferences = (Preferences) o;
-        if(preferences.id == null || id == null) {
+        if (preferences.id == null || id == null) {
             return false;
         }
         return Objects.equals(id, preferences.id);
