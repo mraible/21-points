@@ -40,7 +40,7 @@ node {
     }
 
     stage('packaging') {
-        sh "./gradlew bootRepackage -Pprod -x test"
+        sh "./gradlew bootRepackage -Pprod -x test --stacktrace"
     }
 
     stage('deploying') {
