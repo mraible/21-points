@@ -1,7 +1,7 @@
 package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.security.SecurityUtils;

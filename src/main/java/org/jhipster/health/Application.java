@@ -72,5 +72,4 @@ public class Application {
             env.getProperty("server.port"));
 
     }
-
 }

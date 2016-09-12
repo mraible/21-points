@@ -46,7 +46,9 @@ describe('account', function () {
         accountMenu.click();
         element(by.css('[ui-sref="settings"]')).click();
 
-        expect(element(by.css('h2')).getAttribute('data-translate')).toMatch(/settings.title/);
+        element(by.css('h2')).getAttribute('data-translate').then(function (value) {
+            expect(value).toMatch(/settings.title/);
+        });
         element(by.css('button[type=submit]')).click();
 
         element(by.css('.alert-success')).getAttribute('data-translate').then(function (value) {

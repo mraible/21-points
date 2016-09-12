@@ -188,6 +188,7 @@ public class JHipsterProperties {
                 private String secret;
 
                 private long tokenValidityInSeconds = 1800;
+
                 private long tokenValidityInSecondsForRememberMe = 2592000;
 
                 public String getSecret() {
@@ -485,9 +486,7 @@ public class JHipsterProperties {
 
             public void setQueueSize(int queueSize) { this.queueSize = queueSize; }
         }
-
     }
-
 
     public static class Ribbon {
 

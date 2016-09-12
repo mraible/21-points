@@ -1,6 +1,6 @@
 {
   "generator-jhipster": {
-    "jhipsterVersion": "3.6.1",
+    "jhipsterVersion": "3.7.0",
     "baseName": "21points",
     "packageName": "org.jhipster.health",
     "packageFolder": "org/jhipster/health",
