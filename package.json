@@ -70,5 +70,8 @@
   "scripts": {
     "test": "gulp test",
     "postinstall": "webdriver-manager update"
+  },
+  "dependencies": {
+    "pretty-bytes": "^4.0.2"
   }
 }
