@@ -27,11 +27,11 @@
                 if (vm.isAuthenticated()) {
                     Preferences.user(function (preferences) {
                         vm.preferences = preferences;
-                    });
 
-                    Points.thisWeek(function (points) {
-                        vm.pointsThisWeek = points;
-                        vm.pointsPercentage = (points.points / 21) * 100;
+                        Points.thisWeek(function (points) {
+                            vm.pointsThisWeek = points;
+                            vm.pointsPercentage = (points.points / vm.preferences.weeklyGoal) * 100;
+                        });
                     });
 
                     BloodPressure.last30Days(function (bpReadings) {
