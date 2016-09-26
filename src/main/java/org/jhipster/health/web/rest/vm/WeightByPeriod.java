@@ -1,4 +1,4 @@
-package org.jhipster.health.web.rest.dto;
+package org.jhipster.health.web.rest.vm;
 
 import org.jhipster.health.domain.Weight;
 

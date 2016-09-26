@@ -7,7 +7,7 @@ import org.jhipster.health.repository.WeightRepository;
 import org.jhipster.health.repository.search.WeightSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
-import org.jhipster.health.web.rest.dto.WeightByPeriod;
+import org.jhipster.health.web.rest.vm.WeightByPeriod;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
