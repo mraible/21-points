@@ -3,9 +3,9 @@
 
     angular
         .module('21PointsApp', [
-            'ngStorage', 
+            'ngStorage',
             'tmh.dynamicLocale',
-            'pascalprecht.translate', 
+            'pascalprecht.translate',
             'ngResource',
             'ngCookies',
             'ngAria',
@@ -16,7 +16,8 @@
             'ui.router',
             'infinite-scroll',
             // jhipster-needle-angularjs-add-module JHipster will add new module here
-            'angular-loading-bar'
+            'angular-loading-bar',
+            'nvd3'
         ])
         .run(run);
 

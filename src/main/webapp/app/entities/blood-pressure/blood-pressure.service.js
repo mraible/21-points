@@ -11,6 +11,7 @@
 
         return $resource(resourceUrl, {}, {
             'query': { method: 'GET', isArray: true},
+            'last30Days': { method: 'GET', isArray: false, url: 'api/bp-by-days/30'},
             'get': {
                 method: 'GET',
                 transformResponse: function (data) {

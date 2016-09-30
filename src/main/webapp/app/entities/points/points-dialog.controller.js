@@ -10,6 +10,14 @@
     function PointsDialogController ($timeout, $scope, $stateParams, $uibModalInstance, entity, Points, User) {
         var vm = this;
 
+        // defaults for new entries
+        if (!entity.id) {
+            entity.date = new Date();
+            entity.exercise = 1;
+            entity.meals = 1;
+            entity.alcohol = 1;
+        }
+
         vm.points = entity;
         vm.clear = clear;
         vm.datePickerOpenStatus = {};

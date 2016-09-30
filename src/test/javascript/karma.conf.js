@@ -30,6 +30,8 @@ module.exports = function (config) {
             'src/main/webapp/bower_components/stomp-websocket/lib/stomp.min.js',
             'src/main/webapp/bower_components/arrive/src/arrive.js',
             'src/main/webapp/bower_components/bootstrap/dist/js/bootstrap.js',
+            'src/main/webapp/bower_components/d3/d3.js',
+            'src/main/webapp/bower_components/nvd3/build/nv.d3.js',
             'src/main/webapp/bower_components/angular/angular.js',
             'src/main/webapp/bower_components/angular-aria/angular-aria.js',
             'src/main/webapp/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
@@ -50,6 +52,7 @@ module.exports = function (config) {
             'src/main/webapp/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
             'src/main/webapp/bower_components/bootstrap-material-design/dist/js/material.js',
             'src/main/webapp/bower_components/bootstrap-material-design/dist/js/ripples.js',
+            'src/main/webapp/bower_components/angular-nvd3/dist/angular-nvd3.js',
             'src/main/webapp/bower_components/angular-mocks/angular-mocks.js',
             // endbower
             'src/main/webapp/app/app.module.js',

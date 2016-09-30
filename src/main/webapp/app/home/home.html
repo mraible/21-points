@@ -1,41 +1,124 @@
 <div ng-cloak>
     <div class="row">
         <div class="col-md-4">
-            <span class="hipster img-responsive img-rounded"></span>
+            <span class="heart img-responsive img-rounded m-t-md hidden-xs"
+                  tooltip="The greatest wealth is Health"></span>
         </div>
         <div class="col-md-8">
-            <h1 data-translate="home.title">Welcome, Java Hipster!</h1>
-            <p class="lead" data-translate="home.subtitle">This is your homepage</p>
+            <h1 ng-if="isAuthenticated() && vm.account.firstName" translate="home.title"
+                translate-values="{name: '{{vm.account.firstName}}'}">Welcome, Java Hipster!</h1>
+
+            <h1 ng-hide="vm.isAuthenticated()">Welcome!</h1>
+
+            <p class="lead" translate="home.subtitle">This is your homepage</p>
 
             <div ng-switch="vm.isAuthenticated()">
-                <div class="alert alert-success" ng-switch-when="true" data-translate="home.logged.message" translate-values="{username: '{{vm.account.login}}'}">
-                    You are logged in as user "{{vm.account.login}}".
+                <div ng-switch-when="true">
+                    <div class="row">
+                        <div class="col-md-6 col-xs-5">
+                            <h4 translate="home.points.thisWeek" class="m-t-sm hidden-xs"
+                                translate-values="{date: '{{vm.pointsThisWeek.week | date: 'longDate'}}'}">
+                                Points for the week of {{vm.pointsThisWeek.week | date: 'longDate'}}:
+                            </h4>
+                            <h4 translate="main.points.thisWeekMobile" class="m-t-sm visible-xs">
+                                Points for {{pointsThisWeek.week | date: 'longDate'}}:
+                            </h4>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a ui-sref="points.add" class="btn btn-primary btn-raised m-n m-b-xs">Add Points</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="progress progress-lg" ng-show="vm.pointsThisWeek.points">
+                                <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
+                                     aria-valuenow="{{vm.pointsThisWeek.points}}"
+                                     aria-valuemin="0" aria-valuemax="21" style="width: {{vm.pointsPercentage}}%">
+                                    {{vm.pointsThisWeek.points}} / Goal: 10
+                                </div>
+                            </div>
+                            <alert type="info" ng-hide="vm.pointsThisWeek.points">
+                                No points yet this week, better get moving!
+                            </alert>
+                        </div>
+                    </div>
+                    <div class="row m-t-sm">
+                        <div class="col-md-6">
+                            <h4 class="m-t-md">Weight:</h4>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a ui-sref="weight.add" class="btn btn-default btn-sm btn-raised">Add Weight</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <img src="http://placehold.it/700x150?text=Weight Graph" class="img-responsive">
+                        </div>
+                    </div>
+                    <div class="row m-t-sm">
+                        <div class="col-md-6">
+                            <h4 class="m-t-md">Blood Pressure:</h4>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a ui-sref="bloodPressure.add" class="btn btn-default btn-sm btn-raised">Add Blood
+                                Pressure</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <img src="http://placehold.it/700x150?text=Blood Pressure Graph" class="img-responsive">
+                        </div>
+                    </div>
+                    <!--<div class="row">
+                        <div class="col-md-10">
+                            <span ng-if="vm.bpReadings.readings.length">
+                                <nvd3 options="bpOptions" data="bpData" class="with-3d-shadow with-transitions"></nvd3>
+                            </span>
+                            <span ng-if="!vm.bpReadings.readings.length">
+                                <alert type="info">No blood pressure readings found.</alert>
+                            </span>
+                        </div>
+                    </div>-->
                 </div>
 
-                <div class="alert alert-warning" ng-switch-when="false" data-translate="global.messages.info.authenticated" translate-compile>
-                    If you want to <a class="alert-link" href="" ng-click="vm.login()">sign in</a>, you can try the default accounts:<br/>- Administrator (login="admin" and password="admin") <br/>- User (login="user" and password="user").
-                </div>
+                <div ng-switch-when="false">
+                    <p><strong>
+                        To get started, please
+                        <a href="" ng-click="vm.login()"><span class="glyphicon glyphicon-log-in"></span>
+                            &#xA0;<span translate="global.menu.account.login">Authenticate</span>.</a>
+                        </strong>
+                    </p>
 
-                <div class="alert alert-warning" ng-switch-when="false" data-translate="global.messages.info.register" translate-compile>
-                    You don't have an account yet? <a class="alert-link" ui-sref="register">Register a new account</a>
+                    <p>
+                        <a ui-sref="about" class="btn btn-info btn-raised hidden-xs">
+                            Learn more about 21-Points Health
+                            <div class="ripple-wrapper"></div></a>
+                        <a ui-sref="about" class="btn btn-info visible-xs">
+                            Learn more
+                            <div class="ripple-wrapper"></div></a>
+                    </p>
+
+                    <p translate="home.question">
+                        If you have any question on JHipster:
+                    </p>
+
+                    <ul id="resources">
+                        <li><a href="http://www.jhipster-book.com" target="_blank"
+                               translate="home.link.homepage">JHipster Mini-Book Blog</a></li>
+                        <li><a href="http://stackoverflow.com/tags/jhipster/info" target="_blank"
+                               translate="home.link.stackoverflow">JHipster on Stack Overflow</a></li>
+                        <li><a href="https://twitter.com/jhipster_book" target="_blank"
+                               translate="home.link.contact">Contact @java_hipster on Twitter</a></li>
+                        <li><a href="https://github.com/mraible/21-points/issues" target="_blank"
+                               translate="home.link.issues">Report an issue</a></li>
+                    </ul>
+
+                    <p translate="global.messages.info.register">
+                        Don't have an account yet? <a href="#/register">Register a new account</a>.
                 </div>
             </div>
-
-            <p data-translate="home.question">
-                If you have any question on JHipster:
-            </p>
-
-            <ul>
-                <li><a href="http://jhipster.github.io/" target="_blank" data-translate="home.link.homepage">JHipster homepage</a></li>
-                <li><a href="http://stackoverflow.com/tags/jhipster/info" target="_blank" data-translate="home.link.stackoverflow">JHipster on Stack Overflow</a></li>
-                <li><a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" data-translate="home.link.bugtracker">JHipster bug tracker</a></li>
-                <li><a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" data-translate="home.link.chat">JHipster public chat room</a></li>
-                <li><a href="https://twitter.com/java_hipster" target="_blank"  data-translate="home.link.follow">follow @java_hipster on Twitter</a></li>
-            </ul>
-
-            <p>
-             <span data-translate="home.like">If you like JHipster, don't forget to give us a star on </span>&nbsp;<a href="https://github.com/jhipster/generator-jhipster" target="_blank" data-translate="home.github">Github</a>!
-            </p>
         </div>
     </div>
+</div>
+</div>
 </div>

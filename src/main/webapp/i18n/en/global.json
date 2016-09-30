@@ -1,6 +1,6 @@
 {
     "global": {
-        "title": "21points",
+        "title": "21-Points Health",
         "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
         "menu": {
             "home": "Home",
@@ -18,8 +18,8 @@
                 "settings": "Settings",
                 "password": "Password",
                 "sessions": "Sessions",
-                "login": "Sign in",
-                "logout": "Sign out",
+                "login": "Sign In",
+                "logout": "Log out",
                 "register": "Register"
             },
             "admin": {
@@ -91,6 +91,8 @@
             "delete": "Delete",
             "edit": "Edit",
             "open": "Open",
+            "new": "Add",
+            "search": "Search",
             "save": "Save",
             "view": "View"
         },
@@ -123,5 +125,5 @@
         "emailexists": "E-mail is already in use!",
         "idexists": "A new {{ entityName }} cannot already have an ID"
     },
-    "footer": "This is your footer"
+    "footer": "<strong>21-Points Health</strong> | An application developed for a better life and <a href='http://www.jhipster-book.com' target='_blank'>The JHipster Mini-Book</a> | By <a href='http://raibledesigns.com' target='_blank'>Matt Raible</a>"
 }

@@ -30,28 +30,40 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label" data-translate="21PointsApp.points.exercise" for="field_exercise">Exercise</label>
-            <input type="number" class="form-control" name="exercise" id="field_exercise"
-                    ng-model="vm.points.exercise"
-                     />
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="vm.points.exercise" id="field_exercise"
+                           ng-true-value="1" ng-false-value="0">
+                    <span class="check"></span>
+                    <label data-translate="21PointsApp.points.exercise" for="field_exercise" class="control-label">Exercise</label>
+                </label>
+            </div>
         </div>
         <div class="form-group">
-            <label class="control-label" data-translate="21PointsApp.points.meals" for="field_meals">Meals</label>
-            <input type="number" class="form-control" name="meals" id="field_meals"
-                    ng-model="vm.points.meals"
-                     />
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="vm.points.meals" id="field_meals"
+                           ng-true-value="1" ng-false-value="0">
+                    <span class="check"></span>
+                    <label data-translate="21PointsApp.points.meals" for="field_meals" class="control-label">Meals</label>
+                </label>
+            </div>
         </div>
         <div class="form-group">
-            <label class="control-label" data-translate="21PointsApp.points.alcohol" for="field_alcohol">Alcohol</label>
-            <input type="number" class="form-control" name="alcohol" id="field_alcohol"
-                    ng-model="vm.points.alcohol"
-                     />
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="vm.points.alcohol" id="field_alcohol"
+                           ng-true-value="1" ng-false-value="0">
+                    <span class="check"></span>
+                    <label data-translate="21PointsApp.points.alcohol" for="field_alcohol" class="control-label">Alcohol</label>
+                </label>
+            </div>
         </div>
         <div class="form-group">
             <label class="control-label" data-translate="21PointsApp.points.notes" for="field_notes">Notes</label>
-            <input type="text" class="form-control" name="notes" id="field_notes"
+            <textarea class="form-control" name="notes" id="field_notes"
                     ng-model="vm.points.notes"
-                    ng-maxlength="140" />
+                    ng-maxlength="140" rows="3"></textarea>
             <div ng-show="editForm.notes.$invalid">
                 <p class="help-block"
                     ng-show="editForm.notes.$error.maxlength" data-translate="entity.validation.maxlength" translate-value-max="140">
@@ -60,7 +72,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" has-authority="ROLE_ADMIN">
             <label data-translate="21PointsApp.points.user" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" ng-model="vm.points.user" ng-options="user as user.login for user in vm.users track by user.id">
                 <option value=""></option>
@@ -71,7 +83,7 @@
         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="vm.clear()">
             <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span data-translate="entity.action.cancel">Cancel</span>
         </button>
-        <button type="submit" ng-disabled="editForm.$invalid || vm.isSaving" class="btn btn-primary">
+        <button type="submit" ng-disabled="editForm.$invalid || vm.isSaving" class="btn btn-primary btn-raised">
             <span class="glyphicon glyphicon-save"></span>&nbsp;<span data-translate="entity.action.save">Save</span>
         </button>
     </div>

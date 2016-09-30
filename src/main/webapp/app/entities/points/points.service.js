@@ -11,6 +11,7 @@
 
         return $resource(resourceUrl, {}, {
             'query': { method: 'GET', isArray: true},
+            'thisWeek': { method: 'GET', isArray: false, url: 'api/points-this-week'},
             'get': {
                 method: 'GET',
                 transformResponse: function (data) {

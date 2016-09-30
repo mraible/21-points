@@ -26,8 +26,7 @@
             });
         }
 
-        // update the window title using params in the following
-        // precendence
+        // update the window title using params in the following precedence
         // 1. titleKey parameter
         // 2. $state.$current.data.pageTitle (current state page title)
         // 3. 'global.title'
@@ -35,8 +34,14 @@
             if (!titleKey && $state.$current.data && $state.$current.data.pageTitle) {
                 titleKey = $state.$current.data.pageTitle;
             }
-            $translate(titleKey || 'global.title').then(function (title) {
-                $window.document.title = title;
+
+            $translate(titleKey).then(function (title) {
+                // Change window title with translated one
+                $translate('global.title').then(function (appname) {
+                    if (title !== appname) {
+                        $window.document.title = title + " | " + appname;
+                    }
+                });
             });
         }
     }

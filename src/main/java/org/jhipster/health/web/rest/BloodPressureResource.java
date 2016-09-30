@@ -2,9 +2,10 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.BloodPressure;
-
 import org.jhipster.health.repository.BloodPressureRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
+import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.dto.BloodPressureByPeriod;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -15,18 +16,24 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * REST controller for managing BloodPressure.
@@ -36,7 +43,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
 public class BloodPressureResource {
 
     private final Logger log = LoggerFactory.getLogger(BloodPressureResource.class);
-        
+
     @Inject
     private BloodPressureRepository bloodPressureRepository;
 
@@ -111,6 +118,26 @@ public class BloodPressureResource {
     }
 
     /**
+     * GET  /bp-by-days -> get all the blood pressure readings by last x days.
+     */
+    @RequestMapping(value = "/bp-by-days/{days}")
+    @Timed
+    public ResponseEntity<BloodPressureByPeriod> getByDays(@PathVariable int days) {
+        ZonedDateTime rightNow = ZonedDateTime.now();
+        ZonedDateTime daysAgo = rightNow.minusDays(days);
+
+        List<BloodPressure> readings = bloodPressureRepository.findAllByTimestampBetweenOrderByTimestampDesc(daysAgo, rightNow);
+        BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", filterByUser(readings));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private List<BloodPressure> filterByUser(List<BloodPressure> readings) {
+        Stream<BloodPressure> userReadings = readings.stream()
+            .filter(bp -> bp.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin()));
+        return userReadings.collect(Collectors.toList());
+    }
+
+    /**
      * GET  /blood-pressures/:id : get the "id" bloodPressure.
      *
      * @param id the id of the bloodPressure to retrieve
@@ -151,7 +178,7 @@ public class BloodPressureResource {
      * SEARCH  /_search/blood-pressures?query=:query : search for the bloodPressure corresponding
      * to the query.
      *
-     * @param query the query of the bloodPressure search 
+     * @param query the query of the bloodPressure search
      * @param pageable the pagination information
      * @return the result of the search
      * @throws URISyntaxException if there is an error to generate the pagination HTTP headers

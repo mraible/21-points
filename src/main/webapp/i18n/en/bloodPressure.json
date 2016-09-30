@@ -2,24 +2,25 @@
     "21PointsApp": {
         "bloodPressure" : {
             "home": {
-                "title": "Blood Pressures",
-                "createLabel": "Create a new Blood Pressure",
-                "createOrEditLabel": "Create or edit a Blood Pressure",
+                "title": "Blood Pressure",
+                "createLabel": "Add Reading",
+                "createOrEditLabel": "Edit a Reading",
                 "search": "Search for Blood Pressure"
             },
-            "created": "A new Blood Pressure is created with identifier {{ param }}",
-            "updated": "A Blood Pressure is updated with identifier {{ param }}",
-            "deleted": "A Blood Pressure is deleted with identifier {{ param }}",
+            "created": "Blood pressure added successfully.",
+            "updated": "Blood pressure updated successfully.",
+            "deleted": "Blood pressure deleted.",
             "delete": {
-                "question": "Are you sure you want to delete Blood Pressure {{ id }}?"
+                "question": "Are you sure you want to delete this?"
             },
             "detail": {
-                "title": "Blood Pressure"
+                "title": "View Blood Pressure"
             },
-            "timestamp": "Timestamp",
+            "timestamp": "Date/Time",
             "systolic": "Systolic",
             "diastolic": "Diastolic",
-            "user": "User"
+            "user": "User",
+            "actions": "Actions"
         }
     }
 }

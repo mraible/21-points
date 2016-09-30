@@ -104,6 +104,72 @@ Main page styles
     background-size: contain;
 }
 
+/* New CSS classes and modifications */
+.m-n {
+    margin: 0;
+}
+
+.p-n {
+    padding: 0;
+}
+
+.p-r {
+    padding-right: 10px;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+body {
+    padding-bottom: 80px;
+}
+
+.modal-title {
+    margin-bottom: 10px;
+}
+
+.modal-content .modal-body {
+    padding-top: 0;
+}
+
+.form-group {
+    margin: 0;
+
+    label {
+        .control-label {
+            font-size: 16px;
+        }
+    }
+
+    .checkbox {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+.footer {
+    bottom: 0;
+    left: 0;
+    color: #666;
+    background: #eee;
+    border-top: 1px solid silver;
+    position: fixed;
+    width: 100%;
+    padding: 10px;
+    padding-bottom: 0;
+    text-align: center;
+    z-index: 2;
+}
+
+.heart {
+    display: inline-block;
+    width: 347px;
+    height: 347px;
+    background: url("../images/21-points-logo.jpg") no-repeat center top;
+    background-size: contain;
+}
+
 /* wait autoprefixer update to allow simple generation of high pixel density media query */
 @media
 only screen and (-webkit-min-device-pixel-ratio: 2),
@@ -112,10 +178,105 @@ only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-    .hipster {
-        background: url("../images/hipster2x.png") no-repeat center top;
+    .heart {
+        background: url("../images/21-points-logo2x.jpg") no-repeat center top;
         background-size: contain;
     }
+}
+
+.progress-lg {
+    height: 20px;
+}
+
+.m-n {
+    margin: 0;
+}
+
+.m-l-sm {
+    margin-left: 10px;
+}
+
+.m-b-xs {
+    margin-bottom: 5px;
+}
+
+.m-t-sm {
+    margin-top: 10px;
+}
+
+.m-t-md {
+    margin-top: 15px;
+}
+
+.truncate {
+    width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.navbar {
+    position: fixed;
+    width: 100%;
+    z-index: 5;
+}
+
+.development {
+    position: fixed;
+}
+
+body > .container {
+    padding-top: 80px;
+}
+
+/* Smartphones */
+@media handheld and (max-width: 480px), screen and (max-device-width: 480px), screen and (max-width: 1000px) {
+    .navbar, .development {
+        position: absolute;
+    }
+
+    #resources li {
+        padding: 5px 0
+    }
+}
+
+/* Events in Calendar */
+.fc-event.label {
+    display: inline-block;
+    padding: 1px 4px;
+    float: right;
+    border: 0;
+}
+
+.fc-event.label-primary {
+    background-color: #009688;
+}
+
+.fc-event.label-info {
+    background-color: #03a9f4;
+}
+
+.fc-event.label-success {
+    background-color: #4caf50;
+}
+
+/* Loading bar color */
+#loading-bar .bar {
+    background: #76ff03;
+}
+
+/* Fancy blur effect */
+#loading-bar .peg {
+    -moz-box-shadow: #76ff03 1px 0 6px 1px;
+    -ms-box-shadow: #76ff03 1px 0 6px 1px;
+    -webkit-box-shadow: #76ff03 1px 0 6px 1px;
+    box-shadow: #76ff03 1px 0 6px 1px;
+}
+
+#loading-bar-spinner .spinner-icon {
+    border-top-color:  #76ff03;
+    border-left-color: #76ff03;
 }
 
 /* ==========================================================================

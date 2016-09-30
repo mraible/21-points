@@ -2,17 +2,23 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Preferences;
-
+import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
+import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -23,7 +29,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * REST controller for managing Preferences.
@@ -33,12 +39,15 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
 public class PreferencesResource {
 
     private final Logger log = LoggerFactory.getLogger(PreferencesResource.class);
-        
+
     @Inject
     private PreferencesRepository preferencesRepository;
 
     @Inject
     private PreferencesSearchRepository preferencesSearchRepository;
+
+    @Inject
+    private UserRepository userRepository;
 
     /**
      * POST  /preferences : Create a new preferences.
@@ -104,6 +113,25 @@ public class PreferencesResource {
     }
 
     /**
+     * GET  /my-preferences -> get the current user's preferences.
+     */
+    @RequestMapping(value = "/my-preferences")
+    @Timed
+    public ResponseEntity<Preferences> getUserPreferences() {
+        String username = SecurityUtils.getCurrentUserLogin();
+        log.debug("REST request to get Preferences : {}", username);
+        User user = userRepository.findOneByLogin(username).get();
+
+        if (user.getPreferences() != null) {
+            return new ResponseEntity<>(user.getPreferences(), HttpStatus.OK);
+        } else {
+            Preferences defaultPreferences = new Preferences();
+            defaultPreferences.setWeeklyGoal(10); // default
+            return new ResponseEntity<>(defaultPreferences, HttpStatus.OK);
+        }
+    }
+
+    /**
      * GET  /preferences/:id : get the "id" preferences.
      *
      * @param id the id of the preferences to retrieve
@@ -144,7 +172,7 @@ public class PreferencesResource {
      * SEARCH  /_search/preferences?query=:query : search for the preferences corresponding
      * to the query.
      *
-     * @param query the query of the preferences search 
+     * @param query the query of the preferences search
      * @return the result of the search
      */
     @RequestMapping(value = "/_search/preferences",
