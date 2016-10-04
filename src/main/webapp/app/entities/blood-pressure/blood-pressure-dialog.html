@@ -4,7 +4,8 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                 ng-click="vm.clear()">&times;</button>
-        <h4 class="modal-title" id="myBloodPressureLabel" data-translate="21PointsApp.bloodPressure.home.createOrEditLabel">Create or edit a Blood Pressure</h4>
+        <h4 class="modal-title" id="myBloodPressureLabel" data-translate="21PointsApp.bloodPressure.home.createOrEditLabel" ng-if="vm.bloodPressure.id">Create or edit a Blood Pressure</h4>
+        <h4 class="modal-title" id="myBloodPressureLabel" data-translate="21PointsApp.bloodPressure.home.createLabel" ng-if="!vm.bloodPressure.id">Add a Reading</h4>
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
@@ -16,8 +17,8 @@
         <div class="form-group">
             <label class="control-label" data-translate="21PointsApp.bloodPressure.timestamp" for="field_timestamp">Timestamp</label>
                 <div class="input-group">
-                    <input id="field_timestamp" type="text" class="form-control" name="timestamp" datetime-picker="{{dateformat}}" ng-model="vm.bloodPressure.timestamp" is-open="vm.datePickerOpenStatus.timestamp"
-                    required  />
+                    <input id="field_timestamp" type="text" class="form-control" name="timestamp" datetime-picker="{{dateformat}}"
+                           ng-model="vm.bloodPressure.timestamp" ng-model-options="{timezone: 'utc'}" is-open="vm.datePickerOpenStatus.timestamp" required/>
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-click="vm.openCalendar('timestamp')"><i class="glyphicon glyphicon-calendar"></i></button>
                     </span>
@@ -67,7 +68,7 @@
         </div>
 
         <div class="form-group">
-            <label data-translate="21PointsApp.bloodPressure.user" for="field_user">User</label>
+            <label class="control-label" data-translate="21PointsApp.bloodPressure.user" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" ng-model="vm.bloodPressure.user" ng-options="user as user.login for user in vm.users track by user.id">
                 <option value=""></option>
             </select>

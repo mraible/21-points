@@ -140,7 +140,7 @@ public class BloodPressureResource {
     @RequestMapping(value = "/bp-by-days/{days}")
     @Timed
     public ResponseEntity<BloodPressureByPeriod> getByDays(@PathVariable int days) {
-        ZonedDateTime rightNow = ZonedDateTime.now();
+        ZonedDateTime rightNow = ZonedDateTime.now(ZoneOffset.UTC);
         ZonedDateTime daysAgo = rightNow.minusDays(days);
 
         List<BloodPressure> readings =

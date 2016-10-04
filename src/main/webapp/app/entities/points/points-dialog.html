@@ -4,7 +4,8 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                 ng-click="vm.clear()">&times;</button>
-        <h4 class="modal-title" id="myPointsLabel" data-translate="21PointsApp.points.home.createOrEditLabel">Create or edit a Points</h4>
+        <h4 class="modal-title" id="myPointsLabel" data-translate="21PointsApp.points.home.createOrEditLabel" ng-if="vm.points.id">Create or edit a Points</h4>
+        <h4 class="modal-title" id="myPointsLabel" data-translate="21PointsApp.points.home.createLabel" ng-if="!vm.points.id">Add Points</h4>
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
@@ -16,8 +17,8 @@
         <div class="form-group">
             <label class="control-label" data-translate="21PointsApp.points.date" for="field_date">Date</label>
                 <div class="input-group">
-                    <input id="field_date" type="text" class="form-control" name="date" uib-datepicker-popup="{{dateformat}}" ng-model="vm.points.date" is-open="vm.datePickerOpenStatus.date"
-                    required/>
+                    <input id="field_date" type="text" class="form-control" name="date" uib-datepicker-popup="{{dateformat}}"
+                           ng-model="vm.points.date" ng-model-options="{timezone: 'utc'}" is-open="vm.datePickerOpenStatus.date" required/>
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-click="vm.openCalendar('date')"><i class="glyphicon glyphicon-calendar"></i></button>
                     </span>
@@ -32,7 +33,7 @@
         <div class="form-group">
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" ng-model="vm.points.exercise" id="field_exercise"
+                    <input type="checkbox" ng-model="vm.points.exercise" name="exercise" id="field_exercise"
                            ng-true-value="1" ng-false-value="0">
                     <span class="check"></span>
                     <label data-translate="21PointsApp.points.exercise" for="field_exercise" class="control-label">Exercise</label>
@@ -42,7 +43,7 @@
         <div class="form-group">
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" ng-model="vm.points.meals" id="field_meals"
+                    <input type="checkbox" ng-model="vm.points.meals" name="meals" id="field_meals"
                            ng-true-value="1" ng-false-value="0">
                     <span class="check"></span>
                     <label data-translate="21PointsApp.points.meals" for="field_meals" class="control-label">Meals</label>
@@ -52,7 +53,7 @@
         <div class="form-group">
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" ng-model="vm.points.alcohol" id="field_alcohol"
+                    <input type="checkbox" ng-model="vm.points.alcohol" name="alcohol" id="field_alcohol"
                            ng-true-value="1" ng-false-value="0">
                     <span class="check"></span>
                     <label data-translate="21PointsApp.points.alcohol" for="field_alcohol" class="control-label">Alcohol</label>
@@ -73,7 +74,7 @@
         </div>
 
         <div class="form-group" has-authority="ROLE_ADMIN">
-            <label data-translate="21PointsApp.points.user" for="field_user">User</label>
+            <label class="control-label" data-translate="21PointsApp.points.user" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" ng-model="vm.points.user" ng-options="user as user.login for user in vm.users track by user.id">
                 <option value=""></option>
             </select>

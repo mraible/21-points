@@ -134,7 +134,7 @@ public class PointsResource {
     }
 
     /**
-     * GET  /points -> get all the points for the current week.
+     * GET  /points : get all the points for the current week.
      */
     @RequestMapping(value = "/points-this-week")
     @Timed
@@ -160,7 +160,7 @@ public class PointsResource {
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
     /**
-     * GET  /points -> get all the points for a particular week.
+     * GET  /points : get all the points for a particular week.
      */
     @RequestMapping(value = "/points-by-week/{startDate}")
     @Timed
@@ -172,7 +172,7 @@ public class PointsResource {
     }
 
     /**
-     * GET  /points -> get all the points for a particular current month.
+     * GET  /points : get all the points for a particular current month.
      */
     @RequestMapping(value = "/points-by-month/{yearWithMonth}")
     @Timed
@@ -185,7 +185,7 @@ public class PointsResource {
     }
 
     /**
-     * GET  /points/:id -> get the "id" points.
+     * GET  /points/:id : get the "id" points.
      *
      * @param id the id of the points to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the points, or with status 404 (Not Found)
@@ -205,7 +205,7 @@ public class PointsResource {
     }
 
     /**
-     * DELETE  /points/:id -> delete the "id" points.
+     * DELETE  /points/:id : delete the "id" points.
      *
      * @param id the id of the points to delete
      * @return the ResponseEntity with status 200 (OK)
@@ -222,7 +222,7 @@ public class PointsResource {
     }
 
     /**
-     * SEARCH  /_search/points?query=:query -> search for the points corresponding
+     * SEARCH  /_search/points?query=:query : search for the points corresponding
      * to the query.
      *
      * @param query the query of the points search

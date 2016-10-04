@@ -33,6 +33,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -149,10 +150,8 @@ public class WeightResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<WeightByPeriod> getByDays(@PathVariable int days) {
-        LocalDate today = LocalDate.now();
-        LocalDate previousDate = today.minusDays(days);
-        ZonedDateTime daysAgo = previousDate.atStartOfDay(ZoneId.of("Z"));
-        ZonedDateTime rightNow = today.atStartOfDay(ZoneId.of("Z"));
+        ZonedDateTime rightNow = ZonedDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime daysAgo = rightNow.minusDays(days);
 
         List<Weight> weighIns = weightRepository.findAllByTimestampBetweenOrderByTimestampDesc(daysAgo, rightNow);
         WeightByPeriod response = new WeightByPeriod("Last " + days + " Days", filterByUser(weighIns));

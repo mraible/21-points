@@ -5,22 +5,22 @@
                   tooltip="The greatest wealth is Health"></span>
         </div>
         <div class="col-md-8">
-            <h1 ng-if="isAuthenticated() && vm.account.firstName" translate="home.title"
+            <h1 ng-if="isAuthenticated() && vm.account.firstName" data-translate="home.title"
                 translate-values="{name: '{{vm.account.firstName}}'}">Welcome, Java Hipster!</h1>
 
             <h1 ng-hide="vm.isAuthenticated()">Welcome!</h1>
 
-            <p class="lead" translate="home.subtitle">This is your homepage</p>
+            <p class="lead" data-translate="home.subtitle">This is your homepage</p>
 
             <div ng-switch="vm.isAuthenticated()">
                 <div ng-switch-when="true">
                     <div class="row">
                         <div class="col-md-6 col-xs-5">
-                            <h4 translate="home.points.thisWeek" class="m-t-sm hidden-xs"
-                                translate-values="{date: '{{vm.pointsThisWeek.week | date: 'longDate'}}'}">
+                            <h4 data-translate="home.points.thisWeek" class="m-t-sm hidden-xs"
+                                data-translate-values="{date: '{{vm.pointsThisWeek.week | date: 'longDate'}}'}">
                                 Points for the week of {{vm.pointsThisWeek.week | date: 'longDate'}}:
                             </h4>
-                            <h4 translate="main.points.thisWeekMobile" class="m-t-sm visible-xs">
+                            <h4 data-translate="main.points.thisWeekMobile" class="m-t-sm visible-xs">
                                 Points for {{pointsThisWeek.week | date: 'longDate'}}:
                             </h4>
                         </div>
@@ -30,25 +30,48 @@
                     </div>
                     <div class="row">
                         <div class="col-md-10">
-                            <div class="progress-bar progress-bar-striped" role="progressbar"
-                                 ng-class="{'progress-bar-success': vm.pointsThisWeek.points >= vm.preferences.weeklyGoal,
-                                            'progress-bar-danger': vm.pointsThisWeek.points < 10,
-                                            'progress-bar-warning': vm.pointsThisWeek.points > 10 && vm.pointsThisWeek.points < vm.preferences.weeklyGoal}"
-                                 aria-valuenow="{{vm.pointsThisWeek.points}}"
-                                 aria-valuemin="0" aria-valuemax="21" style="width: {{vm.pointsPercentage}}%">
-                                <span ng-show="vm.pointsThisWeek.points">
-                                    {{vm.pointsThisWeek.points}} / Goal: {{vm.preferences.weeklyGoal}}
-                                </span>
-                                <span class="sr-only">{{vm.pointsPercentage}} points this week</span>
+                            <div class="progress progress-lg" ng-if="vm.pointsThisWeek.points">
+                                <div class="progress-bar progress-bar-striped" role="progressbar"
+                                     ng-class="{'progress-bar-success': vm.pointsThisWeek.points >= vm.preferences.weeklyGoal,
+                                                'progress-bar-danger': vm.pointsThisWeek.points < 10,
+                                                'progress-bar-warning': vm.pointsThisWeek.points > 10 && vm.pointsThisWeek.points < vm.preferences.weeklyGoal}"
+                                     aria-valuenow="{{vm.pointsThisWeek.points}}"
+                                     aria-valuemin="0" aria-valuemax="21" style="width: {{vm.pointsPercentage}}%">
+                                    <span ng-show="vm.pointsThisWeek.points">
+                                        {{vm.pointsThisWeek.points}} / Goal: {{vm.preferences.weeklyGoal}}
+                                    </span>
+                                    <span class="sr-only">{{vm.pointsPercentage}} points this week</span>
+                                </div>
                             </div>
                             <alert type="info" ng-hide="vm.pointsThisWeek.points">
                                 No points yet this week, better get moving!
                             </alert>
                         </div>
                     </div>
+
                     <div class="row m-t-sm">
-                        <div class="col-md-6">
-                            <h4 class="m-t-md">Weight:</h4>
+                        <div class="col-md-6 col-xs-3 text-nowrap">
+                            <h4 class="m-t-md hidden-xs" data-translate="home.bloodPressure">Blood Pressure:</h4>
+                            <h4 class="m-t-md visible-xs" data-translate="home.bloodPressureMobile">BP:</h4>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a ui-sref="blood-pressure.add" class="btn btn-default btn-sm btn-raised">
+                                Add Blood Pressure</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <span ng-if="vm.bpReadings.readings.length">
+                                <nvd3 options="vm.bpOptions" data="vm.bpData" class="with-3d-shadow with-transitions"></nvd3>
+                            </span>
+                            <span ng-if="!vm.bpReadings.readings.length">
+                                <alert type="info">No blood pressure readings found.</alert>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-6">
+                            <h4 class="m-t-md" data-translate="home.weight">Weight:</h4>
                         </div>
                         <div class="col-md-4 text-right">
                             <a ui-sref="weight.add" class="btn btn-default btn-sm btn-raised">Add Weight</a>
@@ -56,33 +79,14 @@
                     </div>
                     <div class="row">
                         <div class="col-md-10">
-                            <img src="http://placehold.it/700x150?text=Weight Graph" class="img-responsive">
-                        </div>
-                    </div>
-                    <div class="row m-t-sm">
-                        <div class="col-md-6">
-                            <h4 class="m-t-md">Blood Pressure:</h4>
-                        </div>
-                        <div class="col-md-4 text-right">
-                            <a ui-sref="bloodPressure.add" class="btn btn-default btn-sm btn-raised">Add Blood
-                                Pressure</a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <img src="http://placehold.it/700x150?text=Blood Pressure Graph" class="img-responsive">
-                        </div>
-                    </div>
-                    <!--<div class="row">
-                        <div class="col-md-10">
-                            <span ng-if="vm.bpReadings.readings.length">
-                                <nvd3 options="bpOptions" data="bpData" class="with-3d-shadow with-transitions"></nvd3>
+                            <span ng-if="vm.weights.weighIns.length">
+                                <nvd3 options="vm.weightOptions" data="vm.weightData" class="with-3d-shadow with-transitions"></nvd3>
                             </span>
-                            <span ng-if="!vm.bpReadings.readings.length">
-                                <alert type="info">No blood pressure readings found.</alert>
+                            <span ng-if="!vm.weights.weighIns.length">
+                                <alert type="info">No weigh-ins found.</alert>
                             </span>
                         </div>
-                    </div>-->
+                    </div>
 
                     <div class="row">
                         <p class="m-t-md col-md-10">
@@ -91,7 +95,7 @@
                         </p>
                     </div>
 
-                    <p translate="home.logged.message" translate-values="{username: '{{vm.account.login}}'}"
+                    <p data-translate="home.logged.message" translate-values="{username: '{{vm.account.login}}'}"
                        style="border-top: 1px solid silver; padding-top: 5px; margin-top: 40px">
                         You are logged in as user "{{vm.account.login}}".
                     </p>
@@ -101,7 +105,7 @@
                     <p><strong>
                         To get started, please
                         <a href="" ng-click="vm.login()"><span class="glyphicon glyphicon-log-in"></span>
-                            &#xA0;<span translate="global.menu.account.login">Authenticate</span>.</a>
+                            &#xA0;<span data-translate="global.menu.account.login">Authenticate</span>.</a>
                         </strong>
                     </p>
 
@@ -114,27 +118,26 @@
                             <div class="ripple-wrapper"></div></a>
                     </p>
 
-                    <p translate="home.question">
+                    <p data-translate="home.question">
                         If you have any question on JHipster:
                     </p>
 
                     <ul id="resources">
                         <li><a href="http://www.jhipster-book.com" target="_blank"
-                               translate="home.link.homepage">JHipster Mini-Book Blog</a></li>
+                               data-translate="home.link.homepage">JHipster Mini-Book Blog</a></li>
                         <li><a href="http://stackoverflow.com/tags/jhipster/info" target="_blank"
-                               translate="home.link.stackoverflow">JHipster on Stack Overflow</a></li>
+                               data-translate="home.link.stackoverflow">JHipster on Stack Overflow</a></li>
                         <li><a href="https://twitter.com/jhipster_book" target="_blank"
-                               translate="home.link.contact">Contact @java_hipster on Twitter</a></li>
+                               data-translate="home.link.contact">Contact @java_hipster on Twitter</a></li>
                         <li><a href="https://github.com/mraible/21-points/issues" target="_blank"
-                               translate="home.link.issues">Report an issue</a></li>
+                               data-translate="home.link.issues">Report an issue</a></li>
                     </ul>
 
-                    <p translate="global.messages.info.register">
-                        Don't have an account yet? <a href="#/register">Register a new account</a>.
+                    <p data-translate="global.messages.info.register" translate-compile>
+                        Don't have an account yet? <a ui-sref="register">Register a new account</a>.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-</div>
-</div>
 </div>

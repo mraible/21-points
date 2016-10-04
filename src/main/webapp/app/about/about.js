@@ -15,12 +15,12 @@
             },
             views: {
                 'content@': {
-                    templateUrl: 'scripts/app/about/about.html'
+                    templateUrl: 'app/about/about.html'
                 }
             },
             resolve: {
                 aboutTranslatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
-                    $translatePartialLoader.addPart('main');
+                    $translatePartialLoader.addPart('home');
                     return $translate.refresh();
                 }]
             }

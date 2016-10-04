@@ -1,31 +1,26 @@
 <div>
-    <h2 data-translate="21PointsApp.preferences.home.title">Preferences</h2>
     <jhi-alert></jhi-alert>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-xs-4 no-padding-left">
-                <button class="btn btn-primary" ui-sref="preferences.new" >
-                    <span class="glyphicon glyphicon-plus"></span>
-                    <span class="hidden-xs"  data-translate="21PointsApp.preferences.home.createLabel">
-                        Create new Preferences
-                    </span>
-                </button>
+            <div class="col-sm-7">
+                <h2 data-translate="21PointsApp.preferences.home.title">Preferences</h2>
             </div>
-            <div class="col-xs-8 no-padding-right">
+            <div class="col-sm-5 text-right p-n">
                 <form name="searchForm" class="form-inline">
-                    <div class="input-group pull-right" >
-                        <input type="text" class="form-control" ng-model="vm.searchQuery" id="searchQuery" placeholder="{{ '21PointsApp.preferences.home.search' | translate }}">
-                        <span  class="input-group-btn width-min" >
-                            <button class="btn btn-info" ng-click="vm.search(vm.searchQuery)">
-                                <span class="glyphicon glyphicon-search"></span>
-                            </button>
-                        </span>
-                        <span class="input-group-btn width-min" ng-if="vm.currentSearch">
-                            <button class="btn btn-info" ng-click="vm.clear()">
-                                <span class="glyphicon glyphicon-trash"></span>
-                            </button>
-                        </span>
+                    <div class="form-group m-n">
+                        <input type="text" class="form-control" ng-model="vm.searchQuery" id="searchQuery"
+                               placeholder="{{ 'entity.action.search' | translate }}">
                     </div>
+                    <button class="btn btn-info btn-sm" ng-click="vm.clear()" ng-if="vm.currentSearch">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button class="btn btn-info btn-sm btn-raised" ng-click="vm.search(vm.searchQuery)">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                    <button class="btn btn-primary btn-sm btn-raised" ui-sref="preferences.new"
+                            uib-tooltip="{{'entity.action.new' | translate}}">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
                 </form>
             </div>
         </div>
@@ -38,8 +33,7 @@
                     <th><span data-translate="global.field.id">ID</span></th>
                     <th><span data-translate="21PointsApp.preferences.weeklyGoal">Weekly Goal</span></th>
                     <th><span data-translate="21PointsApp.preferences.weightUnits">Weight Units</span></th>
-                    <th><span data-translate="21PointsApp.preferences.user">User</span></th>
-                    <th></th>
+                    <th translate="21PointsApp.preferences.actions" class="col-md-3">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,27 +42,21 @@
                     <td>{{preferences.weeklyGoal}}</td>
                     <td data-translate="{{'21PointsApp.Units.' + preferences.weightUnits}}">{{preferences.weightUnits}}</td>
                     <td>
-                        {{preferences.user.undefined}}
-                    </td>
-                    <td class="text-right">
-                        <div class="btn-group flex-btn-group-container">
-                            <button type="submit"
+                        <div class="btn-group btn-group-raised m-n">
+                            <button type="submit" uib-tooltip="{{'entity.action.view' | translate}}"
                                     ui-sref="preferences-detail({id:preferences.id})"
-                                    class="btn btn-info btn-sm">
+                                    class="btn btn-info btn-xs">
                                 <span class="glyphicon glyphicon-eye-open"></span>
-                                <span class="hidden-xs hidden-sm" data-translate="entity.action.view"></span>
                             </button>
-                            <button type="submit"
+                            <button type="submit" uib-tooltip="{{'entity.action.edit' | translate}}"
                                     ui-sref="preferences.edit({id:preferences.id})"
-                                    class="btn btn-primary btn-sm">
+                                    class="btn btn-primary btn-xs">
                                 <span class="glyphicon glyphicon-pencil"></span>
-                                <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"></span>
                             </button>
-                            <button type="submit"
+                            <button type="submit" uib-tooltip="{{'entity.action.delete' | translate}}"
                                     ui-sref="preferences.delete({id:preferences.id})"
-                                    class="btn btn-danger btn-sm">
+                                    class="btn btn-danger btn-xs">
                                 <span class="glyphicon glyphicon-remove-circle"></span>
-                                <span class="hidden-xs hidden-sm" data-translate="entity.action.delete"></span>
                             </button>
                         </div>
                     </td>

@@ -10,6 +10,12 @@
     function WeightDialogController ($timeout, $scope, $stateParams, $uibModalInstance, entity, Weight, User) {
         var vm = this;
 
+        // defaults for new entries
+        if (!entity.id) {
+            var now = new Date();
+            entity.timestamp = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes()));
+        }
+
         vm.weight = entity;
         vm.clear = clear;
         vm.datePickerOpenStatus = {};

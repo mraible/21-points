@@ -20,6 +20,12 @@
                         <span class="hidden-sm" data-translate="global.menu.home">Home</span>
                     </a>
                 </li>
+                <li ui-sref-active="active">
+                    <a ui-sref="about">
+                        <span class="glyphicon glyphicon-star"></span>
+                        <span translate="global.menu.about">About</span>
+                    </a>
+                </li>
                 <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
                 <li ng-class="{active: vm.$state.includes('entity')}" ng-switch-when="true" uib-dropdown class="dropdown pointer">
                     <a class="dropdown-toggle" uib-dropdown-toggle href="" id="entity-menu">
@@ -39,9 +45,9 @@
                             </a>
                         </li>
                         <li ui-sref-active="active" >
-                            <a ui-sref="preferences" ng-click="vm.collapseNavbar()">
+                            <a ui-sref="weight" ng-click="vm.collapseNavbar()">
                                 <span class="glyphicon glyphicon-asterisk"></span>&nbsp;
-                                <span data-translate="global.menu.entities.preferences">Preferences</span>
+                                <span data-translate="global.menu.entities.weight">Weight</span>
                             </a>
                         </li>
                         <li ui-sref-active="active" >
@@ -51,9 +57,9 @@
                             </a>
                         </li>
                         <li ui-sref-active="active" >
-                            <a ui-sref="weight" ng-click="vm.collapseNavbar()">
+                            <a ui-sref="preferences" ng-click="vm.collapseNavbar()">
                                 <span class="glyphicon glyphicon-asterisk"></span>&nbsp;
-                                <span data-translate="global.menu.entities.weight">Weight</span>
+                                <span data-translate="global.menu.entities.preferences">Preferences</span>
                             </a>
                         </li>
                         <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->

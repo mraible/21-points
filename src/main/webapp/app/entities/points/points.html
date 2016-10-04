@@ -37,7 +37,7 @@
                     <th jh-sort-by="alcohol"><span data-translate="21PointsApp.points.alcohol">Alcohol</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="notes"><span data-translate="21PointsApp.points.notes">Notes</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="user.login"><span data-translate="21PointsApp.points.user">User</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th></th>
+                    <th data-translate="21PointsApp.points.actions" class="col-md-2">Actions</th>
                 </tr>
             </thead>
             <tbody infinite-scroll="vm.loadPage(vm.page + 1)" infinite-scroll-disabled="vm.page >= vm.links['last']">
@@ -45,15 +45,15 @@
                     <td class="text-nowrap"><a ui-sref="points-detail({id:points.id})">{{points.date | date:'mediumDate'}}</a></td>
                     <td class="text-center">
                         <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.exercise,
-                                                    'glyphicon-remove text-danger': !points.exercise}"></i>
+                                                        'glyphicon-remove text-danger': !points.exercise}"></i>
                     </td>
                     <td class="text-center">
                         <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.meals,
-                                                    'glyphicon-remove text-danger': !points.meals}"></i>
+                                                        'glyphicon-remove text-danger': !points.meals}"></i>
                     </td>
                     <td class="text-center">
                         <i class="glyphicon" ng-class="{'glyphicon-ok text-success': points.alcohol,
-                                                    'glyphicon-remove text-danger': !points.alcohol}"></i>
+                                                        'glyphicon-remove text-danger': !points.alcohol}"></i>
                     </td>
                     <td>
                         <div class="truncate cursor" uib-popover="{{points.notes}}">{{points.notes}}</div>
@@ -61,7 +61,7 @@
                     <td>
                         {{points.user.login}}
                     </td>
-                    <td class="text-right">
+                    <td>
                         <div class="btn-group btn-group-raised m-n">
                             <button type="submit" uib-tooltip="{{'entity.action.view' | translate}}"
                                     ui-sref="points-detail({id:points.id})"

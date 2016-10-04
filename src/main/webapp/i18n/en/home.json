@@ -1,7 +1,7 @@
 {
     "home": {
         "title": "Hello, {{name}}!",
-        "subtitle": "21-Points is here to track your health and improve your life. :)",
+        "subtitle": "21-Points is here to track your health and improve your life. &#128522;",
         "logged": {
             "message": "You are logged in as user {{username}}."
         },
