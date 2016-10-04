@@ -4,7 +4,7 @@
             "home": {
                 "title": "Daily Points",
                 "createLabel": "Add Points",
-                "createOrEditLabel": "Edit Points",
+                "editLabel": "Edit Points",
                 "search": "Search for Points"
             },
             "created": "Points added successfully.",

@@ -5,14 +5,16 @@
                   tooltip="The greatest wealth is Health"></span>
         </div>
         <div class="col-md-8">
-            <h1 ng-if="isAuthenticated() && vm.account.firstName" data-translate="home.title"
+            <h1 ng-if="vm.isAuthenticated() && vm.account.firstName" data-translate="home.title"
                 translate-values="{name: '{{vm.account.firstName}}'}">Welcome, Java Hipster!</h1>
 
-            <h1 ng-hide="vm.isAuthenticated()">Welcome!</h1>
+            <h1 ng-if="!vm.isAuthenticated()" data-translate="home.title"
+                translate-values="{name: 'Java Hipster'}">Welcome!</h1>
 
             <p class="lead" data-translate="home.subtitle">This is your homepage</p>
 
             <div ng-switch="vm.isAuthenticated()">
+
                 <div ng-switch-when="true">
                     <div class="row">
                         <div class="col-md-6 col-xs-5">
@@ -80,7 +82,7 @@
                     <div class="row">
                         <div class="col-md-10">
                             <span ng-if="vm.weights.weighIns.length">
-                                <nvd3 options="vm.weightOptions" data="vm.weightData" class="with-3d-shadow with-transitions"></nvd3>
+                                <nvd3 options="vweightOptions" data="vm.weightData" class="with-3d-shadow with-transitions"></nvd3>
                             </span>
                             <span ng-if="!vm.weights.weighIns.length">
                                 <alert type="info">No weigh-ins found.</alert>
@@ -95,8 +97,7 @@
                         </p>
                     </div>
 
-                    <p data-translate="home.logged.message" translate-values="{username: '{{vm.account.login}}'}"
-                       style="border-top: 1px solid silver; padding-top: 5px; margin-top: 40px">
+                    <p data-translate="home.logged.message" translate-values="{username: '{{vm.account.login}}'}" class="logged-in">
                         You are logged in as user "{{vm.account.login}}".
                     </p>
                 </div>

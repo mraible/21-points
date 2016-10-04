@@ -32,7 +32,7 @@ describe('Weight e2e test', function () {
     it('should load create Weight dialog', function () {
         element(by.css('[ui-sref="weight.new"]')).click().then(function() {
             element(by.css('h4.modal-title')).getAttribute('data-translate').then(function (value) {
-                expect(value).toMatch(/21PointsApp.weight.home.createOrEditLabel/);
+                expect(value).toMatch(/21PointsApp.weight.home.createLabel/);
             });
             element(by.css('button.close')).click();
         });
