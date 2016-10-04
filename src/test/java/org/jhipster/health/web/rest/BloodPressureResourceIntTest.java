@@ -126,9 +126,15 @@ public class BloodPressureResourceIntTest {
     public void createBloodPressure() throws Exception {
         int databaseSizeBeforeCreate = bloodPressureRepository.findAll().size();
 
-        // Create the BloodPressure
+        // create security-aware mockMvc
+        restBloodPressureMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
 
+        // Create the BloodPressure
         restBloodPressureMockMvc.perform(post("/api/blood-pressures")
+                .with(user("user"))
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
                 .andExpect(status().isCreated());
@@ -206,14 +212,20 @@ public class BloodPressureResourceIntTest {
         // Initialize the database
         bloodPressureRepository.saveAndFlush(bloodPressure);
 
+        restBloodPressureMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
         // Get all the bloodPressures
-        restBloodPressureMockMvc.perform(get("/api/blood-pressures?sort=id,desc"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
-                .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP_STR)))
-                .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
-                .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
+        restBloodPressureMockMvc.perform(get("/api/blood-pressures?sort=id,desc")
+            .with(user("admin").roles("ADMIN")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
+            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP_STR)))
+            .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
+            .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
     }
 
     @Test
@@ -312,14 +324,14 @@ public class BloodPressureResourceIntTest {
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
     }
 
-    private void createBloodPressureByMonth(ZonedDateTime firstOfMonth, ZonedDateTime firstDayOfLastMonth) {
+    private void createBloodPressureByMonth(ZonedDateTime firstDate, ZonedDateTime firstDayOfLastMonth) {
         User user = userRepository.findOneByLogin("user").get();
-        // this month
-        bloodPressure = new BloodPressure(firstOfMonth, 120, 80, user);
+
+        bloodPressure = new BloodPressure(firstDate, 120, 80, user);
         bloodPressureRepository.saveAndFlush(bloodPressure);
-        bloodPressure = new BloodPressure(firstOfMonth.plusDays(10), 125, 75, user);
+        bloodPressure = new BloodPressure(firstDate.plusDays(10), 125, 75, user);
         bloodPressureRepository.saveAndFlush(bloodPressure);
-        bloodPressure = new BloodPressure(firstOfMonth.plusDays(20), 100, 69, user);
+        bloodPressure = new BloodPressure(firstDate.plusDays(20), 100, 69, user);
         bloodPressureRepository.saveAndFlush(bloodPressure);
 
         // last month
@@ -335,9 +347,9 @@ public class BloodPressureResourceIntTest {
     @Transactional
     public void getBloodPressureForLast30Days() throws Exception {
         ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime firstOfMonth = now.withDayOfMonth(1);
-        ZonedDateTime firstDayOfLastMonth = firstOfMonth.minusMonths(1);
-        createBloodPressureByMonth(firstOfMonth, firstDayOfLastMonth);
+        ZonedDateTime twentyNineDaysAgo = now.minusDays(29);
+        ZonedDateTime firstDayOfLastMonth = now.withDayOfMonth(1).minusMonths(1);
+        createBloodPressureByMonth(twentyNineDaysAgo, firstDayOfLastMonth);
 
         // create security-aware mockMvc
         restBloodPressureMockMvc = MockMvcBuilders
@@ -346,7 +358,7 @@ public class BloodPressureResourceIntTest {
             .build();
 
         // Get all the blood pressure readings
-        restBloodPressureMockMvc.perform(get("/api/bloodPressures")
+        restBloodPressureMockMvc.perform(get("/api/blood-pressures")
             .with(user("user").roles("USER")))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -361,5 +373,32 @@ public class BloodPressureResourceIntTest {
             .andExpect(jsonPath("$.period").value("Last 30 Days"))
             .andExpect(jsonPath("$.readings.[*].systolic").value(hasItem(120)))
             .andExpect(jsonPath("$.readings.[*].diastolic").value(hasItem(69)));
+    }
+
+    @Test
+    @Transactional
+    public void getBloodPressureByMonth() throws Exception {
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime firstOfMonth = now.withDayOfMonth(1);
+        ZonedDateTime firstDayOfLastMonth = firstOfMonth.minusMonths(1);
+        createBloodPressureByMonth(firstOfMonth, firstDayOfLastMonth);
+
+        // create security-aware mockMvc
+        restBloodPressureMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
+
+        // Get the points for last week
+        restBloodPressureMockMvc.perform(get("/api/bp-by-month/{yearAndMonth}", fmt.format(firstDayOfLastMonth))
+            .with(user("user").roles("USER")))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.period").value(fmt.format(firstDayOfLastMonth)))
+            .andExpect(jsonPath("$.readings.[*].systolic").value(hasItem(130)))
+            .andExpect(jsonPath("$.readings.[*].diastolic").value(hasItem(90)));
     }
 }

@@ -6,7 +6,6 @@ import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PointsRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
-import org.joda.time.DateTimeConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,20 +24,23 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -326,7 +328,7 @@ public class PointsResourceIntTest {
     @Transactional
     public void getPointsThisWeek() throws Exception {
         LocalDate today = LocalDate.now();
-        LocalDate thisMonday = today.with(ChronoField.DAY_OF_WEEK, DateTimeConstants.MONDAY);
+        LocalDate thisMonday = today.with(DayOfWeek.MONDAY);
         LocalDate lastMonday = thisMonday.minusWeeks(1);
         createPointsByWeek(thisMonday, lastMonday);
 
@@ -350,5 +352,87 @@ public class PointsResourceIntTest {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.week").value(thisMonday.toString()))
             .andExpect(jsonPath("$.points").value(5));
+    }
+
+    @Test
+    @Transactional
+    public void getPointsByWeek() throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate aMonday = today.minusMonths(2).with(ChronoField.DAY_OF_WEEK, 1);
+        LocalDate aPreviousMonday = aMonday.minusWeeks(2);
+        createPointsByWeek(aMonday, aPreviousMonday);
+
+        // create security-aware mockMvc
+        restPointsMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
+        // Get the points for last week
+        restPointsMockMvc.perform(get("/api/points-by-week/{startDate}", aPreviousMonday.toString())
+            .with(user("user").roles("USER")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.week").value(aPreviousMonday.toString()))
+            .andExpect(jsonPath("$.points").value(3));
+    }
+
+    @Test
+    @Transactional
+    public void getPointsOnSunday() throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate sunday = today.with(DayOfWeek.SUNDAY);
+        User user = userRepository.findOneByLogin("user").get();
+        points = new Points(sunday, 1, 1, 0, user);
+        pointsRepository.saveAndFlush(points);
+
+        // create security-aware mockMvc
+        restPointsMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
+        // Get all the points
+        restPointsMockMvc.perform(get("/api/points")
+            .with(user("user").roles("USER")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$", hasSize(1)));
+
+        // Get the points for this week only
+        restPointsMockMvc.perform(get("/api/points-this-week")
+            .with(user("user").roles("USER")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.week").value(sunday.with(DayOfWeek.MONDAY).toString()))
+            .andExpect(jsonPath("$.points").value(2));
+    }
+
+    @Test
+    @Transactional
+    public void getPointsByMonth() throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate thisMonday = today.with(DayOfWeek.MONDAY);
+        LocalDate lastMonday = thisMonday.minusDays(7);
+        createPointsByWeek(thisMonday, lastMonday);
+
+        // create security-aware mockMvc
+        restPointsMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
+        // Get the points for last month
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
+        String startDate = fmt.format(today.withDayOfMonth(1));
+
+        restPointsMockMvc.perform(get("/api/points-by-month/{yearWithMonth}", startDate)
+            .with(user("user").roles("USER")))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.month").value(startDate))
+            .andExpect(jsonPath("$.points.[*].date").value(hasItem(thisMonday.plusDays(2).toString())))
+            .andExpect(jsonPath("$.points.[*].date").value(hasItem(thisMonday.plusDays(3).toString())));
     }
 }

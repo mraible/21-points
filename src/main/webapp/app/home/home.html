@@ -30,12 +30,16 @@
                     </div>
                     <div class="row">
                         <div class="col-md-10">
-                            <div class="progress progress-lg" ng-show="vm.pointsThisWeek.points">
-                                <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
-                                     aria-valuenow="{{vm.pointsThisWeek.points}}"
-                                     aria-valuemin="0" aria-valuemax="21" style="width: {{vm.pointsPercentage}}%">
-                                    {{vm.pointsThisWeek.points}} / Goal: 10
-                                </div>
+                            <div class="progress-bar progress-bar-striped" role="progressbar"
+                                 ng-class="{'progress-bar-success': vm.pointsThisWeek.points >= vm.preferences.weeklyGoal,
+                                            'progress-bar-danger': vm.pointsThisWeek.points < 10,
+                                            'progress-bar-warning': vm.pointsThisWeek.points > 10 && vm.pointsThisWeek.points < vm.preferences.weeklyGoal}"
+                                 aria-valuenow="{{vm.pointsThisWeek.points}}"
+                                 aria-valuemin="0" aria-valuemax="21" style="width: {{vm.pointsPercentage}}%">
+                                <span ng-show="vm.pointsThisWeek.points">
+                                    {{vm.pointsThisWeek.points}} / Goal: {{vm.preferences.weeklyGoal}}
+                                </span>
+                                <span class="sr-only">{{vm.pointsPercentage}} points this week</span>
                             </div>
                             <alert type="info" ng-hide="vm.pointsThisWeek.points">
                                 No points yet this week, better get moving!
@@ -79,6 +83,18 @@
                             </span>
                         </div>
                     </div>-->
+
+                    <div class="row">
+                        <p class="m-t-md col-md-10">
+                            <a ui-sref="preferences.add" class="pull-right">Edit Preferences</a>
+                            <a ui-sref="history">View History</a>
+                        </p>
+                    </div>
+
+                    <p translate="home.logged.message" translate-values="{username: '{{vm.account.login}}'}"
+                       style="border-top: 1px solid silver; padding-top: 5px; margin-top: 40px">
+                        You are logged in as user "{{vm.account.login}}".
+                    </p>
                 </div>
 
                 <div ng-switch-when="false">

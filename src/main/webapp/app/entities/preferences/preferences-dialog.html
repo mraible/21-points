@@ -53,7 +53,7 @@
 
         <div class="form-group">
             <label data-translate="21PointsApp.preferences.user" for="field_user">User</label>
-            <select class="form-control" id="field_user" name="user" ng-model="vm.preferences.user" ng-options="user as user. for user in vm.users track by user.id">
+            <select class="form-control" id="field_user" name="user" ng-model="vm.preferences.user" ng-options="user as user.login for user in vm.users track by user.id">
                 <option value=""></option>
             </select>
         </div>

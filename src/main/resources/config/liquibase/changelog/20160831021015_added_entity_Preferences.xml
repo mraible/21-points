@@ -24,7 +24,7 @@
             <column name="weekly_goal" type="integer">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="weight_units" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
@@ -33,6 +33,18 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
-        
+
+    </changeSet>
+
+    <changeSet author="mraible (generated)" id="1440176725177-1">
+        <addColumn tableName="JHI_USER">
+            <column name="preferences_id" type="int8"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1440176725177-2">
+        <addForeignKeyConstraint baseColumnNames="preferences_id" baseTableName="JHI_USER"
+                                 constraintName="FK_1r5e40mq4hwtlyd9lemghc8su" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="PREFERENCES"/>
     </changeSet>
 </databaseChangeLog>

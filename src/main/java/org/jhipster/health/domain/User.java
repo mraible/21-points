@@ -87,9 +87,9 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Authority> authorities = new HashSet<>();
 
-    /*@OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore
-    private Preferences preferences;*/
+    private Preferences preferences;
 
     public Long getId() {
         return id;
@@ -188,13 +188,13 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.authorities = authorities;
     }
 
-    /*public Preferences getPreferences() {
+    public Preferences getPreferences() {
         return preferences;
     }
 
     public void setPreferences(Preferences preferences) {
         this.preferences = preferences;
-    }*/
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -229,6 +229,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
             ", activated='" + activated + '\'' +
             ", langKey='" + langKey + '\'' +
             ", activationKey='" + activationKey + '\'' +
+            ", preferences='" + preferences + '\'' +
             "}";
     }
 }

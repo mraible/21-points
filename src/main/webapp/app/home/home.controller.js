@@ -5,9 +5,9 @@
         .module('21PointsApp')
         .controller('HomeController', HomeController);
 
-    HomeController.$inject = ['$scope', 'Principal', 'LoginService', 'Points', '$state'];
+    HomeController.$inject = ['$scope', 'BloodPressure', 'Chart', 'Principal', 'LoginService', 'Points', 'Preferences', '$state'];
 
-    function HomeController ($scope, Principal, LoginService, Points, $state) {
+    function HomeController ($scope, BloodPressure, Chart, Principal, LoginService, Points, Preferences, $state) {
         var vm = this;
 
         vm.account = null;
@@ -31,7 +31,7 @@
                 vm.pointsPercentage = (data.points / 21) * 100;
             });
 
-            /*Preferences.user(function(data) {
+            Preferences.user(function(data) {
                 vm.preferences = data;
             });
 
@@ -64,7 +64,7 @@
                         color: '#03a9f4'
                     }];
                 }
-            });*/
+            });
         }
         function register () {
             $state.go('register');

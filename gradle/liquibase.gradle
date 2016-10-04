@@ -20,7 +20,7 @@ task liquibaseDiffChangelog(dependsOn: compileJava, type: JavaExec) {
     args "--url=jdbc:h2:file:./target/h2db/db/21points"
     args "--driver=org.h2.Driver"
     args "diffChangeLog"
-    
+
 }
 
 def buildTimestamp() {

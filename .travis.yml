@@ -20,9 +20,16 @@ before_install:
   - java -version
 install: npm install
 script:
-  - ./gradlew clean
   - ./gradlew test
   - gulp test
+  - docker-compose up -d
+  - sleep 20s
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - ./gradlew bootRun &
+  - bootPid=$!
+  - sleep 120s
+  - gulp itest
   - ./gradlew bootRepackage -Pprod -x test
 notifications:
   webhooks:

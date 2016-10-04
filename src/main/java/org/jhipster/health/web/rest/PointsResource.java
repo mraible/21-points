@@ -7,14 +7,15 @@ import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.dto.PointsPerMonth;
 import org.jhipster.health.web.rest.dto.PointsPerWeek;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
-import org.joda.time.DateTimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,8 +31,9 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.ChronoField;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -140,24 +142,50 @@ public class PointsResource {
         // Get current date
         LocalDate now = LocalDate.now();
         // Get first day of week
-        LocalDate startOfWeek = now.with(ChronoField.DAY_OF_WEEK, DateTimeConstants.MONDAY);
+        LocalDate startOfWeek = now.with(DayOfWeek.MONDAY);
         // Get last day of week
-        LocalDate endOfWeek = now.with(ChronoField.DAY_OF_WEEK, DateTimeConstants.SUNDAY);
+        LocalDate endOfWeek = now.with(DayOfWeek.SUNDAY);
         log.debug("Looking for points between: {} and {}", startOfWeek, endOfWeek);
 
-        List<Points> points = pointsRepository.findAllByDateBetween(startOfWeek, endOfWeek);
-        // filter by current user and sum the points
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startOfWeek, endOfWeek, SecurityUtils.getCurrentUserLogin());
+        return calculatePoints(startOfWeek, points);
+    }
+
+    private ResponseEntity<PointsPerWeek> calculatePoints(LocalDate startOfWeek, List<Points> points) {
         Integer numPoints = points.stream()
-            .filter(p -> p.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin()))
             .mapToInt(p -> p.getExercise() + p.getMeals() + p.getAlcohol())
             .sum();
 
         PointsPerWeek count = new PointsPerWeek(startOfWeek, numPoints);
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
+    /**
+     * GET  /points -> get all the points for a particular week.
+     */
+    @RequestMapping(value = "/points-by-week/{startDate}")
+    @Timed
+    public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate startDate) {
+        // Get last day of week
+        LocalDate endOfWeek = startDate.with(DayOfWeek.SUNDAY);
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startDate, endOfWeek, SecurityUtils.getCurrentUserLogin());
+        return calculatePoints(startDate, points);
+    }
 
     /**
-     * GET  /points/:id : get the "id" points.
+     * GET  /points -> get all the points for a particular current month.
+     */
+    @RequestMapping(value = "/points-by-month/{yearWithMonth}")
+    @Timed
+    public ResponseEntity<PointsPerMonth> getPointsByMonth(@PathVariable @DateTimeFormat(pattern="yyyy-MM") YearMonth yearWithMonth) {
+        // Get last day of the month
+        LocalDate endOfMonth = yearWithMonth.atEndOfMonth();
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(yearWithMonth.atDay(1), endOfMonth, SecurityUtils.getCurrentUserLogin());
+        PointsPerMonth pointsPerMonth = new PointsPerMonth(yearWithMonth, points);
+        return new ResponseEntity<>(pointsPerMonth, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /points/:id -> get the "id" points.
      *
      * @param id the id of the points to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the points, or with status 404 (Not Found)
@@ -177,7 +205,7 @@ public class PointsResource {
     }
 
     /**
-     * DELETE  /points/:id : delete the "id" points.
+     * DELETE  /points/:id -> delete the "id" points.
      *
      * @param id the id of the points to delete
      * @return the ResponseEntity with status 200 (OK)
@@ -194,7 +222,7 @@ public class PointsResource {
     }
 
     /**
-     * SEARCH  /_search/points?query=:query : search for the points corresponding
+     * SEARCH  /_search/points?query=:query -> search for the points corresponding
      * to the query.
      *
      * @param query the query of the points search

@@ -67,12 +67,12 @@ jhipster:
         title: 21points API
         description: 21points API documentation
         version: 0.0.1
-        termsOfServiceUrl:
+        termsOfServiceUrl: http://jhipster.github.io/
         contactName:
         contactUrl:
         contactEmail:
-        license:
-        licenseUrl:
+        license: Apache 2.0
+        licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.html
     ribbon:
         # comma seperated list of profiles to show a ribbon on the GUI
         displayOnActiveProfiles: dev
