@@ -45,9 +45,9 @@
                                     <span class="sr-only">{{vm.pointsPercentage}} points this week</span>
                                 </div>
                             </div>
-                            <alert type="info" ng-hide="vm.pointsThisWeek.points">
+                            <div uib-alert type="info" ng-hide="vm.pointsThisWeek.points">
                                 No points yet this week, better get moving!
-                            </alert>
+                            </div>
                         </div>
                     </div>
 
@@ -67,7 +67,7 @@
                                 <nvd3 options="vm.bpOptions" data="vm.bpData" class="with-3d-shadow with-transitions"></nvd3>
                             </span>
                             <span ng-if="!vm.bpReadings.readings.length">
-                                <alert type="info">No blood pressure readings found.</alert>
+                                <div uib-alert type="info">No blood pressure readings found.</div>
                             </span>
                         </div>
                     </div>
@@ -85,7 +85,7 @@
                                 <nvd3 options="vweightOptions" data="vm.weightData" class="with-3d-shadow with-transitions"></nvd3>
                             </span>
                             <span ng-if="!vm.weights.weighIns.length">
-                                <alert type="info">No weigh-ins found.</alert>
+                                <div uib-alert type="info">No weigh-ins found.</div>
                             </span>
                         </div>
                     </div>
