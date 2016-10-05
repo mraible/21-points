@@ -10,7 +10,7 @@ Before you can build this project, you must install and configure the following 
    Depending on your system, you can install Node either from source or as a pre-packaged bundle.
 
 After installing Node, you should be able to run the following command to install development tools (like
-[Bower][] and [BrowserSync][]). You will only need to run this command when dependencies change in package.json.
+[Bower][] and [Browsersync][]). You will only need to run this command when dependencies change in package.json.
 
     npm install
 
@@ -60,34 +60,14 @@ Performance tests are run by [Gatling]() and written in Scala. They're located i
     
 ## Continuous Integration
 
-To setup this project in Jenkins, use the following configuration:
-
-* Project name: `21points`
-* Source Code Management
-    * Git Repository: `git@github.com:xxxx/21points.git`
-    * Branches to build: `*/master`
-    * Additional Behaviours: `Wipe out repository & force clone`
-* Build Triggers
-    * Poll SCM / Schedule: `H/5 * * * *`
-* Build
-    * Invoke Gradle script / Use Gradle Wrapper / Tasks: `-Pprod clean test bootRepackage`
-    * Execute Shell / Command:
-        ````
-        ./gradlew bootRun &
-        bootPid=$!
-        sleep 30s
-        gulp itest
-        kill $bootPid
-        ````
-* Post-build Actions
-    * Publish JUnit test result report / Test Report XMLs: `build/test-results/*.xml,build/reports/e2e/*.xml`
+To setup this project in Jenkins, see [Jenkinsfile](Jenkinsfile). For Travis CI, see [.travis.yml](.travis.yml).
 
 [JHipster]: https://jhipster.github.io/
 [Gatling]: http://gatling.io/
 [Node.js]: https://nodejs.org/
 [Bower]: http://bower.io/
 [Gulp]: http://gulpjs.com/
-[BrowserSync]: http://www.browsersync.io/
+[Browsersync]: http://www.browsersync.io/
 [Karma]: http://karma-runner.github.io/
 [Jasmine]: http://jasmine.github.io/2.0/introduction.html
 [Protractor]: https://angular.github.io/protractor/
