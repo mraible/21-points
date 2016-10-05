@@ -1,6 +1,6 @@
-# 21points
+# 21-Points Health
 
-This application was generated using JHipster, you can find documentation and help at [https://jhipster.github.io](https://jhipster.github.io).
+This application was generated using [JHipster](https://jhipster.github.io), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
 
 ## Development
 
