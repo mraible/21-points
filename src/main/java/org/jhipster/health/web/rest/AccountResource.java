@@ -1,32 +1,32 @@
 package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import org.apache.commons.lang3.StringUtils;
+
 import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.service.MailService;
 import org.jhipster.health.service.UserService;
 import org.jhipster.health.service.dto.UserDTO;
-import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.vm.KeyAndPasswordVM;
 import org.jhipster.health.web.rest.vm.ManagedUserVM;
+import org.jhipster.health.web.rest.util.HeaderUtil;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Optional;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.*;
 
 /**
  * REST controller for managing the current user's account.

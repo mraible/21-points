@@ -36,4 +36,6 @@
     <cache name="org.jhipster.health.domain.User.persistentTokens"
            timeToLiveSeconds="3600">
     </cache>
-    </ehcache>
+    
+    <!-- jhipster-needle-ehcache-add-entry -->
+</ehcache>

@@ -37,6 +37,9 @@ describe('account', function () {
         password.clear().sendKeys('admin');
         element(by.css('button[type=submit]')).click();
 
+        element(by.css('.alert-success')).getAttribute('data-translate').then(function (value) {
+            expect(value).toMatch(/home.logged.message/);
+        });
         element(by.css('.logged-in')).getAttribute('data-translate').then(function (value) {
             expect(value).toMatch(/home.logged.message/);
         });

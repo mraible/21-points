@@ -174,7 +174,6 @@ public class JHipsterProperties {
         public Authentication getAuthentication() {
             return authentication;
         }
-
         public static class Authentication {
 
             private final Jwt jwt = new Jwt();

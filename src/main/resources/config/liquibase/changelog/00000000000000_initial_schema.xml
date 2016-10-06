@@ -115,7 +115,7 @@
             <column name="event_id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="principal" type="varchar(255)">
+            <column name="principal" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
             <column name="event_date" type="timestamp"/>
@@ -126,7 +126,7 @@
             <column name="event_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="name" type="varchar(255)">
+            <column name="name" type="varchar(150)">
                 <constraints nullable="false"/>
             </column>
             <column name="value" type="varchar(255)"/>
@@ -136,7 +136,7 @@
         <createIndex indexName="idx_persistent_audit_event"
                      tableName="jhi_persistent_audit_event"
                      unique="false">
-            <column name="principal" type="varchar(255)"/>
+            <column name="principal" type="varchar(50)"/>
             <column name="event_date" type="timestamp"/>
         </createIndex>
 
