@@ -12,6 +12,8 @@
 
 
 spring:
+    profiles:
+        include: swagger
     devtools:
         restart:
             enabled: true
@@ -54,8 +56,6 @@ spring:
         cache-seconds: 1
     thymeleaf:
         cache: false
-    profiles:
-        include: swagger # automatically set the 'swagger' profile
 
 liquibase:
     contexts: dev
