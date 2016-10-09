@@ -82,7 +82,7 @@
                     <div class="row">
                         <div class="col-md-10">
                             <span ng-if="vm.weights.weighIns.length">
-                                <nvd3 options="vweightOptions" data="vm.weightData" class="with-3d-shadow with-transitions"></nvd3>
+                                <nvd3 options="vm.weightOptions" data="vm.weightData" class="with-3d-shadow with-transitions"></nvd3>
                             </span>
                             <span ng-if="!vm.weights.weighIns.length">
                                 <div uib-alert type="info">No weigh-ins found.</div>

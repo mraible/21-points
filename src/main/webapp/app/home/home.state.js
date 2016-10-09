@@ -131,13 +131,9 @@
                     backdrop: 'static',
                     size: 'lg',
                     resolve: {
-                        entity: function () {
-                            return {
-                                weeklyGoal: null,
-                                weightUnits: null,
-                                id: null
-                            };
-                        }
+                        entity: ['Preferences', function (Preferences) {
+                            return Preferences.user().$promise;
+                        }]
                     }
                 }).result.then(function() {
                     $state.go('home', null, { reload: true });

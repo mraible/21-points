@@ -17,7 +17,7 @@
                     <button class="btn btn-info btn-sm btn-raised" ng-click="vm.search(vm.searchQuery)">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
-                    <button class="btn btn-primary btn-sm btn-raised" ui-sref="preferences.new"
+                    <button class="btn btn-primary btn-sm btn-raised" ui-sref="preferences.new" ng-hide="vm.preferences.length && !vm.isAdmin"
                             uib-tooltip="{{'entity.action.new' | translate}}">
                         <span class="glyphicon glyphicon-plus"></span>
                     </button>
@@ -33,6 +33,7 @@
                     <th><span data-translate="global.field.id">ID</span></th>
                     <th><span data-translate="21PointsApp.preferences.weeklyGoal">Weekly Goal</span></th>
                     <th><span data-translate="21PointsApp.preferences.weightUnits">Weight Units</span></th>
+                    <th has-authority="ROLE_ADMIN"><span data-translate="21PointsApp.preferences.user">User</span></th>
                     <th translate="21PointsApp.preferences.actions" class="col-md-3">Actions</th>
                 </tr>
             </thead>
@@ -41,6 +42,9 @@
                     <td><a ui-sref="preferences-detail({id:preferences.id})">{{preferences.id}}</a></td>
                     <td>{{preferences.weeklyGoal}}</td>
                     <td data-translate="{{'21PointsApp.Units.' + preferences.weightUnits}}">{{preferences.weightUnits}}</td>
+                    <td has-authority="ROLE_ADMIN">
+                        {{preferences.user.login}}
+                    </td>
                     <td>
                         <div class="btn-group btn-group-raised m-n">
                             <button type="submit" uib-tooltip="{{'entity.action.view' | translate}}"
