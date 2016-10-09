@@ -67,13 +67,13 @@ public class PreferencesResource {
         if (preferences.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("preferences", "idexists", "A new preferences cannot already have an ID")).body(null);
         }
-        Preferences result = preferencesRepository.save(preferences);
-        preferencesSearchRepository.save(result);
 
         log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentUserLogin());
         User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get();
-        user.setPreferences(result);
-        userRepository.save(user);
+        preferences.setUser(user);
+
+        Preferences result = preferencesRepository.save(preferences);
+        preferencesSearchRepository.save(result);
 
         return ResponseEntity.created(new URI("/api/preferences/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("preferences", result.getId().toString()))
@@ -139,10 +139,10 @@ public class PreferencesResource {
     public ResponseEntity<Preferences> getUserPreferences() {
         String username = SecurityUtils.getCurrentUserLogin();
         log.debug("REST request to get Preferences : {}", username);
-        User user = userRepository.findOneByLogin(username).get();
+        Optional<Preferences> preferences = preferencesRepository.findOneByUserLogin(username);
 
-        if (user.getPreferences() != null) {
-            return new ResponseEntity<>(user.getPreferences(), HttpStatus.OK);
+        if (preferences.isPresent()) {
+            return new ResponseEntity<>(preferences.get(), HttpStatus.OK);
         } else {
             Preferences defaultPreferences = new Preferences();
             defaultPreferences.setWeeklyGoal(10); // default
@@ -182,13 +182,6 @@ public class PreferencesResource {
     @Timed
     public ResponseEntity<Void> deletePreferences(@PathVariable Long id) {
         log.debug("REST request to delete Preferences : {}", id);
-
-        if (SecurityUtils.getCurrentUserLogin() != null) {
-            User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get();
-            user.setPreferences(null);
-            userRepository.save(user);
-        }
-
         preferencesRepository.delete(id);
         preferencesSearchRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("preferences", id.toString())).build();
