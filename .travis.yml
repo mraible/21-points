@@ -22,7 +22,6 @@ install: npm install
 script:
   - ./gradlew test
   - gulp test
-  - docker-compose up -d
   - sleep 20s
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
