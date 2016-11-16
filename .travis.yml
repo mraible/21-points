@@ -20,7 +20,7 @@ before_install:
   - java -version
 install: npm install
 script:
-  - ./gradlew test
+  - ./gradlew test --stacktrace
   - gulp test
   - sleep 20s
   - export DISPLAY=:99.0
