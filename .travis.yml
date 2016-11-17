@@ -21,7 +21,7 @@ before_install:
 install: npm install
 script:
   - ./gradlew clean
-  - ./gradlew test --stacktrace
+  - ./gradlew test
   - gulp test
   - sleep 20s
   - export DISPLAY=:99.0
