@@ -20,6 +20,7 @@ before_install:
   - java -version
 install: npm install
 script:
+  - ./gradlew clean
   - ./gradlew test --stacktrace
   - gulp test
   - sleep 20s
