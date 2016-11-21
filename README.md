@@ -73,7 +73,7 @@ To setup this project in Jenkins, see [Jenkinsfile](Jenkinsfile). For Travis CI,
 [Karma]: http://karma-runner.github.io/
 [Jasmine]: http://jasmine.github.io/2.0/introduction.html
 [Protractor]: https://angular.github.io/protractor/
-[travis-image]: https://travis-ci.org/stormpath/generator-jhipster-stormpath.svg?branch=master
-[travis-url]: https://travis-ci.org/stormpath/generator-jhipster-stormpath
-[daviddm-image]: https://david-dm.org/stormpath/generator-jhipster-stormpath.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/stormpath/generator-jhipster-module
+[travis-image]: https://travis-ci.org/mraible/21-points.svg?branch=master
+[travis-url]: https://travis-ci.org/mraible/21-points
+[daviddm-image]: https://david-dm.org/mraible/21-points.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/mraible/21-points
