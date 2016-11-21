@@ -1,4 +1,6 @@
 # 21-Points Health
+[![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+> To track your health and improve your life. 😊
 
 This application was generated using [JHipster](https://jhipster.github.io), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
 
