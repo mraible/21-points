@@ -1,5 +1,5 @@
 # 21-Points Health
-[![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+[![Build Status][travis-image]][travis-url] [![devDependencies Status][daviddm-image]][daviddm-url]
 > To track your health and improve your life. 😊
 
 This application was generated using [JHipster](https://jhipster.github.io), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
@@ -75,5 +75,5 @@ To setup this project in Jenkins, see [Jenkinsfile](Jenkinsfile). For Travis CI,
 [Protractor]: https://angular.github.io/protractor/
 [travis-image]: https://travis-ci.org/mraible/21-points.svg?branch=master
 [travis-url]: https://travis-ci.org/mraible/21-points
-[daviddm-image]: https://david-dm.org/mraible/21-points.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/mraible/21-points
+[daviddm-image]: https://david-dm.org/mraible/21-points/dev-status.svg
+[daviddm-url]: https://david-dm.org/mraible/21-points?type=dev
