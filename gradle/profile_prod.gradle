@@ -1,0 +1,55 @@
+apply plugin: 'org.springframework.boot'
+apply plugin: 'com.moowork.node'
+
+ext {
+    logbackLoglevel = "INFO"
+}
+
+dependencies {
+
+}
+
+def profiles = 'prod'
+if (project.hasProperty('no-liquibase')) {
+    profiles += ',no-liquibase'
+}
+
+if (project.hasProperty('swagger')) {
+    profiles += ',swagger'
+}
+
+bootRun {
+    args = []
+}
+
+
+task webpack_test(type: YarnTask, dependsOn: 'yarn_install') {
+    args = ["run", "webpack:test"]
+}
+
+task webpack(type: YarnTask, dependsOn: 'yarn_install') {
+    args = ["run", "webpack:prod"]
+}
+
+war {
+    webAppDirName = 'build/www/'
+}
+
+processResources {
+    filesMatching('**/logback-spring.xml') {
+        filter {
+            it.replace('#logback.loglevel#', logbackLoglevel)
+        }
+    }
+    filesMatching('**/application.yml') {
+        filter {
+            it.replace('#spring.profiles.active#', profiles)
+        }
+        filter {
+            it.replace('#project.version#', version)
+        }
+    }
+}
+
+test.dependsOn webpack_test
+processResources.dependsOn webpack
