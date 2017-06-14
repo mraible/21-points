@@ -10,7 +10,7 @@ export * from './auth/has-any-authority.directive';
 export * from './auth/user-route-access-service';
 export * from './language/language.constants';
 export * from './language/language.helper';
-export * from './language/language.pipe';
+export * from './language/find-language-from-key.pipe';
 export * from './login/login.component';
 export * from './login/login.service';
 export * from './login/login-modal.service';

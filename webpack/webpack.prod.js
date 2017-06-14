@@ -10,8 +10,8 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
     devtool: 'source-map',
     output: {
         path: path.resolve('./build/www'),
-        filename: '[hash].[name].bundle.js',
-        chunkFilename: '[hash].[id].chunk.js'
+        filename: 'app/[hash].[name].bundle.js',
+        chunkFilename: 'app/[hash].[id].chunk.js'
     },
     plugins: [
         new ExtractTextPlugin('[hash].styles.css'),

@@ -26,8 +26,8 @@ export class NavbarComponent implements OnInit {
 
     constructor(
         private loginService: LoginService,
-        private languageHelper: JhiLanguageHelper,
         private languageService: JhiLanguageService,
+        private languageHelper: JhiLanguageHelper,
         private principal: Principal,
         private loginModalService: LoginModalService,
         private profileService: ProfileService,
@@ -35,7 +35,6 @@ export class NavbarComponent implements OnInit {
     ) {
         this.version = VERSION ? 'v' + VERSION : '';
         this.isNavbarCollapsed = true;
-        this.languageService.addLocation('home');
     }
 
     ngOnInit() {
