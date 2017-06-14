@@ -3,7 +3,7 @@ import { Renderer, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { TwentyOnePointsTestModule } from '../../../../test.module';
 import { PasswordResetInitComponent } from '../../../../../../../main/webapp/app/account/password-reset/init/password-reset-init.component';
-import { PasswordResetInit } from '../../../../../../../main/webapp/app/account/password-reset/init/password-reset-init.service';
+import { PasswordResetInitService } from '../../../../../../../main/webapp/app/account/password-reset/init/password-reset-init.service';
 
 
 describe('Component Tests', () => {
@@ -17,7 +17,7 @@ describe('Component Tests', () => {
                 imports: [TwentyOnePointsTestModule],
                 declarations: [PasswordResetInitComponent],
                 providers: [
-                    PasswordResetInit,
+                    PasswordResetInitService,
                     {
                         provide: Renderer,
                         useValue: {
@@ -61,7 +61,7 @@ describe('Component Tests', () => {
         );
 
         it('notifies of success upon successful requestReset',
-            inject([PasswordResetInit], (service: PasswordResetInit) => {
+            inject([PasswordResetInitService], (service: PasswordResetInitService) => {
                 spyOn(service, 'save').and.returnValue(Observable.of({}));
                 comp.resetAccount.email = 'user@domain.com';
 
@@ -75,7 +75,7 @@ describe('Component Tests', () => {
         );
 
         it('notifies of unknown email upon email address not registered/400',
-            inject([PasswordResetInit], (service: PasswordResetInit) => {
+            inject([PasswordResetInitService], (service: PasswordResetInitService) => {
                 spyOn(service, 'save').and.returnValue(Observable.throw({
                     status: 400,
                     data: 'email address not registered'
@@ -92,7 +92,7 @@ describe('Component Tests', () => {
         );
 
         it('notifies of error upon error response',
-            inject([PasswordResetInit], (service: PasswordResetInit) => {
+            inject([PasswordResetInitService], (service: PasswordResetInitService) => {
                 spyOn(service, 'save').and.returnValue(Observable.throw({
                     status: 503,
                     data: 'something else'
