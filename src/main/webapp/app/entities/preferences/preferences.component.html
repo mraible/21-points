@@ -30,8 +30,8 @@
             <thead>
             <tr>
             <th><span jhiTranslate="global.field.id">ID</span></th>
-            <th><span jhiTranslate="twentyOnePointsApp.preferences.weekly_goal">Weekly Goal</span></th>
-            <th><span jhiTranslate="twentyOnePointsApp.preferences.weight_units">Weight Units</span></th>
+            <th><span jhiTranslate="twentyOnePointsApp.preferences.weeklyGoal">Weekly Goal</span></th>
+            <th><span jhiTranslate="twentyOnePointsApp.preferences.weightUnits">Weight Units</span></th>
             <th><span jhiTranslate="twentyOnePointsApp.preferences.user">User</span></th>
             <th></th>
             </tr>
@@ -39,8 +39,8 @@
             <tbody>
             <tr *ngFor="let preferences of preferences ;trackBy: trackId">
                 <td><a [routerLink]="['../preferences', preferences.id ]">{{preferences.id}}</a></td>
-                <td>{{preferences.weekly_goal}}</td>
-                <td jhiTranslate="{{'twentyOnePointsApp.Units.' + preferences.weight_units}}">{{preferences.weight_units}}</td>
+                <td>{{preferences.weeklyGoal}}</td>
+                <td jhiTranslate="{{'twentyOnePointsApp.Units.' + preferences.weightUnits}}">{{preferences.weightUnits}}</td>
                 <td>
                     {{preferences.user?.login}}
                 </td>
