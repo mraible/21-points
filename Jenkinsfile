@@ -38,6 +38,15 @@ node {
         }
     }
 
+    stage('protractor tests') {
+        sh '''./gradlew &
+        bootPid=$!
+        sleep 45s
+        yarn e2e
+        kill $bootPid
+        '''
+    }
+
     stage('packaging') {
         sh "./gradlew bootRepackage -x test -Pprod -PnodeInstall --no-daemon"
         archiveArtifacts artifacts: '**/build/libs/*.war', fingerprint: true
