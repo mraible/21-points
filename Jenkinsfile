@@ -41,7 +41,7 @@ node {
     stage('protractor tests') {
         sh '''./gradlew &
         bootPid=$!
-        sleep 45s
+        sleep 60s
         yarn e2e
         kill $bootPid
         '''
