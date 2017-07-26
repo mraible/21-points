@@ -200,5 +200,48 @@ ui bootstrap tweaks
     outline: none;
 }
 
+/* ==========================================================================
+custom styles for 21-Points Health
+========================================================================== */
+
+.footer {
+    bottom: 0;
+    left: 0;
+    color: #666;
+    background: #eee;
+    border-top: 1px solid silver;
+    position: fixed;
+    width: 100%;
+    padding: 10px;
+    padding-bottom: 0;
+    text-align: center;
+    z-index: 2;
+    font-size: .9em;
+
+    p {
+        margin-bottom: 7px;
+    }
+}
+
+.heart {
+    display: inline-block;
+    width: 347px;
+    height: 347px;
+    background: url("../images/21-points-logo.png") no-repeat center top;
+    background-size: contain;
+}
+
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (   min--moz-device-pixel-ratio: 2),
+only screen and (     -o-min-device-pixel-ratio: 2/1),
+only screen and (        min-device-pixel-ratio: 2),
+only screen and (                min-resolution: 192dpi),
+only screen and (                min-resolution: 2dppx) {
+    .heart {
+        background: url("../images/21-points-logo2x.png") no-repeat center top;
+        background-size: contain;
+    }
+}
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */
