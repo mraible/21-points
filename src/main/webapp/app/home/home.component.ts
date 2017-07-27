@@ -32,26 +32,7 @@ export class HomeComponent implements OnInit {
         this.principal.identity().then((account) => {
             this.account = account;
             if (this.isAuthenticated()) {
-                // Get preferences
-                this.preferencesService.user().subscribe((preferences) => {
-                    this.preferences = preferences;
-
-                    // Get points for the current week
-                    this.pointsService.thisWeek().subscribe((points: any) => {
-                        points = points.json;
-                        this.pointsThisWeek = points;
-                        this.pointsPercentage = (points.points / this.preferences.weeklyGoal) * 100;
-
-                        // calculate success, warning, or danger
-                        if (points.points >= preferences.weeklyGoal) {
-                            this.pointsThisWeek.progress = 'success';
-                        } else if (points.points < 10) {
-                            this.pointsThisWeek.progress = 'danger';
-                        } else if (points.points > 10 && points.points < this.preferences.weeklyGoal) {
-                            this.pointsThisWeek.progress = 'warning';
-                        }
-                    });
-                });
+                this.getUserData();
             }
         });
         this.registerAuthenticationSuccess();
@@ -61,6 +42,32 @@ export class HomeComponent implements OnInit {
         this.eventManager.subscribe('authenticationSuccess', (message) => {
             this.principal.identity().then((account) => {
                 this.account = account;
+            });
+        });
+        this.eventManager.subscribe('pointsListModification', (response) => {
+            this.getUserData();
+        });
+    }
+
+    getUserData() {
+        // Get preferences
+        this.preferencesService.user().subscribe((preferences) => {
+            this.preferences = preferences;
+
+            // Get points for the current week
+            this.pointsService.thisWeek().subscribe((points: any) => {
+                points = points.json;
+                this.pointsThisWeek = points;
+                this.pointsPercentage = (points.points / this.preferences.weeklyGoal) * 100;
+
+                // calculate success, warning, or danger
+                if (points.points >= preferences.weeklyGoal) {
+                    this.pointsThisWeek.progress = 'success';
+                } else if (points.points < 10) {
+                    this.pointsThisWeek.progress = 'danger';
+                } else if (points.points > 10 && points.points < this.preferences.weeklyGoal) {
+                    this.pointsThisWeek.progress = 'warning';
+                }
             });
         });
     }
