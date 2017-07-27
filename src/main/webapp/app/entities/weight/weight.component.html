@@ -5,7 +5,7 @@
             <h2 jhiTranslate="twentyOnePointsApp.weight.home.title">Weights</h2>
         </div>
         <div class="col-sm-4 text-right">
-            <button class="btn btn-primary float-right create-weight" [routerLink]="['/', { outlets: { popup: ['weight-new'] } }]" [ngbTooltip]="addTooltip">
+            <button class="btn btn-primary float-right create-weight" [routerLink]="['/', { outlets: { popup: ['weight-new'] } }]" [ngbTooltip]="addTooltip" placement="bottom">
                 <span class="fa fa-plus"></span>
                 <ng-template #addTooltip>
                     <span jhiTranslate="twentyOnePointsApp.weight.home.createLabel">Add Weight</span>

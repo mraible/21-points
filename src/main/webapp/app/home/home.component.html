@@ -43,8 +43,8 @@
                     </div>
                     <div class="row mt-4">
                         <div class="col-md-8 col-xs-3 text-nowrap">
-                            <h4 class="mt-1 hidden-sm-down" jhiTranslate="home.bloodPressure">Blood Pressure:</h4>
-                            <h4 class="mt-1 hidden-sm-up" jhiTranslate="home.bloodPressureMobile">BP:</h4>
+                            <h4 class="mt-1 hidden-sm-down" jhiTranslate="home.bloodPressure.title">Blood Pressure:</h4>
+                            <h4 class="mt-1 hidden-sm-up" jhiTranslate="home.bloodPressure.titleMobile">BP:</h4>
                         </div>
                         <div class="col-md-3 text-right">
                             <a [routerLink]="['/', { outlets: { popup: ['blood-pressure-new'] } }]" class="btn btn-secondary btn-sm">
@@ -53,18 +53,37 @@
                         </div>
                     </div>
                     <div class="row">
-                        <!--<span ng-if="!vm.bpReadings.readings.length">
-                                <div uib-alert type="info">No blood pressure readings found.</div>
-                            </span>-->
+                        <div class="col-md-11">
+                            <span *ngIf="bpReadings.readings && bpReadings.readings.length">
+                                <nvd3 [options]="bpOptions" [data]="bpData" class="with-3d-shadow with-transitions"></nvd3>
+                            </span>
+                            <ngb-alert [dismissible]="false" [hidden]="bpReadings.readings && bpReadings.readings.length">
+                                <span jhiTranslate="home.bloodPressure.noReadings">
+                                    No blood pressure readings found.
+                                </span>
+                            </ngb-alert>
+                        </div>
                     </div>
                     <div class="row mt-4">
                         <div class="col-md-8 col-xs-6">
-                            <h4 jhiTranslate="home.weight">Weight:</h4>
+                            <h4 jhiTranslate="home.weight.title">Weight:</h4>
                         </div>
                         <div class="col-md-3 text-right">
                             <a [routerLink]="['/', { outlets: { popup: ['weight-new'] } }]" class="btn btn-secondary btn-sm">
                                 <span jhiTranslate="twentyOnePointsApp.weight.home.createLabel">Add Weight</span>
                             </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-11">
+                            <span *ngIf="weights.weighIns && weights.weighIns.length">
+                                <nvd3 [options]="weightOptions" [data]="weightData" class="with-3d-shadow with-transitions"></nvd3>
+                            </span>
+                            <ngb-alert [dismissible]="false" [hidden]="weights.weighIns && weights.weighIns.length">
+                                <span jhiTranslate="home.weight.noWeighIns">
+                                    No weigh-ins found.
+                                </span>
+                            </ngb-alert>
                         </div>
                     </div>
 

@@ -25,7 +25,7 @@ describe('Points e2e test', () => {
         entityMenu.click();
         element.all(by.css('[routerLink="points"]')).first().click().then(() => {
             const expectVal = /twentyOnePointsApp.points.home.title/;
-            element.all(by.css('h2 span')).first().getAttribute('jhiTranslate').then((value) => {
+            element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
                 expect(value).toMatch(expectVal);
             });
         });
@@ -33,7 +33,7 @@ describe('Points e2e test', () => {
 
     it('should load create Points dialog', function () {
         element(by.css('button.create-points')).click().then(() => {
-            const expectVal = /twentyOnePointsApp.points.home.createOrEditLabel/;
+            const expectVal = /twentyOnePointsApp.points.home.createLabel/;
             element.all(by.css('h4.modal-title')).first().getAttribute('jhiTranslate').then((value) => {
                 expect(value).toMatch(expectVal);
             });

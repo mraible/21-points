@@ -5,7 +5,7 @@
             <h2 jhiTranslate="twentyOnePointsApp.preferences.home.title">Preferences</h2>
         </div>
         <div class="col-sm-4 text-right">
-            <button class="btn btn-primary float-right create-preferences" [routerLink]="['/', { outlets: { popup: ['preferences-new'] } }]" [ngbTooltip]="addTooltip" [hidden]="preferences.length && !isAdmin">
+            <button class="btn btn-primary float-right create-preferences" [routerLink]="['/', { outlets: { popup: ['preferences-new'] } }]" [ngbTooltip]="addTooltip" placement="bottom" [hidden]="preferences.length && !isAdmin">
                 <span class="fa fa-plus"></span>
                 <ng-template #addTooltip>
                     <span jhiTranslate="twentyOnePointsApp.preferences.home.createLabel">Add Preferences</span>

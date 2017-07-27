@@ -40,6 +40,10 @@ export class PointsPopupService {
                 month: now.getMonth() + 1,
                 day: now.getDate()
             };
+            // default to the best day possible
+            points.exercise = 1;
+            points.meals = 1;
+            points.alcohol = 1;
             return this.pointsModalRef(component, points);
         }
     }

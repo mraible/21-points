@@ -21,8 +21,14 @@
             "thisWeekMobile": "Points:",
             "getMoving": "No points yet this week, better get moving!"
         },
-        "bloodPressure": "Blood Pressure:",
-        "bloodPressureMobile": "BP:",
-        "weight": "Weight:"
+        "bloodPressure": {
+            "title": "Blood Pressure:",
+            "titleMobile": "BP:",
+            "noReadings": "No blood pressure readings found."
+        },
+        "weight": {
+            "title": "Weight:",
+            "noWeighIns": "No weigh-ins found."
+        }
     }
 }
