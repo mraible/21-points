@@ -1,18 +1,18 @@
 <div>
-    <h2>
-        <span jhiTranslate="twentyOnePointsApp.weight.home.title">Weights</span>
-        <button class="btn btn-primary float-right create-weight" [routerLink]="['/', { outlets: { popup: ['weight-new'] } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="twentyOnePointsApp.weight.home.createLabel">
-            Create new Weight
-            </span>
-        </button>
-    </h2>
     <jhi-alert></jhi-alert>
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-8">
+            <h2 jhiTranslate="twentyOnePointsApp.weight.home.title">Weights</h2>
+        </div>
+        <div class="col-sm-4 text-right p-0">
+            <button class="btn btn-primary float-right create-weight" [routerLink]="['/', { outlets: { popup: ['weight-new'] } }]" [ngbTooltip]="addTooltip">
+                <span class="fa fa-plus"></span>
+                <ng-template #addTooltip>
+                    <span jhiTranslate="twentyOnePointsApp.weight.home.createLabel">Add Weight</span>
+                </ng-template>
+            </button>
             <form name="searchForm" class="form-inline">
-                <div class="input-group w-100 mt-3">
+                <div class="input-group w-100 mr-1">
                     <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'twentyOnePointsApp.weight.home.search' | translate }}">
                     <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
                         <span class="fa fa-search"></span>
@@ -29,7 +29,6 @@
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">
-            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="timestamp"><span jhiTranslate="twentyOnePointsApp.weight.timestamp">Timestamp</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="weight"><span jhiTranslate="twentyOnePointsApp.weight.weight">Weight</span> <span class="fa fa-sort"></span></th>
             <th jhiSortBy="user.login"><span jhiTranslate="twentyOnePointsApp.weight.user">User</span> <span class="fa fa-sort"></span></th>
@@ -38,8 +37,7 @@
             </thead>
             <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
             <tr *ngFor="let weight of weights ;trackBy: trackId">
-                <td><a [routerLink]="['../weight', weight.id ]">{{weight.id}}</a></td>
-                <td>{{weight.timestamp | date:'medium'}}</td>
+                <td><a [routerLink]="['../weight', weight.id ]">{{weight.timestamp | date:'medium': 'UTC'}}</a></td>
                 <td>{{weight.weight}}</td>
                 <td>
                     {{weight.user?.login}}

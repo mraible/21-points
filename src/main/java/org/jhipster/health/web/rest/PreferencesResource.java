@@ -3,7 +3,9 @@ package org.jhipster.health.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Preferences;
 
+import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
@@ -42,9 +44,12 @@ public class PreferencesResource {
 
     private final PreferencesSearchRepository preferencesSearchRepository;
 
-    public PreferencesResource(PreferencesRepository preferencesRepository, PreferencesSearchRepository preferencesSearchRepository) {
+    private final UserRepository userRepository;
+
+    public PreferencesResource(PreferencesRepository preferencesRepository, PreferencesSearchRepository preferencesSearchRepository, UserRepository userRepository) {
         this.preferencesRepository = preferencesRepository;
         this.preferencesSearchRepository = preferencesSearchRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -61,6 +66,11 @@ public class PreferencesResource {
         if (preferences.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new preferences cannot already have an ID")).body(null);
         }
+
+        log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentUserLogin());
+        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get();
+        preferences.setUser(user);
+
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.save(result);
         return ResponseEntity.created(new URI("/api/preferences/" + result.getId()))

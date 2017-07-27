@@ -203,6 +203,13 @@ ui bootstrap tweaks
 /* ==========================================================================
 custom styles for 21-Points Health
 ========================================================================== */
+.truncate {
+    width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
 
 .footer {
     bottom: 0;

@@ -1,18 +1,18 @@
 <div>
-    <h2>
-        <span jhiTranslate="twentyOnePointsApp.preferences.home.title">Preferences</span>
-        <button class="btn btn-primary float-right create-preferences" [routerLink]="['/', { outlets: { popup: ['preferences-new'] } }]">
-            <span class="fa fa-plus"></span>
-            <span class="hidden-sm-down"  jhiTranslate="twentyOnePointsApp.preferences.home.createLabel">
-            Create new Preferences
-            </span>
-        </button>
-    </h2>
     <jhi-alert></jhi-alert>
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-8">
+            <h2 jhiTranslate="twentyOnePointsApp.preferences.home.title">Preferences</h2>
+        </div>
+        <div class="col-sm-4 text-right p-0">
+            <button class="btn btn-primary float-right create-preferences" [routerLink]="['/', { outlets: { popup: ['preferences-new'] } }]" [ngbTooltip]="addTooltip" [hidden]="preferences.length && !isAdmin">
+                <span class="fa fa-plus"></span>
+                <ng-template #addTooltip>
+                    <span jhiTranslate="twentyOnePointsApp.preferences.home.createLabel">Add Preferences</span>
+                </ng-template>
+            </button>
             <form name="searchForm" class="form-inline">
-                <div class="input-group w-100 mt-3">
+                <div class="input-group w-100 mr-1">
                     <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="{{ 'twentyOnePointsApp.preferences.home.search' | translate }}">
                     <button class="input-group-addon btn btn-info" (click)="search(currentSearch)">
                         <span class="fa fa-search"></span>
@@ -32,7 +32,7 @@
             <th><span jhiTranslate="global.field.id">ID</span></th>
             <th><span jhiTranslate="twentyOnePointsApp.preferences.weeklyGoal">Weekly Goal</span></th>
             <th><span jhiTranslate="twentyOnePointsApp.preferences.weightUnits">Weight Units</span></th>
-            <th><span jhiTranslate="twentyOnePointsApp.preferences.user">User</span></th>
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'"><span jhiTranslate="twentyOnePointsApp.preferences.user">User</span></th>
             <th></th>
             </tr>
             </thead>
@@ -41,7 +41,7 @@
                 <td><a [routerLink]="['../preferences', preferences.id ]">{{preferences.id}}</a></td>
                 <td>{{preferences.weeklyGoal}}</td>
                 <td jhiTranslate="{{'twentyOnePointsApp.Units.' + preferences.weightUnits}}">{{preferences.weightUnits}}</td>
-                <td>
+                <td *jhiHasAnyAuthority="'ROLE_ADMIN'">
                     {{preferences.user?.login}}
                 </td>
                 <td class="text-right">
