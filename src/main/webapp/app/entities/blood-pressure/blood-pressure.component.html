@@ -4,7 +4,7 @@
         <div class="col-sm-8">
             <h2 jhiTranslate="twentyOnePointsApp.bloodPressure.home.title">Blood Pressures</h2>
         </div>
-        <div class="col-sm-4 text-right p-0">
+        <div class="col-sm-4 text-right">
             <button class="btn btn-primary float-right create-blood-pressure" [routerLink]="['/', { outlets: { popup: ['blood-pressure-new'] } }]" [ngbTooltip]="addTooltip">
                 <span class="fa fa-plus"></span>
                 <ng-template #addTooltip>

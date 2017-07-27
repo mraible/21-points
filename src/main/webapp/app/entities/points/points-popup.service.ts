@@ -32,7 +32,15 @@ export class PointsPopupService {
                 this.pointsModalRef(component, points);
             });
         } else {
-            return this.pointsModalRef(component, new Points());
+            // populate date with current date if new
+            const points = new Points();
+            const now = new Date();
+            points.date = {
+                year: now.getFullYear(),
+                month: now.getMonth() + 1,
+                day: now.getDate()
+            };
+            return this.pointsModalRef(component, points);
         }
     }
 

@@ -29,7 +29,11 @@ export class WeightPopupService {
                 this.weightModalRef(component, weight);
             });
         } else {
-            return this.weightModalRef(component, new Weight());
+            // populate date/time with current time if new
+            const weight = new Weight();
+            weight.timestamp = this.datePipe
+                .transform(new Date(), 'yyyy-MM-ddThh:mm');
+            return this.weightModalRef(component, weight);
         }
     }
 

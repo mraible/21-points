@@ -18,7 +18,8 @@
         "github": "GitHub",
         "points": {
             "thisWeek": "Points for the week of {{date}}:",
-            "thisWeekMobile": "Points:"
+            "thisWeekMobile": "Points:",
+            "getMoving": "No points yet this week, better get moving!"
         },
         "bloodPressure": "Blood Pressure:",
         "bloodPressureMobile": "BP:",

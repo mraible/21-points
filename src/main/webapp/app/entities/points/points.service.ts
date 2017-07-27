@@ -56,6 +56,11 @@ export class PointsService {
             .map((res: any) => this.convertResponse(res));
     }
 
+    thisWeek(): Observable<Points> {
+        return this.http.get('api/points-this-week')
+            .map((res: any) => this.convertResponse(res));
+    }
+
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {

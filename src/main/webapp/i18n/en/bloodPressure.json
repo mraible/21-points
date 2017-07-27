@@ -3,8 +3,8 @@
         "bloodPressure" : {
             "home": {
                 "title": "Blood Pressure",
-                "createLabel": "Add Reading",
-                "createOrEditLabel": "Edit a Reading",
+                "createLabel": "Add Blood Pressure",
+                "createOrEditLabel": "Edit Blood Pressure",
                 "search": "Search for Blood Pressure"
             },
             "created": "Blood pressure added successfully.",
