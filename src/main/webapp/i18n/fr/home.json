@@ -5,7 +5,7 @@
         "welcomeWithName": "Bienvenue, {{name}} !",
         "subtitle": "21-Point Health est ici pour suivre votre santé et améliorer votre vie.",
         "logged": {
-            "message": "Vous êtes connecté en tant que \"{{username}}\"."
+            "message": "Vous êtes connecté en tant que <em>{{username}}</em>."
         },
         "question": "Si vous avez des questions concernant le Mini-Livre JHipster ou 21-Points Health :",
         "link": {
