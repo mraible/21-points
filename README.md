@@ -156,3 +156,8 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [Protractor]: https://angular.github.io/protractor/
 [Leaflet]: http://leafletjs.com/
 [DefinitelyTyped]: http://definitelytyped.org/
+
+[travis-image]: https://travis-ci.org/mraible/21-points.svg?branch=master
+[travis-url]: https://travis-ci.org/mraible/21-points
+[daviddm-image]: https://david-dm.org/mraible/21-points/dev-status.svg
+[daviddm-url]: https://david-dm.org/mraible/21-points?type=dev
