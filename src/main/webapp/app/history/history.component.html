@@ -14,7 +14,7 @@
                 class="btn btn-secondary"
                 mwlCalendarToday
                 [(viewDate)]="viewDate"
-                (viewDateChange)="viewDateChanged($event)">
+                (viewDateChange)="viewDateChanged()">
                 Today
             </div>
             <div
@@ -22,7 +22,7 @@
                 mwlCalendarNextView
                 [view]="view"
                 [(viewDate)]="viewDate"
-                (viewDateChange)="viewDateChanged($event)">
+                (viewDateChange)="viewDateChanged()">
                 Next
             </div>
         </div>

@@ -1,5 +1,8 @@
-# TwentyOnePoints
-This application was generated using JHipster 4.5.3, you can find documentation and help at [https://jhipster.github.io/documentation-archive/v4.5.3](https://jhipster.github.io/documentation-archive/v4.5.3).
+# 21-Points Health
+[![Build Status][travis-image]][travis-url] [![devDependencies Status][daviddm-image]][daviddm-url]
+> To track your health and improve your life. 😊
+
+This application was generated using [JHipster](https://jhipster.github.io), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
 
 ## Development
 

@@ -107,7 +107,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
         this.populateCalendar();
     }
 
-    viewDateChanged(viewDate) {
+    viewDateChanged() {
         this.reset();
     }
 
