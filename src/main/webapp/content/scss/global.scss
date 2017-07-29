@@ -209,6 +209,10 @@ custom styles for 21-Points Health
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
+
+    &.cal-day-notes {
+        width: 150px;
+    }
 }
 
 .footer {

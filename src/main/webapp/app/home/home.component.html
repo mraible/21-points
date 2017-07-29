@@ -87,6 +87,13 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <p class="mt-2 col-md-11">
+                            <a ui-sref="preferences.add" class="pull-right">Edit Preferences</a>
+                            <a routerLink="history" jhiTranslate="home.link.history">View History</a>
+                        </p>
+                    </div>
+
                     <p *ngIf="account" class="logged-in-message" jhiTranslate="home.logged.message"
                        translateValues="{username: '{{account.login}}'}">
                         You are logged in as user "{{account.login}}".

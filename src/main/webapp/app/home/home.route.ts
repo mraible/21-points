@@ -1,8 +1,8 @@
 import { Route } from '@angular/router';
 
-import { UserRouteAccessService } from '../shared';
 import { HomeComponent } from './';
-import { AboutComponent } from './about.component';
+import { AboutComponent } from '../about/about.component';
+import { HistoryComponent } from '../history/history.component';
 
 export const HOME_ROUTE: Route = {
     path: '', component: HomeComponent,
@@ -18,5 +18,14 @@ export const ABOUT_ROUTE: Route = {
     data: {
         authorities: [],
         pageTitle: 'global.menu.about'
+    }
+};
+
+export const HISTORY_ROUTE: Route = {
+    path: 'history',
+    component: HistoryComponent,
+    data: {
+        authorities: [],
+        pageTitle: 'global.menu.history'
     }
 };

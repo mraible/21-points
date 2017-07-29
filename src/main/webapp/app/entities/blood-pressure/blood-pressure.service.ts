@@ -65,6 +65,11 @@ export class BloodPressureService {
         });
     }
 
+    byMonth(month: string): Observable<ResponseWrapper> {
+        return this.http.get(`api/bp-by-month/${month}`)
+            .map((res: any) => this.convertResponse(res));
+    }
+
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
         for (let i = 0; i < jsonResponse.length; i++) {

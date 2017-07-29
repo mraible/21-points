@@ -8,7 +8,7 @@ import { Preferences } from '../entities/preferences/preferences.model';
 import { PointsService } from '../entities/points/points.service';
 import { BloodPressureService } from '../entities/blood-pressure/blood-pressure.service';
 import { WeightService } from '../entities/weight/weight.service';
-import { ChartService } from './chart.service';
+import { D3ChartService } from './d3-chart.service';
 
 @Component({
     selector: 'jhi-home',
@@ -40,7 +40,9 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.principal.identity().then((account) => {
             this.account = account;
-            this.getUserData();
+            if (this.isAuthenticated()) {
+                this.getUserData();
+            }
         });
         this.registerAuthenticationSuccess();
     }
@@ -88,7 +90,7 @@ export class HomeComponent implements OnInit {
         // Get blood pressure readings for the last 30 days
         this.bloodPressureService.last30Days().subscribe((bpReadings: any) => {
             this.bpReadings = bpReadings;
-            this.bpOptions = {... ChartService.getChartConfig() };
+            this.bpOptions = {... D3ChartService.getChartConfig() };
             if (bpReadings.readings.length) {
                 // https://stackoverflow.com/a/34694155/65681
                 this.bpOptions.title.text = bpReadings.period;
@@ -129,7 +131,7 @@ export class HomeComponent implements OnInit {
         this.weightService.last30Days().subscribe((weights: any) => {
             this.weights = weights;
             if (weights.weighIns.length) {
-                this.weightOptions = {... ChartService.getChartConfig() };
+                this.weightOptions = {... D3ChartService.getChartConfig() };
                 this.weightOptions.title.text = this.weights.period;
                 this.weightOptions.chart.yAxis.axisLabel = 'Weight';
                 const weightValues = [];
