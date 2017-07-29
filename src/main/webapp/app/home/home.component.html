@@ -89,7 +89,8 @@
 
                     <div class="row">
                         <p class="mt-2 col-md-11">
-                            <a ui-sref="preferences.add" class="pull-right">Edit Preferences</a>
+                            <a [routerLink]="['/', { outlets: { popup: 'preferences/'+ preferences.id + '/edit'} }]"
+                               class="pull-right" jhiTranslate="home.link.preferences">Edit Preferences</a>
                             <a routerLink="history" jhiTranslate="home.link.history">View History</a>
                         </p>
                     </div>

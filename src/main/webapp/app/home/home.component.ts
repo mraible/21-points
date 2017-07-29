@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { EventManager } from 'ng-jhipster';
 
@@ -9,13 +9,14 @@ import { PointsService } from '../entities/points/points.service';
 import { BloodPressureService } from '../entities/blood-pressure/blood-pressure.service';
 import { WeightService } from '../entities/weight/weight.service';
 import { D3ChartService } from './d3-chart.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     selector: 'jhi-home',
     templateUrl: './home.component.html',
     styleUrls: ['home.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
     account: Account;
     modalRef: NgbModalRef;
     preferences: Preferences;
@@ -27,6 +28,7 @@ export class HomeComponent implements OnInit {
     weights: any = {};
     weightOptions: any;
     weightData: any;
+    eventSubscriber: Subscription;
 
     constructor(private principal: Principal,
                 private loginModalService: LoginModalService,
@@ -47,6 +49,10 @@ export class HomeComponent implements OnInit {
         this.registerAuthenticationSuccess();
     }
 
+    ngOnDestroy() {
+        this.eventManager.destroy(this.eventSubscriber);
+    }
+
     registerAuthenticationSuccess() {
         this.eventManager.subscribe('authenticationSuccess', (message) => {
             this.principal.identity().then((account) => {
@@ -54,15 +60,10 @@ export class HomeComponent implements OnInit {
                 this.getUserData();
             });
         });
-        this.eventManager.subscribe('pointsListModification', () => {
-            this.getUserData();
-        });
-        this.eventManager.subscribe('bloodPressureListModification', () => {
-            this.getUserData();
-        });
-        this.eventManager.subscribe('weightListModification', () => {
-            this.getUserData();
-        });
+        this.eventSubscriber = this.eventManager.subscribe('pointsListModification', () => this.getUserData());
+        this.eventSubscriber = this.eventManager.subscribe('preferencesListModification', () => this.getUserData());
+        this.eventSubscriber = this.eventManager.subscribe('bloodPressureListModification', () => this.getUserData());
+        this.eventSubscriber = this.eventManager.subscribe('weightListModification', () => this.getUserData());
     }
 
     getUserData() {
