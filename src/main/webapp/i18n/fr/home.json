@@ -13,7 +13,8 @@
             "stackoverflow": "JHipster sur Stack Overflow",
             "contact": "Suivez @java_book sur Twitter",
             "issues": "Signaler un problème",
-            "history": "Voir l'historique"
+            "history": "Voir l'historique",
+            "preferences": "Modifier les préférences"
         },
         "like": "Si vous aimez JHipster, donnez nous une étoile sur",
         "github": "GitHub ",
