@@ -25,7 +25,7 @@ describe('Weight e2e test', () => {
         entityMenu.click();
         element.all(by.css('[routerLink="weight"]')).first().click().then(() => {
             const expectVal = /twentyOnePointsApp.weight.home.title/;
-            element.all(by.css('h2 span')).first().getAttribute('jhiTranslate').then((value) => {
+            element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
                 expect(value).toMatch(expectVal);
             });
         });
@@ -33,7 +33,7 @@ describe('Weight e2e test', () => {
 
     it('should load create Weight dialog', function () {
         element(by.css('button.create-weight')).click().then(() => {
-            const expectVal = /twentyOnePointsApp.weight.home.createOrEditLabel/;
+            const expectVal = /twentyOnePointsApp.weight.home.createLabel/;
             element.all(by.css('h4.modal-title')).first().getAttribute('jhiTranslate').then((value) => {
                 expect(value).toMatch(expectVal);
             });

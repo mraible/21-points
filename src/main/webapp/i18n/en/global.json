@@ -1,9 +1,11 @@
 {
     "global": {
-        "title": "TwentyOnePoints",
+        "title": "21-Points Health",
         "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
         "menu": {
             "home": "Home",
+            "about": "About",
+            "history": "History",
             "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
             "entities": {
                 "main": "Entities",
@@ -18,7 +20,7 @@
                 "settings": "Settings",
                 "password": "Password",
                 "sessions": "Sessions",
-                "login": "Sign in",
+                "login": "Sign In",
                 "logout": "Sign out",
                 "register": "Register"
             },
@@ -50,14 +52,16 @@
         "messages": {
             "info": {
                 "authenticated": {
-                    "prefix": "If you want to ",
-                    "link": "sign in",
+                    "prefix": "To get started, please ",
+                    "link": "Sign In",
                     "suffix": ", you can try the default accounts:<br/>- Administrator (login=\"admin\" and password=\"admin\") <br/>- User (login=\"user\" and password=\"user\")."
                 },
                 "register": {
-                    "noaccount": "You don't have an account yet?",
+                    "noaccount": "Don't have an account yet?",
                     "link": "Register a new account"
-                }
+                },
+                "learnMore": "Learn more",
+                "about21Points": "about 21-Points Health"
             },
             "error": {
                 "dontmatch": "The password and its confirmation do not match!"
@@ -99,6 +103,8 @@
             "delete": "Delete",
             "edit": "Edit",
             "open": "Open",
+            "new": "Add",
+            "search": "Search",
             "save": "Save",
             "view": "View"
         },
@@ -132,5 +138,5 @@
         "emailexists": "Email is already in use!",
         "idexists": "A new {{ entityName }} cannot already have an ID"
     },
-    "footer": "This is your footer"
+    "footer": "<strong>21-Points Health</strong> | An application developed for a better life and <a href='http://www.jhipster-book.com' target='_blank'>The JHipster Mini-Book</a> | By <a href='http://raibledesigns.com' target='_blank'>Matt Raible</a>"
 }

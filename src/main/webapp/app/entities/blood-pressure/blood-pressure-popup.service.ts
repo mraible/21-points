@@ -29,7 +29,11 @@ export class BloodPressurePopupService {
                 this.bloodPressureModalRef(component, bloodPressure);
             });
         } else {
-            return this.bloodPressureModalRef(component, new BloodPressure());
+            // populate date/time with current time if new
+            const bp = new BloodPressure();
+            bp.timestamp = this.datePipe
+                .transform(new Date(), 'yyyy-MM-ddThh:mm');
+            return this.bloodPressureModalRef(component, bp);
         }
     }
 

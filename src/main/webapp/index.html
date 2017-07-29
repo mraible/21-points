@@ -4,17 +4,19 @@
     <base href="./" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>TwentyOnePoints</title>
-    <meta name="description" content="">
+    <title>21-Points Health</title>
+    <meta name="description" content="21-Points Health is an app to monitor your health. You can get up to three points per day, by eating right, drinking less alcohol and exercising. It also lets you track your blood pressure and weight. Written as the sample application for the JHipster Mini-Book.">
+    <meta name="viewport" content="width=device-width,user-scalable=no">
     <meta name="google" value="notranslate">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#000000">
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webapp" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.4/nv.d3.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/angular-calendar@0.19.0/dist/css/angular-calendar.css"/>
 </head>
 <body>
     <!--[if lt IE 9]>
-        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     <jhi-main></jhi-main>
     <script>
@@ -38,14 +40,15 @@
             }
         </script>
     -->
-    <!-- Google Analytics: uncomment and change UA-XXXXX-X to be your site's ID.
     <script>
-        (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-        function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-        e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-        e.src='//www.google-analytics.com/analytics.js';
-        r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-        ga('create','UA-XXXXX-X');ga('send','pageview');
-    </script>-->
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-66855820-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
 </body>
 </html>

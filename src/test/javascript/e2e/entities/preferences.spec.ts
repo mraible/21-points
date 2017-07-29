@@ -25,7 +25,7 @@ describe('Preferences e2e test', () => {
         entityMenu.click();
         element.all(by.css('[routerLink="preferences"]')).first().click().then(() => {
             const expectVal = /twentyOnePointsApp.preferences.home.title/;
-            element.all(by.css('h2 span')).first().getAttribute('jhiTranslate').then((value) => {
+            element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
                 expect(value).toMatch(expectVal);
             });
         });
@@ -33,7 +33,7 @@ describe('Preferences e2e test', () => {
 
     it('should load create Preferences dialog', function () {
         element(by.css('button.create-preferences')).click().then(() => {
-            const expectVal = /twentyOnePointsApp.preferences.home.createOrEditLabel/;
+            const expectVal = /twentyOnePointsApp.preferences.home.createLabel/;
             element.all(by.css('h4.modal-title')).first().getAttribute('jhiTranslate').then((value) => {
                 expect(value).toMatch(expectVal);
             });

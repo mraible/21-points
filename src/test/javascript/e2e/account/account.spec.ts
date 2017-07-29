@@ -13,7 +13,7 @@ describe('account', () => {
     });
 
     it('should fail to login with bad password', () => {
-        const expect1 = /home.title/;
+        const expect1 = /home.welcome/;
         element.all(by.css('h1')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect1);
         });
@@ -44,7 +44,7 @@ describe('account', () => {
         browser.waitForAngular();
 
         const expect2 = /home.logged.message/;
-        element.all(by.css('.alert-success span')).getAttribute('jhiTranslate').then((value) => {
+        element.all(by.css('.logged-in-message')).getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect2);
         });
     });

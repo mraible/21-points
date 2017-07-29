@@ -12,7 +12,8 @@ export class BloodPressureService {
     private resourceUrl = 'api/blood-pressures';
     private resourceSearchUrl = 'api/_search/blood-pressures';
 
-    constructor(private http: Http, private dateUtils: DateUtils) { }
+    constructor(private http: Http, private dateUtils: DateUtils) {
+    }
 
     create(bloodPressure: BloodPressure): Observable<BloodPressure> {
         const copy = this.convert(bloodPressure);
@@ -53,6 +54,19 @@ export class BloodPressureService {
     search(req?: any): Observable<ResponseWrapper> {
         const options = createRequestOption(req);
         return this.http.get(this.resourceSearchUrl, options)
+            .map((res: any) => this.convertResponse(res));
+    }
+
+    last30Days(): Observable<BloodPressure> {
+        return this.http.get('api/bp-by-days/30').map((res: Response) => {
+            const jsonResponse = res.json();
+            this.convertItemFromServer(jsonResponse);
+            return jsonResponse;
+        });
+    }
+
+    byMonth(month: string): Observable<ResponseWrapper> {
+        return this.http.get(`api/bp-by-month/${month}`)
             .map((res: any) => this.convertResponse(res));
     }
 

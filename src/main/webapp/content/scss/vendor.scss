@@ -6,5 +6,28 @@ put Sass variables here:
 eg $input-color: red;
 ****************************/
 
+// Customize colors to match Bootstrap Material Theme
+// https://github.com/FezVrasta/bootstrap-material-design/blob/master/sass/_variables.scss
+
+$font-size-base: .9rem;
+
+$blue: #0275d8;
+
+$brand-primary: #009688;
+$brand-success: #4caf50;
+$brand-danger: #f44336;
+$brand-warning: #ff5722;
+$brand-info: #03a9f4;
+
+$border-radius-base: 2px;
+$border-radius-small: 1px;
+
+$font-family-sans-serif: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+$headings-font-weight: 300;
+
+$link-color: $brand-primary;
+
+$input-border-focus: lighten($blue, 25%);
+
 @import 'node_modules/bootstrap/scss/bootstrap';
 @import 'node_modules/font-awesome/scss/font-awesome';

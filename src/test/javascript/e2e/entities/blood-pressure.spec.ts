@@ -25,7 +25,7 @@ describe('BloodPressure e2e test', () => {
         entityMenu.click();
         element.all(by.css('[routerLink="blood-pressure"]')).first().click().then(() => {
             const expectVal = /twentyOnePointsApp.bloodPressure.home.title/;
-            element.all(by.css('h2 span')).first().getAttribute('jhiTranslate').then((value) => {
+            element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
                 expect(value).toMatch(expectVal);
             });
         });
@@ -33,7 +33,7 @@ describe('BloodPressure e2e test', () => {
 
     it('should load create BloodPressure dialog', function () {
         element(by.css('button.create-blood-pressure')).click().then(() => {
-            const expectVal = /twentyOnePointsApp.bloodPressure.home.createOrEditLabel/;
+            const expectVal = /twentyOnePointsApp.bloodPressure.home.createLabel/;
             element.all(by.css('h4.modal-title')).first().getAttribute('jhiTranslate').then((value) => {
                 expect(value).toMatch(expectVal);
             });

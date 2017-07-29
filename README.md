@@ -1,5 +1,8 @@
-# TwentyOnePoints
-This application was generated using JHipster 4.5.3, you can find documentation and help at [https://jhipster.github.io/documentation-archive/v4.5.3](https://jhipster.github.io/documentation-archive/v4.5.3).
+# 21-Points Health
+[![Build Status][travis-image]][travis-url] [![devDependencies Status][daviddm-image]][daviddm-url]
+> To track your health and improve your life. 😊
+
+This application was generated using [JHipster](https://jhipster.github.io), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
 
 ## Development
 
@@ -153,3 +156,8 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [Protractor]: https://angular.github.io/protractor/
 [Leaflet]: http://leafletjs.com/
 [DefinitelyTyped]: http://definitelytyped.org/
+
+[travis-image]: https://travis-ci.org/mraible/21-points.svg?branch=master
+[travis-url]: https://travis-ci.org/mraible/21-points
+[daviddm-image]: https://david-dm.org/mraible/21-points/dev-status.svg
+[daviddm-url]: https://david-dm.org/mraible/21-points?type=dev

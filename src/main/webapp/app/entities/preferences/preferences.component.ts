@@ -13,18 +13,17 @@ import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
     templateUrl: './preferences.component.html'
 })
 export class PreferencesComponent implements OnInit, OnDestroy {
-preferences: Preferences[];
+    preferences: Preferences[] = [];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
+    isAdmin: boolean;
 
-    constructor(
-        private preferencesService: PreferencesService,
-        private alertService: AlertService,
-        private eventManager: EventManager,
-        private activatedRoute: ActivatedRoute,
-        private principal: Principal
-    ) {
+    constructor(private preferencesService: PreferencesService,
+                private alertService: AlertService,
+                private eventManager: EventManager,
+                private activatedRoute: ActivatedRoute,
+                private principal: Principal) {
         this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
     }
 
@@ -32,12 +31,12 @@ preferences: Preferences[];
         if (this.currentSearch) {
             this.preferencesService.search({
                 query: this.currentSearch,
-                }).subscribe(
-                    (res: ResponseWrapper) => this.preferences = res.json,
-                    (res: ResponseWrapper) => this.onError(res.json)
-                );
+            }).subscribe(
+                (res: ResponseWrapper) => this.preferences = res.json,
+                (res: ResponseWrapper) => this.onError(res.json)
+            );
             return;
-       }
+        }
         this.preferencesService.query().subscribe(
             (res: ResponseWrapper) => {
                 this.preferences = res.json;
@@ -45,6 +44,7 @@ preferences: Preferences[];
             },
             (res: ResponseWrapper) => this.onError(res.json)
         );
+
     }
 
     search(query) {
@@ -59,10 +59,12 @@ preferences: Preferences[];
         this.currentSearch = '';
         this.loadAll();
     }
+
     ngOnInit() {
         this.loadAll();
         this.principal.identity().then((account) => {
             this.currentAccount = account;
+            this.isAdmin = account.authorities.indexOf('ROLE_ADMIN') !== -1;
         });
         this.registerChangeInPreferences();
     }
@@ -74,6 +76,7 @@ preferences: Preferences[];
     trackId(index: number, item: Preferences) {
         return item.id;
     }
+
     registerChangeInPreferences() {
         this.eventSubscriber = this.eventManager.subscribe('preferencesListModification', (response) => this.loadAll());
     }

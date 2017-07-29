@@ -1,9 +1,9 @@
 {
     "twentyOnePointsApp": {
         "Units" : {
-            "null": "",
-            "kg": "kg",
-            "lb": "lb"
+            "SELECT": "{VALUE, select, kg{kg} lb{lb} other{}}",
+            "kg": "Kilograms (kg)",
+            "lb": "Pounds (lb)"
         }
     }
 }

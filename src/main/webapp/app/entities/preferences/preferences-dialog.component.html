@@ -1,7 +1,8 @@
 <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
 
     <div class="modal-header">
-        <h4 class="modal-title" id="myPreferencesLabel" jhiTranslate="twentyOnePointsApp.preferences.home.createOrEditLabel">Create or edit a Preferences</h4>
+        <h4 class="modal-title" id="myPreferencesLabel" jhiTranslate="twentyOnePointsApp.preferences.home.createOrEditLabel" *ngIf="preferences.id">Create or edit a Preferences</h4>
+        <h4 class="modal-title" id="myPreferencesLabel" jhiTranslate="twentyOnePointsApp.preferences.home.createLabel" *ngIf="!preferences.id">Create or edit a Preferences</h4>
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                 (click)="clear()">&times;</button>
     </div>
@@ -49,7 +50,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" *jhiHasAnyAuthority="'ROLE_ADMIN'">
             <label jhiTranslate="twentyOnePointsApp.preferences.user" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" [(ngModel)]="preferences.user" >
                 <option [ngValue]="null"></option>
