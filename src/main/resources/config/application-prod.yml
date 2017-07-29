@@ -43,10 +43,15 @@ spring:
                     logs: /tmp/elasticsearch/log
                     data: /tmp/elasticsearch/data
     mail:
-        host: localhost
-        port: 25
-        username:
-        password:
+        host: smtp.sendgrid.net
+        port: 587
+        username: ${SENDGRID_USERNAME}
+        password: ${SENDGRID_PASSWORD}
+        protocol: smtp
+        properties:
+            tls: false
+            auth: true
+            from: app@21-points.com
     thymeleaf:
         cache: true
 
