@@ -19,7 +19,6 @@ export class PreferencesPopupService {
             return;
         }
         this.isOpen = true;
-        console.log('id', id);
 
         if (id) {
             this.preferencesService.find(id).subscribe((preferences) => {
