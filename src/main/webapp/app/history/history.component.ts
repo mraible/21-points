@@ -1,16 +1,12 @@
-import {
-    Component, ChangeDetectionStrategy, ViewChild, TemplateRef, OnInit, OnDestroy,
-    OnChanges
-} from '@angular/core';
-import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours, addMinutes } from 'date-fns';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
+import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours, addMinutes, format } from 'date-fns';
 import { Subject } from 'rxjs/Subject';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
-import * as moment from 'moment';
 import { PointsService } from '../entities/points/points.service';
 import { BloodPressureService } from '../entities/blood-pressure/blood-pressure.service';
 import { WeightService } from '../entities/weight/weight.service';
-import { Principal } from "../shared/index";
+import { Principal } from '../shared';
 import { PreferencesService } from '../entities/preferences/preferences.service';
 import { EventManager } from 'ng-jhipster';
 import { Router } from '@angular/router';
@@ -112,13 +108,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
     }
 
     populateCalendar() {
-        const endOfMonth = moment(this.viewDate).endOf('month');
-        const month = endOfMonth.format('YYYY-MM');
-        console.info('Fetching data for: ' + month);
+        const monthEnd = endOfMonth(this.viewDate);
+        const month = format(monthEnd, 'YYYY-MM');
+        // console.info('Fetching data for: ' + month);
 
         this.pointsService.byMonth(month).subscribe((response)  => {
             response.json.points.forEach((item) => {
-                let value = item.exercise + item.meals + item.alcohol;
+                const value = item.exercise + item.meals + item.alcohol;
                 this.events.push({
                     start: startOfDay(item.date),
                     end: endOfDay(item.date),
@@ -129,10 +125,10 @@ export class HistoryComponent implements OnInit, OnDestroy {
                     meta: {
                         id: item.id,
                         entity: 'points',
-                        value: value,
+                        value,
                         notes: item.notes ? item.notes : ''
                     }
-                })
+                });
             });
             this.refresh.next();
         });
@@ -156,11 +152,11 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
         this.preferencesService.user().subscribe((response) => {
             const weightUnits = response.weightUnits === null ? 'lbs' : response.weightUnits;
-            this.weightService.byMonth(month).subscribe((response)  => {
-                response.json.weighIns.forEach((item) => {
+            this.weightService.byMonth(month).subscribe((weightResponse)  => {
+                weightResponse.json.weighIns.forEach((item) => {
                     this.events.push({
                         start: new Date(item.timestamp),
-                        title: "" + item.weight + ' ' + weightUnits,
+                        title: '' + item.weight + ' ' + weightUnits,
                         color: colors.yellow,
                         actions: this.actions,
                         draggable: false,
@@ -168,7 +164,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
                             id: item.id,
                             entity: 'weight'
                         }
-                    })
+                    });
                 });
                 this.refresh.next();
             });
@@ -176,8 +172,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
     }
 
     beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
-        body.forEach(cell => {
-            cell['dayPoints'] = cell.events.filter(e => e.meta['entity'] === 'points');
+        body.forEach((cell) => {
+            cell['dayPoints'] = cell.events.filter((e) => e.meta['entity'] === 'points');
         });
     }
 
@@ -205,7 +201,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
     handleEvent(action: string, event: CalendarEvent): void {
         action = (action === 'Clicked') ? 'edit' : action;
         this.modalData = {event, action};
-        const url = this.router.createUrlTree(['/', { outlets: { popup: event.meta.entity + '/'+ event.meta.id + '/' + action}}]);
+        const url = this.router.createUrlTree(['/', { outlets: { popup: event.meta.entity + '/' + event.meta.id + '/' + action}}]);
         this.router.navigateByUrl(url.toString());
     }
 }
