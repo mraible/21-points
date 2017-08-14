@@ -36,6 +36,7 @@
     "languages": [
       "en",
       "fr"
-    ]
+    ],
+    "herokuAppName": "health-by-points-2"
   }
 }
