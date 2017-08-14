@@ -91,9 +91,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         // Get blood pressure readings for the last 30 days
         this.bloodPressureService.last30Days().subscribe((bpReadings: any) => {
             this.bpReadings = bpReadings;
+            // https://stackoverflow.com/a/34694155/65681
             this.bpOptions = {... D3ChartService.getChartConfig() };
             if (bpReadings.readings.length) {
-                // https://stackoverflow.com/a/34694155/65681
                 this.bpOptions.title.text = bpReadings.period;
                 this.bpOptions.chart.yAxis.axisLabel = 'Blood Pressure';
                 let systolics, diastolics, upperValues, lowerValues;
