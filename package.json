@@ -7,7 +7,7 @@
     "node_modules"
   ],
   "dependencies": {
-    "@angular/animations": "^4.3.4",
+    "@angular/animations": "4.2.6",
     "@angular/common": "4.2.6",
     "@angular/compiler": "4.2.6",
     "@angular/core": "4.2.6",
@@ -17,8 +17,7 @@
     "@angular/platform-browser-dynamic": "4.2.6",
     "@angular/router": "4.2.6",
     "@ng-bootstrap/ng-bootstrap": "1.0.0-alpha.28",
-    "angular-calendar": "0.19.0",
-    "angular2-cookie": "1.2.6",
+    "angular-calendar": "0.20.1",
     "bootstrap": "4.0.0-alpha.6",
     "core-js": "2.4.1",
     "font-awesome": "4.7.0",

@@ -7,7 +7,7 @@
                 mwlCalendarPreviousView
                 [view]="view"
                 [(viewDate)]="viewDate"
-                (viewDateChange)="viewDateChanged($event)">
+                (viewDateChange)="viewDateChanged()">
                 Previous
             </div>
             <div
@@ -70,15 +70,7 @@
             class="cal-event"
             *ngFor="let event of day.events"
             [style.backgroundColor]="event.color.primary"
-            [ngClass]="event?.cssClass"
-            (mouseenter)="highlightDay.emit({event: event})"
-            (mouseleave)="unhighlightDay.emit({event: event})"
-            [mwlCalendarTooltip]="event.title | calendarEventTitle:'monthTooltip':event"
-            [tooltipPlacement]="tooltipPlacement"
-            [tooltipEvent]="event"
-            [tooltipTemplate]="tooltipTemplate"
-            [tooltipAppendToBody]="tooltipAppendToBody"
-            (mwlClick)="onEventClick($event, event)">
+            [mwlCalendarTooltip]="event.title | calendarEventTitle:'monthTooltip':event">
         </div>
     </div>
     <div class="cal-emoji pull-right" *ngIf="day.dayPoints.length" [ngSwitch]="day.dayPoints[0].meta.value">

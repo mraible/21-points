@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@angular/animations@^4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.3.4.tgz#02c726b3b70ae3d2e155704c8c60e9baf01547ef"
+"@angular/animations@4.2.6":
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-4.2.6.tgz#9d9c80a119b0c03693cbd23bbaf728b1531fffc7"
   dependencies:
     tslib "^1.7.1"
 
@@ -277,12 +277,12 @@ amdefine@>=0.0.4, amdefine@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
-angular-calendar@0.19.0:
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/angular-calendar/-/angular-calendar-0.19.0.tgz#bd2c2b2bb5223a357f376a7d502c01620fde929b"
+angular-calendar@0.20.1:
+  version "0.20.1"
+  resolved "https://registry.yarnpkg.com/angular-calendar/-/angular-calendar-0.20.1.tgz#006d4e5224164358d2a4acd7ab8bfdc412c02a4d"
   dependencies:
     angular-draggable-droppable "^1.0.1"
-    angular-resizable-element "^1.1.1"
+    angular-resizable-element "^1.2.1"
     calendar-utils "0.0.56"
     date-fns "^1.28.5"
     positioning "^1.0.4"
@@ -291,13 +291,9 @@ angular-draggable-droppable@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/angular-draggable-droppable/-/angular-draggable-droppable-1.0.1.tgz#7ad70c310994b0f980f40d382dce59946fe30dcf"
 
-angular-resizable-element@^1.1.1:
+angular-resizable-element@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/angular-resizable-element/-/angular-resizable-element-1.2.1.tgz#e32128f68bbddea8c54e96c2fb143970ce0d7fab"
-
-angular2-cookie@1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/angular2-cookie/-/angular2-cookie-1.2.6.tgz#8fa845531e777adb042fe2f339c0040f6ddbf09d"
 
 angular2-template-loader@0.6.2:
   version "0.6.2"
