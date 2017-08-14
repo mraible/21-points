@@ -8,7 +8,7 @@ import { BloodPressureService } from '../entities/blood-pressure/blood-pressure.
 import { WeightService } from '../entities/weight/weight.service';
 import { Principal } from '../shared';
 import { PreferencesService } from '../entities/preferences/preferences.service';
-import { EventManager } from 'ng-jhipster';
+import { JhiEventManager } from 'ng-jhipster';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -77,7 +77,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
     constructor(private pointsService: PointsService, private bloodPressureService: BloodPressureService,
                 private weightService: WeightService, private principal: Principal,
                 private preferencesService: PreferencesService, private router: Router,
-                private eventManager: EventManager) {
+                private eventManager: JhiEventManager) {
     }
 
     ngOnInit() {

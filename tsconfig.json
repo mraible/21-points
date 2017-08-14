@@ -8,6 +8,7 @@
         "experimentalDecorators": true,
         "removeComments": false,
         "noImplicitAny": false,
+        "skipLibCheck": true,
         "suppressImplicitAnyIndexErrors": true,
         "outDir": "build/www/app",
         "lib": ["es6", "dom"],
@@ -17,6 +18,9 @@
     },
     "include": [
         "src/main/webapp/app",
-        "src/test/javascript"
+        "src/test/javascript/"
+    ],
+    "exclude": [
+        "src/main/webapp/app/app.main-aot.ts"
     ]
 }

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager } from 'ng-jhipster';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { Account, LoginModalService, Principal } from '../shared';
 import { PreferencesService } from '../entities/preferences/preferences.service';
@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     constructor(private principal: Principal,
                 private loginModalService: LoginModalService,
-                private eventManager: EventManager,
+                private eventManager: JhiEventManager,
                 private preferencesService: PreferencesService,
                 private pointsService: PointsService,
                 private bloodPressureService: BloodPressureService,

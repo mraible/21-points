@@ -87,6 +87,6 @@ class PointsGatlingTest extends Simulation {
     val users = scenario("Users").exec(scn)
 
     setUp(
-        users.inject(rampUsers(100) over (1 minutes))
+        users.inject(rampUsers(Integer.getInteger("users", 100)) over (Integer.getInteger("ramp", 1) minutes))
     ).protocols(httpConf)
 }

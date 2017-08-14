@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
-import { PaginationUtil } from 'ng-jhipster';
+import { JhiPaginationUtil } from 'ng-jhipster';
 
 import { PreferencesComponent } from './preferences.component';
 import { PreferencesDetailComponent } from './preferences-detail.component';
 import { PreferencesPopupComponent } from './preferences-dialog.component';
 import { PreferencesDeletePopupComponent } from './preferences-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 export const preferencesRoute: Routes = [
     {

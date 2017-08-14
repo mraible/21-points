@@ -37,7 +37,7 @@ spring:
     data:
         elasticsearch:
             cluster-name:
-            cluster-nodes: localhost:9300
+            cluster-nodes:
             properties:
                 path:
                     logs: /tmp/elasticsearch/log

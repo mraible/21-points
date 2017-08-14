@@ -4,9 +4,7 @@ import { RouterModule } from '@angular/router';
 import { TwentyOnePointsSharedModule } from '../shared';
 
 import { HOME_ROUTE, HomeComponent, ABOUT_ROUTE, HISTORY_ROUTE } from './';
-// HACK: To avoid AOT compilation failure.
-// Tip from https://github.com/krispo/ng2-nvd3/issues/86.
-import { NvD3Module } from 'ng2-nvd3/lib';
+import { NvD3Module } from 'ng2-nvd3';
 import 'd3';
 import 'nvd3';
 import { CalendarModule } from 'angular-calendar';

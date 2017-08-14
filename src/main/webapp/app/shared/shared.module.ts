@@ -1,7 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
-import { CookieService } from 'angular2-cookie/services/cookies.service';
 import {
     TwentyOnePointsSharedLibsModule,
     TwentyOnePointsSharedCommonModule,
@@ -27,7 +26,6 @@ import {
         HasAnyAuthorityDirective
     ],
     providers: [
-        CookieService,
         LoginService,
         LoginModalService,
         AccountService,

@@ -4,7 +4,7 @@ import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { BloodPressure } from './blood-pressure.model';
 import { BloodPressurePopupService } from './blood-pressure-popup.service';
@@ -19,23 +19,21 @@ import { ResponseWrapper } from '../../shared';
 export class BloodPressureDialogComponent implements OnInit {
 
     bloodPressure: BloodPressure;
-    authorities: any[];
     isSaving: boolean;
 
     users: User[];
 
     constructor(
         public activeModal: NgbActiveModal,
-        private alertService: AlertService,
+        private alertService: JhiAlertService,
         private bloodPressureService: BloodPressureService,
         private userService: UserService,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
     }
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
         this.userService.query()
             .subscribe((res: ResponseWrapper) => { this.users = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
     }
@@ -48,24 +46,19 @@ export class BloodPressureDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.bloodPressure.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.bloodPressureService.update(this.bloodPressure), false);
+                this.bloodPressureService.update(this.bloodPressure));
         } else {
             this.subscribeToSaveResponse(
-                this.bloodPressureService.create(this.bloodPressure), true);
+                this.bloodPressureService.create(this.bloodPressure));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<BloodPressure>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<BloodPressure>) {
         result.subscribe((res: BloodPressure) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError(res));
     }
 
-    private onSaveSuccess(result: BloodPressure, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'twentyOnePointsApp.bloodPressure.created'
-            : 'twentyOnePointsApp.bloodPressure.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: BloodPressure) {
         this.eventManager.broadcast({ name: 'bloodPressureListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
@@ -96,7 +89,6 @@ export class BloodPressureDialogComponent implements OnInit {
 })
 export class BloodPressurePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -107,11 +99,11 @@ export class BloodPressurePopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.bloodPressurePopupService
-                    .open(BloodPressureDialogComponent, params['id']);
+                this.bloodPressurePopupService
+                    .open(BloodPressureDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.bloodPressurePopupService
-                    .open(BloodPressureDialogComponent);
+                this.bloodPressurePopupService
+                    .open(BloodPressureDialogComponent as Component);
             }
         });
     }

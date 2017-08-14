@@ -4,11 +4,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * Utility class for handling pagination.
  *
  * <p>
- * Pagination uses the same principles as the <a href="https://developer.github.com/v3/#pagination">Github API</a>,
+ * Pagination uses the same principles as the <a href="https://developer.github.com/v3/#pagination">GitHub API</a>,
  * and follow <a href="http://tools.ietf.org/html/rfc5988">RFC 5988 (Link header)</a>.
  */
 public final class PaginationUtil {
@@ -44,7 +47,12 @@ public final class PaginationUtil {
     }
 
     public static HttpHeaders generateSearchPaginationHttpHeaders(String query, Page page, String baseUrl) {
-        String escapedQuery = query.replace(",", "%2C");
+        String escapedQuery;
+        try {
+            escapedQuery = URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", Long.toString(page.getTotalElements()));
         String link = "";

@@ -1,11 +1,11 @@
+import { BaseEntity, User } from './../../shared';
 
 const enum Units {
     'kg',
     'lb'
+}
 
-};
-import { User } from '../../shared';
-export class Preferences {
+export class Preferences implements BaseEntity {
     constructor(
         public id?: number,
         public weeklyGoal?: number,

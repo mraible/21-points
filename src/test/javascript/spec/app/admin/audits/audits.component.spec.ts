@@ -1,22 +1,21 @@
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { DatePipe } from '@angular/common';
 import { NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
-import { ParseLinks } from 'ng-jhipster';
+import { JhiParseLinks } from 'ng-jhipster';
 import { TwentyOnePointsTestModule } from '../../../test.module';
 import { PaginationConfig } from '../../../../../../main/webapp/app/blocks/config/uib-pagination.config'
 import { AuditsComponent } from '../../../../../../main/webapp/app/admin/audits/audits.component';
 import { AuditsService } from '../../../../../../main/webapp/app/admin/audits/audits.service';
 import { ITEMS_PER_PAGE } from '../../../../../../main/webapp/app/shared';
 
-
-function getDate(isToday= true){
+function getDate(isToday= true) {
     let date: Date = new Date();
     if (isToday) {
         // Today + 1 day - needed if the current day must be included
         date.setDate(date.getDate() + 1);
     } else {
       // get last month
-      if(date.getMonth() === 0) {
+      if (date.getMonth() === 0) {
         date = new Date(date.getFullYear() - 1, 11, date.getDate());
       } else {
         date = new Date(date.getFullYear(), date.getMonth() - 1, date.getDate());
@@ -40,7 +39,7 @@ describe('Component Tests', () => {
                 providers: [
                     AuditsService,
                     NgbPaginationConfig,
-                    ParseLinks,
+                    JhiParseLinks,
                     PaginationConfig,
                     DatePipe
                 ]

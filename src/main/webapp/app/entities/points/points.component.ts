@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
-import { EventManager, ParseLinks, PaginationUtil, JhiLanguageService, AlertService } from 'ng-jhipster';
+import { JhiEventManager, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
 
 import { Points } from './points.model';
 import { PointsService } from './points.service';
@@ -14,34 +14,40 @@ import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 })
 export class PointsComponent implements OnInit, OnDestroy {
 
-    points: Points[];
     currentAccount: any;
+    points: Points[];
+    error: any;
+    success: any;
     eventSubscriber: Subscription;
-    itemsPerPage: number;
+    currentSearch: string;
+    routeData: any;
     links: any;
+    totalItems: any;
+    queryCount: any;
+    itemsPerPage: any;
     page: any;
     predicate: any;
-    queryCount: any;
+    previousPage: any;
     reverse: any;
-    totalItems: number;
-    currentSearch: string;
 
     constructor(
         private pointsService: PointsService,
-        private alertService: AlertService,
-        private eventManager: EventManager,
-        private parseLinks: ParseLinks,
+        private parseLinks: JhiParseLinks,
+        private alertService: JhiAlertService,
+        private principal: Principal,
         private activatedRoute: ActivatedRoute,
-        private principal: Principal
+        private router: Router,
+        private eventManager: JhiEventManager,
+        private paginationUtil: JhiPaginationUtil,
+        private paginationConfig: PaginationConfig
     ) {
-        this.points = [];
         this.itemsPerPage = ITEMS_PER_PAGE;
-        this.page = 0;
-        this.links = {
-            last: 0
-        };
-        this.predicate = 'id';
-        this.reverse = true;
+        this.routeData = this.activatedRoute.data.subscribe((data) => {
+            this.page = data['pagingParams'].page;
+            this.previousPage = data['pagingParams'].page;
+            this.reverse = data['pagingParams'].ascending;
+            this.predicate = data['pagingParams'].predicate;
+        });
         this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
     }
 
@@ -49,60 +55,59 @@ export class PointsComponent implements OnInit, OnDestroy {
         if (this.currentSearch) {
             this.pointsService.search({
                 query: this.currentSearch,
-                page: this.page,
                 size: this.itemsPerPage,
-                sort: this.sort()
-            }).subscribe(
-                (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-                (res: ResponseWrapper) => this.onError(res.json)
-            );
+                sort: this.sort()}).subscribe(
+                    (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
+                    (res: ResponseWrapper) => this.onError(res.json)
+                );
             return;
         }
         this.pointsService.query({
-            page: this.page,
+            page: this.page - 1,
             size: this.itemsPerPage,
-            sort: this.sort()
-        }).subscribe(
+            sort: this.sort()}).subscribe(
             (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
             (res: ResponseWrapper) => this.onError(res.json)
         );
     }
-
-    reset() {
-        this.page = 0;
-        this.points = [];
-        this.loadAll();
+    loadPage(page: number) {
+        if (page !== this.previousPage) {
+            this.previousPage = page;
+            this.transition();
+        }
     }
-
-    loadPage(page) {
-        this.page = page;
+    transition() {
+        this.router.navigate(['/points'], {queryParams:
+            {
+                page: this.page,
+                size: this.itemsPerPage,
+                search: this.currentSearch,
+                sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+            }
+        });
         this.loadAll();
     }
 
     clear() {
-        this.points = [];
-        this.links = {
-            last: 0
-        };
         this.page = 0;
-        this.predicate = 'id';
-        this.reverse = true;
         this.currentSearch = '';
+        this.router.navigate(['/points', {
+            page: this.page,
+            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+        }]);
         this.loadAll();
     }
-
     search(query) {
         if (!query) {
             return this.clear();
         }
-        this.points = [];
-        this.links = {
-            last: 0
-        };
         this.page = 0;
-        this.predicate = '_score';
-        this.reverse = false;
         this.currentSearch = query;
+        this.router.navigate(['/points', {
+            search: this.currentSearch,
+            page: this.page,
+            sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+        }]);
         this.loadAll();
     }
     ngOnInit() {
@@ -121,7 +126,7 @@ export class PointsComponent implements OnInit, OnDestroy {
         return item.id;
     }
     registerChangeInPoints() {
-        this.eventSubscriber = this.eventManager.subscribe('pointsListModification', (response) => this.reset());
+        this.eventSubscriber = this.eventManager.subscribe('pointsListModification', (response) => this.loadAll());
     }
 
     sort() {
@@ -135,11 +140,10 @@ export class PointsComponent implements OnInit, OnDestroy {
     private onSuccess(data, headers) {
         this.links = this.parseLinks.parse(headers.get('link'));
         this.totalItems = headers.get('X-Total-Count');
-        for (let i = 0; i < data.length; i++) {
-            this.points.push(data[i]);
-        }
+        this.queryCount = this.totalItems;
+        // this.page = pagingParams.page;
+        this.points = data;
     }
-
     private onError(error) {
         this.alertService.error(error.message, null, null);
     }

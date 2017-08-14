@@ -199,7 +199,7 @@ public class BloodPressureResource {
      * SEARCH  /_search/blood-pressures?query=:query : search for the bloodPressure corresponding
      * to the query.
      *
-     * @param query    the query of the bloodPressure search
+     * @param query the query of the bloodPressure search
      * @param pageable the pagination information
      * @return the result of the search
      */

@@ -7,45 +7,51 @@ import { BloodPressureService } from './blood-pressure.service';
 
 @Injectable()
 export class BloodPressurePopupService {
-    private isOpen = false;
-    constructor(
-        private datePipe: DatePipe,
-        private modalService: NgbModal,
-        private router: Router,
-        private bloodPressureService: BloodPressureService
+    private ngbModalRef: NgbModalRef;
 
-    ) {}
+    constructor(private datePipe: DatePipe,
+                private modalService: NgbModal,
+                private router: Router,
+                private bloodPressureService: BloodPressureService) {
+        this.ngbModalRef = null;
+    }
 
-    open(component: Component, id?: number | any): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
+    open(component: Component, id?: number | any): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
 
-        if (id) {
-            this.bloodPressureService.find(id).subscribe((bloodPressure) => {
-                bloodPressure.timestamp = this.datePipe
-                    .transform(bloodPressure.timestamp, 'yyyy-MM-ddThh:mm');
-                this.bloodPressureModalRef(component, bloodPressure);
-            });
-        } else {
-            // populate date/time with current time if new
-            const bp = new BloodPressure();
-            bp.timestamp = this.datePipe
-                .transform(new Date(), 'yyyy-MM-ddThh:mm');
-            return this.bloodPressureModalRef(component, bp);
-        }
+            if (id) {
+                this.bloodPressureService.find(id).subscribe((bloodPressure) => {
+                    bloodPressure.timestamp = this.datePipe
+                        .transform(bloodPressure.timestamp, 'yyyy-MM-ddThh:mm');
+                    this.ngbModalRef = this.bloodPressureModalRef(component, bloodPressure);
+                    resolve(this.ngbModalRef);
+                });
+            } else {
+                // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
+                setTimeout(() => {
+                    // populate date/time with current time if new
+                    const bp = new BloodPressure();
+                    bp.timestamp = this.datePipe.transform(new Date(), 'yyyy-MM-ddThh:mm');
+                    this.ngbModalRef = this.bloodPressureModalRef(component, bp);
+                    resolve(this.ngbModalRef);
+                }, 0);
+            }
+        });
     }
 
     bloodPressureModalRef(component: Component, bloodPressure: BloodPressure): NgbModalRef {
-        const modalRef = this.modalService.open(component, { size: 'lg', backdrop: 'static'});
+        const modalRef = this.modalService.open(component, {size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.bloodPressure = bloodPressure;
         modalRef.result.then((result) => {
-            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.router.navigate([{outlets: {popup: null}}], {replaceUrl: true});
+            this.ngbModalRef = null;
         }, (reason) => {
-            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.router.navigate([{outlets: {popup: null}}], {replaceUrl: true});
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

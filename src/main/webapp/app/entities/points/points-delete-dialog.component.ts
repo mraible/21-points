@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { AlertService, EventManager } from 'ng-jhipster';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { Points } from './points.model';
 import { PointsPopupService } from './points-popup.service';
@@ -19,8 +19,7 @@ export class PointsDeleteDialogComponent {
     constructor(
         private pointsService: PointsService,
         public activeModal: NgbActiveModal,
-        private alertService: AlertService,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
     }
 
@@ -36,7 +35,6 @@ export class PointsDeleteDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-        this.alertService.success('twentyOnePointsApp.points.deleted', { param : id }, null);
     }
 }
 
@@ -46,7 +44,6 @@ export class PointsDeleteDialogComponent {
 })
 export class PointsDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -56,8 +53,8 @@ export class PointsDeletePopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
-            this.modalRef = this.pointsPopupService
-                .open(PointsDeleteDialogComponent, params['id']);
+            this.pointsPopupService
+                .open(PointsDeleteDialogComponent as Component, params['id']);
         });
     }
 

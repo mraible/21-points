@@ -1,9 +1,10 @@
+/* tslint:disable max-line-length */
 import { ComponentFixture, TestBed, async, inject } from '@angular/core/testing';
 import { OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
-import { DateUtils, DataUtils, EventManager } from 'ng-jhipster';
+import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
 import { TwentyOnePointsTestModule } from '../../../test.module';
 import { MockActivatedRoute } from '../../../helpers/mock-route.service';
 import { BloodPressureDetailComponent } from '../../../../../../main/webapp/app/entities/blood-pressure/blood-pressure-detail.component';
@@ -22,15 +23,15 @@ describe('Component Tests', () => {
                 imports: [TwentyOnePointsTestModule],
                 declarations: [BloodPressureDetailComponent],
                 providers: [
-                    DateUtils,
-                    DataUtils,
+                    JhiDateUtils,
+                    JhiDataUtils,
                     DatePipe,
                     {
                         provide: ActivatedRoute,
                         useValue: new MockActivatedRoute({id: 123})
                     },
                     BloodPressureService,
-                    EventManager
+                    JhiEventManager
                 ]
             }).overrideTemplate(BloodPressureDetailComponent, '')
             .compileComponents();
@@ -41,7 +42,6 @@ describe('Component Tests', () => {
             comp = fixture.componentInstance;
             service = fixture.debugElement.injector.get(BloodPressureService);
         });
-
 
         describe('OnInit', () => {
             it('Should call load all on init', () => {
@@ -54,7 +54,7 @@ describe('Component Tests', () => {
 
             // THEN
             expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.bloodPressure).toEqual(jasmine.objectContaining({id:10}));
+            expect(comp.bloodPressure).toEqual(jasmine.objectContaining({id: 10}));
             });
         });
     });

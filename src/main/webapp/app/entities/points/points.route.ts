@@ -2,19 +2,36 @@ import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
-import { PaginationUtil } from 'ng-jhipster';
+import { JhiPaginationUtil } from 'ng-jhipster';
 
 import { PointsComponent } from './points.component';
 import { PointsDetailComponent } from './points-detail.component';
 import { PointsPopupComponent } from './points-dialog.component';
 import { PointsDeletePopupComponent } from './points-delete-dialog.component';
 
-import { Principal } from '../../shared';
+@Injectable()
+export class PointsResolvePagingParams implements Resolve<any> {
+
+    constructor(private paginationUtil: JhiPaginationUtil) {}
+
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        const page = route.queryParams['page'] ? route.queryParams['page'] : '1';
+        const sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+        return {
+            page: this.paginationUtil.parsePage(page),
+            predicate: this.paginationUtil.parsePredicate(sort),
+            ascending: this.paginationUtil.parseAscending(sort)
+      };
+    }
+}
 
 export const pointsRoute: Routes = [
     {
         path: 'points',
         component: PointsComponent,
+        resolve: {
+            'pagingParams': PointsResolvePagingParams
+        },
         data: {
             authorities: ['ROLE_USER'],
             pageTitle: 'twentyOnePointsApp.points.home.title'

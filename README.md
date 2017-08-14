@@ -33,6 +33,26 @@ Add the `help` flag on any command to see how you can use it. For example, `yarn
 
 The `yarn run` command will list all of the scripts available to run for this project.
 
+### Service workers
+
+Service workers are commented by default, to enable them please uncomment the following code.
+
+* The service worker registering script in index.html
+```
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+        .register('./sw.js')
+        .then(function() { console.log('Service Worker Registered'); });
+    }
+</script>
+```
+* The copy file option in webpack-common.js
+```js
+{ from: './src/main/webapp/sw.js', to: 'sw.js' },
+```
+Note: Add the respective scripts/assets in `sw.js` that is needed to be cached.
+
 ### Managing dependencies
 
 For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
@@ -137,13 +157,13 @@ For more information refer to [Using Docker and Docker-Compose][], this page als
 To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
 
 [JHipster Homepage and latest documentation]: https://jhipster.github.io
-[JHipster 4.5.3 archive]: https://jhipster.github.io/documentation-archive/v4.5.3
+[JHipster 4.6.2 archive]: https://jhipster.github.io/documentation-archive/v4.6.2
 
-[Using JHipster in development]: https://jhipster.github.io/documentation-archive/v4.5.3/development/
-[Using Docker and Docker-Compose]: https://jhipster.github.io/documentation-archive/v4.5.3/docker-compose
-[Using JHipster in production]: https://jhipster.github.io/documentation-archive/v4.5.3/production/
-[Running tests page]: https://jhipster.github.io/documentation-archive/v4.5.3/running-tests/
-[Setting up Continuous Integration]: https://jhipster.github.io/documentation-archive/v4.5.3/setting-up-ci/
+[Using JHipster in development]: https://jhipster.github.io/documentation-archive/v4.6.2/development/
+[Using Docker and Docker-Compose]: https://jhipster.github.io/documentation-archive/v4.6.2/docker-compose
+[Using JHipster in production]: https://jhipster.github.io/documentation-archive/v4.6.2/production/
+[Running tests page]: https://jhipster.github.io/documentation-archive/v4.6.2/running-tests/
+[Setting up Continuous Integration]: https://jhipster.github.io/documentation-archive/v4.6.2/setting-up-ci/
 
 [Gatling]: http://gatling.io/
 [Node.js]: https://nodejs.org/

@@ -1,5 +1,6 @@
-import { User } from '../../shared';
-export class Points {
+import { BaseEntity, User } from './../../shared';
+
+export class Points implements BaseEntity {
     constructor(
         public id?: number,
         public date?: any,

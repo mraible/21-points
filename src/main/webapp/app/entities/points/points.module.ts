@@ -14,6 +14,7 @@ import {
     PointsDeleteDialogComponent,
     pointsRoute,
     pointsPopupRoute,
+    PointsResolvePagingParams,
 } from './';
 
 const ENTITY_STATES = [
@@ -45,6 +46,7 @@ const ENTITY_STATES = [
     providers: [
         PointsService,
         PointsPopupService,
+        PointsResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

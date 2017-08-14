@@ -31,7 +31,7 @@ describe('BloodPressure e2e test', () => {
         });
     });
 
-    it('should load create BloodPressure dialog', function () {
+    it('should load create BloodPressure dialog', () => {
         element(by.css('button.create-blood-pressure')).click().then(() => {
             const expectVal = /twentyOnePointsApp.bloodPressure.home.createLabel/;
             element.all(by.css('h4.modal-title')).first().getAttribute('jhiTranslate').then((value) => {
@@ -42,7 +42,7 @@ describe('BloodPressure e2e test', () => {
         });
     });
 
-    afterAll(function () {
+    afterAll(() => {
         accountMenu.click();
         logout.click();
     });

@@ -4,7 +4,7 @@ import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Rx';
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, AlertService } from 'ng-jhipster';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
 import { Preferences } from './preferences.model';
 import { PreferencesPopupService } from './preferences-popup.service';
@@ -19,23 +19,21 @@ import { ResponseWrapper } from '../../shared';
 export class PreferencesDialogComponent implements OnInit {
 
     preferences: Preferences;
-    authorities: any[];
     isSaving: boolean;
 
     users: User[];
 
     constructor(
         public activeModal: NgbActiveModal,
-        private alertService: AlertService,
+        private alertService: JhiAlertService,
         private preferencesService: PreferencesService,
         private userService: UserService,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
     }
 
     ngOnInit() {
         this.isSaving = false;
-        this.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
         this.userService.query()
             .subscribe((res: ResponseWrapper) => { this.users = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
     }
@@ -48,24 +46,19 @@ export class PreferencesDialogComponent implements OnInit {
         this.isSaving = true;
         if (this.preferences.id !== undefined) {
             this.subscribeToSaveResponse(
-                this.preferencesService.update(this.preferences), false);
+                this.preferencesService.update(this.preferences));
         } else {
             this.subscribeToSaveResponse(
-                this.preferencesService.create(this.preferences), true);
+                this.preferencesService.create(this.preferences));
         }
     }
 
-    private subscribeToSaveResponse(result: Observable<Preferences>, isCreated: boolean) {
+    private subscribeToSaveResponse(result: Observable<Preferences>) {
         result.subscribe((res: Preferences) =>
-            this.onSaveSuccess(res, isCreated), (res: Response) => this.onSaveError(res));
+            this.onSaveSuccess(res), (res: Response) => this.onSaveError(res));
     }
 
-    private onSaveSuccess(result: Preferences, isCreated: boolean) {
-        this.alertService.success(
-            isCreated ? 'twentyOnePointsApp.preferences.created'
-            : 'twentyOnePointsApp.preferences.updated',
-            { param : result.id }, null);
-
+    private onSaveSuccess(result: Preferences) {
         this.eventManager.broadcast({ name: 'preferencesListModification', content: 'OK'});
         this.isSaving = false;
         this.activeModal.dismiss(result);
@@ -96,7 +89,6 @@ export class PreferencesDialogComponent implements OnInit {
 })
 export class PreferencesPopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -107,11 +99,11 @@ export class PreferencesPopupComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
             if ( params['id'] ) {
-                this.modalRef = this.preferencesPopupService
-                    .open(PreferencesDialogComponent, params['id']);
+                this.preferencesPopupService
+                    .open(PreferencesDialogComponent as Component, params['id']);
             } else {
-                this.modalRef = this.preferencesPopupService
-                    .open(PreferencesDialogComponent);
+                this.preferencesPopupService
+                    .open(PreferencesDialogComponent as Component);
             }
         });
     }

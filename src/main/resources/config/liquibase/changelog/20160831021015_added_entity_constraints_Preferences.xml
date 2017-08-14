@@ -2,12 +2,12 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
     <!--
         Added the constraints for entity Preferences.
     -->
     <changeSet id="20160831021015-2" author="jhipster">
-        
+
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="preferences"
                                  constraintName="fk_preferences_user_id"

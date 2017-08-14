@@ -1,6 +1,6 @@
 {
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
     "project": {
-        "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
         "name": "twenty-one-points"
     },
     "apps": [{
@@ -24,8 +24,6 @@
         ],
         "scripts": []
     }],
-    "addons": [],
-    "packages": [],
     "e2e": {
         "protractor": {
             "config": "src/test/javascript/protractor.conf.js"
@@ -46,9 +44,9 @@
     "defaults": {
         "styleExt": "scss",
         "prefixInterfaces": false,
-        "inline": {
-            "style": true,
-            "template": false
+        "component" : {
+            "inlineStyle" : true,
+            "inlineTemplate": false
         },
         "spec": {
             "component": false,

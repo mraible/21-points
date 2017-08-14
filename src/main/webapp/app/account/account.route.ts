@@ -10,12 +10,12 @@ import {
 } from './';
 
 const ACCOUNT_ROUTES = [
-   activateRoute,
-   passwordRoute,
-   passwordResetFinishRoute,
-   passwordResetInitRoute,
-   registerRoute,
-   settingsRoute
+    activateRoute,
+    passwordRoute,
+    passwordResetFinishRoute,
+    passwordResetInitRoute,
+    registerRoute,
+    settingsRoute
 ];
 
 export const accountState: Routes = [{

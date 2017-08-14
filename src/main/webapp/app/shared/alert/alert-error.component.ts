@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
-import { TranslateService } from 'ng2-translate';
-import { EventManager, AlertService } from 'ng-jhipster';
+import { TranslateService } from '@ngx-translate/core';
+import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 import { Subscription } from 'rxjs/Rx';
 
 @Component({
@@ -19,7 +19,7 @@ export class JhiAlertErrorComponent implements OnDestroy {
     alerts: any[];
     cleanHttpErrorListener: Subscription;
 
-    constructor(private alertService: AlertService, private eventManager: EventManager, private translateService: TranslateService) {
+    constructor(private alertService: JhiAlertService, private eventManager: JhiEventManager, private translateService: TranslateService) {
         this.alerts = [];
 
         this.cleanHttpErrorListener = eventManager.subscribe('twentyOnePointsApp.httpError', (response) => {

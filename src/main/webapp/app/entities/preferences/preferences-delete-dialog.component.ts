@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { AlertService, EventManager } from 'ng-jhipster';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { Preferences } from './preferences.model';
 import { PreferencesPopupService } from './preferences-popup.service';
@@ -19,8 +19,7 @@ export class PreferencesDeleteDialogComponent {
     constructor(
         private preferencesService: PreferencesService,
         public activeModal: NgbActiveModal,
-        private alertService: AlertService,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
     }
 
@@ -36,7 +35,6 @@ export class PreferencesDeleteDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-        this.alertService.success('twentyOnePointsApp.preferences.deleted', { param : id }, null);
     }
 }
 
@@ -46,7 +44,6 @@ export class PreferencesDeleteDialogComponent {
 })
 export class PreferencesDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -56,8 +53,8 @@ export class PreferencesDeletePopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
-            this.modalRef = this.preferencesPopupService
-                .open(PreferencesDeleteDialogComponent, params['id']);
+            this.preferencesPopupService
+                .open(PreferencesDeleteDialogComponent as Component, params['id']);
         });
     }
 

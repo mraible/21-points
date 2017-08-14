@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { AlertService, EventManager } from 'ng-jhipster';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { BloodPressure } from './blood-pressure.model';
 import { BloodPressurePopupService } from './blood-pressure-popup.service';
@@ -19,8 +19,7 @@ export class BloodPressureDeleteDialogComponent {
     constructor(
         private bloodPressureService: BloodPressureService,
         public activeModal: NgbActiveModal,
-        private alertService: AlertService,
-        private eventManager: EventManager
+        private eventManager: JhiEventManager
     ) {
     }
 
@@ -36,7 +35,6 @@ export class BloodPressureDeleteDialogComponent {
             });
             this.activeModal.dismiss(true);
         });
-        this.alertService.success('twentyOnePointsApp.bloodPressure.deleted', { param : id }, null);
     }
 }
 
@@ -46,7 +44,6 @@ export class BloodPressureDeleteDialogComponent {
 })
 export class BloodPressureDeletePopupComponent implements OnInit, OnDestroy {
 
-    modalRef: NgbModalRef;
     routeSub: any;
 
     constructor(
@@ -56,8 +53,8 @@ export class BloodPressureDeletePopupComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.routeSub = this.route.params.subscribe((params) => {
-            this.modalRef = this.bloodPressurePopupService
-                .open(BloodPressureDeleteDialogComponent, params['id']);
+            this.bloodPressurePopupService
+                .open(BloodPressureDeleteDialogComponent as Component, params['id']);
         });
     }
 

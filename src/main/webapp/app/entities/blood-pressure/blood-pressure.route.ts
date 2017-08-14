@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
-import { PaginationUtil } from 'ng-jhipster';
+import { JhiPaginationUtil } from 'ng-jhipster';
 
 import { BloodPressureComponent } from './blood-pressure.component';
 import { BloodPressureDetailComponent } from './blood-pressure-detail.component';
 import { BloodPressurePopupComponent } from './blood-pressure-dialog.component';
 import { BloodPressureDeletePopupComponent } from './blood-pressure-delete-dialog.component';
-
-import { Principal } from '../../shared';
 
 export const bloodPressureRoute: Routes = [
     {

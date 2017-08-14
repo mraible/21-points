@@ -11,7 +11,7 @@
     <div class="navbar-collapse collapse" id="navbarResponsive" [ngbCollapse]="isNavbarCollapsed" [ngSwitch]="isAuthenticated()">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-                <a class="nav-link" routerLink="/" (click)="collapseNavbar()" replaceUrl="true">
+                <a class="nav-link" routerLink="/" (click)="collapseNavbar()">
                     <i class="fa fa-home" aria-hidden="true"></i>
                     <span jhiTranslate="global.menu.home">Home</span>
                 </a>

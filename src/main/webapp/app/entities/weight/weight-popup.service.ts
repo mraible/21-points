@@ -7,34 +7,44 @@ import { WeightService } from './weight.service';
 
 @Injectable()
 export class WeightPopupService {
-    private isOpen = false;
+    private ngbModalRef: NgbModalRef;
+
     constructor(
         private datePipe: DatePipe,
         private modalService: NgbModal,
         private router: Router,
         private weightService: WeightService
 
-    ) {}
+    ) {
+        this.ngbModalRef = null;
+    }
 
-    open(component: Component, id?: number | any): NgbModalRef {
-        if (this.isOpen) {
-            return;
-        }
-        this.isOpen = true;
+    open(component: Component, id?: number | any): Promise<NgbModalRef> {
+        return new Promise<NgbModalRef>((resolve, reject) => {
+            const isOpen = this.ngbModalRef !== null;
+            if (isOpen) {
+                resolve(this.ngbModalRef);
+            }
 
-        if (id) {
-            this.weightService.find(id).subscribe((weight) => {
-                weight.timestamp = this.datePipe
-                    .transform(weight.timestamp, 'yyyy-MM-ddThh:mm');
-                this.weightModalRef(component, weight);
-            });
-        } else {
-            // populate date/time with current time if new
-            const weight = new Weight();
-            weight.timestamp = this.datePipe
-                .transform(new Date(), 'yyyy-MM-ddThh:mm');
-            return this.weightModalRef(component, weight);
-        }
+            if (id) {
+                this.weightService.find(id).subscribe((weight) => {
+                    weight.timestamp = this.datePipe
+                        .transform(weight.timestamp, 'yyyy-MM-ddThh:mm');
+                    this.ngbModalRef = this.weightModalRef(component, weight);
+                    resolve(this.ngbModalRef);
+                });
+            } else {
+                // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
+                setTimeout(() => {
+                    // populate date/time with current time if new
+                    const weight = new Weight();
+                    weight.timestamp = this.datePipe
+                        .transform(new Date(), 'yyyy-MM-ddThh:mm');
+                    this.ngbModalRef = this.weightModalRef(component, weight);
+                    resolve(this.ngbModalRef);
+                }, 0);
+            }
+        });
     }
 
     weightModalRef(component: Component, weight: Weight): NgbModalRef {
@@ -42,10 +52,10 @@ export class WeightPopupService {
         modalRef.componentInstance.weight = weight;
         modalRef.result.then((result) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true });
-            this.isOpen = false;
+            this.ngbModalRef = null;
         });
         return modalRef;
     }

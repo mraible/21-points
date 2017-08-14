@@ -4,6 +4,7 @@ import org.jhipster.health.TwentyOnePointsApp;
 
 import org.jhipster.health.domain.Preferences;
 import org.jhipster.health.repository.PreferencesRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
 import org.jhipster.health.web.rest.errors.ExceptionTranslator;
 
@@ -56,6 +57,9 @@ public class PreferencesResourceIntTest {
     private PreferencesSearchRepository preferencesSearchRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -77,7 +81,7 @@ public class PreferencesResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        PreferencesResource preferencesResource = new PreferencesResource(preferencesRepository, preferencesSearchRepository);
+        PreferencesResource preferencesResource = new PreferencesResource(preferencesRepository, preferencesSearchRepository, userRepository);
         this.restPreferencesMockMvc = MockMvcBuilders.standaloneSetup(preferencesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -108,8 +112,15 @@ public class PreferencesResourceIntTest {
     public void createPreferences() throws Exception {
         int databaseSizeBeforeCreate = preferencesRepository.findAll().size();
 
+        // Create security-aware mockMvc
+        restPreferencesMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
         // Create the Preferences
         restPreferencesMockMvc.perform(post("/api/preferences")
+            .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(preferences)))
             .andExpect(status().isCreated());
@@ -261,10 +272,17 @@ public class PreferencesResourceIntTest {
     public void updateNonExistingPreferences() throws Exception {
         int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
 
+        // Create security-aware mockMvc
+        restPreferencesMockMvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
+
         // Create the Preferences
 
         // If the entity doesn't have an ID, it will be created instead of just being updated
         restPreferencesMockMvc.perform(put("/api/preferences")
+            .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(preferences)))
             .andExpect(status().isCreated());

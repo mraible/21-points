@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 
 /**
- * Performance test for the Preferences entity.
+ * Performance test for the Weight entity.
  */
-class PreferencesGatlingTest extends Simulation {
+class WeightGatlingTest extends Simulation {
 
     val context: LoggerContext = LoggerFactory.getILoggerFactory.asInstanceOf[LoggerContext]
     // Log all HTTP requests
@@ -42,7 +42,7 @@ class PreferencesGatlingTest extends Simulation {
         "Authorization" -> "${access_token}"
     )
 
-    val scn = scenario("Test the Preferences entity")
+    val scn = scenario("Test the Weight entity")
         .exec(http("First unauthenticated request")
         .get("/api/account")
         .headers(headers_http)
@@ -60,26 +60,26 @@ class PreferencesGatlingTest extends Simulation {
         .check(status.is(200)))
         .pause(10)
         .repeat(2) {
-            exec(http("Get all preferences")
-            .get("/api/preferences")
+            exec(http("Get all weights")
+            .get("/api/weights")
             .headers(headers_http_authenticated)
             .check(status.is(200)))
             .pause(10 seconds, 20 seconds)
-            .exec(http("Create new preferences")
-            .post("/api/preferences")
+            .exec(http("Create new weight")
+            .post("/api/weights")
             .headers(headers_http_authenticated)
-            .body(StringBody("""{"id":null, "weeklyGoal":"0", "weightUnits":null}""")).asJSON
+            .body(StringBody("""{"id":null, "timestamp":"2020-01-01T00:00:00.000Z", "weight":null}""")).asJSON
             .check(status.is(201))
-            .check(headerRegex("Location", "(.*)").saveAs("new_preferences_url"))).exitHereIfFailed
+            .check(headerRegex("Location", "(.*)").saveAs("new_weight_url"))).exitHereIfFailed
             .pause(10)
             .repeat(5) {
-                exec(http("Get created preferences")
-                .get("${new_preferences_url}")
+                exec(http("Get created weight")
+                .get("${new_weight_url}")
                 .headers(headers_http_authenticated))
                 .pause(10)
             }
-            .exec(http("Delete created preferences")
-            .delete("${new_preferences_url}")
+            .exec(http("Delete created weight")
+            .delete("${new_weight_url}")
             .headers(headers_http_authenticated))
             .pause(10)
         }
@@ -87,6 +87,6 @@ class PreferencesGatlingTest extends Simulation {
     val users = scenario("Users").exec(scn)
 
     setUp(
-        users.inject(rampUsers(100) over (1 minutes))
+        users.inject(rampUsers(Integer.getInteger("users", 100)) over (Integer.getInteger("ramp", 1) minutes))
     ).protocols(httpConf)
 }
