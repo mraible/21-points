@@ -55,9 +55,18 @@
 </div>
 <br>
 
-<ng-template #customCellTemplate let-day="day" let-locale="locale">
+<ng-template #customCellTemplate let-day="day"
+             let-openDay="openDay"
+             let-locale="locale"
+             let-tooltipPlacement="tooltipPlacement"
+             let-highlightDay="highlightDay"
+             let-unhighlightDay="unhighlightDay"
+             let-eventClicked="eventClicked"
+             let-tooltipTemplate="tooltipTemplate"
+             let-tooltipAppendToBody="tooltipAppendToBody">
     <div class="cal-cell-top">
-        <span class="cal-day-badge bg-{{day.dayPoints[0].meta.value >= 2 ? 'success' : 'warning'}}" *ngIf="day.dayPoints.length">
+        <span class="cal-day-badge bg-{{day.dayPoints[0].meta.value >= 2 ? 'success' : 'warning'}}"
+              *ngIf="day.dayPoints.length">
             {{ day.dayPoints[0].meta.value }}
         </span>
         <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
@@ -70,14 +79,22 @@
             class="cal-event"
             *ngFor="let event of day.events"
             [style.backgroundColor]="event.color.primary"
-            [mwlCalendarTooltip]="event.title | calendarEventTitle:'monthTooltip':event">
+            [ngClass]="event?.cssClass"
+            (mouseenter)="highlightDay.emit({event: event})"
+            (mouseleave)="unhighlightDay.emit({event: event})"
+            [mwlCalendarTooltip]="event.title | calendarEventTitle:'monthTooltip':event"
+            [tooltipPlacement]="tooltipPlacement"
+            [tooltipEvent]="event"
+            [tooltipTemplate]="tooltipTemplate"
+            [tooltipAppendToBody]="tooltipAppendToBody"
+            (mwlClick)="onEventClick($event, event)">
         </div>
-    </div>
-    <div class="cal-emoji pull-right" *ngIf="day.dayPoints.length" [ngSwitch]="day.dayPoints[0].meta.value">
-        <span *ngSwitchCase="0">😞</span>
-        <span *ngSwitchCase="1">😕</span>
-        <span *ngSwitchCase="2">🙂</span>
-        <span *ngSwitchCase="3">😁</span>
+        <!--<div class="cal-emoji" *ngIf="day.dayPoints.length" [ngSwitch]="day.dayPoints[0].meta.value">
+            <span *ngSwitchCase="0">😞</span>
+            <span *ngSwitchCase="1">😕</span>
+            <span *ngSwitchCase="2">🙂</span>
+            <span *ngSwitchCase="3">😁</span>
+        </div>-->
     </div>
 </ng-template>
 

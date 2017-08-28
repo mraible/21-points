@@ -4,10 +4,6 @@
 }
 
 .cal-emoji {
-    background-color: unset;
     font-size: 20px;
-    text-align: right;
-    padding-right: 15px;
-    margin-top: -25px;
     opacity: .30;
 }
