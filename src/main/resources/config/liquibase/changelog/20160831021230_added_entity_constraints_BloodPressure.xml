@@ -7,7 +7,11 @@
         Added the constraints for entity BloodPressure.
     -->
     <changeSet id="20160831021230-2" author="jhipster">
-        
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists schemaName="public" foreignKeyName="fk_blood_pressure_user_id"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="blood_pressure"
                                  constraintName="fk_blood_pressure_user_id"

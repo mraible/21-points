@@ -7,7 +7,11 @@
         Added the constraints for entity Preferences.
     -->
     <changeSet id="20170725033721-2" author="jhipster">
-        
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists schemaName="public" foreignKeyName="fk_preferences_user_id"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="preferences"
                                  constraintName="fk_preferences_user_id"

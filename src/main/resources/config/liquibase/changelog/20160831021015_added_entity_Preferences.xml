@@ -17,19 +17,24 @@
         Added the entity Preferences.
     -->
     <changeSet id="20160831021015-1" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="public" tableName="preferences"/>
+            </not>
+        </preConditions>
         <createTable tableName="preferences">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="weekly_goal" type="integer">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
 
             <column name="weight_units" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
-                <constraints unique="true" nullable="true" />
+                <constraints unique="true" nullable="true"/>
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
