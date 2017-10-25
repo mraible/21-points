@@ -1,6 +1,6 @@
 
 <div *ngIf="points">
-    <h2><span jhiTranslate="twentyOnePointsApp.points.detail.title">Points</span> {{points.id}}</h2>
+    <h2><span jhiTranslate="twentyOnePointsApp.points.detail.title">Points</span></h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
     <dl class="row-md jh-entity-details">
@@ -10,15 +10,15 @@
         </dd>
         <dt><span jhiTranslate="twentyOnePointsApp.points.exercise">Exercise</span></dt>
         <dd>
-            <span>{{points.exercise}}</span>
+            <i class="fa fa-{{points.exercise ? 'check text-success' : 'times text-danger'}}" aria-hidden="true"></i>
         </dd>
         <dt><span jhiTranslate="twentyOnePointsApp.points.meals">Meals</span></dt>
         <dd>
-            <span>{{points.meals}}</span>
+            <i class="fa fa-{{points.meals ? 'check text-success' : 'times text-danger'}}" aria-hidden="true"></i>
         </dd>
         <dt><span jhiTranslate="twentyOnePointsApp.points.alcohol">Alcohol</span></dt>
         <dd>
-            <span>{{points.alcohol}}</span>
+            <i class="fa fa-{{points.alcohol ? 'check text-success' : 'times text-danger'}}" aria-hidden="true"></i>
         </dd>
         <dt><span jhiTranslate="twentyOnePointsApp.points.notes">Notes</span></dt>
         <dd>
