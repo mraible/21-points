@@ -4,26 +4,52 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
     <changeSet author="mraible" id="1508867356214-0">
-       <renameTable newTableName="blood_pressure" oldTableName="bloodpressure" schemaName="public"/>
+        <preConditions onFail="MARK_RAN">
+            <tableExists schemaName="public" tableName="bloodpressure"/>
+        </preConditions>
+        <renameTable newTableName="blood_pressure" oldTableName="bloodpressure" schemaName="public"/>
     </changeSet>
     <changeSet author="mraible" id="1508867356214-1">
-       <renameColumn newColumnName="jhi_date" oldColumnName="date" schemaName="public" tableName="points"/>
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="points" columnName="date"/>
+        </preConditions>
+        <renameColumn newColumnName="jhi_date" oldColumnName="date" schemaName="public" tableName="points"/>
     </changeSet>
     <changeSet author="mraible" id="1508867356214-2">
-       <renameColumn newColumnName="jhi_timestamp" oldColumnName="timestamp" schemaName="public" tableName="weight"/>
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="weight" columnName="timestamp"/>
+        </preConditions>
+        <renameColumn newColumnName="jhi_timestamp" oldColumnName="timestamp" schemaName="public" tableName="weight"/>
     </changeSet>
     <changeSet author="mraible" id="1508867356214-3">
-       <renameColumn newColumnName="jhi_timestamp" oldColumnName="timestamp" schemaName="public" tableName="blood_pressure"/>
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="blood_pressure" columnName="timestamp"/>
+        </preConditions>
+        <renameColumn newColumnName="jhi_timestamp" oldColumnName="timestamp" schemaName="public"
+                      tableName="blood_pressure"/>
     </changeSet>
     <changeSet author="mraible" id="1508867356214-4">
-       <renameColumn newColumnName="password_hash" oldColumnName="password" schemaName="public" tableName="jhi_user"/>
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="jhi_user" columnName="password"/>
+        </preConditions>
+        <renameColumn newColumnName="password_hash" oldColumnName="password" schemaName="public" tableName="jhi_user"/>
     </changeSet>
     <changeSet author="mraible (generated)" id="1508867356214-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="public" tableName="preferences" columnName="user_id"/>
+            </not>
+        </preConditions>
         <addColumn tableName="preferences">
             <column name="user_id" type="int8"/>
         </addColumn>
     </changeSet>
     <changeSet author="mraible (generated)" id="1508867356214-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="public" tableName="jhi_user" columnName="image_url"/>
+            </not>
+        </preConditions>
         <addColumn tableName="jhi_user">
             <column name="image_url" type="varchar(256 BYTE)"/>
         </addColumn>
@@ -44,9 +70,15 @@
                                  referencedTableName="jhi_user"/>
     </changeSet>
     <changeSet author="mraible (generated)" id="1508867356214-11">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists schemaName="public" foreignKeyName="FK_1r5e40mq4hwtlyd9lemghc8su"/>
+        </preConditions>
         <dropForeignKeyConstraint baseTableName="jhi_user" constraintName="FK_1r5e40mq4hwtlyd9lemghc8su"/>
     </changeSet>
     <changeSet author="mraible" id="1508867356214-26">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="jhi_user" columnName="preferences_id"/>
+        </preConditions>
         <sql>
             update preferences
             set user_id = subquery.user_id
@@ -55,6 +87,9 @@
         </sql>
     </changeSet>
     <changeSet author="mraible (generated)" id="1508867356214-16">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="jhi_user" columnName="preferences_id"/>
+        </preConditions>
         <dropColumn columnName="preferences_id" tableName="jhi_user"/>
     </changeSet>
     <changeSet author="mraible (generated)" id="1508867356214-18">
