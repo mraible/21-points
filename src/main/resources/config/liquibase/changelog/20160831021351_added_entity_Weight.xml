@@ -17,25 +17,30 @@
         Added the entity Weight.
     -->
     <changeSet id="20160831021351-1" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="public" tableName="weight"/>
+            </not>
+        </preConditions>
         <createTable tableName="weight">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="jhi_timestamp" type="timestamp">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
 
             <column name="weight" type="double">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
 
             <column name="user_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         <dropDefaultValue tableName="weight" columnName="jhi_timestamp" columnDataType="datetime"/>
-        
+
     </changeSet>
 </databaseChangeLog>

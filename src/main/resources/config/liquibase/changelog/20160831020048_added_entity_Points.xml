@@ -17,32 +17,37 @@
         Added the entity Points.
     -->
     <changeSet id="20160831020048-1" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="public" tableName="points"/>
+            </not>
+        </preConditions>
         <createTable tableName="points">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="jhi_date" type="date">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
 
             <column name="exercise" type="integer">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
 
             <column name="meals" type="integer">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
 
             <column name="alcohol" type="integer">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
 
             <column name="notes" type="varchar(140)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
 
             <column name="user_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->

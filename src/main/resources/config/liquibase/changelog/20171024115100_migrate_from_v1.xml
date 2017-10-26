@@ -1,0 +1,125 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="mraible" id="1508867356214-0">
+        <preConditions onFail="MARK_RAN">
+            <tableExists schemaName="public" tableName="bloodpressure"/>
+        </preConditions>
+        <renameTable newTableName="blood_pressure" oldTableName="bloodpressure" schemaName="public"/>
+    </changeSet>
+    <changeSet author="mraible" id="1508867356214-1">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="points" columnName="date"/>
+        </preConditions>
+        <renameColumn newColumnName="jhi_date" oldColumnName="date" schemaName="public" tableName="points"/>
+    </changeSet>
+    <changeSet author="mraible" id="1508867356214-2">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="weight" columnName="timestamp"/>
+        </preConditions>
+        <renameColumn newColumnName="jhi_timestamp" oldColumnName="timestamp" schemaName="public" tableName="weight"/>
+    </changeSet>
+    <changeSet author="mraible" id="1508867356214-3">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="blood_pressure" columnName="timestamp"/>
+        </preConditions>
+        <renameColumn newColumnName="jhi_timestamp" oldColumnName="timestamp" schemaName="public"
+                      tableName="blood_pressure"/>
+    </changeSet>
+    <changeSet author="mraible" id="1508867356214-4">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="jhi_user" columnName="password"/>
+        </preConditions>
+        <renameColumn newColumnName="password_hash" oldColumnName="password" schemaName="public" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="public" tableName="preferences" columnName="user_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="preferences">
+            <column name="user_id" type="int8"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists schemaName="public" tableName="jhi_user" columnName="image_url"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="jhi_user">
+            <column name="image_url" type="varchar(256 BYTE)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-8">
+        <addUniqueConstraint columnNames="user_id" constraintName="preferences_user_id_key" tableName="preferences"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-9">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="blood_pressure"
+                                 constraintName="fk_blood_pressure_user_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-10">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="preferences"
+                                 constraintName="fk_preferences_user_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-11">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists schemaName="public" foreignKeyName="FK_1r5e40mq4hwtlyd9lemghc8su"/>
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="jhi_user" constraintName="FK_1r5e40mq4hwtlyd9lemghc8su"/>
+    </changeSet>
+    <changeSet author="mraible" id="1508867356214-26">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="jhi_user" columnName="preferences_id"/>
+        </preConditions>
+        <sql>
+            update preferences
+            set user_id = subquery.user_id
+            from (select id as user_id, preferences_id from jhi_user) as subquery
+            where preferences.id = subquery.preferences_id
+        </sql>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-16">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="public" tableName="jhi_user" columnName="preferences_id"/>
+        </preConditions>
+        <dropColumn columnName="preferences_id" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-18">
+        <modifyDataType columnName="event_id" newDataType="bigint" tableName="jhi_persistent_audit_event"/>
+        <dropDefaultValue columnDataType="bigint" columnName="event_id" tableName="jhi_persistent_audit_event"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-19">
+        <modifyDataType columnName="id" newDataType="bigint" tableName="jhi_user"/>
+        <dropDefaultValue columnDataType="bigint" columnName="id" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-20">
+        <modifyDataType columnName="id" newDataType="bigint" tableName="points"/>
+        <dropDefaultValue columnDataType="bigint" columnName="id" tableName="points"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-21">
+        <modifyDataType columnName="id" newDataType="bigint" tableName="preferences"/>
+        <dropDefaultValue columnDataType="bigint" columnName="id" tableName="preferences"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-22">
+        <modifyDataType columnName="id" newDataType="bigint" tableName="weight"/>
+        <dropDefaultValue columnDataType="bigint" columnName="id" tableName="weight"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-23">
+        <modifyDataType columnName="name" newDataType="varchar(150)" tableName="jhi_persistent_audit_evt_data"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1508867356214-24">
+        <modifyDataType columnName="principal" newDataType="varchar(50)" tableName="jhi_persistent_audit_event"/>
+    </changeSet>
+    <changeSet author="mraible" id="1508867356214-25">
+        <delete schemaName="public" tableName="jhi_persistent_audit_evt_data"/>
+        <delete schemaName="public" tableName="jhi_persistent_audit_event"/>
+    </changeSet>
+</databaseChangeLog>
