@@ -480,6 +480,15 @@ public class PointsResourceIntTest {
         // Get the points for last month
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
         String startDate = fmt.format(today.withDayOfMonth(1));
+        LocalDate firstDate = thisMonday.plusDays(2);
+        LocalDate secondDate = thisMonday.plusDays(3);
+
+        // see if adding days takes you into next month
+        if (today.getMonthValue() < firstDate.getMonthValue() || today.getMonthValue() < secondDate.getMonthValue()) {
+            // if so, look for second set of dates
+            firstDate = lastMonday.plusDays(3);
+            secondDate = lastMonday.plusDays(4);
+        }
 
         restPointsMockMvc.perform(get("/api/points-by-month/{yearWithMonth}", startDate)
             .with(user("user").roles("USER")))
@@ -487,7 +496,7 @@ public class PointsResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.month").value(startDate))
-            .andExpect(jsonPath("$.points.[*].date").value(hasItem(thisMonday.plusDays(2).toString())))
-            .andExpect(jsonPath("$.points.[*].date").value(hasItem(thisMonday.plusDays(3).toString())));
+            .andExpect(jsonPath("$.points.[*].date").value(hasItem(firstDate.toString())))
+            .andExpect(jsonPath("$.points.[*].date").value(hasItem(secondDate.toString())));
     }
 }

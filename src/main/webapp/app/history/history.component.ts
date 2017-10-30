@@ -1,8 +1,26 @@
 import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
-import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours, addMinutes, format } from 'date-fns';
+import {
+    startOfDay,
+    endOfDay,
+    subDays,
+    addDays,
+    endOfMonth,
+    isSameDay,
+    isSameMonth,
+    addHours,
+    addMinutes,
+    format,
+    startOfMonth,
+    getDaysInMonth
+} from 'date-fns';
 import { Subject } from 'rxjs/Subject';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
+import {
+    CalendarEvent,
+    CalendarEventAction,
+    CalendarEventTimesChangedEvent,
+    CalendarMonthViewDay
+} from 'angular-calendar';
 import { PointsService } from '../entities/points/points.service';
 import { BloodPressureService } from '../entities/blood-pressure/blood-pressure.service';
 import { WeightService } from '../entities/weight/weight.service';
@@ -11,6 +29,7 @@ import { PreferencesService } from '../entities/preferences/preferences.service'
 import { JhiEventManager } from 'ng-jhipster';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
+import { Preferences } from '../entities/preferences/preferences.model';
 
 const colors: any = {
     red: {
@@ -110,9 +129,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
     populateCalendar() {
         const monthEnd = endOfMonth(this.viewDate);
         const month = format(monthEnd, 'YYYY-MM');
-        // console.info('Fetching data for: ' + month);
 
-        this.pointsService.byMonth(month).subscribe((response)  => {
+        this.pointsService.byMonth(month).subscribe((response) => {
             response.json.points.forEach((item) => {
                 const value = item.exercise + item.meals + item.alcohol;
                 this.events.push({
@@ -129,11 +147,12 @@ export class HistoryComponent implements OnInit, OnDestroy {
                         notes: item.notes ? item.notes : ''
                     }
                 });
+
             });
             this.refresh.next();
         });
 
-        this.bloodPressureService.byMonth(month).subscribe((response)  => {
+        this.bloodPressureService.byMonth(month).subscribe((response) => {
             response.json.readings.forEach((item) => {
                 this.events.push({
                     start: new Date(item.timestamp),
@@ -152,7 +171,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
         this.preferencesService.user().subscribe((response) => {
             const weightUnits = response.weightUnits === null ? 'lbs' : response.weightUnits;
-            this.weightService.byMonth(month).subscribe((weightResponse)  => {
+            this.weightService.byMonth(month).subscribe((weightResponse) => {
                 weightResponse.json.weighIns.forEach((item) => {
                     this.events.push({
                         start: new Date(item.timestamp),
@@ -168,12 +187,46 @@ export class HistoryComponent implements OnInit, OnDestroy {
                 });
                 this.refresh.next();
             });
+
+            const weeklyGoal = response.weeklyGoal;
+            const monthStart = startOfMonth(month);
+            const daysInMonth = getDaysInMonth(month);
+
+            const sundays = [];
+            for (let i = 0; i <= daysInMonth; i++) {
+                const date = new Date(monthStart.getFullYear(), monthStart.getMonth(), i);
+
+                if (date.getDay() === 0) {
+                    sundays.push(date);
+                }
+            }
+
+            sundays.forEach((sunday) => {
+                this.pointsService.byWeek(format(sunday, 'YYYY-MM-DD')).subscribe((data) => {
+                    const pointsByWeek = data.json;
+                    this.events.push({
+                        start: startOfDay(sunday),
+                        end: endOfDay(sunday),
+                        title: pointsByWeek.points + '/' + weeklyGoal + ' Points',
+                        color: (pointsByWeek.points >= 10) ? colors.green : colors.red,
+                        cssClass: 'd-none', // hide as an event dot
+                        draggable: false,
+                        meta: {
+                            entity: 'totalPoints',
+                            value: pointsByWeek.points,
+                            goal: weeklyGoal || 10
+                        }
+                    });
+                    this.refresh.next();
+                })
+            });
         });
     }
 
-    beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
+    beforeMonthViewRender({body}: { body: CalendarMonthViewDay[] }): void {
         body.forEach((cell) => {
             cell['dayPoints'] = cell.events.filter((e) => e.meta['entity'] === 'points');
+            cell['weekPoints'] = cell.events.filter((e) => e.meta['entity'] === 'totalPoints');
         });
     }
 
@@ -201,7 +254,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
     handleEvent(action: string, event: CalendarEvent): void {
         action = (action === 'Clicked') ? 'edit' : action;
         this.modalData = {event, action};
-        const url = this.router.createUrlTree(['/', { outlets: { popup: event.meta.entity + '/' + event.meta.id + '/' + action}}]);
+        const url = this.router.createUrlTree(['/', {outlets: {popup: event.meta.entity + '/' + event.meta.id + '/' + action}}]);
         this.router.navigateByUrl(url.toString());
     }
 }

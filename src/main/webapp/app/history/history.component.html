@@ -88,12 +88,15 @@
             [tooltipTemplate]="tooltipTemplate"
             [tooltipAppendToBody]="tooltipAppendToBody">
         </div>
-        <!--<div class="cal-emoji" *ngIf="day.dayPoints.length" [ngSwitch]="day.dayPoints[0].meta.value">
-            <span *ngSwitchCase="0">😞</span>
-            <span *ngSwitchCase="1">😕</span>
-            <span *ngSwitchCase="2">🙂</span>
-            <span *ngSwitchCase="3">😁</span>
-        </div>-->
+    </div>
+    <div class="cal-cell-bottom">
+        <ngb-progressbar max="21" [value]="day.weekPoints[0].meta.value" [striped]="true"
+                         *ngIf="day.weekPoints.length && day.weekPoints[0].meta.value"
+                         [type]="(day.weekPoints[0].meta.value >= day.weekPoints[0].meta.goal) ? 'success' : 'danger'">
+            <span ngbTooltip="{{day.weekPoints[0].title}}">
+                {{day.weekPoints[0].meta.value}} / {{day.weekPoints[0].meta.goal}}
+            </span>
+        </ngb-progressbar>
     </div>
 </ng-template>
 
