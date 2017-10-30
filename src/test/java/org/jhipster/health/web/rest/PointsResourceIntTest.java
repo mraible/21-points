@@ -469,6 +469,7 @@ public class PointsResourceIntTest {
         LocalDate today = LocalDate.now();
         LocalDate thisMonday = today.with(DayOfWeek.MONDAY);
         LocalDate lastMonday = thisMonday.minusDays(7);
+        System.out.println("creating Points by week with thisMonday: " + thisMonday + " and lastMonday: " + lastMonday);
         createPointsByWeek(thisMonday, lastMonday);
 
         // create security-aware mockMvc
@@ -480,6 +481,7 @@ public class PointsResourceIntTest {
         // Get the points for last month
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
         String startDate = fmt.format(today.withDayOfMonth(1));
+        System.out.println("startDate: " + startDate);
 
         restPointsMockMvc.perform(get("/api/points-by-month/{yearWithMonth}", startDate)
             .with(user("user").roles("USER")))
