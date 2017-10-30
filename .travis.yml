@@ -31,7 +31,7 @@ install:
   - yarn install
 script:
   - chmod +x gradlew
-  - ./gradlew clean test --stacktrace
+  - ./gradlew clean test
   - yarn test
   - ./gradlew bootRepackage -Pprod -x test
 notifications:

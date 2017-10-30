@@ -134,6 +134,7 @@ public class PointsResource {
     @Timed
     public ResponseEntity<PointsPerWeek> getPointsThisWeek() {
         // Get current date
+        // todo: get now() from user's timezone
         LocalDate now = LocalDate.now();
         // Get first day of week
         LocalDate startOfWeek = now.with(DayOfWeek.MONDAY);
