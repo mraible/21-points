@@ -61,6 +61,11 @@ export class PointsService {
             .map((res: any) => this.convertResponse(res));
     }
 
+    byWeek(date: string): Observable<ResponseWrapper> {
+        return this.http.get(`api/points-by-week/${date}`)
+            .map((res: any) => this.convertResponse(res));
+    }
+
     byMonth(month: string): Observable<ResponseWrapper> {
         return this.http.get(`api/points-by-month/${month}`)
             .map((res: any) => this.convertResponse(res));

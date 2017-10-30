@@ -1,3 +1,8 @@
+.cal-cell-bottom {
+    font-size: .8em;
+    padding: 0 5px 5px 5px;
+}
+
 .cal-day-notes {
     font-size: .8em;
     padding: 5px

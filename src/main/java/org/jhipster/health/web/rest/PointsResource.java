@@ -155,19 +155,20 @@ public class PointsResource {
     }
 
     /**
-     * GET  /points : get all the points for a particular week.
+     * GET  /points-by-week/yyyy-MM-dd : get all the points for a particular week.
      */
-    @GetMapping("/points-by-week/{startDate}")
+    @GetMapping("/points-by-week/{date}")
     @Timed
-    public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate startDate) {
-        // Get last day of week
-        LocalDate endOfWeek = startDate.with(DayOfWeek.SUNDAY);
-        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startDate, endOfWeek, SecurityUtils.getCurrentUserLogin());
-        return calculatePoints(startDate, points);
+    public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date) {
+        // Get first and last days of week
+        LocalDate startOfWeek = date.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = date.with(DayOfWeek.SUNDAY);
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startOfWeek, endOfWeek, SecurityUtils.getCurrentUserLogin());
+        return calculatePoints(startOfWeek, points);
     }
 
     /**
-     * GET  /points : get all the points for a particular current month.
+     * GET  /points-by-month : get all the points for a particular current month.
      */
     @GetMapping("/points-by-month/{yearWithMonth}")
     @Timed
