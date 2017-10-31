@@ -1,10 +1,10 @@
 package org.jhipster.health.config;
 
-import org.jhipster.health.security.*;
-import org.jhipster.health.security.jwt.*;
-
-import io.github.jhipster.security.*;
-
+import io.github.jhipster.security.Http401UnauthorizedEntryPoint;
+import org.jhipster.health.security.AuthoritiesConstants;
+import org.jhipster.health.security.HttpsEnforcer;
+import org.jhipster.health.security.jwt.JWTConfigurer;
+import org.jhipster.health.security.jwt.TokenProvider;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.Filter;
 
 @Configuration
 @EnableWebSecurity
@@ -38,10 +39,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final CorsFilter corsFilter;
 
-    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder, UserDetailsService userDetailsService,
-            TokenProvider tokenProvider,
-        CorsFilter corsFilter) {
-
+    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder,
+                                 UserDetailsService userDetailsService, TokenProvider tokenProvider,
+                                 CorsFilter corsFilter) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.userDetailsService = userDetailsService;
         this.tokenProvider = tokenProvider;
@@ -122,5 +122,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
         return new SecurityEvaluationContextExtension();
+    }
+
+    @Bean
+    public Filter httpsEnforcerFilter(){
+        return new HttpsEnforcer();
     }
 }
