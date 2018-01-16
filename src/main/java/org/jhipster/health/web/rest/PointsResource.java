@@ -146,15 +146,6 @@ public class PointsResource {
         return calculatePoints(startOfWeek, points);
     }
 
-    private ResponseEntity<PointsPerWeek> calculatePoints(LocalDate startOfWeek, List<Points> points) {
-        Integer numPoints = points.stream()
-            .mapToInt(p -> p.getExercise() + p.getMeals() + p.getAlcohol())
-            .sum();
-
-        PointsPerWeek count = new PointsPerWeek(startOfWeek, numPoints);
-        return new ResponseEntity<>(count, HttpStatus.OK);
-    }
-
     /**
      * GET  /points-by-week/yyyy-MM-dd : get all the points for a particular week.
      */
@@ -166,6 +157,15 @@ public class PointsResource {
         LocalDate endOfWeek = date.with(DayOfWeek.SUNDAY);
         List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startOfWeek, endOfWeek, SecurityUtils.getCurrentUserLogin());
         return calculatePoints(startOfWeek, points);
+    }
+
+    private ResponseEntity<PointsPerWeek> calculatePoints(LocalDate startOfWeek, List<Points> points) {
+        Integer numPoints = points.stream()
+            .mapToInt(p -> p.getExercise() + p.getMeals() + p.getAlcohol())
+            .sum();
+
+        PointsPerWeek count = new PointsPerWeek(startOfWeek, numPoints);
+        return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
     /**
