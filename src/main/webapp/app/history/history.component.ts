@@ -29,7 +29,6 @@ import { PreferencesService } from '../entities/preferences/preferences.service'
 import { JhiEventManager } from 'ng-jhipster';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-import { Preferences } from '../entities/preferences/preferences.model';
 
 const colors: any = {
     red: {
@@ -169,8 +168,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
             this.refresh.next();
         });
 
-        this.preferencesService.user().subscribe((response) => {
-            const weightUnits = response.weightUnits === null ? 'lbs' : response.weightUnits;
+        this.preferencesService.user().subscribe((preferences) => {
+            const weightUnits = preferences.weightUnits === null ? 'lbs' : preferences.weightUnits;
             this.weightService.byMonth(month).subscribe((weightResponse) => {
                 weightResponse.json.weighIns.forEach((item) => {
                     this.events.push({
@@ -188,7 +187,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
                 this.refresh.next();
             });
 
-            const weeklyGoal = response.weeklyGoal;
+            const weeklyGoal = preferences.weeklyGoal;
             const monthStart = startOfMonth(month);
             const daysInMonth = getDaysInMonth(month);
 

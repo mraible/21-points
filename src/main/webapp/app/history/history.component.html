@@ -75,8 +75,7 @@
         </div>
     </div>
     <div class="cal-events" *ngIf="day.events.length > 0">
-        <div
-            class="cal-event"
+        <div class="cal-event"
             *ngFor="let event of day.events"
             [style.backgroundColor]="event.color.primary"
             [ngClass]="event?.cssClass"
