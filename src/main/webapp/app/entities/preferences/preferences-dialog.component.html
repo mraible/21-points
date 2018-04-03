@@ -14,17 +14,10 @@
                    [(ngModel)]="preferences.id" readonly />
         </div>
         <div class="form-group">
-<<<<<<< HEAD
             <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.weeklyGoal" for="field_weeklyGoal">Weekly Goal</label>
             <input type="number" class="form-control" name="weeklyGoal" id="field_weeklyGoal"
                 [(ngModel)]="preferences.weeklyGoal" required min="10" max="21" />
             <div [hidden]="!(editForm.controls.weeklyGoal?.dirty && editForm.controls.weeklyGoal?.invalid)">
-=======
-            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.weekly_goal" for="field_weekly_goal">Weekly Goal</label>
-            <input type="number" class="form-control" name="weekly_goal" id="field_weekly_goal"
-                [(ngModel)]="preferences.weekly_goal" required min="10" max="21"/>
-            <div [hidden]="!(editForm.controls.weekly_goal?.dirty && editForm.controls.weekly_goal?.invalid)">
->>>>>>> jhipster_upgrade
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.weeklyGoal?.errors?.required" jhiTranslate="entity.validation.required">
                    This field is required.
@@ -44,17 +37,10 @@
             </div>
         </div>
         <div class="form-group">
-<<<<<<< HEAD
             <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.weightUnits" for="field_weightUnits">Weight Units</label>
             <select class="form-control" name="weightUnits" [(ngModel)]="preferences.weightUnits" id="field_weightUnits"  required>
                 <option value="kg" jhiTranslate="twentyOnePointsApp.Units.kg">kg</option>
                 <option value="lb" jhiTranslate="twentyOnePointsApp.Units.lb">lb</option>
-=======
-            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.weight_units" for="field_weight_units">Weight Units</label>
-            <select class="form-control" name="weight_units" [(ngModel)]="preferences.weight_units" id="field_weight_units"  required>
-                <option value="kg">{{'twentyOnePointsApp.Units.kg' | translate}}</option>
-                <option value="lb">{{'twentyOnePointsApp.Units.lb' | translate}}</option>
->>>>>>> jhipster_upgrade
             </select>
             <div [hidden]="!(editForm.controls.weightUnits?.dirty && editForm.controls.weightUnits?.invalid)">
                 <small class="form-text text-danger"
@@ -64,13 +50,8 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <div class="form-group" *jhiHasAnyAuthority="'ROLE_ADMIN'">
             <label jhiTranslate="twentyOnePointsApp.preferences.user" for="field_user">User</label>
-=======
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.user" for="field_user">User</label>
->>>>>>> jhipster_upgrade
             <select class="form-control" id="field_user" name="user" [(ngModel)]="preferences.user" >
                 <option [ngValue]="null"></option>
                 <option [ngValue]="userOption.id === preferences.user?.id ? preferences.user : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>

@@ -54,17 +54,12 @@ export class PreferencesService {
         return res.clone({body});
     }
 
-<<<<<<< HEAD
     user(): Observable<Preferences> {
         return this.http.get('api/my-preferences').map((res: Response) => {
             return res.json();
         });
     }
 
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        return new ResponseWrapper(res.headers, jsonResponse, res.status);
-=======
     private convertArrayResponse(res: HttpResponse<Preferences[]>): HttpResponse<Preferences[]> {
         const jsonResponse: Preferences[] = res.body;
         const body: Preferences[] = [];
@@ -80,7 +75,6 @@ export class PreferencesService {
     private convertItemFromServer(preferences: Preferences): Preferences {
         const copy: Preferences = Object.assign({}, preferences);
         return copy;
->>>>>>> jhipster_upgrade
     }
 
     /**

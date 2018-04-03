@@ -56,33 +56,19 @@ export class PointsService {
         return res.clone({body});
     }
 
-<<<<<<< HEAD
-    thisWeek(): Observable<ResponseWrapper> {
+    thisWeek(): Observable<HttpResponse<Points[]>> {
         return this.http.get('api/points-this-week')
             .map((res: any) => this.convertResponse(res));
     }
 
-    byWeek(date: string): Observable<ResponseWrapper> {
+    byWeek(date: string): Observable<HttpResponse<Points[]>> {
         return this.http.get(`api/points-by-week/${date}`)
             .map((res: any) => this.convertResponse(res));
     }
 
-    byMonth(month: string): Observable<ResponseWrapper> {
+    byMonth(month: string): Observable<HttpResponse<Points[]>> {
         return this.http.get(`api/points-by-month/${month}`)
             .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-=======
-    private convertArrayResponse(res: HttpResponse<Points[]>): HttpResponse<Points[]> {
-        const jsonResponse: Points[] = res.body;
-        const body: Points[] = [];
->>>>>>> jhipster_upgrade
-        for (let i = 0; i < jsonResponse.length; i++) {
-            body.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return res.clone({body});
     }
 
     /**

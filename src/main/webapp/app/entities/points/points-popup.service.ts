@@ -62,17 +62,10 @@ export class PointsPopupService {
         const modalRef = this.modalService.open(component, {size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.points = points;
         modalRef.result.then((result) => {
-<<<<<<< HEAD
             this.router.navigate([{outlets: {popup: null}}], {replaceUrl: true});
             this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{outlets: {popup: null}}], {replaceUrl: true});
-=======
-            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true, queryParamsHandling: 'merge' });
-            this.ngbModalRef = null;
-        }, (reason) => {
-            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true, queryParamsHandling: 'merge' });
->>>>>>> jhipster_upgrade
             this.ngbModalRef = null;
         });
         return modalRef;

@@ -56,8 +56,7 @@ export class WeightService {
         return res.clone({body});
     }
 
-<<<<<<< HEAD
-    last30Days(): Observable<Weight> {
+    last30Days(): Observable<HttpResponse<Weight[]>> {
         return this.http.get('api/weight-by-days/30').map((res: Response) => {
             const jsonResponse = res.json();
             this.convertItemFromServer(jsonResponse);
@@ -65,18 +64,14 @@ export class WeightService {
         });
     }
 
-    byMonth(month: string): Observable<ResponseWrapper> {
+    byMonth(month: string): Observable<HttpResponse<Weight[]>> {
         return this.http.get(`api/weight-by-month/${month}`)
             .map((res: any) => this.convertResponse(res));
     }
 
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-=======
     private convertArrayResponse(res: HttpResponse<Weight[]>): HttpResponse<Weight[]> {
         const jsonResponse: Weight[] = res.body;
         const body: Weight[] = [];
->>>>>>> jhipster_upgrade
         for (let i = 0; i < jsonResponse.length; i++) {
             body.push(this.convertItemFromServer(jsonResponse[i]));
         }

@@ -56,7 +56,6 @@ export class BloodPressureService {
         return res.clone({body});
     }
 
-<<<<<<< HEAD
     last30Days(): Observable<BloodPressure> {
         return this.http.get('api/bp-by-days/30').map((res: Response) => {
             const jsonResponse = res.json();
@@ -72,11 +71,6 @@ export class BloodPressureService {
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
-=======
-    private convertArrayResponse(res: HttpResponse<BloodPressure[]>): HttpResponse<BloodPressure[]> {
-        const jsonResponse: BloodPressure[] = res.body;
-        const body: BloodPressure[] = [];
->>>>>>> jhipster_upgrade
         for (let i = 0; i < jsonResponse.length; i++) {
             body.push(this.convertItemFromServer(jsonResponse[i]));
         }

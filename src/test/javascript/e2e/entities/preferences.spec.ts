@@ -16,7 +16,6 @@ describe('Preferences e2e test', () => {
     });
 
     it('should load Preferences', () => {
-<<<<<<< HEAD
         entityMenu.click();
         element.all(by.css('[routerLink="preferences"]')).first().click().then(() => {
             const expectVal = /twentyOnePointsApp.preferences.home.title/;
@@ -35,31 +34,6 @@ describe('Preferences e2e test', () => {
 
             element(by.css('button.close')).click();
         });
-=======
-        navBarPage.goToEntity('preferences');
-        preferencesComponentsPage = new PreferencesComponentsPage();
-        expect(preferencesComponentsPage.getTitle())
-            .toMatch(/twentyOnePointsApp.preferences.home.title/);
-
-    });
-
-    it('should load create Preferences dialog', () => {
-        preferencesComponentsPage.clickOnCreateButton();
-        preferencesDialogPage = new PreferencesDialogPage();
-        expect(preferencesDialogPage.getModalTitle())
-            .toMatch(/twentyOnePointsApp.preferences.home.createOrEditLabel/);
-        preferencesDialogPage.close();
-    });
-
-    it('should create and save Preferences', () => {
-        preferencesComponentsPage.clickOnCreateButton();
-        preferencesDialogPage.setWeekly_goalInput('5');
-        expect(preferencesDialogPage.getWeekly_goalInput()).toMatch('5');
-        preferencesDialogPage.weight_unitsSelectLastOption();
-        preferencesDialogPage.userSelectLastOption();
-        preferencesDialogPage.save();
-        expect(preferencesDialogPage.getSaveButton().isPresent()).toBeFalsy();
->>>>>>> jhipster_upgrade
     });
 
     afterAll(() => {

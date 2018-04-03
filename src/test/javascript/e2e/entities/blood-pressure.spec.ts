@@ -16,7 +16,6 @@ describe('BloodPressure e2e test', () => {
     });
 
     it('should load BloodPressures', () => {
-<<<<<<< HEAD
         entityMenu.click();
         element.all(by.css('[routerLink="blood-pressure"]')).first().click().then(() => {
             const expectVal = /twentyOnePointsApp.bloodPressure.home.title/;
@@ -35,34 +34,6 @@ describe('BloodPressure e2e test', () => {
 
             element(by.css('button.close')).click();
         });
-=======
-        navBarPage.goToEntity('blood-pressure');
-        bloodPressureComponentsPage = new BloodPressureComponentsPage();
-        expect(bloodPressureComponentsPage.getTitle())
-            .toMatch(/twentyOnePointsApp.bloodPressure.home.title/);
-
-    });
-
-    it('should load create BloodPressure dialog', () => {
-        bloodPressureComponentsPage.clickOnCreateButton();
-        bloodPressureDialogPage = new BloodPressureDialogPage();
-        expect(bloodPressureDialogPage.getModalTitle())
-            .toMatch(/twentyOnePointsApp.bloodPressure.home.createOrEditLabel/);
-        bloodPressureDialogPage.close();
-    });
-
-    it('should create and save BloodPressures', () => {
-        bloodPressureComponentsPage.clickOnCreateButton();
-        bloodPressureDialogPage.setTimestampInput(12310020012301);
-        expect(bloodPressureDialogPage.getTimestampInput()).toMatch('2001-12-31T02:30');
-        bloodPressureDialogPage.setSystolicInput('5');
-        expect(bloodPressureDialogPage.getSystolicInput()).toMatch('5');
-        bloodPressureDialogPage.setDiastolicInput('5');
-        expect(bloodPressureDialogPage.getDiastolicInput()).toMatch('5');
-        bloodPressureDialogPage.userSelectLastOption();
-        bloodPressureDialogPage.save();
-        expect(bloodPressureDialogPage.getSaveButton().isPresent()).toBeFalsy();
->>>>>>> jhipster_upgrade
     });
 
     afterAll(() => {

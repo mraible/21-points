@@ -16,7 +16,6 @@ describe('Weight e2e test', () => {
     });
 
     it('should load Weights', () => {
-<<<<<<< HEAD
         entityMenu.click();
         element.all(by.css('[routerLink="weight"]')).first().click().then(() => {
             const expectVal = /twentyOnePointsApp.weight.home.title/;
@@ -35,32 +34,6 @@ describe('Weight e2e test', () => {
 
             element(by.css('button.close')).click();
         });
-=======
-        navBarPage.goToEntity('weight');
-        weightComponentsPage = new WeightComponentsPage();
-        expect(weightComponentsPage.getTitle())
-            .toMatch(/twentyOnePointsApp.weight.home.title/);
-
-    });
-
-    it('should load create Weight dialog', () => {
-        weightComponentsPage.clickOnCreateButton();
-        weightDialogPage = new WeightDialogPage();
-        expect(weightDialogPage.getModalTitle())
-            .toMatch(/twentyOnePointsApp.weight.home.createOrEditLabel/);
-        weightDialogPage.close();
-    });
-
-    it('should create and save Weights', () => {
-        weightComponentsPage.clickOnCreateButton();
-        weightDialogPage.setTimestampInput(12310020012301);
-        expect(weightDialogPage.getTimestampInput()).toMatch('2001-12-31T02:30');
-        weightDialogPage.setWeightInput('5');
-        expect(weightDialogPage.getWeightInput()).toMatch('5');
-        weightDialogPage.userSelectLastOption();
-        weightDialogPage.save();
-        expect(weightDialogPage.getSaveButton().isPresent()).toBeFalsy();
->>>>>>> jhipster_upgrade
     });
 
     afterAll(() => {

@@ -46,15 +46,9 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <div class="form-group" *jhiHasAnyAuthority="'ROLE_ADMIN'">
             <label jhiTranslate="twentyOnePointsApp.weight.user" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" [(ngModel)]="weight.user" required>
-=======
-        <div class="form-group">
-            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.weight.user" for="field_user">User</label>
-            <select class="form-control" id="field_user" name="user" [(ngModel)]="weight.user" >
->>>>>>> jhipster_upgrade
                 <option [ngValue]="null"></option>
                 <option [ngValue]="userOption.id === weight.user?.id ? weight.user : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
             </select>

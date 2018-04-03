@@ -16,7 +16,6 @@ describe('Points e2e test', () => {
     });
 
     it('should load Points', () => {
-<<<<<<< HEAD
         entityMenu.click();
         element.all(by.css('[routerLink="points"]')).first().click().then(() => {
             const expectVal = /twentyOnePointsApp.points.home.title/;
@@ -35,38 +34,6 @@ describe('Points e2e test', () => {
 
             element(by.css('button.close')).click();
         });
-=======
-        navBarPage.goToEntity('points');
-        pointsComponentsPage = new PointsComponentsPage();
-        expect(pointsComponentsPage.getTitle())
-            .toMatch(/twentyOnePointsApp.points.home.title/);
-
-    });
-
-    it('should load create Points dialog', () => {
-        pointsComponentsPage.clickOnCreateButton();
-        pointsDialogPage = new PointsDialogPage();
-        expect(pointsDialogPage.getModalTitle())
-            .toMatch(/twentyOnePointsApp.points.home.createOrEditLabel/);
-        pointsDialogPage.close();
-    });
-
-    it('should create and save Points', () => {
-        pointsComponentsPage.clickOnCreateButton();
-        pointsDialogPage.setDateInput('2000-12-31');
-        expect(pointsDialogPage.getDateInput()).toMatch('2000-12-31');
-        pointsDialogPage.setExerciseInput('5');
-        expect(pointsDialogPage.getExerciseInput()).toMatch('5');
-        pointsDialogPage.setMealsInput('5');
-        expect(pointsDialogPage.getMealsInput()).toMatch('5');
-        pointsDialogPage.setAlcoholInput('5');
-        expect(pointsDialogPage.getAlcoholInput()).toMatch('5');
-        pointsDialogPage.setNotesInput('notes');
-        expect(pointsDialogPage.getNotesInput()).toMatch('notes');
-        pointsDialogPage.userSelectLastOption();
-        pointsDialogPage.save();
-        expect(pointsDialogPage.getSaveButton().isPresent()).toBeFalsy();
->>>>>>> jhipster_upgrade
     });
 
     afterAll(() => {
