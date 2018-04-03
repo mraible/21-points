@@ -1,61 +1,62 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import { SERVER_API_URL } from '../../app.constants';
+
 import { JhiDateUtils } from 'ng-jhipster';
 
 import { Weight } from './weight.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+import { createRequestOption } from '../../shared';
+
+export type EntityResponseType = HttpResponse<Weight>;
 
 @Injectable()
 export class WeightService {
 
-    private resourceUrl = 'api/weights';
-    private resourceSearchUrl = 'api/_search/weights';
+    private resourceUrl =  SERVER_API_URL + 'api/weights';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/weights';
 
-    constructor(private http: Http, private dateUtils: JhiDateUtils) { }
+    constructor(private http: HttpClient, private dateUtils: JhiDateUtils) { }
 
-    create(weight: Weight): Observable<Weight> {
+    create(weight: Weight): Observable<EntityResponseType> {
         const copy = this.convert(weight);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
-        });
+        return this.http.post<Weight>(this.resourceUrl, copy, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertResponse(res));
     }
 
-    update(weight: Weight): Observable<Weight> {
+    update(weight: Weight): Observable<EntityResponseType> {
         const copy = this.convert(weight);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
-        });
+        return this.http.put<Weight>(this.resourceUrl, copy, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertResponse(res));
     }
 
-    find(id: number): Observable<Weight> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
-        });
+    find(id: number): Observable<EntityResponseType> {
+        return this.http.get<Weight>(`${this.resourceUrl}/${id}`, { observe: 'response'})
+            .map((res: EntityResponseType) => this.convertResponse(res));
     }
 
-    query(req?: any): Observable<ResponseWrapper> {
+    query(req?: any): Observable<HttpResponse<Weight[]>> {
         const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-            .map((res: Response) => this.convertResponse(res));
+        return this.http.get<Weight[]>(this.resourceUrl, { params: options, observe: 'response' })
+            .map((res: HttpResponse<Weight[]>) => this.convertArrayResponse(res));
     }
 
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
+    delete(id: number): Observable<HttpResponse<any>> {
+        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response'});
     }
 
-    search(req?: any): Observable<ResponseWrapper> {
+    search(req?: any): Observable<HttpResponse<Weight[]>> {
         const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
+        return this.http.get<Weight[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+            .map((res: HttpResponse<Weight[]>) => this.convertArrayResponse(res));
     }
 
+    private convertResponse(res: EntityResponseType): EntityResponseType {
+        const body: Weight = this.convertItemFromServer(res.body);
+        return res.clone({body});
+    }
+
+<<<<<<< HEAD
     last30Days(): Observable<Weight> {
         return this.http.get('api/weight-by-days/30').map((res: Response) => {
             const jsonResponse = res.json();
@@ -71,17 +72,30 @@ export class WeightService {
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();
+=======
+    private convertArrayResponse(res: HttpResponse<Weight[]>): HttpResponse<Weight[]> {
+        const jsonResponse: Weight[] = res.body;
+        const body: Weight[] = [];
+>>>>>>> jhipster_upgrade
         for (let i = 0; i < jsonResponse.length; i++) {
-            this.convertItemFromServer(jsonResponse[i]);
+            body.push(this.convertItemFromServer(jsonResponse[i]));
         }
-        return new ResponseWrapper(res.headers, jsonResponse, res.status);
+        return res.clone({body});
     }
 
-    private convertItemFromServer(entity: any) {
-        entity.timestamp = this.dateUtils
-            .convertDateTimeFromServer(entity.timestamp);
+    /**
+     * Convert a returned JSON object to Weight.
+     */
+    private convertItemFromServer(weight: Weight): Weight {
+        const copy: Weight = Object.assign({}, weight);
+        copy.timestamp = this.dateUtils
+            .convertDateTimeFromServer(weight.timestamp);
+        return copy;
     }
 
+    /**
+     * Convert a Weight to a JSON which can be sent to the server.
+     */
     private convert(weight: Weight): Weight {
         const copy: Weight = Object.assign({}, weight);
 

@@ -36,6 +36,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.jhipster.health.web.rest.TestUtil.sameInstant;
+import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -91,10 +92,15 @@ public class WeightResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+<<<<<<< HEAD
         WeightResource weightResource = new WeightResource(weightRepository, weightSearchRepository, userRepository);
+=======
+        final WeightResource weightResource = new WeightResource(weightRepository, weightSearchRepository);
+>>>>>>> jhipster_upgrade
         this.restWeightMockMvc = MockMvcBuilders.standaloneSetup(weightResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -144,7 +150,8 @@ public class WeightResourceIntTest {
 
         // Validate the Weight in Elasticsearch
         Weight weightEs = weightSearchRepository.findOne(testWeight.getId());
-        assertThat(weightEs).isEqualToComparingFieldByField(testWeight);
+        assertThat(testWeight.getTimestamp()).isEqualTo(testWeight.getTimestamp());
+        assertThat(weightEs).isEqualToIgnoringGivenFields(testWeight, "timestamp");
     }
 
     @Test
@@ -161,7 +168,7 @@ public class WeightResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(weight)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Weight in the database
         List<Weight> weightList = weightRepository.findAll();
         assertThat(weightList).hasSize(databaseSizeBeforeCreate);
     }
@@ -257,6 +264,8 @@ public class WeightResourceIntTest {
 
         // Update the weight
         Weight updatedWeight = weightRepository.findOne(weight.getId());
+        // Disconnect from session so that the updates on updatedWeight are not directly saved in db
+        em.detach(updatedWeight);
         updatedWeight
             .timestamp(UPDATED_TIMESTAMP)
             .weight(UPDATED_WEIGHT);
@@ -275,7 +284,8 @@ public class WeightResourceIntTest {
 
         // Validate the Weight in Elasticsearch
         Weight weightEs = weightSearchRepository.findOne(testWeight.getId());
-        assertThat(weightEs).isEqualToComparingFieldByField(testWeight);
+        assertThat(testWeight.getTimestamp()).isEqualTo(testWeight.getTimestamp());
+        assertThat(weightEs).isEqualToIgnoringGivenFields(testWeight, "timestamp");
     }
 
     @Test

@@ -37,6 +37,8 @@ public class CacheConfiguration {
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
+            cm.createCache(org.jhipster.health.repository.UserRepository.USERS_BY_LOGIN_CACHE, jcacheConfiguration);
+            cm.createCache(org.jhipster.health.repository.UserRepository.USERS_BY_EMAIL_CACHE, jcacheConfiguration);
             cm.createCache(org.jhipster.health.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(org.jhipster.health.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(org.jhipster.health.domain.User.class.getName() + ".authorities", jcacheConfiguration);

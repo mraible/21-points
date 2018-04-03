@@ -1,6 +1,7 @@
 import { Injectable, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { HttpResponse } from '@angular/common/http';
 import { Points } from './points.model';
 import { PointsService } from './points.service';
 
@@ -22,17 +23,19 @@ export class PointsPopupService {
             }
 
             if (id) {
-                this.pointsService.find(id).subscribe((points) => {
-                    if (points.date) {
-                        points.date = {
-                            year: points.date.getFullYear(),
-                            month: points.date.getMonth() + 1,
-                            day: points.date.getDate()
-                        };
-                    }
-                    this.ngbModalRef = this.pointsModalRef(component, points);
-                    resolve(this.ngbModalRef);
-                });
+                this.pointsService.find(id)
+                    .subscribe((pointsResponse: HttpResponse<Points>) => {
+                        const points: Points = pointsResponse.body;
+                        if (points.date) {
+                            points.date = {
+                                year: points.date.getFullYear(),
+                                month: points.date.getMonth() + 1,
+                                day: points.date.getDate()
+                            };
+                        }
+                        this.ngbModalRef = this.pointsModalRef(component, points);
+                        resolve(this.ngbModalRef);
+                    });
             } else {
                 // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
                 setTimeout(() => {
@@ -59,10 +62,17 @@ export class PointsPopupService {
         const modalRef = this.modalService.open(component, {size: 'lg', backdrop: 'static'});
         modalRef.componentInstance.points = points;
         modalRef.result.then((result) => {
+<<<<<<< HEAD
             this.router.navigate([{outlets: {popup: null}}], {replaceUrl: true});
             this.ngbModalRef = null;
         }, (reason) => {
             this.router.navigate([{outlets: {popup: null}}], {replaceUrl: true});
+=======
+            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true, queryParamsHandling: 'merge' });
+            this.ngbModalRef = null;
+        }, (reason) => {
+            this.router.navigate([{ outlets: { popup: null }}], { replaceUrl: true, queryParamsHandling: 'merge' });
+>>>>>>> jhipster_upgrade
             this.ngbModalRef = null;
         });
         return modalRef;

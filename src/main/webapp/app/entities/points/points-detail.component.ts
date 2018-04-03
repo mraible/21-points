@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager  } from 'ng-jhipster';
+import { HttpResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs/Subscription';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { Points } from './points.model';
 import { PointsService } from './points.service';
@@ -31,9 +32,10 @@ export class PointsDetailComponent implements OnInit, OnDestroy {
     }
 
     load(id) {
-        this.pointsService.find(id).subscribe((points) => {
-            this.points = points;
-        });
+        this.pointsService.find(id)
+            .subscribe((pointsResponse: HttpResponse<Points>) => {
+                this.points = pointsResponse.body;
+            });
     }
     previousState() {
         window.history.back();

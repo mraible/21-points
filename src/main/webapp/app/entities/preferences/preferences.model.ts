@@ -1,6 +1,6 @@
 import { BaseEntity, User } from './../../shared';
 
-const enum Units {
+export const enum Units {
     'kg',
     'lb'
 }

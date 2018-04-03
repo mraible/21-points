@@ -15,12 +15,18 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface PointsRepository extends JpaRepository<Points,Long> {
+public interface PointsRepository extends JpaRepository<Points, Long> {
 
+<<<<<<< HEAD
     @Query("select points from Points points where points.user.login = ?#{principal.username} order by points.date desc")
     Page<Points> findByUserIsCurrentUser(Pageable pageable);
 
     List<Points> findAllByDateBetweenAndUserLogin(LocalDate firstDate, LocalDate secondDate, String login);
 
     Page<Points> findAllByOrderByDateDesc(Pageable pageable);
+=======
+    @Query("select points from Points points where points.user.login = ?#{principal.username}")
+    List<Points> findByUserIsCurrentUser();
+
+>>>>>>> jhipster_upgrade
 }

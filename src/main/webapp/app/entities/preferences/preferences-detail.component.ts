@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager  } from 'ng-jhipster';
+import { HttpResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs/Subscription';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { Preferences } from './preferences.model';
 import { PreferencesService } from './preferences.service';
@@ -31,9 +32,10 @@ export class PreferencesDetailComponent implements OnInit, OnDestroy {
     }
 
     load(id) {
-        this.preferencesService.find(id).subscribe((preferences) => {
-            this.preferences = preferences;
-        });
+        this.preferencesService.find(id)
+            .subscribe((preferencesResponse: HttpResponse<Preferences>) => {
+                this.preferences = preferencesResponse.body;
+            });
     }
     previousState() {
         window.history.back();

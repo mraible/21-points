@@ -21,11 +21,15 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
                 '/management',
                 '/swagger-resources',
                 '/v2/api-docs',
-                '/h2-console'
+                '/h2-console',
+                '/auth'
             ],
             target: 'http://127.0.0.1:8080',
             secure: false
-        }]
+        }],
+        watchOptions: {
+            ignored: /node_modules/
+        }
     },
     entry: {
         polyfills: './src/main/webapp/app/polyfills',

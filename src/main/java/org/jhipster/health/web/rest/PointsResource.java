@@ -6,11 +6,14 @@ import org.jhipster.health.domain.Points;
 import org.jhipster.health.repository.PointsRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
+<<<<<<< HEAD
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+=======
+import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+>>>>>>> jhipster_upgrade
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.jhipster.health.web.rest.vm.PointsPerMonth;
 import org.jhipster.health.web.rest.vm.PointsPerWeek;
@@ -71,7 +74,7 @@ public class PointsResource {
     public ResponseEntity<Points> createPoints(@Valid @RequestBody Points points) throws URISyntaxException {
         log.debug("REST request to save Points : {}", points);
         if (points.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new points cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new points cannot already have an ID", ENTITY_NAME, "idexists");
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
@@ -115,7 +118,7 @@ public class PointsResource {
      */
     @GetMapping("/points")
     @Timed
-    public ResponseEntity<List<Points>> getAllPoints(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Points>> getAllPoints(Pageable pageable) {
         log.debug("REST request to get a page of Points");
         Page<Points> page;
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
@@ -220,7 +223,7 @@ public class PointsResource {
      */
     @GetMapping("/_search/points")
     @Timed
-    public ResponseEntity<List<Points>> searchPoints(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Points>> searchPoints(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Points for query {}", query);
         Page<Points> page = pointsSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/points");

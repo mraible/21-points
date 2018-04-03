@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import { SERVER_API_URL } from '../../../app.constants';
 
 @Injectable()
 export class PasswordResetFinishService {
 
-    constructor(private http: Http) {}
+    constructor(private http: HttpClient) {}
 
     save(keyAndPassword: any): Observable<any> {
-        return this.http.post('api/account/reset_password/finish', keyAndPassword);
+        return this.http.post(SERVER_API_URL + 'api/account/reset-password/finish', keyAndPassword);
     }
 }

@@ -7,8 +7,12 @@ import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
+<<<<<<< HEAD
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+=======
+import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+>>>>>>> jhipster_upgrade
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -64,7 +68,7 @@ public class PreferencesResource {
     public ResponseEntity<Preferences> createPreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
         log.debug("REST request to save Preferences : {}", preferences);
         if (preferences.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new preferences cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new preferences cannot already have an ID", ENTITY_NAME, "idexists");
         }
 
         log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentUserLogin());
@@ -110,6 +114,7 @@ public class PreferencesResource {
     @Timed
     public List<Preferences> getAllPreferences() {
         log.debug("REST request to get all Preferences");
+<<<<<<< HEAD
         List<Preferences> preferences = new ArrayList<>();
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             preferences = preferencesRepository.findAll();
@@ -141,6 +146,10 @@ public class PreferencesResource {
             return new ResponseEntity<>(defaultPreferences, HttpStatus.OK);
         }
     }
+=======
+        return preferencesRepository.findAll();
+        }
+>>>>>>> jhipster_upgrade
 
     /**
      * GET  /preferences/:id : get the "id" preferences.

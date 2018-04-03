@@ -13,8 +13,12 @@ import java.util.Optional;
  */
 @SuppressWarnings("unused")
 @Repository
+<<<<<<< HEAD
 public interface PreferencesRepository extends JpaRepository<Preferences,Long> {
 
     Optional<Preferences> findOneByUserLogin(String login);
+=======
+public interface PreferencesRepository extends JpaRepository<Preferences, Long> {
+>>>>>>> jhipster_upgrade
 
 }

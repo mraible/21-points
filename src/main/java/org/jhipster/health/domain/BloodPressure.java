@@ -2,10 +2,11 @@ package org.jhipster.health.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -41,6 +42,7 @@ public class BloodPressure implements Serializable {
     @ManyToOne
     private User user;
 
+<<<<<<< HEAD
     public BloodPressure() {}
 
     public BloodPressure(ZonedDateTime dateTime, Integer systolic, Integer diastolic, User user) {
@@ -50,6 +52,9 @@ public class BloodPressure implements Serializable {
         this.user = user;
     }
 
+=======
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+>>>>>>> jhipster_upgrade
     public Long getId() {
         return id;
     }
@@ -109,6 +114,7 @@ public class BloodPressure implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -135,8 +141,8 @@ public class BloodPressure implements Serializable {
         return "BloodPressure{" +
             "id=" + getId() +
             ", timestamp='" + getTimestamp() + "'" +
-            ", systolic='" + getSystolic() + "'" +
-            ", diastolic='" + getDiastolic() + "'" +
+            ", systolic=" + getSystolic() +
+            ", diastolic=" + getDiastolic() +
             "}";
     }
 }

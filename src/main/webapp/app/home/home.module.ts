@@ -15,10 +15,14 @@ import { HistoryComponent } from '../history/history.component';
 @NgModule({
     imports: [
         TwentyOnePointsSharedModule,
+<<<<<<< HEAD
         NvD3Module,
         BrowserAnimationsModule,
         CalendarModule.forRoot(),
         RouterModule.forRoot([ HOME_ROUTE, ABOUT_ROUTE, HISTORY_ROUTE ], { useHash: true })
+=======
+        RouterModule.forChild([ HOME_ROUTE ])
+>>>>>>> jhipster_upgrade
     ],
     declarations: [
         HomeComponent,
