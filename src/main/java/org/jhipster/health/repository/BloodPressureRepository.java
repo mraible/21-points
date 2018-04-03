@@ -11,9 +11,9 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface BloodPressureRepository extends JpaRepository<BloodPressure,Long> {
+public interface BloodPressureRepository extends JpaRepository<BloodPressure, Long> {
 
     @Query("select blood_pressure from BloodPressure blood_pressure where blood_pressure.user.login = ?#{principal.username}")
     List<BloodPressure> findByUserIsCurrentUser();
-    
+
 }

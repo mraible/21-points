@@ -5,9 +5,9 @@ import org.jhipster.health.domain.Weight;
 
 import org.jhipster.health.repository.WeightRepository;
 import org.jhipster.health.repository.search.WeightSearchRepository;
+import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class WeightResource {
     public ResponseEntity<Weight> createWeight(@Valid @RequestBody Weight weight) throws URISyntaxException {
         log.debug("REST request to save Weight : {}", weight);
         if (weight.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new weight cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new weight cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Weight result = weightRepository.save(weight);
         weightSearchRepository.save(result);
@@ -101,7 +101,7 @@ public class WeightResource {
      */
     @GetMapping("/weights")
     @Timed
-    public ResponseEntity<List<Weight>> getAllWeights(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Weight>> getAllWeights(Pageable pageable) {
         log.debug("REST request to get a page of Weights");
         Page<Weight> page = weightRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/weights");
@@ -147,7 +147,7 @@ public class WeightResource {
      */
     @GetMapping("/_search/weights")
     @Timed
-    public ResponseEntity<List<Weight>> searchWeights(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Weight>> searchWeights(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Weights for query {}", query);
         Page<Weight> page = weightSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/weights");

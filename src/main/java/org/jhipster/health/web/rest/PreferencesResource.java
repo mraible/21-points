@@ -5,6 +5,7 @@ import org.jhipster.health.domain.Preferences;
 
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
+import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class PreferencesResource {
     public ResponseEntity<Preferences> createPreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
         log.debug("REST request to save Preferences : {}", preferences);
         if (preferences.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new preferences cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new preferences cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.save(result);
@@ -97,7 +98,7 @@ public class PreferencesResource {
     public List<Preferences> getAllPreferences() {
         log.debug("REST request to get all Preferences");
         return preferencesRepository.findAll();
-    }
+        }
 
     /**
      * GET  /preferences/:id : get the "id" preferences.

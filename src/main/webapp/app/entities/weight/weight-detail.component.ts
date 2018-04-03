@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager  } from 'ng-jhipster';
+import { HttpResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs/Subscription';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { Weight } from './weight.model';
 import { WeightService } from './weight.service';
@@ -31,9 +32,10 @@ export class WeightDetailComponent implements OnInit, OnDestroy {
     }
 
     load(id) {
-        this.weightService.find(id).subscribe((weight) => {
-            this.weight = weight;
-        });
+        this.weightService.find(id)
+            .subscribe((weightResponse: HttpResponse<Weight>) => {
+                this.weight = weightResponse.body;
+            });
     }
     previousState() {
         window.history.back();

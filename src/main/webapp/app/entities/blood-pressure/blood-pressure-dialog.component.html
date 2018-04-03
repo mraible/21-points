@@ -16,7 +16,7 @@
             <label class="form-control-label" jhiTranslate="twentyOnePointsApp.bloodPressure.timestamp" for="field_timestamp">Timestamp</label>
             <div class="d-flex">
                 <input id="field_timestamp" type="datetime-local" class="form-control" name="timestamp" [(ngModel)]="bloodPressure.timestamp"
-                required  />
+                required/>
             </div>
             <div [hidden]="!(editForm.controls.timestamp?.dirty && editForm.controls.timestamp?.invalid)">
                 <small class="form-text text-danger"
@@ -32,7 +32,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="twentyOnePointsApp.bloodPressure.systolic" for="field_systolic">Systolic</label>
             <input type="number" class="form-control" name="systolic" id="field_systolic"
-                [(ngModel)]="bloodPressure.systolic" required />
+                [(ngModel)]="bloodPressure.systolic" required/>
             <div [hidden]="!(editForm.controls.systolic?.dirty && editForm.controls.systolic?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.systolic?.errors?.required" jhiTranslate="entity.validation.required">
@@ -47,7 +47,7 @@
         <div class="form-group">
             <label class="form-control-label" jhiTranslate="twentyOnePointsApp.bloodPressure.diastolic" for="field_diastolic">Diastolic</label>
             <input type="number" class="form-control" name="diastolic" id="field_diastolic"
-                [(ngModel)]="bloodPressure.diastolic" required />
+                [(ngModel)]="bloodPressure.diastolic" required/>
             <div [hidden]="!(editForm.controls.diastolic?.dirty && editForm.controls.diastolic?.invalid)">
                 <small class="form-text text-danger"
                    [hidden]="!editForm.controls.diastolic?.errors?.required" jhiTranslate="entity.validation.required">
@@ -61,7 +61,7 @@
         </div>
 
         <div class="form-group">
-            <label jhiTranslate="twentyOnePointsApp.bloodPressure.user" for="field_user">User</label>
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.bloodPressure.user" for="field_user">User</label>
             <select class="form-control" id="field_user" name="user" [(ngModel)]="bloodPressure.user" >
                 <option [ngValue]="null"></option>
                 <option [ngValue]="userOption.id === bloodPressure.user?.id ? bloodPressure.user : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
@@ -69,7 +69,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
             <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
         </button>
         <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

@@ -42,4 +42,5 @@
         <dropDefaultValue tableName="blood_pressure" columnName="jhi_timestamp" columnDataType="datetime"/>
         
     </changeSet>
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

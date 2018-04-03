@@ -5,9 +5,9 @@ import org.jhipster.health.domain.BloodPressure;
 
 import org.jhipster.health.repository.BloodPressureRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
+import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class BloodPressureResource {
     public ResponseEntity<BloodPressure> createBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
         log.debug("REST request to save BloodPressure : {}", bloodPressure);
         if (bloodPressure.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new bloodPressure cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new bloodPressure cannot already have an ID", ENTITY_NAME, "idexists");
         }
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(result);
@@ -101,7 +101,7 @@ public class BloodPressureResource {
      */
     @GetMapping("/blood-pressures")
     @Timed
-    public ResponseEntity<List<BloodPressure>> getAllBloodPressures(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<BloodPressure>> getAllBloodPressures(Pageable pageable) {
         log.debug("REST request to get a page of BloodPressures");
         Page<BloodPressure> page = bloodPressureRepository.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/blood-pressures");
@@ -147,7 +147,7 @@ public class BloodPressureResource {
      */
     @GetMapping("/_search/blood-pressures")
     @Timed
-    public ResponseEntity<List<BloodPressure>> searchBloodPressures(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<BloodPressure>> searchBloodPressures(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of BloodPressures for query {}", query);
         Page<BloodPressure> page = bloodPressureSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/blood-pressures");

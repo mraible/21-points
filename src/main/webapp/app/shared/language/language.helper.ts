@@ -11,6 +11,7 @@ export class JhiLanguageHelper {
 
     constructor(
         private translateService: TranslateService,
+        // tslint:disable-next-line: no-unused-variable
         private rootRenderer: RendererFactory2,
         private titleService: Title,
         private router: Router

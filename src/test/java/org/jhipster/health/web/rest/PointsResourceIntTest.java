@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
+import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -80,10 +81,11 @@ public class PointsResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        PointsResource pointsResource = new PointsResource(pointsRepository, pointsSearchRepository);
+        final PointsResource pointsResource = new PointsResource(pointsRepository, pointsSearchRepository);
         this.restPointsMockMvc = MockMvcBuilders.standaloneSetup(pointsResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -132,7 +134,7 @@ public class PointsResourceIntTest {
 
         // Validate the Points in Elasticsearch
         Points pointsEs = pointsSearchRepository.findOne(testPoints.getId());
-        assertThat(pointsEs).isEqualToComparingFieldByField(testPoints);
+        assertThat(pointsEs).isEqualToIgnoringGivenFields(testPoints);
     }
 
     @Test
@@ -149,7 +151,7 @@ public class PointsResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(points)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Points in the database
         List<Points> pointsList = pointsRepository.findAll();
         assertThat(pointsList).hasSize(databaseSizeBeforeCreate);
     }
@@ -226,6 +228,8 @@ public class PointsResourceIntTest {
 
         // Update the points
         Points updatedPoints = pointsRepository.findOne(points.getId());
+        // Disconnect from session so that the updates on updatedPoints are not directly saved in db
+        em.detach(updatedPoints);
         updatedPoints
             .date(UPDATED_DATE)
             .exercise(UPDATED_EXERCISE)
@@ -250,7 +254,7 @@ public class PointsResourceIntTest {
 
         // Validate the Points in Elasticsearch
         Points pointsEs = pointsSearchRepository.findOne(testPoints.getId());
-        assertThat(pointsEs).isEqualToComparingFieldByField(testPoints);
+        assertThat(pointsEs).isEqualToIgnoringGivenFields(testPoints);
     }
 
     @Test

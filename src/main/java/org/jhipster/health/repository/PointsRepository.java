@@ -11,9 +11,9 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface PointsRepository extends JpaRepository<Points,Long> {
+public interface PointsRepository extends JpaRepository<Points, Long> {
 
     @Query("select points from Points points where points.user.login = ?#{principal.username}")
     List<Points> findByUserIsCurrentUser();
-    
+
 }

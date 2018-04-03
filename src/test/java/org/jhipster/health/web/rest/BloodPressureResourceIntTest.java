@@ -29,6 +29,7 @@ import java.time.ZoneId;
 import java.util.List;
 
 import static org.jhipster.health.web.rest.TestUtil.sameInstant;
+import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -77,10 +78,11 @@ public class BloodPressureResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        BloodPressureResource bloodPressureResource = new BloodPressureResource(bloodPressureRepository, bloodPressureSearchRepository);
+        final BloodPressureResource bloodPressureResource = new BloodPressureResource(bloodPressureRepository, bloodPressureSearchRepository);
         this.restBloodPressureMockMvc = MockMvcBuilders.standaloneSetup(bloodPressureResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -125,7 +127,8 @@ public class BloodPressureResourceIntTest {
 
         // Validate the BloodPressure in Elasticsearch
         BloodPressure bloodPressureEs = bloodPressureSearchRepository.findOne(testBloodPressure.getId());
-        assertThat(bloodPressureEs).isEqualToComparingFieldByField(testBloodPressure);
+        assertThat(testBloodPressure.getTimestamp()).isEqualTo(testBloodPressure.getTimestamp());
+        assertThat(bloodPressureEs).isEqualToIgnoringGivenFields(testBloodPressure, "timestamp");
     }
 
     @Test
@@ -142,7 +145,7 @@ public class BloodPressureResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the BloodPressure in the database
         List<BloodPressure> bloodPressureList = bloodPressureRepository.findAll();
         assertThat(bloodPressureList).hasSize(databaseSizeBeforeCreate);
     }
@@ -251,6 +254,8 @@ public class BloodPressureResourceIntTest {
 
         // Update the bloodPressure
         BloodPressure updatedBloodPressure = bloodPressureRepository.findOne(bloodPressure.getId());
+        // Disconnect from session so that the updates on updatedBloodPressure are not directly saved in db
+        em.detach(updatedBloodPressure);
         updatedBloodPressure
             .timestamp(UPDATED_TIMESTAMP)
             .systolic(UPDATED_SYSTOLIC)
@@ -271,7 +276,8 @@ public class BloodPressureResourceIntTest {
 
         // Validate the BloodPressure in Elasticsearch
         BloodPressure bloodPressureEs = bloodPressureSearchRepository.findOne(testBloodPressure.getId());
-        assertThat(bloodPressureEs).isEqualToComparingFieldByField(testBloodPressure);
+        assertThat(testBloodPressure.getTimestamp()).isEqualTo(testBloodPressure.getTimestamp());
+        assertThat(bloodPressureEs).isEqualToIgnoringGivenFields(testBloodPressure, "timestamp");
     }
 
     @Test

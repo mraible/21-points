@@ -5,7 +5,6 @@ import { JhiParseLinks } from 'ng-jhipster';
 import { Audit } from './audit.model';
 import { AuditsService } from './audits.service';
 import { ITEMS_PER_PAGE } from '../../shared';
-import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 
 @Component({
   selector: 'jhi-audit',
@@ -21,17 +20,17 @@ export class AuditsComponent implements OnInit {
     reverse: boolean;
     toDate: string;
     totalItems: number;
+    datePipe: DatePipe;
 
     constructor(
         private auditsService: AuditsService,
-        private parseLinks: JhiParseLinks,
-        private paginationConfig: PaginationConfig,
-        private datePipe: DatePipe
+        private parseLinks: JhiParseLinks
     ) {
         this.itemsPerPage = ITEMS_PER_PAGE;
         this.page = 1;
         this.reverse = false;
         this.orderProp = 'timestamp';
+        this.datePipe = new DatePipe('en');
     }
 
     getAudits() {
@@ -53,7 +52,7 @@ export class AuditsComponent implements OnInit {
         this.auditsService.query({page: this.page - 1, size: this.itemsPerPage,
             fromDate: this.fromDate, toDate: this.toDate}).subscribe((res) => {
 
-            this.audits = res.json();
+            this.audits = res.body;
             this.links = this.parseLinks.parse(res.headers.get('link'));
             this.totalItems = + res.headers.get('X-Total-Count');
         });

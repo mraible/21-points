@@ -1,9 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
 import { BloodPressureComponent } from './blood-pressure.component';
 import { BloodPressureDetailComponent } from './blood-pressure-detail.component';
 import { BloodPressurePopupComponent } from './blood-pressure-dialog.component';

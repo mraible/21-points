@@ -11,16 +11,19 @@
         "skipLibCheck": true,
         "suppressImplicitAnyIndexErrors": true,
         "outDir": "build/www/app",
-        "lib": ["es6", "dom"],
+        "lib": ["es7", "dom"],
         "typeRoots": [
             "node_modules/@types"
-        ]
+        ],
+        "baseUrl": "./",
+        "paths": {
+            "@angular/*": [
+                "../node_modules/@angular/*"
+            ]
+        }
     },
     "include": [
         "src/main/webapp/app",
         "src/test/javascript/"
-    ],
-    "exclude": [
-        "src/main/webapp/app/app.main-aot.ts"
     ]
 }

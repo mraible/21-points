@@ -11,6 +11,6 @@ import org.springframework.data.jpa.repository.*;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface PreferencesRepository extends JpaRepository<Preferences,Long> {
-    
+public interface PreferencesRepository extends JpaRepository<Preferences, Long> {
+
 }

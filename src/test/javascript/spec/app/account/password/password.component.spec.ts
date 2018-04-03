@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { Observable } from 'rxjs/Rx';
+import { HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+
 import { TwentyOnePointsTestModule } from '../../../test.module';
 import { PasswordComponent } from '../../../../../../main/webapp/app/account/password/password.component';
 import { PasswordService } from '../../../../../../main/webapp/app/account/password/password.service';
@@ -23,7 +25,8 @@ describe('Component Tests', () => {
                     AccountService,
                     PasswordService
                 ]
-            }).overrideTemplate(PasswordComponent, '')
+            })
+            .overrideTemplate(PasswordComponent, '')
             .compileComponents();
         }));
 
@@ -47,7 +50,7 @@ describe('Component Tests', () => {
 
         it('should call Auth.changePassword when passwords match', () => {
             // GIVEN
-            spyOn(service, 'save').and.returnValue(Observable.of(true));
+            spyOn(service, 'save').and.returnValue(Observable.of(new HttpResponse({body: true})));
             comp.password = comp.confirmPassword = 'myPassword';
 
             // WHEN
@@ -59,7 +62,7 @@ describe('Component Tests', () => {
 
         it('should set success to OK upon success', function() {
             // GIVEN
-            spyOn(service, 'save').and.returnValue(Observable.of(true));
+            spyOn(service, 'save').and.returnValue(Observable.of(new HttpResponse({body: true})));
             comp.password = comp.confirmPassword = 'myPassword';
 
             // WHEN

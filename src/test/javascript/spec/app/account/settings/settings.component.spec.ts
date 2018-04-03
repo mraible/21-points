@@ -1,11 +1,9 @@
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { Observable } from 'rxjs/Rx';
-import { JhiLanguageHelper } from '../../../../../../main/webapp/app/shared';
+import { Observable } from 'rxjs/Observable';
+
 import { TwentyOnePointsTestModule } from '../../../test.module';
 import { Principal, AccountService } from '../../../../../../main/webapp/app/shared';
 import { SettingsComponent } from '../../../../../../main/webapp/app/account/settings/settings.component';
-import { MockAccountService } from '../../../helpers/mock-account.service';
-import { MockPrincipal } from '../../../helpers/mock-principal.service';
 
 describe('Component Tests', () => {
 
@@ -21,20 +19,9 @@ describe('Component Tests', () => {
                 imports: [TwentyOnePointsTestModule],
                 declarations: [SettingsComponent],
                 providers: [
-                    {
-                        provide: Principal,
-                        useClass: MockPrincipal
-                    },
-                    {
-                        provide: AccountService,
-                        useClass: MockAccountService
-                    },
-                    {
-                        provide: JhiLanguageHelper,
-                        useValue: null
-                    },
                 ]
-            }).overrideTemplate(SettingsComponent, '')
+            })
+            .overrideTemplate(SettingsComponent, '')
             .compileComponents();
         }));
 

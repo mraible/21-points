@@ -2,10 +2,11 @@ package org.jhipster.health.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -42,6 +43,7 @@ public class Preferences implements Serializable {
     @JoinColumn(unique = true)
     private User user;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
     }
@@ -88,6 +90,7 @@ public class Preferences implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -113,7 +116,7 @@ public class Preferences implements Serializable {
     public String toString() {
         return "Preferences{" +
             "id=" + getId() +
-            ", weekly_goal='" + getWeekly_goal() + "'" +
+            ", weekly_goal=" + getWeekly_goal() +
             ", weight_units='" + getWeight_units() + "'" +
             "}";
     }
