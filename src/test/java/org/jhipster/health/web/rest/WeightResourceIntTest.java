@@ -92,11 +92,7 @@ public class WeightResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-<<<<<<< HEAD
         WeightResource weightResource = new WeightResource(weightRepository, weightSearchRepository, userRepository);
-=======
-        final WeightResource weightResource = new WeightResource(weightRepository, weightSearchRepository);
->>>>>>> jhipster_upgrade
         this.restWeightMockMvc = MockMvcBuilders.standaloneSetup(weightResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

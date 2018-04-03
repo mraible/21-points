@@ -1,16 +1,8 @@
 package org.jhipster.health.config;
 
-<<<<<<< HEAD
-import io.github.jhipster.security.Http401UnauthorizedEntryPoint;
-import org.jhipster.health.security.AuthoritiesConstants;
-import org.jhipster.health.security.HttpsEnforcer;
-import org.jhipster.health.security.jwt.JWTConfigurer;
-import org.jhipster.health.security.jwt.TokenProvider;
-=======
 import org.jhipster.health.security.*;
 import org.jhipster.health.security.jwt.*;
 
->>>>>>> jhipster_upgrade
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
@@ -47,15 +40,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final CorsFilter corsFilter;
 
-<<<<<<< HEAD
-    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder,
-                                 UserDetailsService userDetailsService, TokenProvider tokenProvider,
-                                 CorsFilter corsFilter) {
-=======
     private final SecurityProblemSupport problemSupport;
 
-    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder, UserDetailsService userDetailsService,TokenProvider tokenProvider,CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
->>>>>>> jhipster_upgrade
+    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder,
+                                 UserDetailsService userDetailsService, TokenProvider tokenProvider,
+                                 CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.userDetailsService = userDetailsService;
         this.tokenProvider = tokenProvider;
@@ -130,7 +119,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new JWTConfigurer(tokenProvider);
     }
 
-<<<<<<< HEAD
     @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
         return new SecurityEvaluationContextExtension();
@@ -140,6 +128,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public Filter httpsEnforcerFilter(){
         return new HttpsEnforcer();
     }
-=======
->>>>>>> jhipster_upgrade
 }

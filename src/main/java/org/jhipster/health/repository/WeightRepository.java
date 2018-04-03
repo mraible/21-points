@@ -17,16 +17,10 @@ import java.util.List;
 @Repository
 public interface WeightRepository extends JpaRepository<Weight, Long> {
 
-<<<<<<< HEAD
     @Query("select weight from Weight weight where weight.user.login = ?#{principal.username} order by weight.timestamp desc")
     Page<Weight> findByUserIsCurrentUser(Pageable pageable);
 
     Page<Weight> findAllByOrderByTimestampDesc(Pageable pageable);
 
     List<Weight> findAllByTimestampBetweenOrderByTimestampDesc(ZonedDateTime firstDate, ZonedDateTime secondDate);
-=======
-    @Query("select weight from Weight weight where weight.user.login = ?#{principal.username}")
-    List<Weight> findByUserIsCurrentUser();
-
->>>>>>> jhipster_upgrade
 }

@@ -6,12 +6,9 @@ import org.jhipster.health.domain.BloodPressure;
 import org.jhipster.health.repository.BloodPressureRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
-<<<<<<< HEAD
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
-=======
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
->>>>>>> jhipster_upgrade
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -79,7 +76,7 @@ public class BloodPressureResource {
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
-            bloodPressure.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get());
+            bloodPressure.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
         }
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(result);
@@ -142,7 +139,7 @@ public class BloodPressureResource {
 
         List<BloodPressure> readings =
             bloodPressureRepository.findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(
-                daysAgo, rightNow, SecurityUtils.getCurrentUserLogin());
+                daysAgo, rightNow, SecurityUtils.getCurrentUserLogin().get());
         BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", readings);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -160,7 +157,7 @@ public class BloodPressureResource {
 
         List<BloodPressure> readings = bloodPressureRepository.
             findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(firstDay.atStartOfDay(zonedDateTime.getZone()),
-                lastDay.plusDays(1).atStartOfDay(zonedDateTime.getZone()), SecurityUtils.getCurrentUserLogin());
+                lastDay.plusDays(1).atStartOfDay(zonedDateTime.getZone()), SecurityUtils.getCurrentUserLogin().get());
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
         String yearAndMonth = fmt.format(firstDay);

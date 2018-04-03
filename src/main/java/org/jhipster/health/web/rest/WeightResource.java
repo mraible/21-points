@@ -6,12 +6,9 @@ import org.jhipster.health.domain.Weight;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.WeightRepository;
 import org.jhipster.health.repository.search.WeightSearchRepository;
-<<<<<<< HEAD
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
-=======
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
->>>>>>> jhipster_upgrade
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -79,7 +76,7 @@ public class WeightResource {
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
-            weight.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get());
+            weight.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
         }
         if (weight.getTimestamp() == null) {
             // todo: get user's timezone from preferences

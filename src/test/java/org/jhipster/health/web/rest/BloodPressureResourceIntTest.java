@@ -92,11 +92,7 @@ public class BloodPressureResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-<<<<<<< HEAD
         BloodPressureResource bloodPressureResource = new BloodPressureResource(bloodPressureRepository, bloodPressureSearchRepository, userRepository);
-=======
-        final BloodPressureResource bloodPressureResource = new BloodPressureResource(bloodPressureRepository, bloodPressureSearchRepository);
->>>>>>> jhipster_upgrade
         this.restBloodPressureMockMvc = MockMvcBuilders.standaloneSetup(bloodPressureResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

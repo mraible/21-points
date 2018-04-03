@@ -17,7 +17,6 @@ import java.util.List;
 @Repository
 public interface BloodPressureRepository extends JpaRepository<BloodPressure, Long> {
 
-<<<<<<< HEAD
     @Query("select bloodPressure from BloodPressure bloodPressure where bloodPressure.user.login = ?#{principal.username} order by bloodPressure.timestamp desc")
     Page<BloodPressure> findByUserIsCurrentUser(Pageable pageable);
 
@@ -26,9 +25,4 @@ public interface BloodPressureRepository extends JpaRepository<BloodPressure, Lo
     List<BloodPressure> findAllByTimestampBetweenOrderByTimestampDesc(ZonedDateTime firstDate, ZonedDateTime secondDate);
 
     List<BloodPressure> findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(ZonedDateTime firstDate, ZonedDateTime secondDate, String login);
-=======
-    @Query("select blood_pressure from BloodPressure blood_pressure where blood_pressure.user.login = ?#{principal.username}")
-    List<BloodPressure> findByUserIsCurrentUser();
-
->>>>>>> jhipster_upgrade
 }

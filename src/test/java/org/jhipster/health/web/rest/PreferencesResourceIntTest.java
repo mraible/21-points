@@ -82,11 +82,7 @@ public class PreferencesResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-<<<<<<< HEAD
         PreferencesResource preferencesResource = new PreferencesResource(preferencesRepository, preferencesSearchRepository, userRepository);
-=======
-        final PreferencesResource preferencesResource = new PreferencesResource(preferencesRepository, preferencesSearchRepository);
->>>>>>> jhipster_upgrade
         this.restPreferencesMockMvc = MockMvcBuilders.standaloneSetup(preferencesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

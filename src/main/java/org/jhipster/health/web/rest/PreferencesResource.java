@@ -7,12 +7,9 @@ import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
-<<<<<<< HEAD
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
-=======
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
->>>>>>> jhipster_upgrade
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -72,7 +69,7 @@ public class PreferencesResource {
         }
 
         log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentUserLogin());
-        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get();
+        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get();
         preferences.setUser(user);
 
         Preferences result = preferencesRepository.save(preferences);
@@ -114,7 +111,6 @@ public class PreferencesResource {
     @Timed
     public List<Preferences> getAllPreferences() {
         log.debug("REST request to get all Preferences");
-<<<<<<< HEAD
         List<Preferences> preferences = new ArrayList<>();
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             preferences = preferencesRepository.findAll();
@@ -134,7 +130,7 @@ public class PreferencesResource {
     @GetMapping("/my-preferences")
     @Timed
     public ResponseEntity<Preferences> getUserPreferences() {
-        String username = SecurityUtils.getCurrentUserLogin();
+        String username = SecurityUtils.getCurrentUserLogin().get();
         log.debug("REST request to get Preferences : {}", username);
         Optional<Preferences> preferences = preferencesRepository.findOneByUserLogin(username);
 
@@ -146,10 +142,6 @@ public class PreferencesResource {
             return new ResponseEntity<>(defaultPreferences, HttpStatus.OK);
         }
     }
-=======
-        return preferencesRepository.findAll();
-        }
->>>>>>> jhipster_upgrade
 
     /**
      * GET  /preferences/:id : get the "id" preferences.

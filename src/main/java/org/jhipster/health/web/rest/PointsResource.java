@@ -6,12 +6,9 @@ import org.jhipster.health.domain.Points;
 import org.jhipster.health.repository.PointsRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
-<<<<<<< HEAD
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
-=======
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
->>>>>>> jhipster_upgrade
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -78,7 +75,7 @@ public class PointsResource {
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
-            points.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get());
+            points.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
         }
         Points result = pointsRepository.save(points);
         pointsSearchRepository.save(result);
@@ -145,7 +142,7 @@ public class PointsResource {
         LocalDate endOfWeek = now.with(DayOfWeek.SUNDAY);
         log.debug("Looking for points between: {} and {}", startOfWeek, endOfWeek);
 
-        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startOfWeek, endOfWeek, SecurityUtils.getCurrentUserLogin());
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startOfWeek, endOfWeek, SecurityUtils.getCurrentUserLogin().get());
         return calculatePoints(startOfWeek, points);
     }
 
@@ -158,7 +155,7 @@ public class PointsResource {
         // Get first and last days of week
         LocalDate startOfWeek = date.with(DayOfWeek.MONDAY);
         LocalDate endOfWeek = date.with(DayOfWeek.SUNDAY);
-        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startOfWeek, endOfWeek, SecurityUtils.getCurrentUserLogin());
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(startOfWeek, endOfWeek, SecurityUtils.getCurrentUserLogin().get());
         return calculatePoints(startOfWeek, points);
     }
 
@@ -179,7 +176,7 @@ public class PointsResource {
     public ResponseEntity<PointsPerMonth> getPointsByMonth(@PathVariable @DateTimeFormat(pattern="yyyy-MM") YearMonth yearWithMonth) {
         // Get last day of the month
         LocalDate endOfMonth = yearWithMonth.atEndOfMonth();
-        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(yearWithMonth.atDay(1), endOfMonth, SecurityUtils.getCurrentUserLogin());
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(yearWithMonth.atDay(1), endOfMonth, SecurityUtils.getCurrentUserLogin().get());
         PointsPerMonth pointsPerMonth = new PointsPerMonth(yearWithMonth, points);
         return new ResponseEntity<>(pointsPerMonth, HttpStatus.OK);
     }

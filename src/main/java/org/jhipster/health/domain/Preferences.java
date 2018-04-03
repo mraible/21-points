@@ -116,13 +116,8 @@ public class Preferences implements Serializable {
     public String toString() {
         return "Preferences{" +
             "id=" + getId() +
-<<<<<<< HEAD
             ", weeklyGoal='" + getWeeklyGoal() + "'" +
             ", weightUnits='" + getWeightUnits() + "'" +
-=======
-            ", weekly_goal=" + getWeekly_goal() +
-            ", weight_units='" + getWeight_units() + "'" +
->>>>>>> jhipster_upgrade
             "}";
     }
 }

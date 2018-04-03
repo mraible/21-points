@@ -38,7 +38,6 @@ public class Weight implements Serializable {
     @ManyToOne
     private User user;
 
-<<<<<<< HEAD
     public Weight() {}
 
     public Weight(ZonedDateTime timestamp, Double weight, User user) {
@@ -47,9 +46,8 @@ public class Weight implements Serializable {
         this.user = user;
     }
 
-=======
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
->>>>>>> jhipster_upgrade
+
     public Long getId() {
         return id;
     }

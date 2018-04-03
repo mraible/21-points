@@ -97,11 +97,7 @@ public class PointsResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-<<<<<<< HEAD
         PointsResource pointsResource = new PointsResource(pointsRepository, pointsSearchRepository, userRepository);
-=======
-        final PointsResource pointsResource = new PointsResource(pointsRepository, pointsSearchRepository);
->>>>>>> jhipster_upgrade
         this.restPointsMockMvc = MockMvcBuilders.standaloneSetup(pointsResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
