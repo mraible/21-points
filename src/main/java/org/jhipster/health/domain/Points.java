@@ -2,10 +2,11 @@ package org.jhipster.health.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -55,6 +56,8 @@ public class Points implements Serializable {
         this.alcohol = alcohol;
         this.user = user;
     }
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     public Long getId() {
         return id;
@@ -141,6 +144,7 @@ public class Points implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -167,9 +171,9 @@ public class Points implements Serializable {
         return "Points{" +
             "id=" + getId() +
             ", date='" + getDate() + "'" +
-            ", exercise='" + getExercise() + "'" +
-            ", meals='" + getMeals() + "'" +
-            ", alcohol='" + getAlcohol() + "'" +
+            ", exercise=" + getExercise() +
+            ", meals=" + getMeals() +
+            ", alcohol=" + getAlcohol() +
             ", notes='" + getNotes() + "'" +
             "}";
     }

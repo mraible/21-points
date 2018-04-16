@@ -15,7 +15,7 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface PointsRepository extends JpaRepository<Points,Long> {
+public interface PointsRepository extends JpaRepository<Points, Long> {
 
     @Query("select points from Points points where points.user.login = ?#{principal.username} order by points.date desc")
     Page<Points> findByUserIsCurrentUser(Pageable pageable);

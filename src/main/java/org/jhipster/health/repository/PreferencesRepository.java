@@ -16,5 +16,4 @@ import java.util.Optional;
 public interface PreferencesRepository extends JpaRepository<Preferences,Long> {
 
     Optional<Preferences> findOneByUserLogin(String login);
-
 }

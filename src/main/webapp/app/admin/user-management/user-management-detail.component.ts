@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
+import { Subscription } from 'rxjs/Subscription';
 
 import { User, UserService } from '../../shared';
 
@@ -26,8 +26,8 @@ export class UserMgmtDetailComponent implements OnInit, OnDestroy {
     }
 
     load(login) {
-        this.userService.find(login).subscribe((user) => {
-            this.user = user;
+        this.userService.find(login).subscribe((response) => {
+            this.user = response.body;
         });
     }
 

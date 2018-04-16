@@ -1,32 +1,23 @@
 import { browser, element, by } from 'protractor';
+import { NavBarPage } from './../page-objects/jhi-page-objects';
 
 describe('administration', () => {
 
-    const username = element(by.id('username'));
-    const password = element(by.id('password'));
-    const accountMenu = element(by.id('account-menu'));
-    const adminMenu = element(by.id('admin-menu'));
-    const login = element(by.id('login'));
-    const logout = element(by.id('logout'));
+    let navBarPage: NavBarPage;
 
     beforeAll(() => {
         browser.get('/');
-
-        accountMenu.click();
-        login.click();
-
-        username.sendKeys('admin');
-        password.sendKeys('admin');
-        element(by.css('button[type=submit]')).click();
+        browser.waitForAngular();
+        navBarPage = new NavBarPage(true);
+        navBarPage.getSignInPage().autoSignInUsing('admin', 'admin');
         browser.waitForAngular();
     });
 
     beforeEach(() => {
-        adminMenu.click();
+        navBarPage.clickOnAdminMenu();
     });
-
     it('should load user management', () => {
-        element(by.css('[routerLink="user-management"]')).click();
+        navBarPage.clickOnAdmin('user-management');
         const expect1 = /userManagement.home.title/;
         element.all(by.css('h2 span')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect1);
@@ -34,7 +25,7 @@ describe('administration', () => {
     });
 
     it('should load metrics', () => {
-        element(by.css('[routerLink="jhi-metrics"]')).click();
+        navBarPage.clickOnAdmin('jhi-metrics');
         const expect1 = /metrics.title/;
         element.all(by.css('h2 span')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect1);
@@ -42,7 +33,7 @@ describe('administration', () => {
     });
 
     it('should load health', () => {
-        element(by.css('[routerLink="jhi-health"]')).click();
+        navBarPage.clickOnAdmin('jhi-health');
         const expect1 = /health.title/;
         element.all(by.css('h2 span')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect1);
@@ -50,7 +41,7 @@ describe('administration', () => {
     });
 
     it('should load configuration', () => {
-        element(by.css('[routerLink="jhi-configuration"]')).click();
+        navBarPage.clickOnAdmin('jhi-configuration');
         const expect1 = /configuration.title/;
         element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect1);
@@ -58,7 +49,7 @@ describe('administration', () => {
     });
 
     it('should load audits', () => {
-        element(by.css('[routerLink="audits"]')).click();
+        navBarPage.clickOnAdmin('audits');
         const expect1 = /audits.title/;
         element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect1);
@@ -66,7 +57,7 @@ describe('administration', () => {
     });
 
     it('should load logs', () => {
-        element(by.css('[routerLink="logs"]')).click();
+        navBarPage.clickOnAdmin('logs');
         const expect1 = /logs.title/;
         element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect1);
@@ -74,7 +65,6 @@ describe('administration', () => {
     });
 
     afterAll(() => {
-        accountMenu.click();
-        logout.click();
+        navBarPage.autoSignOut();
     });
 });

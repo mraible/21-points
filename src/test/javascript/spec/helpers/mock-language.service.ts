@@ -1,5 +1,6 @@
 import { SpyObject } from './spyobject';
 import { JhiLanguageService } from 'ng-jhipster';
+import { JhiLanguageHelper } from './../../../../main/webapp/app/shared/language/language.helper';
 import Spy = jasmine.Spy;
 
 export class MockLanguageService extends SpyObject {
@@ -23,4 +24,15 @@ export class MockLanguageService extends SpyObject {
     addLocation(location: string) {}
 
     reload() {}
+}
+
+export class MockLanguageHelper extends SpyObject {
+
+    getAllSpy: Spy;
+
+    constructor() {
+        super(JhiLanguageHelper);
+
+        this.getAllSpy = this.spy('getAll').andReturn(Promise.resolve(['en', 'fr']));
+    }
 }

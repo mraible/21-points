@@ -1,37 +1,59 @@
-import groovy.json.JsonSlurper
 import org.gradle.internal.os.OperatingSystem
 
 buildscript {
     repositories {
         mavenLocal()
-        mavenCentral()
         jcenter()
         maven { url "http://repo.spring.io/plugins-release" }
-        maven { url "http://repo.spring.io/milestone" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
-        classpath "net.ltgt.gradle:gradle-apt-plugin:0.9"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
-        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
-        classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
-        classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
-        classpath 'gradle.plugin.com.heroku.sdk:heroku-gradle:0.2.0'
+        classpath "io.spring.gradle:propdeps-plugin:0.0.9.RELEASE"
+        classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.17"
+        classpath "gradle.plugin.com.heroku.sdk:heroku-gradle:0.2.0"
         //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
     }
+}
+
+plugins {
+    id "org.sonarqube" version "2.5"
+    id "net.ltgt.apt-eclipse" version "0.13"
+    id "net.ltgt.apt-idea" version "0.13"
+    id "net.ltgt.apt" version "0.13"
+    id "io.spring.dependency-management" version "1.0.3.RELEASE"
+    id "com.github.lkishalmi.gatling" version "0.7.1"
+    id "com.moowork.node" version "1.2.0"
+    //jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
 }
 
 apply plugin: 'java'
 sourceCompatibility=1.8
 targetCompatibility=1.8
+// Until JHipster supports JDK 9
+assert System.properties['java.specification.version'] == '1.8'
+
 apply plugin: 'maven'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 apply plugin: 'propdeps'
 apply plugin: 'com.moowork.node'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'idea'
+
+dependencyManagement {
+  imports {
+    mavenBom 'io.github.jhipster:jhipster-dependencies:' + jhipster_dependencies_version
+    //jhipster-needle-gradle-dependency-management - JHipster will add additional dependencies management here
+  }
+}
+
 defaultTasks 'bootRun'
+
+group = 'org.jhipster.health'
+version = '4.5.0-SNAPSHOT'
+
+description = ''
 
 bootRepackage {
    mainClass = 'org.jhipster.health.TwentyOnePointsApp'
@@ -55,7 +77,7 @@ if (OperatingSystem.current().isWindows()) {
         doFirst {
             manifest {
                 attributes 'Class-Path': configurations.runtime.files.collect {
-                    it.toURL().toString().replaceFirst(/file:\/+/, '/').replaceAll(' ', '%20')
+                    it.toURI().toURL().toString().replaceFirst(/file:\/+/, '/').replaceAll(' ', '%20')
                 }.join(' ')
             }
         }
@@ -75,8 +97,7 @@ if (OperatingSystem.current().isWindows()) {
 }
 
 test {
-    include '**/*UnitTest*'
-    include '**/*IntTest*'
+    exclude '**/CucumberTest*'
 
     // uncomment if the tests reports are not generated
     // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
@@ -89,12 +110,13 @@ task testReport(type: TestReport) {
     reportOn test
 }
 
+
+apply from: 'gradle/docker.gradle'
+apply from: 'gradle/heroku.gradle'
 apply from: 'gradle/sonar.gradle'
 apply from: 'gradle/liquibase.gradle'
 apply from: 'gradle/gatling.gradle'
 apply from: 'gradle/mapstruct.gradle'
-apply from: 'gradle/docker.gradle'
-apply from: 'gradle/heroku.gradle'
 //jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
 
 if (project.hasProperty('prod')) {
@@ -111,11 +133,6 @@ if (project.hasProperty('prometheus')) {
     apply from: 'gradle/prometheus.gradle'
 }
 
-group = 'org.jhipster.health'
-version = '4.1.0'
-
-description = ''
-
 configurations {
     providedRuntime
     compile.exclude module: "spring-boot-starter-tomcat"
@@ -123,27 +140,19 @@ configurations {
 
 repositories {
     mavenLocal()
-    mavenCentral()
     jcenter()
-    maven { url 'http://repo.spring.io/milestone' }
-    maven { url 'http://repo.spring.io/snapshot' }
-    maven { url 'https://repository.jboss.org/nexus/content/repositories/releases' }
-    maven { url 'https://oss.sonatype.org/content/repositories/releases' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url 'http://repo.maven.apache.org/maven2' }
 }
 
 dependencies {
-    compile "io.github.jhipster:jhipster:${jhipster_server_version}"
-    compile "io.dropwizard.metrics:metrics-core:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-jcache:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-jvm:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-servlet:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-json:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-servlets:${dropwizard_metrics_version}"
-    compile ("net.logstash.logback:logstash-logback-encoder:${logstash_logback_encoder_version}") {
-        exclude(group: 'ch.qos.logback')
-    }
+    compile "org.springframework.boot:spring-boot-starter-cache"
+    compile "io.github.jhipster:jhipster"
+    compile "io.dropwizard.metrics:metrics-core"
+    compile "io.dropwizard.metrics:metrics-jcache"
+    compile "io.dropwizard.metrics:metrics-json"
+    compile "io.dropwizard.metrics:metrics-jvm"
+    compile "io.dropwizard.metrics:metrics-servlet"
+    compile "io.dropwizard.metrics:metrics-servlets"
+    compile "net.logstash.logback:logstash-logback-encoder"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-json-org"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-hppc"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
@@ -151,20 +160,20 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations"
     compile "com.fasterxml.jackson.core:jackson-databind"
     compile "com.fasterxml.jackson.module:jackson-module-afterburner"
-    compile ("com.ryantenney.metrics:metrics-spring:${metrics_spring_version}")
+    compile "com.ryantenney.metrics:metrics-spring"
     compile "javax.cache:cache-api"
-    compile "org.hibernate:hibernate-core:${hibernate_version}"
-    compile ("com.zaxxer:HikariCP:${hikaricp_version}")
-    compile "org.apache.commons:commons-lang3:${commons_lang_version}"
-    compile "commons-io:commons-io:${commons_io_version}"
+    compile "org.hibernate:hibernate-core"
+    compile "com.zaxxer:HikariCP"
+    compile "org.apache.commons:commons-lang3"
+    compile "commons-io:commons-io"
     compile "javax.transaction:javax.transaction-api"
     compile "org.ehcache:ehcache"
-    compile "org.hibernate:hibernate-jcache:${hibernate_version}"
-    compile "org.hibernate:hibernate-envers:${hibernate_version}"
+    compile "org.hibernate:hibernate-jcache"
+    compile "org.hibernate:hibernate-entitymanager"
+    compile "org.hibernate:hibernate-envers"
     compile "org.hibernate:hibernate-validator"
-    compile "org.hibernate:hibernate-entitymanager:${hibernate_version}"
-    compile ("org.liquibase:liquibase-core")
-    compile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
+    compile "org.liquibase:liquibase-core"
+    compile "com.mattbertolini:liquibase-slf4j"
     compile "org.springframework.boot:spring-boot-actuator"
     compile "org.springframework.boot:spring-boot-autoconfigure"
     compile "org.springframework.boot:spring-boot-loader-tools"
@@ -182,40 +191,34 @@ dependencies {
     }
     compile "org.springframework.boot:spring-boot-starter-undertow"
     compile "org.springframework.boot:spring-boot-starter-thymeleaf"
-    compile "org.springframework.boot:spring-boot-starter-cloud-connectors"
-    compile ("org.springframework:spring-context-support")
+    compile "org.zalando:problem-spring-web"
+    compile "org.springframework.cloud:spring-cloud-spring-service-connector"
+    compile "org.springframework:spring-context-support"
     compile "org.springframework.security:spring-security-config"
     compile "org.springframework.security:spring-security-data"
     compile "org.springframework.security:spring-security-web"
-    compile "io.jsonwebtoken:jjwt:${jjwt_version}"
-    compile ("io.springfox:springfox-swagger2:${springfox_version}") {
+    compile "io.jsonwebtoken:jjwt"
+    compile ("io.springfox:springfox-swagger2") {
         exclude module: 'mapstruct'
     }
-    compile "io.springfox:springfox-bean-validators:${springfox_version}"
+    compile "io.springfox:springfox-bean-validators"
     compile "org.postgresql:postgresql"
-    compile "com.h2database:h2"
     compile "org.mapstruct:mapstruct-jdk8:${mapstruct_version}"
-    testCompile "org.awaitility:awaitility:${awaitility_version}"
     testCompile "com.jayway.jsonpath:json-path"
     testCompile ("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'com.vaadin.external.google', module: 'android-json'
     }
     testCompile "org.springframework.security:spring-security-test"
     testCompile "org.springframework.boot:spring-boot-test"
-    testCompile "org.assertj:assertj-core:${assertj_version}"
+    testCompile "org.assertj:assertj-core"
     testCompile "junit:junit"
     testCompile "org.mockito:mockito-core"
-    testCompile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
+    testCompile "com.mattbertolini:liquibase-slf4j"
     testCompile "org.hamcrest:hamcrest-library"
-    testCompile "io.gatling.highcharts:gatling-charts-highcharts:${gatling_version}"
-    optional ("org.springframework.boot:spring-boot-configuration-processor:${spring_boot_version}") {
+    optional ("org.springframework.boot:spring-boot-configuration-processor") {
         exclude group: 'com.vaadin.external.google', module: 'android-json'
     }
     //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
-}
-
-clean {
-    delete "target"
 }
 
 task cleanResources(type: Delete) {
@@ -223,7 +226,7 @@ task cleanResources(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.0'
+    gradleVersion = '4.4'
 }
 
 task stage(dependsOn: 'bootRepackage') {

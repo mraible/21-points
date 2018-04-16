@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager  } from 'ng-jhipster';
+import { HttpResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs/Subscription';
+import { JhiEventManager } from 'ng-jhipster';
 
 import { BloodPressure } from './blood-pressure.model';
 import { BloodPressureService } from './blood-pressure.service';
@@ -31,9 +32,10 @@ export class BloodPressureDetailComponent implements OnInit, OnDestroy {
     }
 
     load(id) {
-        this.bloodPressureService.find(id).subscribe((bloodPressure) => {
-            this.bloodPressure = bloodPressure;
-        });
+        this.bloodPressureService.find(id)
+            .subscribe((bloodPressureResponse: HttpResponse<BloodPressure>) => {
+                this.bloodPressure = bloodPressureResponse.body;
+            });
     }
     previousState() {
         window.history.back();

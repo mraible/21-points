@@ -15,7 +15,7 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface WeightRepository extends JpaRepository<Weight,Long> {
+public interface WeightRepository extends JpaRepository<Weight, Long> {
 
     @Query("select weight from Weight weight where weight.user.login = ?#{principal.username} order by weight.timestamp desc")
     Page<Weight> findByUserIsCurrentUser(Pageable pageable);

@@ -1,9 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes, CanActivate } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import { UserRouteAccessService } from '../../shared';
-import { JhiPaginationUtil } from 'ng-jhipster';
-
 import { PreferencesComponent } from './preferences.component';
 import { PreferencesDetailComponent } from './preferences-detail.component';
 import { PreferencesPopupComponent } from './preferences-dialog.component';

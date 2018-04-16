@@ -1,6 +1,7 @@
 import { Injectable, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { HttpResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { BloodPressure } from './blood-pressure.model';
 import { BloodPressureService } from './blood-pressure.service';
@@ -24,12 +25,14 @@ export class BloodPressurePopupService {
             }
 
             if (id) {
-                this.bloodPressureService.find(id).subscribe((bloodPressure) => {
-                    bloodPressure.timestamp = this.datePipe
-                        .transform(bloodPressure.timestamp, 'yyyy-MM-ddThh:mm');
-                    this.ngbModalRef = this.bloodPressureModalRef(component, bloodPressure);
-                    resolve(this.ngbModalRef);
-                });
+                this.bloodPressureService.find(id)
+                    .subscribe((bloodPressureResponse: HttpResponse<BloodPressure>) => {
+                        const bloodPressure: BloodPressure = bloodPressureResponse.body;
+                        bloodPressure.timestamp = this.datePipe
+                            .transform(bloodPressure.timestamp, 'yyyy-MM-ddTHH:mm:ss');
+                        this.ngbModalRef = this.bloodPressureModalRef(component, bloodPressure);
+                        resolve(this.ngbModalRef);
+                    });
             } else {
                 // setTimeout used as a workaround for getting ExpressionChangedAfterItHasBeenCheckedError
                 setTimeout(() => {

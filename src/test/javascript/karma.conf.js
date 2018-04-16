@@ -1,6 +1,6 @@
 const webpackConfig = require('../../../webpack/webpack.test.js');
 
-const WATCH = process.argv.indexOf('--watch') > -1;
+const WATCH = process.argv.includes('--watch');
 
 module.exports = (config) => {
     config.set({
@@ -46,6 +46,7 @@ module.exports = (config) => {
 
         remapIstanbulReporter: {
             reports: { // eslint-disable-line
+                'lcovonly': 'build/test-results/coverage/report-lcov/lcov.info',
                 'html': 'build/test-results/coverage',
                 'text-summary': null
             }

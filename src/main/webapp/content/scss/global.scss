@@ -1,3 +1,4 @@
+@import 'bootstrap-variables';
 
 /* ==============================================================
 Bootstrap tweaks
@@ -7,6 +8,15 @@ body, h1, h2, h3, h4 {
     font-weight: 300;
 }
 
+a {
+    color: #533f03;
+    font-weight: bold;
+}
+
+a:hover {
+    color: #533f03;
+    font-weight: bold;
+}
 
 /* ==========================================================================
 Browser Upgrade Prompt
@@ -254,5 +264,12 @@ only screen and (                min-resolution: 2dppx) {
         background-size: contain;
     }
 }
+
+.thread-dump-modal-lock {
+    max-width: 450px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+ }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */

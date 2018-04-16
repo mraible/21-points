@@ -9,6 +9,7 @@ import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -64,11 +65,11 @@ public class PreferencesResource {
     public ResponseEntity<Preferences> createPreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
         log.debug("REST request to save Preferences : {}", preferences);
         if (preferences.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new preferences cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new preferences cannot already have an ID", ENTITY_NAME, "idexists");
         }
 
         log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentUserLogin());
-        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get();
+        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get();
         preferences.setUser(user);
 
         Preferences result = preferencesRepository.save(preferences);
@@ -129,7 +130,7 @@ public class PreferencesResource {
     @GetMapping("/my-preferences")
     @Timed
     public ResponseEntity<Preferences> getUserPreferences() {
-        String username = SecurityUtils.getCurrentUserLogin();
+        String username = SecurityUtils.getCurrentUserLogin().get();
         log.debug("REST request to get Preferences : {}", username);
         Optional<Preferences> preferences = preferencesRepository.findOneByUserLogin(username);
 

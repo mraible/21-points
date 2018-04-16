@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -85,6 +86,7 @@ public class PreferencesResourceIntTest {
         this.restPreferencesMockMvc = MockMvcBuilders.standaloneSetup(preferencesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -134,7 +136,7 @@ public class PreferencesResourceIntTest {
 
         // Validate the Preferences in Elasticsearch
         Preferences preferencesEs = preferencesSearchRepository.findOne(testPreferences.getId());
-        assertThat(preferencesEs).isEqualToComparingFieldByField(testPreferences);
+        assertThat(preferencesEs).isEqualToIgnoringGivenFields(testPreferences);
     }
 
     @Test
@@ -151,7 +153,7 @@ public class PreferencesResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(preferences)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Preferences in the database
         List<Preferences> preferencesList = preferencesRepository.findAll();
         assertThat(preferencesList).hasSize(databaseSizeBeforeCreate);
     }
@@ -246,6 +248,8 @@ public class PreferencesResourceIntTest {
 
         // Update the preferences
         Preferences updatedPreferences = preferencesRepository.findOne(preferences.getId());
+        // Disconnect from session so that the updates on updatedPreferences are not directly saved in db
+        em.detach(updatedPreferences);
         updatedPreferences
             .weeklyGoal(UPDATED_WEEKLY_GOAL)
             .weightUnits(UPDATED_WEIGHT_UNITS);
@@ -264,7 +268,7 @@ public class PreferencesResourceIntTest {
 
         // Validate the Preferences in Elasticsearch
         Preferences preferencesEs = preferencesSearchRepository.findOne(testPreferences.getId());
-        assertThat(preferencesEs).isEqualToComparingFieldByField(testPreferences);
+        assertThat(preferencesEs).isEqualToIgnoringGivenFields(testPreferences);
     }
 
     @Test
