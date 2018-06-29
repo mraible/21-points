@@ -1,0 +1,68 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="myPreferencesLabel" jhiTranslate="twentyOnePointsApp.preferences.home.createOrEditLabel">Create or edit a Preferences</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" [hidden]="!preferences.id">
+            <label for="id" jhiTranslate="global.field.id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                   [(ngModel)]="preferences.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.weekly_goal" for="field_weekly_goal">Weekly Goal</label>
+            <input type="number" class="form-control" name="weekly_goal" id="field_weekly_goal"
+                [(ngModel)]="preferences.weekly_goal" required min="10" max="21"/>
+            <div [hidden]="!(editForm.controls.weekly_goal?.dirty && editForm.controls.weekly_goal?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.weekly_goal?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.weekly_goal?.errors?.min" jhiTranslate="entity.validation.min" translateValues="{ min: 10 }">
+                    This field should be at least 10.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.weekly_goal?.errors?.max" jhiTranslate="entity.validation.max" translateValues="{ max: 21 }">
+                    This field cannot be more than 21.
+                </small>
+                <small class="form-text text-danger"
+                    [hidden]="!editForm.controls.weekly_goal?.errors?.number" jhiTranslate="entity.validation.number">
+                    This field should be a number.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.weight_units" for="field_weight_units">Weight Units</label>
+            <select class="form-control" name="weight_units" [(ngModel)]="preferences.weight_units" id="field_weight_units"  required>
+                <option value="kg">{{'twentyOnePointsApp.Units.kg' | translate}}</option>
+                <option value="lb">{{'twentyOnePointsApp.Units.lb' | translate}}</option>
+            </select>
+            <div [hidden]="!(editForm.controls.weight_units?.dirty && editForm.controls.weight_units?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.weight_units?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.user" for="field_user">User</label>
+            <select class="form-control" id="field_user" name="user" [(ngModel)]="preferences.user" >
+                <option [ngValue]="null"></option>
+                <option [ngValue]="userOption.id === preferences.user?.id ? preferences.user : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+            <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+    </div>
+</form>

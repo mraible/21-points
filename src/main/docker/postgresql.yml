@@ -1,0 +1,11 @@
+version: '2'
+services:
+    twentyonepoints-postgresql:
+        image: postgres:9.6.5
+        # volumes:
+        #     - ~/volumes/jhipster/TwentyOnePoints/postgresql/:/var/lib/postgresql/data/
+        environment:
+            - POSTGRES_USER=TwentyOnePoints
+            - POSTGRES_PASSWORD=
+        ports:
+            - 5432:5432

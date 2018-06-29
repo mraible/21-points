@@ -1,0 +1,46 @@
+
+<div *ngIf="points">
+    <h2><span jhiTranslate="twentyOnePointsApp.points.detail.title">Points</span> {{points.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="twentyOnePointsApp.points.date">Date</span></dt>
+        <dd>
+            <span>{{points.date | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span jhiTranslate="twentyOnePointsApp.points.exercise">Exercise</span></dt>
+        <dd>
+            <span>{{points.exercise}}</span>
+        </dd>
+        <dt><span jhiTranslate="twentyOnePointsApp.points.meals">Meals</span></dt>
+        <dd>
+            <span>{{points.meals}}</span>
+        </dd>
+        <dt><span jhiTranslate="twentyOnePointsApp.points.alcohol">Alcohol</span></dt>
+        <dd>
+            <span>{{points.alcohol}}</span>
+        </dd>
+        <dt><span jhiTranslate="twentyOnePointsApp.points.notes">Notes</span></dt>
+        <dd>
+            <span>{{points.notes}}</span>
+        </dd>
+        <dt><span jhiTranslate="twentyOnePointsApp.points.user">User</span></dt>
+        <dd>
+            {{points.user?.login}}
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'points/'+ points.id + '/edit'} }]"
+            replaceUrl="true"
+            queryParamsHandling="merge"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+    </button>
+</div>
