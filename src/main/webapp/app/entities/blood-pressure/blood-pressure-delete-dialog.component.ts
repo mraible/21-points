@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { BloodPressure } from './blood-pressure.model';
-import { BloodPressurePopupService } from './blood-pressure-popup.service';
+import { IBloodPressure } from 'app/shared/model/blood-pressure.model';
 import { BloodPressureService } from './blood-pressure.service';
 
 @Component({
@@ -13,22 +12,20 @@ import { BloodPressureService } from './blood-pressure.service';
     templateUrl: './blood-pressure-delete-dialog.component.html'
 })
 export class BloodPressureDeleteDialogComponent {
-
-    bloodPressure: BloodPressure;
+    bloodPressure: IBloodPressure;
 
     constructor(
         private bloodPressureService: BloodPressureService,
         public activeModal: NgbActiveModal,
         private eventManager: JhiEventManager
-    ) {
-    }
+    ) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.bloodPressureService.delete(id).subscribe((response) => {
+        this.bloodPressureService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'bloodPressureListModification',
                 content: 'Deleted an bloodPressure'
@@ -43,22 +40,33 @@ export class BloodPressureDeleteDialogComponent {
     template: ''
 })
 export class BloodPressureDeletePopupComponent implements OnInit, OnDestroy {
+    private ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private bloodPressurePopupService: BloodPressurePopupService
-    ) {}
+    constructor(private activatedRoute: ActivatedRoute, private router: Router, private modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.bloodPressurePopupService
-                .open(BloodPressureDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ bloodPressure }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(BloodPressureDeleteDialogComponent as Component, {
+                    size: 'lg',
+                    backdrop: 'static'
+                });
+                this.ngbModalRef.componentInstance.bloodPressure = bloodPressure;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

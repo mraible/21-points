@@ -2,9 +2,7 @@ package org.jhipster.health.web.rest;
 
 import org.jhipster.health.TwentyOnePointsApp;
 
-import org.jhipster.health.domain.User;
 import org.jhipster.health.domain.Weight;
-import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.WeightRepository;
 import org.jhipster.health.repository.search.WeightSearchRepository;
 import org.jhipster.health.web.rest.errors.ExceptionTranslator;
@@ -13,10 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -24,25 +22,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.jhipster.health.web.rest.TestUtil.sameInstant;
+
 import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -53,10 +46,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TwentyOnePointsApp.class)
 public class WeightResourceIntTest {
-    private final Logger log = LoggerFactory.getLogger(WeightResourceIntTest.class);
 
-    private static final ZonedDateTime DEFAULT_TIMESTAMP = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_TIMESTAMP = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final Instant DEFAULT_TIMESTAMP = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_TIMESTAMP = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     private static final Double DEFAULT_WEIGHT = 1D;
     private static final Double UPDATED_WEIGHT = 2D;
@@ -64,11 +56,14 @@ public class WeightResourceIntTest {
     @Autowired
     private WeightRepository weightRepository;
 
-    @Autowired
-    private WeightSearchRepository weightSearchRepository;
 
+    /**
+     * This repository is mocked in the org.jhipster.health.repository.search test package.
+     *
+     * @see org.jhipster.health.repository.search.WeightSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private UserRepository userRepository;
+    private WeightSearchRepository mockWeightSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -92,7 +87,7 @@ public class WeightResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        WeightResource weightResource = new WeightResource(weightRepository, weightSearchRepository, userRepository);
+        final WeightResource weightResource = new WeightResource(weightRepository, mockWeightSearchRepository, userRepository);
         this.restWeightMockMvc = MockMvcBuilders.standaloneSetup(weightResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -115,7 +110,6 @@ public class WeightResourceIntTest {
 
     @Before
     public void initTest() {
-        weightSearchRepository.deleteAll();
         weight = createEntity(em);
     }
 
@@ -145,9 +139,7 @@ public class WeightResourceIntTest {
         assertThat(testWeight.getWeight()).isEqualTo(DEFAULT_WEIGHT);
 
         // Validate the Weight in Elasticsearch
-        Weight weightEs = weightSearchRepository.findOne(testWeight.getId());
-        assertThat(testWeight.getTimestamp()).isEqualTo(testWeight.getTimestamp());
-        assertThat(weightEs).isEqualToIgnoringGivenFields(testWeight, "timestamp");
+        verify(mockWeightSearchRepository, times(1)).save(testWeight);
     }
 
     @Test
@@ -167,6 +159,9 @@ public class WeightResourceIntTest {
         // Validate the Weight in the database
         List<Weight> weightList = weightRepository.findAll();
         assertThat(weightList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Weight in Elasticsearch
+        verify(mockWeightSearchRepository, times(0)).save(weight);
     }
 
     @Test
@@ -223,7 +218,7 @@ public class WeightResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(weight.getId().intValue())))
-            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
+            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP.toString())))
             .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.doubleValue())));
     }
 
@@ -238,7 +233,7 @@ public class WeightResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(weight.getId().intValue()))
-            .andExpect(jsonPath("$.timestamp").value(sameInstant(DEFAULT_TIMESTAMP)))
+            .andExpect(jsonPath("$.timestamp").value(DEFAULT_TIMESTAMP.toString()))
             .andExpect(jsonPath("$.weight").value(DEFAULT_WEIGHT.doubleValue()));
     }
 
@@ -255,11 +250,11 @@ public class WeightResourceIntTest {
     public void updateWeight() throws Exception {
         // Initialize the database
         weightRepository.saveAndFlush(weight);
-        weightSearchRepository.save(weight);
+
         int databaseSizeBeforeUpdate = weightRepository.findAll().size();
 
         // Update the weight
-        Weight updatedWeight = weightRepository.findOne(weight.getId());
+        Weight updatedWeight = weightRepository.findById(weight.getId()).get();
         // Disconnect from session so that the updates on updatedWeight are not directly saved in db
         em.detach(updatedWeight);
         updatedWeight
@@ -279,9 +274,7 @@ public class WeightResourceIntTest {
         assertThat(testWeight.getWeight()).isEqualTo(UPDATED_WEIGHT);
 
         // Validate the Weight in Elasticsearch
-        Weight weightEs = weightSearchRepository.findOne(testWeight.getId());
-        assertThat(testWeight.getTimestamp()).isEqualTo(testWeight.getTimestamp());
-        assertThat(weightEs).isEqualToIgnoringGivenFields(testWeight, "timestamp");
+        verify(mockWeightSearchRepository, times(1)).save(testWeight);
     }
 
     @Test
@@ -302,11 +295,14 @@ public class WeightResourceIntTest {
             .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(weight)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Weight in the database
         List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Weight in Elasticsearch
+        verify(mockWeightSearchRepository, times(0)).save(weight);
     }
 
     @Test
@@ -314,7 +310,7 @@ public class WeightResourceIntTest {
     public void deleteWeight() throws Exception {
         // Initialize the database
         weightRepository.saveAndFlush(weight);
-        weightSearchRepository.save(weight);
+
         int databaseSizeBeforeDelete = weightRepository.findAll().size();
 
         // Get the weight
@@ -322,13 +318,12 @@ public class WeightResourceIntTest {
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean weightExistsInEs = weightSearchRepository.exists(weight.getId());
-        assertThat(weightExistsInEs).isFalse();
-
         // Validate the database is empty
         List<Weight> weightList = weightRepository.findAll();
         assertThat(weightList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Weight in Elasticsearch
+        verify(mockWeightSearchRepository, times(1)).deleteById(weight.getId());
     }
 
     @Test
@@ -336,14 +331,14 @@ public class WeightResourceIntTest {
     public void searchWeight() throws Exception {
         // Initialize the database
         weightRepository.saveAndFlush(weight);
-        weightSearchRepository.save(weight);
-
+        when(mockWeightSearchRepository.search(queryStringQuery("id:" + weight.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(weight), PageRequest.of(0, 1), 1));
         // Search the weight
         restWeightMockMvc.perform(get("/api/_search/weights?query=id:" + weight.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(weight.getId().intValue())))
-            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
+            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP.toString())))
             .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.doubleValue())));
     }
 

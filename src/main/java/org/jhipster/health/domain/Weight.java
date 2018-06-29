@@ -1,12 +1,12 @@
 package org.jhipster.health.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
-
-import org.springframework.data.elasticsearch.annotations.Document;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -36,6 +36,7 @@ public class Weight implements Serializable {
     private Double weight;
 
     @ManyToOne
+    @JsonIgnoreProperties("")
     private User user;
 
     public Weight() {}

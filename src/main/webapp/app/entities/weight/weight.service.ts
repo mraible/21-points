@@ -1,100 +1,77 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { SERVER_API_URL } from '../../app.constants';
+import { Observable } from 'rxjs';
+import * as moment from 'moment';
+import { DATE_FORMAT } from 'app/shared/constants/input.constants';
 
-import { JhiDateUtils } from 'ng-jhipster';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared';
+import { IWeight } from 'app/shared/model/weight.model';
 
-import { Weight } from './weight.model';
-import { createRequestOption } from '../../shared';
+type EntityResponseType = HttpResponse<IWeight>;
+type EntityArrayResponseType = HttpResponse<IWeight[]>;
 
-export type EntityResponseType = HttpResponse<Weight>;
-
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class WeightService {
-
-    private resourceUrl =  SERVER_API_URL + 'api/weights';
+    private resourceUrl = SERVER_API_URL + 'api/weights';
     private resourceSearchUrl = SERVER_API_URL + 'api/_search/weights';
 
-    constructor(private http: HttpClient, private dateUtils: JhiDateUtils) { }
+    constructor(private http: HttpClient) {}
 
-    create(weight: Weight): Observable<EntityResponseType> {
-        const copy = this.convert(weight);
-        return this.http.post<Weight>(this.resourceUrl, copy, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertResponse(res));
+    create(weight: IWeight): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(weight);
+        return this.http
+            .post<IWeight>(this.resourceUrl, copy, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
     }
 
-    update(weight: Weight): Observable<EntityResponseType> {
-        const copy = this.convert(weight);
-        return this.http.put<Weight>(this.resourceUrl, copy, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertResponse(res));
+    update(weight: IWeight): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(weight);
+        return this.http
+            .put<IWeight>(this.resourceUrl, copy, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
     }
 
     find(id: number): Observable<EntityResponseType> {
-        return this.http.get<Weight>(`${this.resourceUrl}/${id}`, { observe: 'response'})
-            .map((res: EntityResponseType) => this.convertResponse(res));
+        return this.http
+            .get<IWeight>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
     }
 
-    query(req?: any): Observable<HttpResponse<Weight[]>> {
+    query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get<Weight[]>(this.resourceUrl, { params: options, observe: 'response' })
-            .map((res: HttpResponse<Weight[]>) => this.convertArrayResponse(res));
+        return this.http
+            .get<IWeight[]>(this.resourceUrl, { params: options, observe: 'response' })
+            .map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res));
     }
 
     delete(id: number): Observable<HttpResponse<any>> {
-        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response'});
+        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
 
-    search(req?: any): Observable<HttpResponse<Weight[]>> {
+    search(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get<Weight[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-            .map((res: HttpResponse<Weight[]>) => this.convertArrayResponse(res));
+        return this.http
+            .get<IWeight[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+            .map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res));
     }
 
-    private convertResponse(res: EntityResponseType): EntityResponseType {
-        const body: Weight = this.convertItemFromServer(res.body);
-        return res.clone({body});
-    }
-
-    last30Days(): Observable<HttpResponse<Weight[]>> {
-        return this.http.get('api/weight-by-days/30').map((res: Response) => {
-            const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
+    private convertDateFromClient(weight: IWeight): IWeight {
+        const copy: IWeight = Object.assign({}, weight, {
+            timestamp: weight.timestamp != null && weight.timestamp.isValid() ? weight.timestamp.toJSON() : null
         });
-    }
-
-    byMonth(month: string): Observable<HttpResponse<Weight[]>> {
-        return this.http.get(`api/weight-by-month/${month}`)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertArrayResponse(res: HttpResponse<Weight[]>): HttpResponse<Weight[]> {
-        const jsonResponse: Weight[] = res.body;
-        const body: Weight[] = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            body.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return res.clone({body});
-    }
-
-    /**
-     * Convert a returned JSON object to Weight.
-     */
-    private convertItemFromServer(weight: Weight): Weight {
-        const copy: Weight = Object.assign({}, weight);
-        copy.timestamp = this.dateUtils
-            .convertDateTimeFromServer(weight.timestamp);
         return copy;
     }
 
-    /**
-     * Convert a Weight to a JSON which can be sent to the server.
-     */
-    private convert(weight: Weight): Weight {
-        const copy: Weight = Object.assign({}, weight);
+    private convertDateFromServer(res: EntityResponseType): EntityResponseType {
+        res.body.timestamp = res.body.timestamp != null ? moment(res.body.timestamp) : null;
+        return res;
+    }
 
-        copy.timestamp = this.dateUtils.toDate(weight.timestamp);
-        return copy;
+    private convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
+        res.body.forEach((weight: IWeight) => {
+            weight.timestamp = weight.timestamp != null ? moment(weight.timestamp) : null;
+        });
+        return res;
     }
 }

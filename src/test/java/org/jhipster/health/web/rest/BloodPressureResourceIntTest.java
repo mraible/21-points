@@ -3,9 +3,7 @@ package org.jhipster.health.web.rest;
 import org.jhipster.health.TwentyOnePointsApp;
 
 import org.jhipster.health.domain.BloodPressure;
-import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.BloodPressureRepository;
-import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
 import org.jhipster.health.web.rest.errors.ExceptionTranslator;
 
@@ -15,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -27,20 +27,18 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.jhipster.health.web.rest.TestUtil.sameInstant;
+
 import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -52,8 +50,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = TwentyOnePointsApp.class)
 public class BloodPressureResourceIntTest {
 
-    private static final ZonedDateTime DEFAULT_TIMESTAMP = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_TIMESTAMP = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final Instant DEFAULT_TIMESTAMP = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_TIMESTAMP = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     private static final Integer DEFAULT_SYSTOLIC = 1;
     private static final Integer UPDATED_SYSTOLIC = 2;
@@ -64,11 +62,14 @@ public class BloodPressureResourceIntTest {
     @Autowired
     private BloodPressureRepository bloodPressureRepository;
 
-    @Autowired
-    private BloodPressureSearchRepository bloodPressureSearchRepository;
 
+    /**
+     * This repository is mocked in the org.jhipster.health.repository.search test package.
+     *
+     * @see org.jhipster.health.repository.search.BloodPressureSearchRepositoryMockConfiguration
+     */
     @Autowired
-    private UserRepository userRepository;
+    private BloodPressureSearchRepository mockBloodPressureSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -92,7 +93,7 @@ public class BloodPressureResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        BloodPressureResource bloodPressureResource = new BloodPressureResource(bloodPressureRepository, bloodPressureSearchRepository, userRepository);
+        final BloodPressureResource bloodPressureResource = new BloodPressureResource(bloodPressureRepository, mockBloodPressureSearchRepository);
         this.restBloodPressureMockMvc = MockMvcBuilders.standaloneSetup(bloodPressureResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -116,7 +117,6 @@ public class BloodPressureResourceIntTest {
 
     @Before
     public void initTest() {
-        bloodPressureSearchRepository.deleteAll();
         bloodPressure = createEntity(em);
     }
 
@@ -147,9 +147,7 @@ public class BloodPressureResourceIntTest {
         assertThat(testBloodPressure.getDiastolic()).isEqualTo(DEFAULT_DIASTOLIC);
 
         // Validate the BloodPressure in Elasticsearch
-        BloodPressure bloodPressureEs = bloodPressureSearchRepository.findOne(testBloodPressure.getId());
-        assertThat(testBloodPressure.getTimestamp()).isEqualTo(testBloodPressure.getTimestamp());
-        assertThat(bloodPressureEs).isEqualToIgnoringGivenFields(testBloodPressure, "timestamp");
+        verify(mockBloodPressureSearchRepository, times(1)).save(testBloodPressure);
     }
 
     @Test
@@ -169,6 +167,9 @@ public class BloodPressureResourceIntTest {
         // Validate the BloodPressure in the database
         List<BloodPressure> bloodPressureList = bloodPressureRepository.findAll();
         assertThat(bloodPressureList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the BloodPressure in Elasticsearch
+        verify(mockBloodPressureSearchRepository, times(0)).save(bloodPressure);
     }
 
     @Test
@@ -242,7 +243,7 @@ public class BloodPressureResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
-            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
+            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP.toString())))
             .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
     }
@@ -258,7 +259,7 @@ public class BloodPressureResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(bloodPressure.getId().intValue()))
-            .andExpect(jsonPath("$.timestamp").value(sameInstant(DEFAULT_TIMESTAMP)))
+            .andExpect(jsonPath("$.timestamp").value(DEFAULT_TIMESTAMP.toString()))
             .andExpect(jsonPath("$.systolic").value(DEFAULT_SYSTOLIC))
             .andExpect(jsonPath("$.diastolic").value(DEFAULT_DIASTOLIC));
     }
@@ -276,11 +277,11 @@ public class BloodPressureResourceIntTest {
     public void updateBloodPressure() throws Exception {
         // Initialize the database
         bloodPressureRepository.saveAndFlush(bloodPressure);
-        bloodPressureSearchRepository.save(bloodPressure);
+
         int databaseSizeBeforeUpdate = bloodPressureRepository.findAll().size();
 
         // Update the bloodPressure
-        BloodPressure updatedBloodPressure = bloodPressureRepository.findOne(bloodPressure.getId());
+        BloodPressure updatedBloodPressure = bloodPressureRepository.findById(bloodPressure.getId()).get();
         // Disconnect from session so that the updates on updatedBloodPressure are not directly saved in db
         em.detach(updatedBloodPressure);
         updatedBloodPressure
@@ -302,9 +303,7 @@ public class BloodPressureResourceIntTest {
         assertThat(testBloodPressure.getDiastolic()).isEqualTo(UPDATED_DIASTOLIC);
 
         // Validate the BloodPressure in Elasticsearch
-        BloodPressure bloodPressureEs = bloodPressureSearchRepository.findOne(testBloodPressure.getId());
-        assertThat(testBloodPressure.getTimestamp()).isEqualTo(testBloodPressure.getTimestamp());
-        assertThat(bloodPressureEs).isEqualToIgnoringGivenFields(testBloodPressure, "timestamp");
+        verify(mockBloodPressureSearchRepository, times(1)).save(testBloodPressure);
     }
 
     @Test
@@ -325,11 +324,14 @@ public class BloodPressureResourceIntTest {
             .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the BloodPressure in the database
         List<BloodPressure> bloodPressureList = bloodPressureRepository.findAll();
-        assertThat(bloodPressureList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(bloodPressureList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the BloodPressure in Elasticsearch
+        verify(mockBloodPressureSearchRepository, times(0)).save(bloodPressure);
     }
 
     @Test
@@ -337,7 +339,7 @@ public class BloodPressureResourceIntTest {
     public void deleteBloodPressure() throws Exception {
         // Initialize the database
         bloodPressureRepository.saveAndFlush(bloodPressure);
-        bloodPressureSearchRepository.save(bloodPressure);
+
         int databaseSizeBeforeDelete = bloodPressureRepository.findAll().size();
 
         // Get the bloodPressure
@@ -345,13 +347,12 @@ public class BloodPressureResourceIntTest {
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean bloodPressureExistsInEs = bloodPressureSearchRepository.exists(bloodPressure.getId());
-        assertThat(bloodPressureExistsInEs).isFalse();
-
         // Validate the database is empty
         List<BloodPressure> bloodPressureList = bloodPressureRepository.findAll();
         assertThat(bloodPressureList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the BloodPressure in Elasticsearch
+        verify(mockBloodPressureSearchRepository, times(1)).deleteById(bloodPressure.getId());
     }
 
     @Test
@@ -359,14 +360,14 @@ public class BloodPressureResourceIntTest {
     public void searchBloodPressure() throws Exception {
         // Initialize the database
         bloodPressureRepository.saveAndFlush(bloodPressure);
-        bloodPressureSearchRepository.save(bloodPressure);
-
+        when(mockBloodPressureSearchRepository.search(queryStringQuery("id:" + bloodPressure.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(bloodPressure), PageRequest.of(0, 1), 1));
         // Search the bloodPressure
         restBloodPressureMockMvc.perform(get("/api/_search/blood-pressures?query=id:" + bloodPressure.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
-            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
+            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP.toString())))
             .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
     }

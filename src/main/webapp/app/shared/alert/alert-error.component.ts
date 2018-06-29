@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'jhi-alert-error',
@@ -15,14 +15,14 @@ import { Subscription } from 'rxjs/Subscription';
         </div>`
 })
 export class JhiAlertErrorComponent implements OnDestroy {
-
     alerts: any[];
     cleanHttpErrorListener: Subscription;
-    // tslint:disable-next-line: no-unused-variable
+    /* tslint:disable */
     constructor(private alertService: JhiAlertService, private eventManager: JhiEventManager, private translateService: TranslateService) {
+        /* tslint:enable */
         this.alerts = [];
 
-        this.cleanHttpErrorListener = eventManager.subscribe('twentyOnePointsApp.httpError', (response) => {
+        this.cleanHttpErrorListener = eventManager.subscribe('twentyOnePointsApp.httpError', response => {
             let i;
             const httpErrorResponse = response.content;
             switch (httpErrorResponse.status) {
@@ -35,7 +35,7 @@ export class JhiAlertErrorComponent implements OnDestroy {
                     const arr = httpErrorResponse.headers.keys();
                     let errorHeader = null;
                     let entityKey = null;
-                    arr.forEach((entry) => {
+                    arr.forEach(entry => {
                         if (entry.endsWith('app-error')) {
                             errorHeader = httpErrorResponse.headers.get(entry);
                         } else if (entry.endsWith('app-params')) {
@@ -51,13 +51,17 @@ export class JhiAlertErrorComponent implements OnDestroy {
                             const fieldError = fieldErrors[i];
                             // convert 'something[14].other[4].id' to 'something[].other[].id' so translations can be written to it
                             const convertedField = fieldError.field.replace(/\[\d*\]/g, '[]');
-                            const fieldName = translateService.instant('twentyOnePointsApp.' +
-                                fieldError.objectName + '.' + convertedField);
-                            this.addErrorAlert(
-                                'Error on field "' + fieldName + '"', 'error.' + fieldError.message, { fieldName });
+                            const fieldName = translateService.instant(
+                                'twentyOnePointsApp.' + fieldError.objectName + '.' + convertedField
+                            );
+                            this.addErrorAlert('Error on field "' + fieldName + '"', 'error.' + fieldError.message, { fieldName });
                         }
                     } else if (httpErrorResponse.error !== '' && httpErrorResponse.error.message) {
-                        this.addErrorAlert(httpErrorResponse.error.message, httpErrorResponse.error.message, httpErrorResponse.error.params);
+                        this.addErrorAlert(
+                            httpErrorResponse.error.message,
+                            httpErrorResponse.error.message,
+                            httpErrorResponse.error.params
+                        );
                     } else {
                         this.addErrorAlert(httpErrorResponse.error);
                     }
@@ -85,7 +89,7 @@ export class JhiAlertErrorComponent implements OnDestroy {
     }
 
     addErrorAlert(message, key?, data?) {
-        key = (key && key !== null) ? key : message;
+        key = key && key !== null ? key : message;
         this.alerts.push(
             this.alertService.addAlert(
                 {

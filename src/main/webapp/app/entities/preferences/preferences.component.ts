@@ -1,19 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
 
-import { Preferences } from './preferences.model';
+import { IPreferences } from 'app/shared/model/preferences.model';
+import { Principal } from 'app/core';
 import { PreferencesService } from './preferences.service';
-import { Principal } from '../../shared';
 
 @Component({
     selector: 'jhi-preferences',
     templateUrl: './preferences.component.html'
 })
 export class PreferencesComponent implements OnInit, OnDestroy {
-    preferences: Preferences[];
+    preferences: IPreferences[];
     currentAccount: any;
     eventSubscriber: Subscription;
     currentSearch: string;
@@ -26,22 +26,26 @@ export class PreferencesComponent implements OnInit, OnDestroy {
         private activatedRoute: ActivatedRoute,
         private principal: Principal
     ) {
-        this.currentSearch = this.activatedRoute.snapshot && this.activatedRoute.snapshot.params['search'] ?
-            this.activatedRoute.snapshot.params['search'] : '';
+        this.currentSearch =
+            this.activatedRoute.snapshot && this.activatedRoute.snapshot.params['search']
+                ? this.activatedRoute.snapshot.params['search']
+                : '';
     }
 
     loadAll() {
         if (this.currentSearch) {
-            this.preferencesService.search({
-                query: this.currentSearch,
-                }).subscribe(
-                    (res: HttpResponse<Preferences[]>) => this.preferences = res.body,
+            this.preferencesService
+                .search({
+                    query: this.currentSearch
+                })
+                .subscribe(
+                    (res: HttpResponse<IPreferences[]>) => (this.preferences = res.body),
                     (res: HttpErrorResponse) => this.onError(res.message)
                 );
             return;
-       }
+        }
         this.preferencesService.query().subscribe(
-            (res: HttpResponse<Preferences[]>) => {
+            (res: HttpResponse<IPreferences[]>) => {
                 this.preferences = res.body;
                 this.currentSearch = '';
             },
@@ -64,7 +68,7 @@ export class PreferencesComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then((account) => {
+        this.principal.identity().then(account => {
             this.currentAccount = account;
             this.isAdmin = account.authorities.indexOf('ROLE_ADMIN') !== -1;
         });
@@ -75,15 +79,15 @@ export class PreferencesComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId(index: number, item: Preferences) {
+    trackId(index: number, item: IPreferences) {
         return item.id;
     }
 
     registerChangeInPreferences() {
-        this.eventSubscriber = this.eventManager.subscribe('preferencesListModification', (response) => this.loadAll());
+        this.eventSubscriber = this.eventManager.subscribe('preferencesListModification', response => this.loadAll());
     }
 
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
+    private onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
     }
 }

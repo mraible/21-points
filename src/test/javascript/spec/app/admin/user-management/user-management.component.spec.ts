@@ -1,13 +1,12 @@
 import { ComponentFixture, TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of } from 'rxjs';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { TwentyOnePointsTestModule } from '../../../test.module';
-import { UserMgmtComponent } from '../../../../../../main/webapp/app/admin/user-management/user-management.component';
-import { UserService, User } from '../../../../../../main/webapp/app/shared';
+import { UserMgmtComponent } from 'app/admin/user-management/user-management.component';
+import { UserService, User } from 'app/core';
 
 describe('Component Tests', () => {
-
     describe('User Management Component', () => {
         let comp: UserMgmtComponent;
         let fixture: ComponentFixture<UserMgmtComponent>;
@@ -16,13 +15,10 @@ describe('Component Tests', () => {
         beforeEach(async(() => {
             TestBed.configureTestingModule({
                 imports: [TwentyOnePointsTestModule],
-                declarations: [UserMgmtComponent],
-                providers: [
-                    UserService
-                ]
+                declarations: [UserMgmtComponent]
             })
-            .overrideTemplate(UserMgmtComponent, '')
-            .compileComponents();
+                .overrideTemplate(UserMgmtComponent, '')
+                .compileComponents();
         }));
 
         beforeEach(() => {
@@ -32,15 +28,21 @@ describe('Component Tests', () => {
         });
 
         describe('OnInit', () => {
-            it('Should call load all on init',
-                inject([],
+            it(
+                'Should call load all on init',
+                inject(
+                    [],
                     fakeAsync(() => {
                         // GIVEN
                         const headers = new HttpHeaders().append('link', 'link;link');
-                        spyOn(service, 'query').and.returnValue(Observable.of(new HttpResponse({
-                            body: [new User(123)],
-                            headers
-                        })));
+                        spyOn(service, 'query').and.returnValue(
+                            of(
+                                new HttpResponse({
+                                    body: [new User(123)],
+                                    headers
+                                })
+                            )
+                        );
 
                         // WHEN
                         comp.ngOnInit();
@@ -48,24 +50,30 @@ describe('Component Tests', () => {
 
                         // THEN
                         expect(service.query).toHaveBeenCalled();
-                        expect(comp.users[0]).toEqual(jasmine.objectContaining({id: 123}));
+                        expect(comp.users[0]).toEqual(jasmine.objectContaining({ id: 123 }));
                     })
                 )
             );
         });
 
         describe('setActive', () => {
-            it('Should update user and call load all',
-                inject([],
+            it(
+                'Should update user and call load all',
+                inject(
+                    [],
                     fakeAsync(() => {
                         // GIVEN
                         const headers = new HttpHeaders().append('link', 'link;link');
                         const user = new User(123);
-                        spyOn(service, 'query').and.returnValue(Observable.of(new HttpResponse({
-                            body: [user],
-                            headers
-                        })));
-                        spyOn(service, 'update').and.returnValue(Observable.of(new HttpResponse({ status: 200 })));
+                        spyOn(service, 'query').and.returnValue(
+                            of(
+                                new HttpResponse({
+                                    body: [user],
+                                    headers
+                                })
+                            )
+                        );
+                        spyOn(service, 'update').and.returnValue(of(new HttpResponse({ status: 200 })));
 
                         // WHEN
                         comp.setActive(user, true);
@@ -74,11 +82,10 @@ describe('Component Tests', () => {
                         // THEN
                         expect(service.update).toHaveBeenCalledWith(user);
                         expect(service.query).toHaveBeenCalled();
-                        expect(comp.users[0]).toEqual(jasmine.objectContaining({id: 123}));
+                        expect(comp.users[0]).toEqual(jasmine.objectContaining({ id: 123 }));
                     })
                 )
             );
         });
     });
-
 });

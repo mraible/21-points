@@ -8,6 +8,7 @@
     <meta name="description" content="21-Points Health is an app to monitor your health. You can get up to three points per day, by eating right, drinking less alcohol and exercising. It also lets you track your blood pressure and weight. Written as the sample application for the JHipster Mini-Book.">
     <meta name="viewport" content="width=device-width,user-scalable=no">
     <meta name="google" value="notranslate">
+    <meta name="viewport" content="width=device-width,user-scalable=no">
     <meta name="theme-color" content="#000000">
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webapp" />
@@ -26,7 +27,7 @@
         <script>
             if ('serviceWorker' in navigator) {
                  navigator.serviceWorker
-                    .register('./sw.js')
+                    .register('./service-worker.js')
                     .then(function() { console.log('Service Worker Registered'); });
             }
         </script>
@@ -39,7 +40,6 @@
 
         ga('create', 'UA-66855820-1', 'auto');
         ga('send', 'pageview');
-
     </script>
 </body>
 </html>

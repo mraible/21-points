@@ -12,7 +12,7 @@
 
 eureka:
     instance:
-        hostname: health-by-points-2.herokuapp.com
+        hostname: health-by-points.herokuapp.com
         non-secure-port: 80
         prefer-ip-address: false
     client:

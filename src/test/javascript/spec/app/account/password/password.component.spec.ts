@@ -1,17 +1,13 @@
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of, throwError } from 'rxjs';
 
 import { TwentyOnePointsTestModule } from '../../../test.module';
-import { PasswordComponent } from '../../../../../../main/webapp/app/account/password/password.component';
-import { PasswordService } from '../../../../../../main/webapp/app/account/password/password.service';
-import { Principal } from '../../../../../../main/webapp/app/shared/auth/principal.service';
-import { AccountService } from '../../../../../../main/webapp/app/shared/auth/account.service';
+import { PasswordComponent } from 'app/account/password/password.component';
+import { PasswordService } from 'app/account/password/password.service';
 
 describe('Component Tests', () => {
-
     describe('PasswordComponent', () => {
-
         let comp: PasswordComponent;
         let fixture: ComponentFixture<PasswordComponent>;
         let service: PasswordService;
@@ -20,14 +16,10 @@ describe('Component Tests', () => {
             TestBed.configureTestingModule({
                 imports: [TwentyOnePointsTestModule],
                 declarations: [PasswordComponent],
-                providers: [
-                    Principal,
-                    AccountService,
-                    PasswordService
-                ]
+                providers: []
             })
-            .overrideTemplate(PasswordComponent, '')
-            .compileComponents();
+                .overrideTemplate(PasswordComponent, '')
+                .compileComponents();
         }));
 
         beforeEach(() => {
@@ -38,7 +30,7 @@ describe('Component Tests', () => {
 
         it('should show error if passwords do not match', () => {
             // GIVEN
-            comp.password = 'password1';
+            comp.newPassword = 'password1';
             comp.confirmPassword = 'password2';
             // WHEN
             comp.changePassword();
@@ -50,20 +42,26 @@ describe('Component Tests', () => {
 
         it('should call Auth.changePassword when passwords match', () => {
             // GIVEN
-            spyOn(service, 'save').and.returnValue(Observable.of(new HttpResponse({body: true})));
-            comp.password = comp.confirmPassword = 'myPassword';
+            const passwordValues = {
+                currentPassword: 'oldPassword',
+                newPassword: 'myPassword'
+            };
+
+            spyOn(service, 'save').and.returnValue(of(new HttpResponse({ body: true })));
+            comp.currentPassword = passwordValues.currentPassword;
+            comp.newPassword = comp.confirmPassword = passwordValues.newPassword;
 
             // WHEN
             comp.changePassword();
 
             // THEN
-            expect(service.save).toHaveBeenCalledWith('myPassword');
+            expect(service.save).toHaveBeenCalledWith(passwordValues.newPassword, passwordValues.currentPassword);
         });
 
         it('should set success to OK upon success', function() {
             // GIVEN
-            spyOn(service, 'save').and.returnValue(Observable.of(new HttpResponse({body: true})));
-            comp.password = comp.confirmPassword = 'myPassword';
+            spyOn(service, 'save').and.returnValue(of(new HttpResponse({ body: true })));
+            comp.newPassword = comp.confirmPassword = 'myPassword';
 
             // WHEN
             comp.changePassword();
@@ -76,8 +74,8 @@ describe('Component Tests', () => {
 
         it('should notify of error if change password fails', function() {
             // GIVEN
-            spyOn(service, 'save').and.returnValue(Observable.throw('ERROR'));
-            comp.password = comp.confirmPassword = 'myPassword';
+            spyOn(service, 'save').and.returnValue(throwError('ERROR'));
+            comp.newPassword = comp.confirmPassword = 'myPassword';
 
             // WHEN
             comp.changePassword();

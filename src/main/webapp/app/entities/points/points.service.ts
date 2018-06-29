@@ -1,93 +1,77 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { SERVER_API_URL } from '../../app.constants';
+import { Observable } from 'rxjs';
+import * as moment from 'moment';
+import { DATE_FORMAT } from 'app/shared/constants/input.constants';
 
-import { JhiDateUtils } from 'ng-jhipster';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared';
+import { IPoints } from 'app/shared/model/points.model';
 
-import { Points } from './points.model';
-import { createRequestOption } from '../../shared';
+type EntityResponseType = HttpResponse<IPoints>;
+type EntityArrayResponseType = HttpResponse<IPoints[]>;
 
-export type EntityResponseType = HttpResponse<Points>;
-
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class PointsService {
-
-    private resourceUrl =  SERVER_API_URL + 'api/points';
+    private resourceUrl = SERVER_API_URL + 'api/points';
     private resourceSearchUrl = SERVER_API_URL + 'api/_search/points';
 
-    constructor(private http: HttpClient, private dateUtils: JhiDateUtils) { }
+    constructor(private http: HttpClient) {}
 
-    create(points: Points): Observable<EntityResponseType> {
-        const copy = this.convert(points);
-        return this.http.post<Points>(this.resourceUrl, copy, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertResponse(res));
+    create(points: IPoints): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(points);
+        return this.http
+            .post<IPoints>(this.resourceUrl, copy, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
     }
 
-    update(points: Points): Observable<EntityResponseType> {
-        const copy = this.convert(points);
-        return this.http.put<Points>(this.resourceUrl, copy, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertResponse(res));
+    update(points: IPoints): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(points);
+        return this.http
+            .put<IPoints>(this.resourceUrl, copy, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
     }
 
     find(id: number): Observable<EntityResponseType> {
-        return this.http.get<Points>(`${this.resourceUrl}/${id}`, { observe: 'response'})
-            .map((res: EntityResponseType) => this.convertResponse(res));
+        return this.http
+            .get<IPoints>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
     }
 
-    query(req?: any): Observable<HttpResponse<Points[]>> {
+    query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get<Points[]>(this.resourceUrl, { params: options, observe: 'response' })
-            .map((res: HttpResponse<Points[]>) => this.convertArrayResponse(res));
+        return this.http
+            .get<IPoints[]>(this.resourceUrl, { params: options, observe: 'response' })
+            .map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res));
     }
 
     delete(id: number): Observable<HttpResponse<any>> {
-        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response'});
+        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
 
-    search(req?: any): Observable<HttpResponse<Points[]>> {
+    search(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get<Points[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-            .map((res: HttpResponse<Points[]>) => this.convertArrayResponse(res));
+        return this.http
+            .get<IPoints[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+            .map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res));
     }
 
-    private convertResponse(res: EntityResponseType): EntityResponseType {
-        const body: Points = this.convertItemFromServer(res.body);
-        return res.clone({body});
-    }
-
-    thisWeek(): Observable<HttpResponse<Points[]>> {
-        return this.http.get('api/points-this-week')
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    byWeek(date: string): Observable<HttpResponse<Points[]>> {
-        return this.http.get(`api/points-by-week/${date}`)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    byMonth(month: string): Observable<HttpResponse<Points[]>> {
-        return this.http.get(`api/points-by-month/${month}`)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    /**
-     * Convert a returned JSON object to Points.
-     */
-    private convertItemFromServer(points: Points): Points {
-        const copy: Points = Object.assign({}, points);
-        copy.date = this.dateUtils
-            .convertLocalDateFromServer(points.date);
+    private convertDateFromClient(points: IPoints): IPoints {
+        const copy: IPoints = Object.assign({}, points, {
+            date: points.date != null && points.date.isValid() ? points.date.format(DATE_FORMAT) : null
+        });
         return copy;
     }
 
-    /**
-     * Convert a Points to a JSON which can be sent to the server.
-     */
-    private convert(points: Points): Points {
-        const copy: Points = Object.assign({}, points);
-        copy.date = this.dateUtils
-            .convertLocalDateToServer(points.date);
-        return copy;
+    private convertDateFromServer(res: EntityResponseType): EntityResponseType {
+        res.body.date = res.body.date != null ? moment(res.body.date) : null;
+        return res;
+    }
+
+    private convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
+        res.body.forEach((points: IPoints) => {
+            points.date = points.date != null ? moment(points.date) : null;
+        });
+        return res;
     }
 }

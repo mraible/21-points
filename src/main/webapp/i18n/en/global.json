@@ -1,17 +1,15 @@
 {
     "global": {
-        "title": "21-Points Health",
+        "title": "TwentyOnePoints",
         "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
         "menu": {
             "home": "Home",
-            "about": "About",
-            "history": "History",
             "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
             "entities": {
                 "main": "Entities",
-                "points": "Points",
                 "bloodPressure": "Blood Pressure",
                 "weight": "Weight",
+                "points": "Points",
                 "preferences": "Preferences",
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
@@ -20,7 +18,7 @@
                 "settings": "Settings",
                 "password": "Password",
                 "sessions": "Sessions",
-                "login": "Sign In",
+                "login": "Sign in",
                 "logout": "Sign out",
                 "register": "Register"
             },
@@ -42,6 +40,8 @@
         "form": {
             "username": "Username",
             "username.placeholder": "Your username",
+            "currentpassword": "Current password",
+            "currentpassword.placeholder": "Current password",
             "newpassword": "New password",
             "newpassword.placeholder": "New password",
             "confirmpassword": "New password confirmation",
@@ -52,16 +52,14 @@
         "messages": {
             "info": {
                 "authenticated": {
-                    "prefix": "To get started, please ",
-                    "link": "Sign In",
+                    "prefix": "If you want to ",
+                    "link": "sign in",
                     "suffix": ", you can try the default accounts:<br/>- Administrator (login=\"admin\" and password=\"admin\") <br/>- User (login=\"user\" and password=\"user\")."
                 },
                 "register": {
-                    "noaccount": "Don't have an account yet?",
+                    "noaccount": "You don't have an account yet?",
                     "link": "Register a new account"
-                },
-                "learnMore": "Learn more",
-                "about21Points": "about 21-Points Health"
+                }
             },
             "error": {
                 "dontmatch": "The password and its confirmation do not match!"
@@ -103,8 +101,6 @@
             "delete": "Delete",
             "edit": "Edit",
             "open": "Open",
-            "new": "Add",
-            "search": "Search",
             "save": "Save",
             "view": "View"
         },
@@ -137,7 +133,8 @@
         "Size": "Field {{ fieldName }} does not meet min/max size requirements!",
         "userexists": "Login name already used!",
         "emailexists": "Email is already in use!",
-        "idexists": "A new {{ entityName }} cannot already have an ID"
+        "idexists": "A new {{ entityName }} cannot already have an ID",
+        "idnull": "Invalid ID"
     },
-    "footer": "<strong>21-Points Health</strong> | An application developed for a better life and <a href='http://www.jhipster-book.com' target='_blank'>The JHipster Mini-Book</a> | By <a href='http://raibledesigns.com' target='_blank'>Matt Raible</a>"
+    "footer": "This is your footer"
 }

@@ -2,7 +2,6 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Preferences;
-
 import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.UserRepository;
@@ -93,7 +92,7 @@ public class PreferencesResource {
     public ResponseEntity<Preferences> updatePreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
         log.debug("REST request to update Preferences : {}", preferences);
         if (preferences.getId() == null) {
-            return createPreferences(preferences);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.save(result);
@@ -153,8 +152,8 @@ public class PreferencesResource {
     @Timed
     public ResponseEntity<Preferences> getPreferences(@PathVariable Long id) {
         log.debug("REST request to get Preferences : {}", id);
-        Preferences preferences = preferencesRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(preferences));
+        Optional<Preferences> preferences = preferencesRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(preferences);
     }
 
     /**
@@ -167,8 +166,8 @@ public class PreferencesResource {
     @Timed
     public ResponseEntity<Void> deletePreferences(@PathVariable Long id) {
         log.debug("REST request to delete Preferences : {}", id);
-        preferencesRepository.delete(id);
-        preferencesSearchRepository.delete(id);
+        preferencesRepository.deleteById(id);
+        preferencesSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

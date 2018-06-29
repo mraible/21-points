@@ -28,7 +28,7 @@
             <column name="password_hash" type="varchar(60)"/>
             <column name="first_name" type="varchar(50)"/>
             <column name="last_name" type="varchar(50)"/>
-            <column name="email" type="varchar(100)">
+            <column name="email" type="varchar(254)">
                 <constraints unique="true" nullable="true" uniqueConstraintName="ux_user_email"/>
             </column>
             <column name="image_url" type="varchar(256)"/>
@@ -50,17 +50,7 @@
             <column name="last_modified_by" type="varchar(50)"/>
             <column name="last_modified_date" type="timestamp"/>
         </createTable>
-        <createIndex indexName="idx_user_login"
-            tableName="jhi_user"
-            unique="true">
-            <column name="login" type="varchar(50)"/>
-        </createIndex>
 
-        <createIndex indexName="idx_user_email"
-            tableName="jhi_user"
-            unique="true">
-            <column name="email" type="varchar(100)"/>
-        </createIndex>
         <createTable tableName="jhi_authority">
             <column name="name" type="varchar(50)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -88,6 +78,10 @@
                                  constraintName="fk_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
+
+        <addNotNullConstraint   columnName="password_hash"
+                                columnDataType="varchar(60)"
+                                tableName="jhi_user"/>
         <loadData encoding="UTF-8"
                   file="config/liquibase/users.csv"
                   separator=";"

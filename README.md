@@ -20,7 +20,6 @@ You will only need to run this command when dependencies change in [package.json
 
 We use yarn scripts and [Webpack][] as our build system.
 
-
 Run the following commands in two separate terminals to create a blissful development experience where your browser
 auto-refreshes when files change on your hard drive.
 
@@ -43,13 +42,13 @@ Service workers are commented by default, to enable them please uncomment the fo
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-        .register('./sw.js')
+        .register('./service-worker.js')
         .then(function() { console.log('Service Worker Registered'); });
     }
 </script>
 ```
 
-Note: workbox creates the respective service worker and dynamically generate the `sw.js`
+Note: workbox creates the respective service worker and dynamically generate the `service-worker.js`
 
 ### Managing dependencies
 
@@ -93,7 +92,7 @@ will generate few files:
 
 To optimize 21-Points Health for production, run:
 
-    ./gradlew -Pprod clean bootRepackage
+    ./gradlew -Pprod clean bootWar
 
 This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
 To ensure everything worked, run:
@@ -112,7 +111,7 @@ To launch your application's tests, run:
 
 ### Client tests
 
-Unit tests are run by [Karma][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
+Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
 
     yarn test
 
@@ -121,9 +120,9 @@ and can be run by starting Spring Boot in one terminal (`./gradlew bootRun`) and
 
 ### Other tests
 
-Performance tests are run by [Gatling][] and written in Scala. They're located in [src/test/gatling](src/test/gatling) and can be run with:
+Performance tests are run by [Gatling][] and written in Scala. They're located in [src/test/gatling](src/test/gatling).
 
-    ./gradlew gatlingRun
+To use those tests, you must install Gatling from [https://gatling.io/](https://gatling.io/).
 
 For more information, refer to the [Running tests page][].
 
@@ -142,7 +141,7 @@ To stop it and remove the container, run:
 You can also fully dockerize your application and all the services that it depends on.
 To achieve this, first build a docker image of your app by running:
 
-    ./gradlew bootRepackage -Pprod buildDocker
+    ./gradlew bootWar -Pprod buildDocker
 
 Then run:
 
@@ -154,14 +153,14 @@ For more information refer to [Using Docker and Docker-Compose][], this page als
 
 To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
 
-[JHipster Homepage and latest documentation]: http://www.jhipster.tech
-[JHipster 4.14.1 archive]: http://www.jhipster.tech/documentation-archive/v4.14.1
+[JHipster Homepage and latest documentation]: https://www.jhipster.tech
+[JHipster 5.0.1 archive]: https://www.jhipster.tech/documentation-archive/v5.0.1
 
-[Using JHipster in development]: http://www.jhipster.tech/documentation-archive/v4.14.1/development/
-[Using Docker and Docker-Compose]: http://www.jhipster.tech/documentation-archive/v4.14.1/docker-compose
-[Using JHipster in production]: http://www.jhipster.tech/documentation-archive/v4.14.1/production/
-[Running tests page]: http://www.jhipster.tech/documentation-archive/v4.14.1/running-tests/
-[Setting up Continuous Integration]: http://www.jhipster.tech/documentation-archive/v4.14.1/setting-up-ci/
+[Using JHipster in development]: https://www.jhipster.tech/documentation-archive/v5.0.1/development/
+[Using Docker and Docker-Compose]: https://www.jhipster.tech/documentation-archive/v5.0.1/docker-compose
+[Using JHipster in production]: https://www.jhipster.tech/documentation-archive/v5.0.1/production/
+[Running tests page]: https://www.jhipster.tech/documentation-archive/v5.0.1/running-tests/
+[Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v5.0.1/setting-up-ci/
 
 [Gatling]: http://gatling.io/
 [Node.js]: https://nodejs.org/
@@ -169,7 +168,7 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [Webpack]: https://webpack.github.io/
 [Angular CLI]: https://cli.angular.io/
 [BrowserSync]: http://www.browsersync.io/
-[Karma]: http://karma-runner.github.io/
+[Jest]: https://facebook.github.io/jest/
 [Jasmine]: http://jasmine.github.io/2.0/introduction.html
 [Protractor]: https://angular.github.io/protractor/
 [Leaflet]: http://leafletjs.com/

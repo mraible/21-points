@@ -1,99 +1,77 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { SERVER_API_URL } from '../../app.constants';
+import { Observable } from 'rxjs';
+import * as moment from 'moment';
+import { DATE_FORMAT } from 'app/shared/constants/input.constants';
 
-import { JhiDateUtils } from 'ng-jhipster';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared';
+import { IBloodPressure } from 'app/shared/model/blood-pressure.model';
 
-import { BloodPressure } from './blood-pressure.model';
-import { createRequestOption } from '../../shared';
+type EntityResponseType = HttpResponse<IBloodPressure>;
+type EntityArrayResponseType = HttpResponse<IBloodPressure[]>;
 
-export type EntityResponseType = HttpResponse<BloodPressure>;
-
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class BloodPressureService {
-
-    private resourceUrl =  SERVER_API_URL + 'api/blood-pressures';
+    private resourceUrl = SERVER_API_URL + 'api/blood-pressures';
     private resourceSearchUrl = SERVER_API_URL + 'api/_search/blood-pressures';
 
-    constructor(private http: HttpClient, private dateUtils: JhiDateUtils) { }
+    constructor(private http: HttpClient) {}
 
-    create(bloodPressure: BloodPressure): Observable<EntityResponseType> {
-        const copy = this.convert(bloodPressure);
-        return this.http.post<BloodPressure>(this.resourceUrl, copy, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertResponse(res));
+    create(bloodPressure: IBloodPressure): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(bloodPressure);
+        return this.http
+            .post<IBloodPressure>(this.resourceUrl, copy, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
     }
 
-    update(bloodPressure: BloodPressure): Observable<EntityResponseType> {
-        const copy = this.convert(bloodPressure);
-        return this.http.put<BloodPressure>(this.resourceUrl, copy, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertResponse(res));
+    update(bloodPressure: IBloodPressure): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(bloodPressure);
+        return this.http
+            .put<IBloodPressure>(this.resourceUrl, copy, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
     }
 
     find(id: number): Observable<EntityResponseType> {
-        return this.http.get<BloodPressure>(`${this.resourceUrl}/${id}`, { observe: 'response'})
-            .map((res: EntityResponseType) => this.convertResponse(res));
+        return this.http
+            .get<IBloodPressure>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
     }
 
-    query(req?: any): Observable<HttpResponse<BloodPressure[]>> {
+    query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get<BloodPressure[]>(this.resourceUrl, { params: options, observe: 'response' })
-            .map((res: HttpResponse<BloodPressure[]>) => this.convertArrayResponse(res));
+        return this.http
+            .get<IBloodPressure[]>(this.resourceUrl, { params: options, observe: 'response' })
+            .map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res));
     }
 
     delete(id: number): Observable<HttpResponse<any>> {
-        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response'});
+        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
 
-    search(req?: any): Observable<HttpResponse<BloodPressure[]>> {
+    search(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get<BloodPressure[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-            .map((res: HttpResponse<BloodPressure[]>) => this.convertArrayResponse(res));
+        return this.http
+            .get<IBloodPressure[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+            .map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res));
     }
 
-    private convertResponse(res: EntityResponseType): EntityResponseType {
-        const body: BloodPressure = this.convertItemFromServer(res.body);
-        return res.clone({body});
-    }
-
-    last30Days(): Observable<BloodPressure> {
-        return this.http.get('api/bp-by-days/30').map((res: Response) => {
-            const jsonResponse = res.json();
-            this.convertItemFromServer(jsonResponse);
-            return jsonResponse;
+    private convertDateFromClient(bloodPressure: IBloodPressure): IBloodPressure {
+        const copy: IBloodPressure = Object.assign({}, bloodPressure, {
+            timestamp: bloodPressure.timestamp != null && bloodPressure.timestamp.isValid() ? bloodPressure.timestamp.toJSON() : null
         });
-    }
-
-    byMonth(month: string): Observable<ResponseWrapper> {
-        return this.http.get(`api/bp-by-month/${month}`)
-            .map((res: any) => this.convertResponse(res));
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        for (let i = 0; i < jsonResponse.length; i++) {
-            body.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return res.clone({body});
-    }
-
-    /**
-     * Convert a returned JSON object to BloodPressure.
-     */
-    private convertItemFromServer(bloodPressure: BloodPressure): BloodPressure {
-        const copy: BloodPressure = Object.assign({}, bloodPressure);
-        copy.timestamp = this.dateUtils
-            .convertDateTimeFromServer(bloodPressure.timestamp);
         return copy;
     }
 
-    /**
-     * Convert a BloodPressure to a JSON which can be sent to the server.
-     */
-    private convert(bloodPressure: BloodPressure): BloodPressure {
-        const copy: BloodPressure = Object.assign({}, bloodPressure);
+    private convertDateFromServer(res: EntityResponseType): EntityResponseType {
+        res.body.timestamp = res.body.timestamp != null ? moment(res.body.timestamp) : null;
+        return res;
+    }
 
-        copy.timestamp = this.dateUtils.toDate(bloodPressure.timestamp);
-        return copy;
+    private convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
+        res.body.forEach((bloodPressure: IBloodPressure) => {
+            bloodPressure.timestamp = bloodPressure.timestamp != null ? moment(bloodPressure.timestamp) : null;
+        });
+        return res;
     }
 }

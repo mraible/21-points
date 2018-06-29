@@ -2,7 +2,6 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Points;
-
 import org.jhipster.health.repository.PointsRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
@@ -33,6 +32,8 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -98,7 +99,7 @@ public class PointsResource {
     public ResponseEntity<Points> updatePoints(@Valid @RequestBody Points points) throws URISyntaxException {
         log.debug("REST request to update Points : {}", points);
         if (points.getId() == null) {
-            return createPoints(points);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Points result = pointsRepository.save(points);
         pointsSearchRepository.save(result);
@@ -191,8 +192,8 @@ public class PointsResource {
     @Timed
     public ResponseEntity<Points> getPoints(@PathVariable Long id) {
         log.debug("REST request to get Points : {}", id);
-        Points points = pointsRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(points));
+        Optional<Points> points = pointsRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(points);
     }
 
     /**
@@ -205,8 +206,8 @@ public class PointsResource {
     @Timed
     public ResponseEntity<Void> deletePoints(@PathVariable Long id) {
         log.debug("REST request to delete Points : {}", id);
-        pointsRepository.delete(id);
-        pointsSearchRepository.delete(id);
+        pointsRepository.deleteById(id);
+        pointsSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

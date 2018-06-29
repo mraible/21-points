@@ -1,15 +1,14 @@
 /* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of } from 'rxjs';
 import { JhiEventManager } from 'ng-jhipster';
 
 import { TwentyOnePointsTestModule } from '../../../test.module';
-import { BloodPressureDeleteDialogComponent } from '../../../../../../main/webapp/app/entities/blood-pressure/blood-pressure-delete-dialog.component';
-import { BloodPressureService } from '../../../../../../main/webapp/app/entities/blood-pressure/blood-pressure.service';
+import { BloodPressureDeleteDialogComponent } from 'app/entities/blood-pressure/blood-pressure-delete-dialog.component';
+import { BloodPressureService } from 'app/entities/blood-pressure/blood-pressure.service';
 
 describe('Component Tests', () => {
-
     describe('BloodPressure Management Delete Component', () => {
         let comp: BloodPressureDeleteDialogComponent;
         let fixture: ComponentFixture<BloodPressureDeleteDialogComponent>;
@@ -17,19 +16,13 @@ describe('Component Tests', () => {
         let mockEventManager: any;
         let mockActiveModal: any;
 
-        beforeEach(async(() => {
+        beforeEach(() => {
             TestBed.configureTestingModule({
                 imports: [TwentyOnePointsTestModule],
-                declarations: [BloodPressureDeleteDialogComponent],
-                providers: [
-                    BloodPressureService
-                ]
+                declarations: [BloodPressureDeleteDialogComponent]
             })
-            .overrideTemplate(BloodPressureDeleteDialogComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
+                .overrideTemplate(BloodPressureDeleteDialogComponent, '')
+                .compileComponents();
             fixture = TestBed.createComponent(BloodPressureDeleteDialogComponent);
             comp = fixture.componentInstance;
             service = fixture.debugElement.injector.get(BloodPressureService);
@@ -38,11 +31,13 @@ describe('Component Tests', () => {
         });
 
         describe('confirmDelete', () => {
-            it('Should call delete service on confirmDelete',
-                inject([],
+            it(
+                'Should call delete service on confirmDelete',
+                inject(
+                    [],
                     fakeAsync(() => {
                         // GIVEN
-                        spyOn(service, 'delete').and.returnValue(Observable.of({}));
+                        spyOn(service, 'delete').and.returnValue(of({}));
 
                         // WHEN
                         comp.confirmDelete(123);
@@ -57,5 +52,4 @@ describe('Component Tests', () => {
             );
         });
     });
-
 });

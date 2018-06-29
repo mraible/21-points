@@ -3,6 +3,7 @@ package org.jhipster.health.service;
 import org.jhipster.health.TwentyOnePointsApp;
 import org.jhipster.health.config.Constants;
 import org.jhipster.health.domain.User;
+import org.jhipster.health.repository.search.UserSearchRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.service.dto.UserDTO;
 import org.jhipster.health.service.util.RandomUtil;
@@ -11,8 +12,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.auditing.AuditingHandler;
+import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -20,10 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for the UserResource REST controller.
@@ -41,6 +50,20 @@ public class UserServiceIntTest {
     @Autowired
     private UserService userService;
 
+    /**
+     * This repository is mocked in the org.jhipster.health.repository.search test package.
+     *
+     * @see org.jhipster.health.repository.search.UserSearchRepositoryMockConfiguration
+     */
+    @Autowired
+    private UserSearchRepository mockUserSearchRepository;
+
+    @Autowired
+    private AuditingHandler auditingHandler;
+
+    @Mock
+    DateTimeProvider dateTimeProvider;
+
     private User user;
 
     @Before
@@ -54,6 +77,9 @@ public class UserServiceIntTest {
         user.setLastName("doe");
         user.setImageUrl("http://placehold.it/50x50");
         user.setLangKey("en");
+
+        when(dateTimeProvider.getNow()).thenReturn(Optional.of(LocalDateTime.now()));
+        auditingHandler.setDateTimeProvider(dateTimeProvider);
     }
 
     @Test
@@ -134,15 +160,17 @@ public class UserServiceIntTest {
     @Transactional
     public void testFindNotActivatedUsersByCreationDateBefore() {
         Instant now = Instant.now();
+        when(dateTimeProvider.getNow()).thenReturn(Optional.of(now.minus(4, ChronoUnit.DAYS)));
         user.setActivated(false);
-        User dbUser = userRepository.saveAndFlush(user);
-        dbUser.setCreatedDate(now.minus(4, ChronoUnit.DAYS));
         userRepository.saveAndFlush(user);
         List<User> users = userRepository.findAllByActivatedIsFalseAndCreatedDateBefore(now.minus(3, ChronoUnit.DAYS));
         assertThat(users).isNotEmpty();
         userService.removeNotActivatedUsers();
         users = userRepository.findAllByActivatedIsFalseAndCreatedDateBefore(now.minus(3, ChronoUnit.DAYS));
         assertThat(users).isEmpty();
+
+        // Verify Elasticsearch mock
+        verify(mockUserSearchRepository, times(1)).delete(user);
     }
 
     @Test
@@ -152,7 +180,7 @@ public class UserServiceIntTest {
         if (!userRepository.findOneByLogin(Constants.ANONYMOUS_USER).isPresent()) {
             userRepository.saveAndFlush(user);
         }
-        final PageRequest pageable = new PageRequest(0, (int) userRepository.count());
+        final PageRequest pageable = PageRequest.of(0, (int) userRepository.count());
         final Page<UserDTO> allManagedUsers = userService.getAllManagedUsers(pageable);
         assertThat(allManagedUsers.getContent().stream()
             .noneMatch(user -> Constants.ANONYMOUS_USER.equals(user.getLogin())))
@@ -162,15 +190,18 @@ public class UserServiceIntTest {
     @Test
     @Transactional
     public void testRemoveNotActivatedUsers() {
+        // custom "now" for audit to use as creation date
+        when(dateTimeProvider.getNow()).thenReturn(Optional.of(Instant.now().minus(30, ChronoUnit.DAYS)));
+
         user.setActivated(false);
-        userRepository.saveAndFlush(user);
-        // Let the audit first set the creation date but then update it
-        user.setCreatedDate(Instant.now().minus(30, ChronoUnit.DAYS));
         userRepository.saveAndFlush(user);
 
         assertThat(userRepository.findOneByLogin("johndoe")).isPresent();
         userService.removeNotActivatedUsers();
         assertThat(userRepository.findOneByLogin("johndoe")).isNotPresent();
+
+        // Verify Elasticsearch mock
+        verify(mockUserSearchRepository, times(1)).delete(user);
     }
 
 }

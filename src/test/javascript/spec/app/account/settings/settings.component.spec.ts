@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { Observable } from 'rxjs/Observable';
+import { Observable, throwError } from 'rxjs';
 
 import { TwentyOnePointsTestModule } from '../../../test.module';
-import { Principal, AccountService } from '../../../../../../main/webapp/app/shared';
-import { SettingsComponent } from '../../../../../../main/webapp/app/account/settings/settings.component';
+import { Principal, AccountService } from 'app/core';
+import { SettingsComponent } from 'app/account/settings/settings.component';
 
 describe('Component Tests', () => {
-
     describe('SettingsComponent', () => {
-
         let comp: SettingsComponent;
         let fixture: ComponentFixture<SettingsComponent>;
         let mockAuth: any;
@@ -18,11 +16,10 @@ describe('Component Tests', () => {
             TestBed.configureTestingModule({
                 imports: [TwentyOnePointsTestModule],
                 declarations: [SettingsComponent],
-                providers: [
-                ]
+                providers: []
             })
-            .overrideTemplate(SettingsComponent, '')
-            .compileComponents();
+                .overrideTemplate(SettingsComponent, '')
+                .compileComponents();
         }));
 
         beforeEach(() => {
@@ -73,7 +70,7 @@ describe('Component Tests', () => {
 
         it('should notify of error upon failed save', () => {
             // GIVEN
-            mockAuth.saveSpy.and.returnValue(Observable.throw('ERROR'));
+            mockAuth.saveSpy.and.returnValue(throwError('ERROR'));
 
             // WHEN
             comp.save();

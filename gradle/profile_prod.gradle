@@ -19,7 +19,6 @@ bootRun {
     args = []
 }
 
-
 task webpack_test(type: YarnTask, dependsOn: 'yarn_install') {
     args = ["run", "webpack:test"]
 }
@@ -50,7 +49,7 @@ generateGitProperties {
 }
 
 gitProperties {
-    keys = ['git.branch', 'git.commit.id.abbrev']
+    keys = ['git.branch', 'git.commit.id.abbrev', 'git.commit.id.describe']
 }
 
 test.dependsOn webpack_test

@@ -53,7 +53,7 @@ export class NavBarPage {
     }
 
     clickOnAdmin(entityName: string) {
-        return element(by.css('[routerLink="' + entityName + '"]')).click();
+        return element(by.css('[routerLink="admin/' + entityName + '"]')).click();
     }
 
     getSignInPage() {
@@ -134,10 +134,15 @@ export class SignInPage {
     }
 }
 export class PasswordPage {
-    password = element(by.id('password'));
+    currentPassword = element(by.id('currentPassword'));
+    password = element(by.id('newPassword'));
     confirmPassword = element(by.id('confirmPassword'));
     saveButton = element(by.css('button[type=submit]'));
     title = element.all(by.css('h2')).first();
+
+    setCurrentPassword(password) {
+        this.currentPassword.sendKeys(password);
+    }
 
     setPassword(password) {
         this.password.sendKeys(password);

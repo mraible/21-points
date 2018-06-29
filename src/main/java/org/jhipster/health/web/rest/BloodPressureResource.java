@@ -2,7 +2,6 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.BloodPressure;
-
 import org.jhipster.health.repository.BloodPressureRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
@@ -34,6 +33,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -99,7 +100,7 @@ public class BloodPressureResource {
     public ResponseEntity<BloodPressure> updateBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
         log.debug("REST request to update BloodPressure : {}", bloodPressure);
         if (bloodPressure.getId() == null) {
-            return createBloodPressure(bloodPressure);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(result);
@@ -176,8 +177,8 @@ public class BloodPressureResource {
     @Timed
     public ResponseEntity<BloodPressure> getBloodPressure(@PathVariable Long id) {
         log.debug("REST request to get BloodPressure : {}", id);
-        BloodPressure bloodPressure = bloodPressureRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(bloodPressure));
+        Optional<BloodPressure> bloodPressure = bloodPressureRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(bloodPressure);
     }
 
     /**
@@ -190,8 +191,8 @@ public class BloodPressureResource {
     @Timed
     public ResponseEntity<Void> deleteBloodPressure(@PathVariable Long id) {
         log.debug("REST request to delete BloodPressure : {}", id);
-        bloodPressureRepository.delete(id);
-        bloodPressureSearchRepository.delete(id);
+        bloodPressureRepository.deleteById(id);
+        bloodPressureSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

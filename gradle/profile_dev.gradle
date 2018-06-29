@@ -22,7 +22,7 @@ task webpackBuildDev(type: YarnTask) {
 }
 
 war {
-    webAppDirName = 'build/www/'
+    webAppDirName = 'src/main/webapp/'
 }
 
 processResources {

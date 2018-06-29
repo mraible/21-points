@@ -116,7 +116,7 @@ public class Preferences implements Serializable {
     public String toString() {
         return "Preferences{" +
             "id=" + getId() +
-            ", weeklyGoal='" + getWeeklyGoal() + "'" +
+            ", weeklyGoal=" + getWeeklyGoal() +
             ", weightUnits='" + getWeightUnits() + "'" +
             "}";
     }

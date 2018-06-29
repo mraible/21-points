@@ -1,53 +1,24 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { TwentyOnePointsSharedModule } from '../../shared';
-import { TwentyOnePointsAdminModule } from '../../admin/admin.module';
+import { TwentyOnePointsSharedModule } from 'app/shared';
+import { TwentyOnePointsAdminModule } from 'app/admin/admin.module';
 import {
-    PointsService,
-    PointsPopupService,
     PointsComponent,
     PointsDetailComponent,
-    PointsDialogComponent,
-    PointsPopupComponent,
+    PointsUpdateComponent,
     PointsDeletePopupComponent,
     PointsDeleteDialogComponent,
     pointsRoute,
-    pointsPopupRoute,
-    PointsResolvePagingParams,
+    pointsPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...pointsRoute,
-    ...pointsPopupRoute,
-];
+const ENTITY_STATES = [...pointsRoute, ...pointsPopupRoute];
 
 @NgModule({
-    imports: [
-        TwentyOnePointsSharedModule,
-        TwentyOnePointsAdminModule,
-        RouterModule.forChild(ENTITY_STATES)
-    ],
-    declarations: [
-        PointsComponent,
-        PointsDetailComponent,
-        PointsDialogComponent,
-        PointsDeleteDialogComponent,
-        PointsPopupComponent,
-        PointsDeletePopupComponent,
-    ],
-    entryComponents: [
-        PointsComponent,
-        PointsDialogComponent,
-        PointsPopupComponent,
-        PointsDeleteDialogComponent,
-        PointsDeletePopupComponent,
-    ],
-    providers: [
-        PointsService,
-        PointsPopupService,
-        PointsResolvePagingParams,
-    ],
+    imports: [TwentyOnePointsSharedModule, TwentyOnePointsAdminModule, RouterModule.forChild(ENTITY_STATES)],
+    declarations: [PointsComponent, PointsDetailComponent, PointsUpdateComponent, PointsDeleteDialogComponent, PointsDeletePopupComponent],
+    entryComponents: [PointsComponent, PointsUpdateComponent, PointsDeleteDialogComponent, PointsDeletePopupComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class TwentyOnePointsPointsModule {}

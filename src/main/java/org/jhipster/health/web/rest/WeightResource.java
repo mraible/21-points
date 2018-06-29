@@ -2,7 +2,6 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Weight;
-
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.WeightRepository;
 import org.jhipster.health.repository.search.WeightSearchRepository;
@@ -11,8 +10,8 @@ import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.jhipster.health.web.rest.vm.WeightByPeriod;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -103,7 +102,7 @@ public class WeightResource {
     public ResponseEntity<Weight> updateWeight(@Valid @RequestBody Weight weight) throws URISyntaxException {
         log.debug("REST request to update Weight : {}", weight);
         if (weight.getId() == null) {
-            return createWeight(weight);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Weight result = weightRepository.save(weight);
         weightSearchRepository.save(result);
@@ -184,8 +183,8 @@ public class WeightResource {
     @Timed
     public ResponseEntity<Weight> getWeight(@PathVariable Long id) {
         log.debug("REST request to get Weight : {}", id);
-        Weight weight = weightRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(weight));
+        Optional<Weight> weight = weightRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(weight);
     }
 
     /**
@@ -198,8 +197,8 @@ public class WeightResource {
     @Timed
     public ResponseEntity<Void> deleteWeight(@PathVariable Long id) {
         log.debug("REST request to delete Weight : {}", id);
-        weightRepository.delete(id);
-        weightSearchRepository.delete(id);
+        weightRepository.deleteById(id);
+        weightSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
