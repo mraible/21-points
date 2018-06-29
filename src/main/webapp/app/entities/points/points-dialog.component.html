@@ -1,0 +1,74 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="myPointsLabel" jhiTranslate="twentyOnePointsApp.points.home.createOrEditLabel">Create or edit a Points</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" [hidden]="!points.id">
+            <label for="id" jhiTranslate="global.field.id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                   [(ngModel)]="points.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.date" for="field_date">Date</label>
+            <div class="input-group">
+                <input id="field_date" type="text" class="form-control" name="date" ngbDatepicker  #dateDp="ngbDatepicker" [(ngModel)]="points.date"
+                required/>
+                <span class="input-group-append">
+                    <button type="button" class="btn btn-secondary" (click)="dateDp.toggle()"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+            <div [hidden]="!(editForm.controls.date?.dirty && editForm.controls.date?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.date?.errors?.required" jhiTranslate="entity.validation.required">
+                   This field is required.
+                </small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.exercise" for="field_exercise">Exercise</label>
+            <input type="number" class="form-control" name="exercise" id="field_exercise"
+                [(ngModel)]="points.exercise" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.meals" for="field_meals">Meals</label>
+            <input type="number" class="form-control" name="meals" id="field_meals"
+                [(ngModel)]="points.meals" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.alcohol" for="field_alcohol">Alcohol</label>
+            <input type="number" class="form-control" name="alcohol" id="field_alcohol"
+                [(ngModel)]="points.alcohol" />
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.notes" for="field_notes">Notes</label>
+            <input type="text" class="form-control" name="notes" id="field_notes"
+                [(ngModel)]="points.notes" maxlength="140"/>
+            <div [hidden]="!(editForm.controls.notes?.dirty && editForm.controls.notes?.invalid)">
+                <small class="form-text text-danger"
+                   [hidden]="!editForm.controls.notes?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 140 }">
+                   This field cannot be longer than 140 characters.
+                </small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.user" for="field_user">User</label>
+            <select class="form-control" id="field_user" name="user" [(ngModel)]="points.user" >
+                <option [ngValue]="null"></option>
+                <option [ngValue]="userOption.id === points.user?.id ? points.user : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+        <button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+            <span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+    </div>
+</form>
