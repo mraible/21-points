@@ -34,7 +34,7 @@ script:
   - chmod +x gradlew
   - ./gradlew -q clean test
   - yarn test
-  - ./gradlew -q bootRepackage -Pprod -x test
+  - ./gradlew -q bootWar -Pprod -x test
 notifications:
   webhooks:
     on_success: change  # options: [always|never|change] default: always
