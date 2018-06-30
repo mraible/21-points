@@ -47,7 +47,7 @@ script:
   - ./gradlew -q clean test
   - yarn test
   - ./gradlew &
-  - sleep 30s
+  - sleep 45s
   - yarn e2e
   - ./gradlew -q bootWar -Pprod -x test
 notifications:
