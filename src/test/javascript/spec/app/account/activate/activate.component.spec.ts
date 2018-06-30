@@ -1,16 +1,14 @@
 import { TestBed, async, tick, fakeAsync, inject } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import { Observable, of, throwError } from 'rxjs';
+
 import { TwentyOnePointsTestModule } from '../../../test.module';
 import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { LoginModalService } from '../../../../../../main/webapp/app/shared';
-import { ActivateService } from '../../../../../../main/webapp/app/account/activate/activate.service';
-import { ActivateComponent } from '../../../../../../main/webapp/app/account/activate/activate.component';
+import { ActivateService } from 'app/account/activate/activate.service';
+import { ActivateComponent } from 'app/account/activate/activate.component';
 
 describe('Component Tests', () => {
-
     describe('ActivateComponent', () => {
-
         let comp: ActivateComponent;
 
         beforeEach(async(() => {
@@ -18,18 +16,14 @@ describe('Component Tests', () => {
                 imports: [TwentyOnePointsTestModule],
                 declarations: [ActivateComponent],
                 providers: [
-                    ActivateService,
                     {
                         provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({'key': 'ABC123'})
-                    },
-                    {
-                        provide: LoginModalService,
-                        useValue: null
+                        useValue: new MockActivatedRoute({ key: 'ABC123' })
                     }
                 ]
-            }).overrideTemplate(ActivateComponent, '')
-            .compileComponents();
+            })
+                .overrideTemplate(ActivateComponent, '')
+                .compileComponents();
         }));
 
         beforeEach(() => {
@@ -37,10 +31,12 @@ describe('Component Tests', () => {
             comp = fixture.componentInstance;
         });
 
-        it('calls activate.get with the key from params',
-            inject([ActivateService],
+        it(
+            'calls activate.get with the key from params',
+            inject(
+                [ActivateService],
                 fakeAsync((service: ActivateService) => {
-                    spyOn(service, 'get').and.returnValue(Observable.of());
+                    spyOn(service, 'get').and.returnValue(of());
 
                     comp.ngOnInit();
                     tick();
@@ -50,10 +46,12 @@ describe('Component Tests', () => {
             )
         );
 
-        it('should set set success to OK upon successful activation',
-            inject([ActivateService],
+        it(
+            'should set set success to OK upon successful activation',
+            inject(
+                [ActivateService],
                 fakeAsync((service: ActivateService) => {
-                    spyOn(service, 'get').and.returnValue(Observable.of({}));
+                    spyOn(service, 'get').and.returnValue(of({}));
 
                     comp.ngOnInit();
                     tick();
@@ -64,10 +62,12 @@ describe('Component Tests', () => {
             )
         );
 
-        it('should set set error to ERROR upon activation failure',
-            inject([ActivateService],
+        it(
+            'should set set error to ERROR upon activation failure',
+            inject(
+                [ActivateService],
                 fakeAsync((service: ActivateService) => {
-                    spyOn(service, 'get').and.returnValue(Observable.throw('ERROR'));
+                    spyOn(service, 'get').and.returnValue(throwError('ERROR'));
 
                     comp.ngOnInit();
                     tick();

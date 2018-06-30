@@ -1,62 +1,40 @@
 /* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async, inject } from '@angular/core/testing';
-import { OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { of } from 'rxjs';
+
 import { TwentyOnePointsTestModule } from '../../../test.module';
-import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { WeightDetailComponent } from '../../../../../../main/webapp/app/entities/weight/weight-detail.component';
-import { WeightService } from '../../../../../../main/webapp/app/entities/weight/weight.service';
-import { Weight } from '../../../../../../main/webapp/app/entities/weight/weight.model';
+import { WeightDetailComponent } from 'app/entities/weight/weight-detail.component';
+import { Weight } from 'app/shared/model/weight.model';
 
 describe('Component Tests', () => {
-
     describe('Weight Management Detail Component', () => {
         let comp: WeightDetailComponent;
         let fixture: ComponentFixture<WeightDetailComponent>;
-        let service: WeightService;
+        const route = ({ data: of({ weight: new Weight(123) }) } as any) as ActivatedRoute;
 
-        beforeEach(async(() => {
+        beforeEach(() => {
             TestBed.configureTestingModule({
                 imports: [TwentyOnePointsTestModule],
                 declarations: [WeightDetailComponent],
-                providers: [
-                    JhiDateUtils,
-                    JhiDataUtils,
-                    DatePipe,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
-                    },
-                    WeightService,
-                    JhiEventManager
-                ]
-            }).overrideTemplate(WeightDetailComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
+                providers: [{ provide: ActivatedRoute, useValue: route }]
+            })
+                .overrideTemplate(WeightDetailComponent, '')
+                .compileComponents();
             fixture = TestBed.createComponent(WeightDetailComponent);
             comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(WeightService);
         });
 
         describe('OnInit', () => {
             it('Should call load all on init', () => {
-            // GIVEN
+                // GIVEN
 
-            spyOn(service, 'find').and.returnValue(Observable.of(new Weight(10)));
+                // WHEN
+                comp.ngOnInit();
 
-            // WHEN
-            comp.ngOnInit();
-
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.weight).toEqual(jasmine.objectContaining({id: 10}));
+                // THEN
+                expect(comp.weight).toEqual(jasmine.objectContaining({ id: 123 }));
             });
         });
     });
-
 });

@@ -1,51 +1,30 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { TwentyOnePointsSharedModule } from '../../shared';
-import { TwentyOnePointsAdminModule } from '../../admin/admin.module';
+import { TwentyOnePointsSharedModule } from 'app/shared';
+import { TwentyOnePointsAdminModule } from 'app/admin/admin.module';
 import {
-    PreferencesService,
-    PreferencesPopupService,
     PreferencesComponent,
     PreferencesDetailComponent,
-    PreferencesDialogComponent,
-    PreferencesPopupComponent,
+    PreferencesUpdateComponent,
     PreferencesDeletePopupComponent,
     PreferencesDeleteDialogComponent,
     preferencesRoute,
-    preferencesPopupRoute,
+    preferencesPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...preferencesRoute,
-    ...preferencesPopupRoute,
-];
+const ENTITY_STATES = [...preferencesRoute, ...preferencesPopupRoute];
 
 @NgModule({
-    imports: [
-        TwentyOnePointsSharedModule,
-        TwentyOnePointsAdminModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
+    imports: [TwentyOnePointsSharedModule, TwentyOnePointsAdminModule, RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         PreferencesComponent,
         PreferencesDetailComponent,
-        PreferencesDialogComponent,
+        PreferencesUpdateComponent,
         PreferencesDeleteDialogComponent,
-        PreferencesPopupComponent,
-        PreferencesDeletePopupComponent,
+        PreferencesDeletePopupComponent
     ],
-    entryComponents: [
-        PreferencesComponent,
-        PreferencesDialogComponent,
-        PreferencesPopupComponent,
-        PreferencesDeleteDialogComponent,
-        PreferencesDeletePopupComponent,
-    ],
-    providers: [
-        PreferencesService,
-        PreferencesPopupService,
-    ],
+    entryComponents: [PreferencesComponent, PreferencesUpdateComponent, PreferencesDeleteDialogComponent, PreferencesDeletePopupComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class TwentyOnePointsPreferencesModule {}

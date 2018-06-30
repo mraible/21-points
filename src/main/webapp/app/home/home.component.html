@@ -1,7 +1,7 @@
 <div>
     <div class="row">
-        <div class="col-md-4">
-            <span class="heart img-fluid img-rounded"></span>
+        <div class="col-md-4 d-none d-md-inline">
+            <span class="heart img-fluid rounded"></span>
         </div>
         <div class="col-md-8">
             <div class="col-md-11 p-0"><jhi-alert></jhi-alert></div>
@@ -13,22 +13,22 @@
             <div [ngSwitch]="isAuthenticated()">
                 <div *ngSwitchCase="true">
                     <div class="row">
-                        <div class="col-md-8 col-xs-6">
-                            <h4 jhiTranslate="home.points.thisWeek" class="mt-1 hidden-sm-down"
+                        <div class="col-8">
+                            <h4 jhiTranslate="home.points.thisWeek" class="mt-1 d-none d-md-inline"
                                 translateValues="{date: '{{pointsThisWeek.week | date: 'longDate'}}'}">
                                 Points for the week of {{pointsThisWeek.week | date: 'longDate'}}:
                             </h4>
-                            <h4 jhiTranslate="home.points.thisWeekMobile" class="mt-1 hidden-sm-up"
-                                translateValues="{date: '{{pointsThisWeek.week | date: 'longDate'}}'}">
-                                Points for {{pointsThisWeek.week | date: 'longDate'}}:
+                            <h4 jhiTranslate="home.points.thisWeekMobile" class="mt-1 d-sm-none"
+                                translateValues="{date: '{{pointsThisWeek.week | date: 'mediumDate'}}'}">
+                                Points for {{pointsThisWeek.week | date: 'mediumDate'}}:
                             </h4>
                         </div>
-                        <div class="col-md-3 text-right">
-                            <a [routerLink]="['/', { outlets: { popup: ['points-new'] } }]" class="btn btn-primary m-0 mb-1 text-white">Add Points</a>
+                        <div class="col-3 col-xs-2 text-right">
+                            <a [routerLink]="['/points/new']" class="btn btn-primary m-0 mb-1 text-white">Add Points</a>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-11">
+                        <div class="col-md-11 col-xs-12">
                             <ngb-progressbar max="21" [value]="pointsThisWeek.points" [striped]="true"
                                              [type]="pointsThisWeek.progress" [hidden]="!pointsThisWeek.points">
                                 <span *ngIf="pointsThisWeek.points">
@@ -42,18 +42,18 @@
                         </div>
                     </div>
                     <div class="row mt-4">
-                        <div class="col-md-8 col-xs-3 text-nowrap">
-                            <h4 class="mt-1 hidden-sm-down" jhiTranslate="home.bloodPressure.title">Blood Pressure:</h4>
-                            <h4 class="mt-1 hidden-sm-up" jhiTranslate="home.bloodPressure.titleMobile">BP:</h4>
+                        <div class="col-6 text-nowrap">
+                            <h4 class="mt-1 d-none d-none d-md-inline" jhiTranslate="home.bloodPressure.title">Blood Pressure:</h4>
+                            <h4 class="mt-1 d-sm-none" jhiTranslate="home.bloodPressure.titleMobile">BP:</h4>
                         </div>
-                        <div class="col-md-3 text-right">
-                            <a [routerLink]="['/', { outlets: { popup: ['blood-pressure-new'] } }]" class="btn btn-secondary btn-sm">
+                        <div class="col col-md-5 col-xs-5 text-right">
+                            <a [routerLink]="['/blood-pressure/new']" class="btn btn-outline-secondary btn-sm">
                                 <span jhiTranslate="twentyOnePointsApp.bloodPressure.home.createLabel">Add Blood Pressure</span>
                             </a>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-11">
+                    <div class="row mt-1">
+                        <div class="col-md-11 col-xs-12">
                             <span *ngIf="bpReadings.readings && bpReadings.readings.length">
                                 <nvd3 [options]="bpOptions" [data]="bpData" class="with-3d-shadow with-transitions"></nvd3>
                             </span>
@@ -65,17 +65,17 @@
                         </div>
                     </div>
                     <div class="row mt-4">
-                        <div class="col-md-8 col-xs-6">
+                        <div class="col-6">
                             <h4 jhiTranslate="home.weight.title">Weight:</h4>
                         </div>
-                        <div class="col-md-3 text-right">
-                            <a [routerLink]="['/', { outlets: { popup: ['weight-new'] } }]" class="btn btn-secondary btn-sm">
+                        <div class="col col-md-5 col-xs-5 text-right">
+                            <a [routerLink]="['/weight/new']" class="btn btn-outline-secondary btn-sm">
                                 <span jhiTranslate="twentyOnePointsApp.weight.home.createLabel">Add Weight</span>
                             </a>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-11">
+                        <div class="col-md-11 col-xs-12">
                             <span *ngIf="weights.weighIns && weights.weighIns.length">
                                 <nvd3 [options]="weightOptions" [data]="weightData" class="with-3d-shadow with-transitions"></nvd3>
                             </span>
@@ -88,9 +88,9 @@
                     </div>
 
                     <div class="row" *ngIf="preferences?.id">
-                        <p class="mt-2 col-md-11">
-                            <a [routerLink]="['/', { outlets: { popup: 'preferences/'+ preferences.id + '/edit'} }]"
-                               class="pull-right" jhiTranslate="home.link.preferences">Edit Preferences</a>
+                        <p class="mt-2 col-11">
+                            <a [routerLink]="['/preferences', preferences.id, 'edit']"
+                               class="float-right" jhiTranslate="home.link.preferences">Edit Preferences</a>
                             <a routerLink="history" jhiTranslate="home.link.history">View History</a>
                         </p>
                     </div>
@@ -105,15 +105,15 @@
                     <p class="font-weight-bold">
                         <span jhiTranslate="global.messages.info.authenticated.prefix">To get started, please </span>
                         <a href="" (click)="login(); false">
-                            <i class="fa fa-sign-in" aria-hidden="true"></i>
-                            <span jhiTranslate="global.messages.info.authenticated.link">Sign In</span></a>
+                            <fa-icon [icon]="'sign-in-alt'"></fa-icon>
+                            <strong jhiTranslate="global.messages.info.authenticated.link">Sign In</strong></a>
                     </p>
 
                     <p>
-                        <a routerLink="about" class="btn btn-info hidden-sm-down text-white">
+                        <a routerLink="about" class="btn btn-info d-none d-sm-inline text-white">
                             <span jhiTranslate="global.messages.info.learnMore">Learn more</span>
                             <span jhiTranslate="global.messages.info.about21Points">about 21-Points Health</span></a>
-                        <a routerLink="about" class="btn btn-info hidden-sm-up text-white">
+                        <a routerLink="about" class="btn btn-info d-sm-none text-white">
                             <span jhiTranslate="global.messages.info.learnMore">Learn more</span></a>
                     </p>
 

@@ -1,20 +1,21 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
-import { JhiEventManager, JhiParseLinks, JhiPaginationUtil, JhiLanguageService, JhiAlertService } from 'ng-jhipster';
+import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 
-import { BloodPressure } from './blood-pressure.model';
+import { IBloodPressure } from 'app/shared/model/blood-pressure.model';
+import { Principal } from 'app/core';
+
+import { ITEMS_PER_PAGE } from 'app/shared';
 import { BloodPressureService } from './blood-pressure.service';
-import { ITEMS_PER_PAGE, Principal, ResponseWrapper } from '../../shared';
-import { PaginationConfig } from '../../blocks/config/uib-pagination.config';
 
 @Component({
     selector: 'jhi-blood-pressure',
     templateUrl: './blood-pressure.component.html'
 })
 export class BloodPressureComponent implements OnInit, OnDestroy {
-
-    bloodPressures: BloodPressure[];
+    bloodPressures: IBloodPressure[];
     currentAccount: any;
     eventSubscriber: Subscription;
     itemsPerPage: number;
@@ -28,7 +29,7 @@ export class BloodPressureComponent implements OnInit, OnDestroy {
 
     constructor(
         private bloodPressureService: BloodPressureService,
-        private alertService: JhiAlertService,
+        private jhiAlertService: JhiAlertService,
         private eventManager: JhiEventManager,
         private parseLinks: JhiParseLinks,
         private activatedRoute: ActivatedRoute,
@@ -42,30 +43,37 @@ export class BloodPressureComponent implements OnInit, OnDestroy {
         };
         this.predicate = 'id';
         this.reverse = true;
-        this.currentSearch = activatedRoute.snapshot.params['search'] ? activatedRoute.snapshot.params['search'] : '';
+        this.currentSearch =
+            this.activatedRoute.snapshot && this.activatedRoute.snapshot.params['search']
+                ? this.activatedRoute.snapshot.params['search']
+                : '';
     }
 
     loadAll() {
         if (this.currentSearch) {
-            this.bloodPressureService.search({
-                query: this.currentSearch,
+            this.bloodPressureService
+                .search({
+                    query: this.currentSearch,
+                    page: this.page,
+                    size: this.itemsPerPage,
+                    sort: this.sort()
+                })
+                .subscribe(
+                    (res: HttpResponse<IBloodPressure[]>) => this.paginateBloodPressures(res.body, res.headers),
+                    (res: HttpErrorResponse) => this.onError(res.message)
+                );
+            return;
+        }
+        this.bloodPressureService
+            .query({
                 page: this.page,
                 size: this.itemsPerPage,
                 sort: this.sort()
-            }).subscribe(
-                (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-                (res: ResponseWrapper) => this.onError(res.json)
+            })
+            .subscribe(
+                (res: HttpResponse<IBloodPressure[]>) => this.paginateBloodPressures(res.body, res.headers),
+                (res: HttpErrorResponse) => this.onError(res.message)
             );
-            return;
-        }
-        this.bloodPressureService.query({
-            page: this.page,
-            size: this.itemsPerPage,
-            sort: this.sort()
-        }).subscribe(
-            (res: ResponseWrapper) => this.onSuccess(res.json, res.headers),
-            (res: ResponseWrapper) => this.onError(res.json)
-        );
     }
 
     reset() {
@@ -105,9 +113,10 @@ export class BloodPressureComponent implements OnInit, OnDestroy {
         this.currentSearch = query;
         this.loadAll();
     }
+
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then((account) => {
+        this.principal.identity().then(account => {
             this.currentAccount = account;
         });
         this.registerChangeInBloodPressures();
@@ -117,11 +126,12 @@ export class BloodPressureComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId(index: number, item: BloodPressure) {
+    trackId(index: number, item: IBloodPressure) {
         return item.id;
     }
+
     registerChangeInBloodPressures() {
-        this.eventSubscriber = this.eventManager.subscribe('bloodPressureListModification', (response) => this.reset());
+        this.eventSubscriber = this.eventManager.subscribe('bloodPressureListModification', response => this.reset());
     }
 
     sort() {
@@ -132,15 +142,15 @@ export class BloodPressureComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    private onSuccess(data, headers) {
+    private paginateBloodPressures(data: IBloodPressure[], headers: HttpHeaders) {
         this.links = this.parseLinks.parse(headers.get('link'));
-        this.totalItems = headers.get('X-Total-Count');
+        this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
         for (let i = 0; i < data.length; i++) {
             this.bloodPressures.push(data[i]);
         }
     }
 
-    private onError(error) {
-        this.alertService.error(error.message, null, null);
+    private onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
     }
 }

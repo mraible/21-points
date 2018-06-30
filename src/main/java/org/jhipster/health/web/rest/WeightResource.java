@@ -2,17 +2,16 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Weight;
-
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.WeightRepository;
 import org.jhipster.health.repository.search.WeightSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.jhipster.health.web.rest.vm.WeightByPeriod;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -72,11 +71,11 @@ public class WeightResource {
     public ResponseEntity<Weight> createWeight(@Valid @RequestBody Weight weight) throws URISyntaxException {
         log.debug("REST request to save Weight : {}", weight);
         if (weight.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new weight cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new weight cannot already have an ID", ENTITY_NAME, "idexists");
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
-            weight.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get());
+            weight.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
         }
         if (weight.getTimestamp() == null) {
             // todo: get user's timezone from preferences
@@ -103,7 +102,7 @@ public class WeightResource {
     public ResponseEntity<Weight> updateWeight(@Valid @RequestBody Weight weight) throws URISyntaxException {
         log.debug("REST request to update Weight : {}", weight);
         if (weight.getId() == null) {
-            return createWeight(weight);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Weight result = weightRepository.save(weight);
         weightSearchRepository.save(result);
@@ -120,7 +119,7 @@ public class WeightResource {
      */
     @GetMapping("/weights")
     @Timed
-    public ResponseEntity<List<Weight>> getAllWeights(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<Weight>> getAllWeights(Pageable pageable) {
         log.debug("REST request to get a page of Weights");
         Page<Weight> page;
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
@@ -170,7 +169,7 @@ public class WeightResource {
 
     private List<Weight> filterByUser(List<Weight> readings) {
         Stream<Weight> userReadings = readings.stream()
-            .filter(bp -> bp.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin()));
+            .filter(bp -> bp.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get()));
         return userReadings.collect(Collectors.toList());
     }
 
@@ -184,8 +183,8 @@ public class WeightResource {
     @Timed
     public ResponseEntity<Weight> getWeight(@PathVariable Long id) {
         log.debug("REST request to get Weight : {}", id);
-        Weight weight = weightRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(weight));
+        Optional<Weight> weight = weightRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(weight);
     }
 
     /**
@@ -198,8 +197,8 @@ public class WeightResource {
     @Timed
     public ResponseEntity<Void> deleteWeight(@PathVariable Long id) {
         log.debug("REST request to delete Weight : {}", id);
-        weightRepository.delete(id);
-        weightSearchRepository.delete(id);
+        weightRepository.deleteById(id);
+        weightSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -213,7 +212,7 @@ public class WeightResource {
      */
     @GetMapping("/_search/weights")
     @Timed
-    public ResponseEntity<List<Weight>> searchWeights(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<Weight>> searchWeights(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Weights for query {}", query);
         Page<Weight> page = weightSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/weights");
