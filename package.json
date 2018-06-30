@@ -1,9 +1,9 @@
 {
-  "name": "twenty-one-points",
-  "version": "0.0.0",
-  "description": "Description for TwentyOnePoints",
+  "name": "21-points",
+  "version": "5.0.0",
+  "description": "21-Points Health is an app you can use to monitor your health.",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "cacheDirectories": [
     "node_modules"
   ],
