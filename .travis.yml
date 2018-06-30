@@ -46,9 +46,9 @@ script:
   - chmod +x gradlew
   - ./gradlew -q clean test
   - yarn test
-  - ./gradlew &
-  - sleep 45s
-  - yarn e2e
+  #- ./gradlew &
+  #- sleep 45s
+  #- yarn e2e
   - ./gradlew -q bootWar -Pprod -x test
 notifications:
   webhooks:
