@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
-import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
+import { JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core';
 import { Observable } from 'rxjs';
 import { Points } from 'app/shared/model/points.model';
@@ -11,7 +11,7 @@ import { PointsDetailComponent } from './points-detail.component';
 import { PointsUpdateComponent } from './points-update.component';
 import { PointsDeletePopupComponent } from './points-delete-dialog.component';
 import { IPoints } from 'app/shared/model/points.model';
-import moment = require('moment');
+import * as moment from 'moment';
 
 @Injectable({ providedIn: 'root' })
 export class PointsResolve implements Resolve<IPoints> {
