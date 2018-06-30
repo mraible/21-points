@@ -169,7 +169,7 @@ public class WeightResource {
 
     private List<Weight> filterByUser(List<Weight> readings) {
         Stream<Weight> userReadings = readings.stream()
-            .filter(bp -> bp.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin()));
+            .filter(bp -> bp.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get()));
         return userReadings.collect(Collectors.toList());
     }
 

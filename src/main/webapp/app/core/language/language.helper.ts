@@ -44,7 +44,11 @@ export class JhiLanguageHelper {
         }
 
         this.translateService.get(titleKey).subscribe(title => {
-            this.titleService.setTitle(title);
+            this.translateService.get('global.title').subscribe(appname => {
+                if (title !== appname) {
+                    this.titleService.setTitle(title + ' | ' + appname);
+                }
+            });
         });
     }
 

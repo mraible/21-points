@@ -56,6 +56,18 @@ export class WeightService {
             .map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res));
     }
 
+    last30Days(): Observable<EntityResponseType> {
+        return this.http
+            .get('api/weight-by-days/30', { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
+    }
+
+    byMonth(month: string): Observable<EntityResponseType> {
+        return this.http
+            .get(`api/weight-by-month/${month}`, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
+    }
+
     private convertDateFromClient(weight: IWeight): IWeight {
         const copy: IWeight = Object.assign({}, weight, {
             timestamp: weight.timestamp != null && weight.timestamp.isValid() ? weight.timestamp.toJSON() : null

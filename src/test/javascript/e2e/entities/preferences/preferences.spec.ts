@@ -1,5 +1,5 @@
 import { browser } from 'protractor';
-import { NavBarPage } from './../../page-objects/jhi-page-objects';
+import { NavBarPage } from '../../page-objects/jhi-page-objects';
 import { PreferencesComponentsPage, PreferencesUpdatePage } from './preferences.page-object';
 
 describe('Preferences e2e test', () => {
@@ -30,8 +30,8 @@ describe('Preferences e2e test', () => {
 
     it('should create and save Preferences', () => {
         preferencesComponentsPage.clickOnCreateButton();
-        preferencesUpdatePage.setWeeklyGoalInput('5');
-        expect(preferencesUpdatePage.getWeeklyGoalInput()).toMatch('5');
+        preferencesUpdatePage.setWeeklyGoalInput('10');
+        expect(preferencesUpdatePage.getWeeklyGoalInput()).toMatch('10');
         preferencesUpdatePage.weightUnitsSelectLastOption();
         preferencesUpdatePage.userSelectLastOption();
         preferencesUpdatePage.save();

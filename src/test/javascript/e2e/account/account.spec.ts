@@ -1,5 +1,5 @@
 import { browser, element, by } from 'protractor';
-import { NavBarPage, SignInPage, PasswordPage, SettingsPage } from './../page-objects/jhi-page-objects';
+import { NavBarPage, SignInPage, PasswordPage, SettingsPage } from '../page-objects/jhi-page-objects';
 
 describe('account', () => {
     let navBarPage: NavBarPage;
@@ -15,7 +15,7 @@ describe('account', () => {
     });
 
     it('should fail to login with bad password', () => {
-        const expect1 = /home.title/;
+        const expect1 = /home.welcome/;
         element
             .all(by.css('h1'))
             .first()
@@ -53,9 +53,9 @@ describe('account', () => {
 
         browser.waitForAngular();
 
-        const expect2 = /home.logged.message/;
+        const expect2 = /home.welcomeWithName/;
         element
-            .all(by.css('.alert-success span'))
+            .all(by.css('h1'))
             .getAttribute('jhiTranslate')
             .then(value => {
                 expect(value).toMatch(expect2);

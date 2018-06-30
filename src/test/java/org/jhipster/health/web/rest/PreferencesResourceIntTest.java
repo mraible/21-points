@@ -4,6 +4,7 @@ import org.jhipster.health.TwentyOnePointsApp;
 
 import org.jhipster.health.domain.Preferences;
 import org.jhipster.health.repository.PreferencesRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
 import org.jhipster.health.web.rest.errors.ExceptionTranslator;
 
@@ -30,11 +31,17 @@ import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionSe
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.jhipster.health.domain.enumeration.Units;
+import org.springframework.web.context.WebApplicationContext;
+
 /**
  * Test class for the PreferencesResource REST controller.
  *
@@ -53,6 +60,8 @@ public class PreferencesResourceIntTest {
     @Autowired
     private PreferencesRepository preferencesRepository;
 
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
@@ -247,7 +256,6 @@ public class PreferencesResourceIntTest {
     public void updatePreferences() throws Exception {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
-
         int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
 
         // Update the preferences
@@ -307,7 +315,6 @@ public class PreferencesResourceIntTest {
     public void deletePreferences() throws Exception {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
-
         int databaseSizeBeforeDelete = preferencesRepository.findAll().size();
 
         // Get the preferences

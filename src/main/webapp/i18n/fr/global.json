@@ -1,16 +1,18 @@
 {
     "global": {
-        "title": "TwentyOnePoints",
+        "title": "21-Points Health",
         "browsehappy": "Vous utilisez un <strong>ancien</strong> navigateur. Veuillez <a href=\"http://browsehappy.com/?locale=fr\">mettre à jour votre navigateur</a> pour une meilleure expérience.",
         "menu": {
             "home": "Accueil",
+            "about": "Sur",
+            "history": "Histoire",
             "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
             "entities": {
                 "main": "Entités",
-                "bloodPressure": "Blood Pressure",
-                "weight": "Weight",
                 "points": "Points",
-                "preferences": "Preferences",
+                "bloodPressure": "Tension Artérielle",
+                "weight": "Poids",
+                "preferences": "Préférences",
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {
@@ -135,5 +137,5 @@
         "idexists": "Une nouvelle entité {{entityName}} ne peut pas avoir d'ID !",
         "idnull": "Invalid ID"
     },
-    "footer": "Ceci est votre pied de page"
+    "footer": "<strong>21-Points Health</strong> | Une application développée pour une meilleure vie et <a href='http://www.jhipster-book.com' target='_blank'>Le Mini-Livre JHipster</a> | By <a href='http://raibledesigns.com' target='_blank'>Matt Raible</a>"
 }

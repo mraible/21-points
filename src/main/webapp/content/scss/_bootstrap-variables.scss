@@ -8,11 +8,15 @@
 // Colors:
 // Grayscale and brand colors for use across Bootstrap.
 
-$primary: #3e8acc;
-$success: #28a745;
-$info: #17a2b8;
-$warning: #ffc107;
-$danger: #dc3545;
+// Customize colors to match Bootstrap Material Theme
+// https://github.com/FezVrasta/bootstrap-material-design/blob/master/sass/_variables.scss
+
+$primary: #009688;
+$success: #4caf50;
+$info: #03a9f4;
+$warning: #ff5722;
+$danger: #f44336;
+$blue: #0275d8;
 
 // Options:
 // Quickly modify global styling by enabling or disabling optional features.
@@ -34,9 +38,20 @@ $border-radius-sm: 0.1rem;
 // Body:
 // Settings for the `<body>` element.
 
-$body-bg: #e4e5e6;
+$body-bg: #fff;
 
 // Typography:
 // Font, line-height, and color for body text, headings, and more.
 
-$font-size-base: 1rem;
+$font-size-base: 0.9rem;
+
+$border-radius: 2px;
+$border-radius-sm: 1px;
+
+$font-family-sans-serif: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+$headings-font-weight: 300;
+
+$link-color: $primary;
+
+$input-focus-border-color: lighten($blue, 25%);
+$input-focus-box-shadow: none;

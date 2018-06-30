@@ -3,7 +3,9 @@ package org.jhipster.health.web.rest;
 import org.jhipster.health.TwentyOnePointsApp;
 
 import org.jhipster.health.domain.Points;
+import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PointsRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.jhipster.health.web.rest.errors.ExceptionTranslator;
 
@@ -22,20 +24,29 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.util.Collections;
 import java.util.List;
 
-
-import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -65,6 +76,8 @@ public class PointsResourceIntTest {
     @Autowired
     private PointsRepository pointsRepository;
 
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
@@ -73,9 +86,6 @@ public class PointsResourceIntTest {
      */
     @Autowired
     private PointsSearchRepository mockPointsSearchRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -190,7 +200,6 @@ public class PointsResourceIntTest {
         points.setDate(null);
 
         // Create the Points, which fails.
-
         restPointsMockMvc.perform(post("/api/points")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(points)))
@@ -256,7 +265,6 @@ public class PointsResourceIntTest {
     public void updatePoints() throws Exception {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
-
         int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
 
         // Update the points
@@ -322,7 +330,6 @@ public class PointsResourceIntTest {
     public void deletePoints() throws Exception {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
-
         int databaseSizeBeforeDelete = pointsRepository.findAll().size();
 
         // Get the points

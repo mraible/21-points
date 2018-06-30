@@ -2,7 +2,7 @@ import { element, by, promise, ElementFinder } from 'protractor';
 
 export class WeightComponentsPage {
     createButton = element(by.id('jh-create-entity'));
-    title = element.all(by.css('jhi-weight div h2#page-heading span')).first();
+    title = element.all(by.css('jhi-weight div h2#page-heading')).first();
 
     clickOnCreateButton(): promise.Promise<void> {
         return this.createButton.click();

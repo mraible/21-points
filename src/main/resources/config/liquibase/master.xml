@@ -5,15 +5,15 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20170725030037_added_entity_Points.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20160831021230_added_entity_BloodPressure.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20160831021351_added_entity_Weight.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20170725030037_added_entity_Points.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20170725033721_added_entity_Preferences.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
-    <include file="config/liquibase/changelog/20160831021230_added_entity_constraints_BloodPressure.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20170725030037_added_entity_constraints_Points.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20160831021351_added_entity_constraints_Weight.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20171024115100_migrate_from_v1.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20170725030037_added_entity_constraints_Points.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20170725033721_added_entity_constraints_Preferences.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20160831021230_added_entity_constraints_BloodPressure.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>

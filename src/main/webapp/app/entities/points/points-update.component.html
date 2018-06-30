@@ -15,7 +15,7 @@
                         <input id="field_date" type="text" class="form-control" name="date" ngbDatepicker  #dateDp="ngbDatepicker" [(ngModel)]="points.date"
                         required/>
                         <span class="input-group-append">
-                            <button type="button" class="btn btn-secondary" (click)="dateDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                            <button type="button" class="btn btn-outline-secondary" (click)="dateDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
                         </span>
                     </div>
                     <div [hidden]="!(editForm.controls.date?.dirty && editForm.controls.date?.invalid)">
@@ -25,25 +25,30 @@
                         </small>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.exercise" for="field_exercise">Exercise</label>
-                    <input type="number" class="form-control" name="exercise" id="field_exercise"
-                        [(ngModel)]="points.exercise" />
+                <div class="form-check">
+                    <label class="form-check-label" for="field_exercise">
+                        <input type="checkbox" class="form-check-input" name="exercise" id="field_exercise"
+                               [(ngModel)]="points.exercise"  />
+                        <span jhiTranslate="twentyOnePointsApp.points.exercise" for="field_exercise">Exercise</span>
+                    </label>
                 </div>
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.meals" for="field_meals">Meals</label>
-                    <input type="number" class="form-control" name="meals" id="field_meals"
-                        [(ngModel)]="points.meals" />
+                <div class="form-check">
+                    <label class="form-check-label" for="field_meals">
+                        <input type="checkbox" class="form-check-input" name="meals" id="field_meals"
+                               [(ngModel)]="points.meals"  />
+                        <span jhiTranslate="twentyOnePointsApp.points.meals">Meals</span>
+                    </label>
                 </div>
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.alcohol" for="field_alcohol">Alcohol</label>
-                    <input type="number" class="form-control" name="alcohol" id="field_alcohol"
-                        [(ngModel)]="points.alcohol" />
+                <div class="form-check">
+                    <label class="form-check-label" for="field_alcohol">
+                        <input type="checkbox" class="form-check-input" name="alcohol" id="field_alcohol"
+                               [(ngModel)]="points.alcohol"  />
+                        <span jhiTranslate="twentyOnePointsApp.points.alcohol" for="field_alcohol">Alcohol</span>
+                    </label>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="twentyOnePointsApp.points.notes" for="field_notes">Notes</label>
-                    <input type="text" class="form-control" name="notes" id="field_notes"
-                        [(ngModel)]="points.notes" maxlength="140"/>
+                    <textarea class="form-control" name="notes" id="field_notes" [(ngModel)]="points.notes" maxlength="140" rows="3"></textarea>
                     <div [hidden]="!(editForm.controls.notes?.dirty && editForm.controls.notes?.invalid)">
                         <small class="form-text text-danger"
                         [hidden]="!editForm.controls.notes?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 140 }">
@@ -61,7 +66,7 @@
                 </div>
             </div>
             <div>
-                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                <button type="button" id="cancel-save" class="btn btn-outline-secondary"  (click)="previousState()">
                     <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
                 </button>
                 <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">

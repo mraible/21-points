@@ -41,4 +41,8 @@ export class PreferencesService {
         const options = createRequestOption(req);
         return this.http.get<IPreferences[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
     }
+
+    user(): Observable<EntityResponseType> {
+        return this.http.get<IPreferences>('api/my-preferences', { observe: 'response' });
+    }
 }

@@ -2,7 +2,7 @@ import { element, by, promise, ElementFinder } from 'protractor';
 
 export class BloodPressureComponentsPage {
     createButton = element(by.id('jh-create-entity'));
-    title = element.all(by.css('jhi-blood-pressure div h2#page-heading span')).first();
+    title = element.all(by.css('jhi-blood-pressure div h2#page-heading')).first();
 
     clickOnCreateButton(): promise.Promise<void> {
         return this.createButton.click();

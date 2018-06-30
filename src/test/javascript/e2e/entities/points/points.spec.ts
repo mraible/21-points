@@ -1,5 +1,5 @@
 import { browser } from 'protractor';
-import { NavBarPage } from './../../page-objects/jhi-page-objects';
+import { NavBarPage } from '../../page-objects/jhi-page-objects';
 import { PointsComponentsPage, PointsUpdatePage } from './points.page-object';
 
 describe('Points e2e test', () => {
@@ -32,12 +32,9 @@ describe('Points e2e test', () => {
         pointsComponentsPage.clickOnCreateButton();
         pointsUpdatePage.setDateInput('2000-12-31');
         expect(pointsUpdatePage.getDateInput()).toMatch('2000-12-31');
-        pointsUpdatePage.setExerciseInput('5');
-        expect(pointsUpdatePage.getExerciseInput()).toMatch('5');
-        pointsUpdatePage.setMealsInput('5');
-        expect(pointsUpdatePage.getMealsInput()).toMatch('5');
-        pointsUpdatePage.setAlcoholInput('5');
-        expect(pointsUpdatePage.getAlcoholInput()).toMatch('5');
+        expect(pointsUpdatePage.getExerciseInput()).toBeTruthy();
+        expect(pointsUpdatePage.getMealsInput()).toBeTruthy();
+        expect(pointsUpdatePage.getAlcoholInput()).toBeTruthy();
         pointsUpdatePage.setNotesInput('notes');
         expect(pointsUpdatePage.getNotesInput()).toMatch('notes');
         pointsUpdatePage.userSelectLastOption();

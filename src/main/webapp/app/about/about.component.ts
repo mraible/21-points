@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Principal } from '../shared';
+import { Principal } from 'app/core';
 
 @Component({
     selector: 'jhi-about',
@@ -8,11 +8,10 @@ import { Principal } from '../shared';
 export class AboutComponent implements OnInit {
     currentAccount: any;
 
-    constructor(private principal: Principal) {
-    }
+    constructor(private principal: Principal) {}
 
     ngOnInit() {
-        this.principal.identity().then((account) => {
+        this.principal.identity().then(account => {
             this.currentAccount = account;
         });
     }

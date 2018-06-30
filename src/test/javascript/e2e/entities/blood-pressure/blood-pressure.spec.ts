@@ -1,5 +1,5 @@
 import { browser, protractor } from 'protractor';
-import { NavBarPage } from './../../page-objects/jhi-page-objects';
+import { NavBarPage } from '../../page-objects/jhi-page-objects';
 import { BloodPressureComponentsPage, BloodPressureUpdatePage } from './blood-pressure.page-object';
 
 describe('BloodPressure e2e test', () => {

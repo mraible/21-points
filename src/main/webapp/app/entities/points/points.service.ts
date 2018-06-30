@@ -56,6 +56,24 @@ export class PointsService {
             .map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res));
     }
 
+    thisWeek(): Observable<EntityResponseType> {
+        return this.http
+            .get('api/points-this-week', { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
+    }
+
+    byWeek(date: string): Observable<EntityResponseType> {
+        return this.http
+            .get(`api/points-by-week/${date}`, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
+    }
+
+    byMonth(month: string): Observable<EntityResponseType> {
+        return this.http
+            .get(`api/points-by-month/${month}`, { observe: 'response' })
+            .map((res: EntityResponseType) => this.convertDateFromServer(res));
+    }
+
     private convertDateFromClient(points: IPoints): IPoints {
         const copy: IPoints = Object.assign({}, points, {
             date: points.date != null && points.date.isValid() ? points.date.format(DATE_FORMAT) : null

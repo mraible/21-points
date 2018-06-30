@@ -2,7 +2,7 @@ import { element, by, promise, ElementFinder } from 'protractor';
 
 export class PointsComponentsPage {
     createButton = element(by.id('jh-create-entity'));
-    title = element.all(by.css('jhi-points div h2#page-heading span')).first();
+    title = element.all(by.css('jhi-points div h2#page-heading')).first();
 
     clickOnCreateButton(): promise.Promise<void> {
         return this.createButton.click();
@@ -29,6 +29,7 @@ export class PointsUpdatePage {
     }
 
     setDateInput(date): promise.Promise<void> {
+        this.dateInput.clear();
         return this.dateInput.sendKeys(date);
     }
 
@@ -37,27 +38,27 @@ export class PointsUpdatePage {
     }
 
     setExerciseInput(exercise): promise.Promise<void> {
-        return this.exerciseInput.sendKeys(exercise);
+        return this.exerciseInput.click();
     }
 
     getExerciseInput() {
-        return this.exerciseInput.getAttribute('value');
+        return this.exerciseInput.getAttribute('checked');
     }
 
     setMealsInput(meals): promise.Promise<void> {
-        return this.mealsInput.sendKeys(meals);
+        return this.mealsInput.click();
     }
 
     getMealsInput() {
-        return this.mealsInput.getAttribute('value');
+        return this.mealsInput.getAttribute('checked');
     }
 
     setAlcoholInput(alcohol): promise.Promise<void> {
-        return this.alcoholInput.sendKeys(alcohol);
+        return this.alcoholInput.click();
     }
 
     getAlcoholInput() {
-        return this.alcoholInput.getAttribute('value');
+        return this.alcoholInput.getAttribute('checked');
     }
 
     setNotesInput(notes): promise.Promise<void> {

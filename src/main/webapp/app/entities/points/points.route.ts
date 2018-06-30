@@ -11,6 +11,7 @@ import { PointsDetailComponent } from './points-detail.component';
 import { PointsUpdateComponent } from './points-update.component';
 import { PointsDeletePopupComponent } from './points-delete-dialog.component';
 import { IPoints } from 'app/shared/model/points.model';
+import moment = require('moment');
 
 @Injectable({ providedIn: 'root' })
 export class PointsResolve implements Resolve<IPoints> {
@@ -20,8 +21,16 @@ export class PointsResolve implements Resolve<IPoints> {
         const id = route.params['id'] ? route.params['id'] : null;
         if (id) {
             return this.service.find(id).map((points: HttpResponse<Points>) => points.body);
+        } else {
+            // populate date with current date if new
+            const points = new Points();
+            points.date = moment();
+            // default to the best day possible
+            points.exercise = 1;
+            points.meals = 1;
+            points.alcohol = 1;
+            return Observable.of(points);
         }
-        return Observable.of(new Points());
     }
 }
 

@@ -21,7 +21,7 @@
                 <button (click)="changeLevel(logger.name, 'INFO')" [ngClass]="(logger.level=='INFO') ? 'btn-info' : 'btn-light'" class="btn btn-sm">INFO</button>
                 <button (click)="changeLevel(logger.name, 'WARN')" [ngClass]="(logger.level=='WARN') ? 'btn-warning' : 'btn-light'" class="btn btn-sm">WARN</button>
                 <button (click)="changeLevel(logger.name, 'ERROR')" [ngClass]="(logger.level=='ERROR') ? 'btn-danger' : 'btn-light'" class="btn btn-sm">ERROR</button>
-                <button (click)="changeLevel(logger.name, 'OFF')" [ngClass]="(logger.level=='OFF') ? 'btn-secondary' : 'btn-light'" class="btn btn-sm">OFF</button>
+                <button (click)="changeLevel(logger.name, 'OFF')" [ngClass]="(logger.level=='OFF') ? 'btn-outline-secondary' : 'btn-light'" class="btn btn-sm">OFF</button>
             </td>
         </tr>
     </table>

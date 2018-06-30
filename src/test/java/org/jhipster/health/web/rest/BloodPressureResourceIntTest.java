@@ -3,7 +3,9 @@ package org.jhipster.health.web.rest;
 import org.jhipster.health.TwentyOnePointsApp;
 
 import org.jhipster.health.domain.BloodPressure;
+import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.BloodPressureRepository;
+import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
 import org.jhipster.health.web.rest.errors.ExceptionTranslator;
 
@@ -27,18 +29,25 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
-
+import static org.hamcrest.Matchers.hasSize;
+import static org.jhipster.health.web.rest.TestUtil.sameInstant;
 import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -50,8 +59,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = TwentyOnePointsApp.class)
 public class BloodPressureResourceIntTest {
 
-    private static final Instant DEFAULT_TIMESTAMP = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_TIMESTAMP = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final ZonedDateTime DEFAULT_TIMESTAMP = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_TIMESTAMP = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     private static final Integer DEFAULT_SYSTOLIC = 1;
     private static final Integer UPDATED_SYSTOLIC = 2;
@@ -62,6 +71,8 @@ public class BloodPressureResourceIntTest {
     @Autowired
     private BloodPressureRepository bloodPressureRepository;
 
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
@@ -93,7 +104,7 @@ public class BloodPressureResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final BloodPressureResource bloodPressureResource = new BloodPressureResource(bloodPressureRepository, mockBloodPressureSearchRepository);
+        final BloodPressureResource bloodPressureResource = new BloodPressureResource(bloodPressureRepository, mockBloodPressureSearchRepository, userRepository);
         this.restBloodPressureMockMvc = MockMvcBuilders.standaloneSetup(bloodPressureResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -243,7 +254,7 @@ public class BloodPressureResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
-            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP.toString())))
+            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
             .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
     }
@@ -259,7 +270,7 @@ public class BloodPressureResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(bloodPressure.getId().intValue()))
-            .andExpect(jsonPath("$.timestamp").value(DEFAULT_TIMESTAMP.toString()))
+            .andExpect(jsonPath("$.timestamp").value(sameInstant(DEFAULT_TIMESTAMP)))
             .andExpect(jsonPath("$.systolic").value(DEFAULT_SYSTOLIC))
             .andExpect(jsonPath("$.diastolic").value(DEFAULT_DIASTOLIC));
     }
@@ -367,7 +378,7 @@ public class BloodPressureResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
-            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(DEFAULT_TIMESTAMP.toString())))
+            .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
             .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
     }
