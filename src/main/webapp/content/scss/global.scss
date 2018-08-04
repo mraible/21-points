@@ -302,4 +302,11 @@ a {
     white-space: nowrap;
 }
 
+/* Override Bootstrap's default vertical-align: top */
+.table {
+    th,
+    td {
+        vertical-align: middle !important;
+    }
+}
 /* jhipster-needle-scss-add-main JHipster will add new css style */
