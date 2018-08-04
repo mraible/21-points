@@ -2,13 +2,13 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.Preferences;
-
 import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -64,11 +64,11 @@ public class PreferencesResource {
     public ResponseEntity<Preferences> createPreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
         log.debug("REST request to save Preferences : {}", preferences);
         if (preferences.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new preferences cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new preferences cannot already have an ID", ENTITY_NAME, "idexists");
         }
 
         log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentUserLogin());
-        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get();
+        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get();
         preferences.setUser(user);
 
         Preferences result = preferencesRepository.save(preferences);
@@ -92,7 +92,7 @@ public class PreferencesResource {
     public ResponseEntity<Preferences> updatePreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
         log.debug("REST request to update Preferences : {}", preferences);
         if (preferences.getId() == null) {
-            return createPreferences(preferences);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.save(result);
@@ -129,7 +129,7 @@ public class PreferencesResource {
     @GetMapping("/my-preferences")
     @Timed
     public ResponseEntity<Preferences> getUserPreferences() {
-        String username = SecurityUtils.getCurrentUserLogin();
+        String username = SecurityUtils.getCurrentUserLogin().get();
         log.debug("REST request to get Preferences : {}", username);
         Optional<Preferences> preferences = preferencesRepository.findOneByUserLogin(username);
 
@@ -152,8 +152,8 @@ public class PreferencesResource {
     @Timed
     public ResponseEntity<Preferences> getPreferences(@PathVariable Long id) {
         log.debug("REST request to get Preferences : {}", id);
-        Preferences preferences = preferencesRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(preferences));
+        Optional<Preferences> preferences = preferencesRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(preferences);
     }
 
     /**
@@ -166,8 +166,8 @@ public class PreferencesResource {
     @Timed
     public ResponseEntity<Void> deletePreferences(@PathVariable Long id) {
         log.debug("REST request to delete Preferences : {}", id);
-        preferencesRepository.delete(id);
-        preferencesSearchRepository.delete(id);
+        preferencesRepository.deleteById(id);
+        preferencesSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 

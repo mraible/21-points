@@ -11,7 +11,7 @@
                 Previous
             </div>
             <div
-                class="btn btn-secondary"
+                class="btn btn-outline-secondary"
                 mwlCalendarToday
                 [(viewDate)]="viewDate"
                 (viewDateChange)="viewDateChanged()">
@@ -89,7 +89,7 @@
         </div>
     </div>
     <div class="cal-cell-bottom">
-        <ngb-progressbar max="21" [value]="day.weekPoints[0].meta.value" [striped]="true"
+        <ngb-progressbar [max]="21" [value]="day.weekPoints[0].meta.value" [striped]="true"
                          *ngIf="day.weekPoints.length && day.weekPoints[0].meta.value"
                          [type]="(day.weekPoints[0].meta.value >= day.weekPoints[0].meta.goal) ? 'success' : 'danger'">
             <span ngbTooltip="{{day.weekPoints[0].title}}">

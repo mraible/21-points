@@ -1,20 +1,21 @@
-const HtmlScreenshotReporter = require("protractor-jasmine2-screenshot-reporter");
+const HtmlScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
 const JasmineReporters = require('jasmine-reporters');
 
 exports.config = {
     allScriptsTimeout: 20000,
 
     specs: [
-        './e2e/account/*.spec.ts',
-        './e2e/admin/*.spec.ts',
-        './e2e/entities/*.spec.ts',
+        './e2e/account/**/*.spec.ts',
+        './e2e/admin/**/*.spec.ts',
+        './e2e/entities/**/*.spec.ts',
         /* jhipster-needle-add-protractor-tests - JHipster will add protractors tests here */
     ],
 
     capabilities: {
-        'browserName': 'chrome',
-        'phantomjs.binary.path': require('phantomjs-prebuilt').path,
-        'phantomjs.ghostdriver.cli.args': ['--loglevel=DEBUG']
+        browserName: 'chrome',
+        chromeOptions: {
+            args: [ "--disable-gpu", "--window-size=800,600" ]
+        }
     },
 
     directConnect: true,
@@ -25,7 +26,7 @@ exports.config = {
 
     jasmineNodeOpts: {
         showColors: true,
-        defaultTimeoutInterval: 60000
+        defaultTimeoutInterval: 720000
     },
 
     beforeLaunch: function() {

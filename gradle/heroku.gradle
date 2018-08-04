@@ -1,6 +1,0 @@
-apply plugin: 'com.heroku.sdk.heroku-gradle'
-
-heroku {
-  appName = "health-by-points-2"
-}
-

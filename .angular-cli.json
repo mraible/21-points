@@ -4,7 +4,7 @@
         "name": "twenty-one-points"
     },
     "apps": [{
-        "root": "src/main/webapp/",
+        "root": "src/main/webapp",
         "outDir": "build/www/app",
         "assets": [
             "content",
@@ -14,7 +14,7 @@
         "index": "index.html",
         "main": "app/app.main.ts",
         "polyfills": "app/polyfills.ts",
-        "test": "",
+        "test": "src/test/javascript/spec/entry.ts",
         "tsconfig": "../../../tsconfig.json",
         "prefix": "jhi",
         "mobile": false,
@@ -46,13 +46,20 @@
         "prefixInterfaces": false,
         "component" : {
             "inlineStyle" : true,
-            "inlineTemplate": false
+            "inlineTemplate": false,
+            "spec": false
         },
-        "spec": {
-            "component": false,
-            "directive": false,
-            "pipe": false,
-            "service": false
+        "directive" : {
+            "spec": false
+        },
+        "guard" : {
+            "spec": false
+        },
+        "pipe" : {
+            "spec": false
+        },
+        "service" : {
+            "spec": false
         }
     },
     "packageManager": "yarn"
