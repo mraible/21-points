@@ -86,11 +86,11 @@ jhipster:
         #allow-credentials: true
         #max-age: 1800
     mail:
-        from: TwentyOnePoints@localhost
+        from: 21-points@localhost
     swagger:
         default-include-pattern: /api/.*
-        title: TwentyOnePoints API
-        description: TwentyOnePoints API documentation
+        title: 21-Points Health API
+        description: 21-Points Health API documentation
         version: 0.0.1
         terms-of-service-url:
         contact-name:
