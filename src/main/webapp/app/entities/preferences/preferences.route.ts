@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 import { UserRouteAccessService } from 'app/core';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Preferences } from 'app/shared/model/preferences.model';
 import { PreferencesService } from './preferences.service';
 import { PreferencesComponent } from './preferences.component';
@@ -18,9 +19,9 @@ export class PreferencesResolve implements Resolve<IPreferences> {
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         const id = route.params['id'] ? route.params['id'] : null;
         if (id) {
-            return this.service.find(id).map((preferences: HttpResponse<Preferences>) => preferences.body);
+            return this.service.find(id).pipe(map((preferences: HttpResponse<Preferences>) => preferences.body));
         }
-        return Observable.of(new Preferences());
+        return of(new Preferences());
     }
 }
 
