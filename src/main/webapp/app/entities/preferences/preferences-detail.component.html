@@ -1,0 +1,35 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="preferences">
+            <h2><span jhiTranslate="twentyOnePointsApp.preferences.detail.title">Preferences</span> {{preferences.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="twentyOnePointsApp.preferences.weeklyGoal">Weekly Goal</span></dt>
+                <dd>
+                    <span>{{preferences.weeklyGoal}}</span>
+                </dd>
+                <dt><span jhiTranslate="twentyOnePointsApp.preferences.weightUnits">Weight Units</span></dt>
+                <dd>
+                    <span jhiTranslate="{{'twentyOnePointsApp.Units.' + preferences.weightUnits}}">{{preferences.weightUnits}}</span>
+                </dd>
+                <dt><span jhiTranslate="twentyOnePointsApp.preferences.user">User</span></dt>
+                <dd>
+                    {{preferences.user?.login}}
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/preferences', preferences.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
