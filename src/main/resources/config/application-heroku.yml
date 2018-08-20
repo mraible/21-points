@@ -27,3 +27,6 @@ spring:
         password: ${JDBC_DATABASE_PASSWORD}
         hikari:
             maximumPoolSize: 8
+    data:
+        jest:
+            uri: ${SEARCHBOX_SSL_URL}
