@@ -12,10 +12,12 @@ module.exports = {
         'app/(.*)': '<rootDir>/src/main/webapp/app/$1'
     },
     reporters: [
-        'default'
+        'default',
+        [ 'jest-junit', { output: './build/test-results/jest/TESTS-results.xml' } ]
     ],
     testResultsProcessor: 'jest-sonar-reporter',
     transformIgnorePatterns: ['node_modules/(?!@angular/common/locales)'],
     testMatch: ['<rootDir>/src/test/javascript/spec/**/+(*.)+(spec.ts)'],
-    rootDir: '../../../'
+    rootDir: '../../../',
+    testURL: "http://localhost/"
 };
