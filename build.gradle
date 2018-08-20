@@ -169,17 +169,15 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-aop"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile "org.springframework.boot:spring-boot-starter-data-elasticsearch"
-    // needed to get around elasticsearch stacktrace about jna not found
-    // https://github.com/elastic/elasticsearch/issues/13245
-    compile "net.java.dev.jna:jna"
     // Jest for Elasticsearch
     runtime "com.github.vanroy:spring-boot-starter-data-jest:3.1.4.RELEASE"
     runtime ("io.searchbox:jest:5.3.3") {
         exclude module: 'commons-logging'
     }
     runtime "com.google.code.gson:gson:2.8.0"
-    runtime "org.apache.logging.log4j:log4j-api:2.7" // needed to create embedded elasticsearch instance
-    runtime "org.apache.logging.log4j:log4j-core:2.7"
+    // log4j needed to create embedded elasticsearch instance
+    compile "org.apache.logging.log4j:log4j-api:2.7"
+    compile "org.apache.logging.log4j:log4j-core:2.7"
     // end of Jest dependencies
     compile "org.springframework.boot:spring-boot-starter-security"
     compile ("org.springframework.boot:spring-boot-starter-web") {

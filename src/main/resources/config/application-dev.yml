@@ -53,9 +53,6 @@ spring:
             properties:
                 path:
                     home: build/elasticsearch
-                transport:
-                    tcp:
-                        connect_timeout: 120s
     liquibase:
         contexts: dev
     mail:
