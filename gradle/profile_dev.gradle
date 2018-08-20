@@ -17,7 +17,8 @@ bootRun {
     args = []
 }
 
-task webpackBuildDev(type: YarnTask) {
+task webpackBuildDev(type: YarnTask, dependsOn: 'yarn_install') {
+    onlyIf { shouldWebpackRun() == true }
     args = ["run", "webpack:build"]
 }
 
@@ -37,4 +38,8 @@ processResources {
 }
 
 processResources.dependsOn webpackBuildDev
-webpackBuildDev.onlyIf { project.hasProperty('webpack') }
+yarn_install.onlyIf { shouldWebpackRun() == true }
+
+def shouldWebpackRun() {
+    file('build/www/app/main.bundle.js').exists() == false || project.hasProperty('webpack')
+}

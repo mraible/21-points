@@ -306,7 +306,7 @@ public class WeightResourceIntTest {
 
         // Create the Weight
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException 
         restWeightMockMvc.perform(put("/api/weights")
             .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)

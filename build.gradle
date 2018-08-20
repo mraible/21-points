@@ -17,9 +17,9 @@ buildscript {
 
 plugins {
     id "org.sonarqube" version "2.6.2"
-    id "net.ltgt.apt-eclipse" version "0.15"
-    id "net.ltgt.apt-idea" version "0.15"
-    id "net.ltgt.apt" version "0.15"
+    id "net.ltgt.apt-eclipse" version "0.18"
+    id "net.ltgt.apt-idea" version "0.18"
+    id "net.ltgt.apt" version "0.18"
     id "io.spring.dependency-management" version "1.0.5.RELEASE"
     id "com.moowork.node" version "1.2.0"
     //jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
@@ -115,13 +115,6 @@ if (project.hasProperty('prod')) {
     apply from: 'gradle/profile_dev.gradle'
 }
 
-if (project.hasProperty('graphite')) {
-    apply from: 'gradle/graphite.gradle'
-}
-
-if (project.hasProperty('prometheus')) {
-    apply from: 'gradle/prometheus.gradle'
-}
 
 configurations {
     providedRuntime
@@ -218,8 +211,8 @@ task cleanResources(type: Delete) {
     delete 'build/resources'
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.6'
+wrapper {
+    gradleVersion = '4.9'
 }
 
 task stage(dependsOn: 'bootWar') {

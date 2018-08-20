@@ -1,14 +1,14 @@
-import { element, by, promise, ElementFinder } from 'protractor';
+import { element, by, ElementFinder } from 'protractor';
 
 export class PointsComponentsPage {
     createButton = element(by.id('jh-create-entity'));
     title = element.all(by.css('jhi-points div h2#page-heading')).first();
 
-    clickOnCreateButton(): promise.Promise<void> {
-        return this.createButton.click();
+    async clickOnCreateButton() {
+        await this.createButton.click();
     }
 
-    getTitle(): any {
+    async getTitle() {
         return this.title.getAttribute('jhiTranslate');
     }
 }
@@ -24,76 +24,76 @@ export class PointsUpdatePage {
     notesInput = element(by.id('field_notes'));
     userSelect = element(by.id('field_user'));
 
-    getPageTitle() {
+    async getPageTitle() {
         return this.pageTitle.getAttribute('jhiTranslate');
     }
 
-    setDateInput(date): promise.Promise<void> {
-        this.dateInput.clear();
-        return this.dateInput.sendKeys(date);
+    async setDateInput(date) {
+        this.dateInput.clear()
+        await this.dateInput.sendKeys(date);
     }
 
-    getDateInput() {
+    async getDateInput() {
         return this.dateInput.getAttribute('value');
     }
 
-    setExerciseInput(exercise): promise.Promise<void> {
-        return this.exerciseInput.click();
+    async setExerciseInput(exercise) {
+        await this.exerciseInput.click();
     }
 
-    getExerciseInput() {
+    async getExerciseInput() {
         return this.exerciseInput.getAttribute('checked');
     }
 
-    setMealsInput(meals): promise.Promise<void> {
-        return this.mealsInput.click();
+    async setMealsInput(meals) {
+        await this.mealsInput.click();
     }
 
-    getMealsInput() {
+    async getMealsInput() {
         return this.mealsInput.getAttribute('checked');
     }
 
-    setAlcoholInput(alcohol): promise.Promise<void> {
-        return this.alcoholInput.click();
+    async setAlcoholInput(alcohol) {
+        await this.alcoholInput.click();
     }
 
-    getAlcoholInput() {
+    async getAlcoholInput() {
         return this.alcoholInput.getAttribute('checked');
     }
 
-    setNotesInput(notes): promise.Promise<void> {
-        return this.notesInput.sendKeys(notes);
+    async setNotesInput(notes) {
+        await this.notesInput.sendKeys(notes);
     }
 
-    getNotesInput() {
+    async getNotesInput() {
         return this.notesInput.getAttribute('value');
     }
 
-    userSelectLastOption(): promise.Promise<void> {
-        return this.userSelect
+    async userSelectLastOption() {
+        await this.userSelect
             .all(by.tagName('option'))
             .last()
             .click();
     }
 
-    userSelectOption(option): promise.Promise<void> {
-        return this.userSelect.sendKeys(option);
+    async userSelectOption(option) {
+        await this.userSelect.sendKeys(option);
     }
 
     getUserSelect(): ElementFinder {
         return this.userSelect;
     }
 
-    getUserSelectedOption() {
+    async getUserSelectedOption() {
         return this.userSelect.element(by.css('option:checked')).getText();
     }
 
-    save(): promise.Promise<void> {
-        return this.saveButton.click();
+    async save() {
+        await this.saveButton.click();
     }
 
-    cancel(): promise.Promise<void> {
-        return this.cancelButton.click();
+    async cancel() {
+        await this.cancelButton.click();
     }
 
     getSaveButton(): ElementFinder {

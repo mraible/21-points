@@ -60,19 +60,19 @@ export class PointsService {
     thisWeek(): Observable<EntityResponseType> {
         return this.http
             .get('api/points-this-week', { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertDateFromServer(res));
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 
     byWeek(date: string): Observable<EntityResponseType> {
         return this.http
             .get(`api/points-by-week/${date}`, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertDateFromServer(res));
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 
     byMonth(month: string): Observable<EntityResponseType> {
         return this.http
             .get(`api/points-by-month/${month}`, { observe: 'response' })
-            .map((res: EntityResponseType) => this.convertDateFromServer(res));
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 
     private convertDateFromClient(points: IPoints): IPoints {

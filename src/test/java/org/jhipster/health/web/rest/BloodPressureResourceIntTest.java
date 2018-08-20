@@ -330,7 +330,7 @@ public class BloodPressureResourceIntTest {
 
         // Create the BloodPressure
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException 
         restBloodPressureMockMvc.perform(put("/api/blood-pressures")
             .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)

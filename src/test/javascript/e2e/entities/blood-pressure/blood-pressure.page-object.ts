@@ -1,14 +1,14 @@
-import { element, by, promise, ElementFinder } from 'protractor';
+import { element, by, ElementFinder } from 'protractor';
 
 export class BloodPressureComponentsPage {
     createButton = element(by.id('jh-create-entity'));
     title = element.all(by.css('jhi-blood-pressure div h2#page-heading')).first();
 
-    clickOnCreateButton(): promise.Promise<void> {
-        return this.createButton.click();
+    async clickOnCreateButton() {
+        await this.createButton.click();
     }
 
-    getTitle(): any {
+    async getTitle() {
         return this.title.getAttribute('jhiTranslate');
     }
 }
@@ -22,59 +22,59 @@ export class BloodPressureUpdatePage {
     diastolicInput = element(by.id('field_diastolic'));
     userSelect = element(by.id('field_user'));
 
-    getPageTitle() {
+    async getPageTitle() {
         return this.pageTitle.getAttribute('jhiTranslate');
     }
 
-    setTimestampInput(timestamp): promise.Promise<void> {
-        return this.timestampInput.sendKeys(timestamp);
+    async setTimestampInput(timestamp) {
+        await this.timestampInput.sendKeys(timestamp);
     }
 
-    getTimestampInput() {
+    async getTimestampInput() {
         return this.timestampInput.getAttribute('value');
     }
 
-    setSystolicInput(systolic): promise.Promise<void> {
-        return this.systolicInput.sendKeys(systolic);
+    async setSystolicInput(systolic) {
+        await this.systolicInput.sendKeys(systolic);
     }
 
-    getSystolicInput() {
+    async getSystolicInput() {
         return this.systolicInput.getAttribute('value');
     }
 
-    setDiastolicInput(diastolic): promise.Promise<void> {
-        return this.diastolicInput.sendKeys(diastolic);
+    async setDiastolicInput(diastolic) {
+        await this.diastolicInput.sendKeys(diastolic);
     }
 
-    getDiastolicInput() {
+    async getDiastolicInput() {
         return this.diastolicInput.getAttribute('value');
     }
 
-    userSelectLastOption(): promise.Promise<void> {
-        return this.userSelect
+    async userSelectLastOption() {
+        await this.userSelect
             .all(by.tagName('option'))
             .last()
             .click();
     }
 
-    userSelectOption(option): promise.Promise<void> {
-        return this.userSelect.sendKeys(option);
+    async userSelectOption(option) {
+        await this.userSelect.sendKeys(option);
     }
 
     getUserSelect(): ElementFinder {
         return this.userSelect;
     }
 
-    getUserSelectedOption() {
+    async getUserSelectedOption() {
         return this.userSelect.element(by.css('option:checked')).getText();
     }
 
-    save(): promise.Promise<void> {
-        return this.saveButton.click();
+    async save() {
+        await this.saveButton.click();
     }
 
-    cancel(): promise.Promise<void> {
-        return this.cancelButton.click();
+    async cancel() {
+        await this.cancelButton.click();
     }
 
     getSaveButton(): ElementFinder {

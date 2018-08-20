@@ -1,44 +1,46 @@
-import { browser } from 'protractor';
-import { NavBarPage } from '../../page-objects/jhi-page-objects';
+import { browser, ExpectedConditions as ec } from 'protractor';
+import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
+
 import { PreferencesComponentsPage, PreferencesUpdatePage } from './preferences.page-object';
 
 describe('Preferences e2e test', () => {
     let navBarPage: NavBarPage;
+    let signInPage: SignInPage;
     let preferencesUpdatePage: PreferencesUpdatePage;
     let preferencesComponentsPage: PreferencesComponentsPage;
 
-    beforeAll(() => {
-        browser.get('/');
-        browser.waitForAngular();
+    beforeAll(async () => {
+        await browser.get('/');
         navBarPage = new NavBarPage();
-        navBarPage.getSignInPage().autoSignInUsing('admin', 'admin');
-        browser.waitForAngular();
+        signInPage = await navBarPage.getSignInPage();
+        await signInPage.autoSignInUsing('admin', 'admin');
+        await browser.wait(ec.visibilityOf(navBarPage.entityMenu), 5000);
     });
 
-    it('should load Preferences', () => {
-        navBarPage.goToEntity('preferences');
+    it('should load Preferences', async () => {
+        await navBarPage.goToEntity('preferences');
         preferencesComponentsPage = new PreferencesComponentsPage();
-        expect(preferencesComponentsPage.getTitle()).toMatch(/twentyOnePointsApp.preferences.home.title/);
+        expect(await preferencesComponentsPage.getTitle()).toMatch(/twentyOnePointsApp.preferences.home.title/);
     });
 
-    it('should load create Preferences page', () => {
-        preferencesComponentsPage.clickOnCreateButton();
+    it('should load create Preferences page', async () => {
+        await preferencesComponentsPage.clickOnCreateButton();
         preferencesUpdatePage = new PreferencesUpdatePage();
-        expect(preferencesUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.preferences.home.createOrEditLabel/);
-        preferencesUpdatePage.cancel();
+        expect(await preferencesUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.preferences.home.createOrEditLabel/);
+        await preferencesUpdatePage.cancel();
     });
 
-    it('should create and save Preferences', () => {
-        preferencesComponentsPage.clickOnCreateButton();
-        preferencesUpdatePage.setWeeklyGoalInput('10');
-        expect(preferencesUpdatePage.getWeeklyGoalInput()).toMatch('10');
-        preferencesUpdatePage.weightUnitsSelectLastOption();
-        preferencesUpdatePage.userSelectLastOption();
-        preferencesUpdatePage.save();
-        expect(preferencesUpdatePage.getSaveButton().isPresent()).toBeFalsy();
+    it('should create and save Preferences', async () => {
+        await preferencesComponentsPage.clickOnCreateButton();
+        await preferencesUpdatePage.setWeeklyGoalInput('10');
+        expect(await preferencesUpdatePage.getWeeklyGoalInput()).toMatch('10');
+        await preferencesUpdatePage.weightUnitsSelectLastOption();
+        await preferencesUpdatePage.userSelectLastOption();
+        await preferencesUpdatePage.save();
+        expect(await preferencesUpdatePage.getSaveButton().isPresent()).toBeFalsy();
     });
 
-    afterAll(() => {
-        navBarPage.autoSignOut();
+    afterAll(async () => {
+        await navBarPage.autoSignOut();
     });
 });

@@ -310,7 +310,7 @@ public class PointsResourceIntTest {
 
         // Create the Points
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException 
         restPointsMockMvc.perform(put("/api/points")
             .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
