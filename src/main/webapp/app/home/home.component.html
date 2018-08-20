@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <div class="col-md-11 p-0"><jhi-alert></jhi-alert></div>
             <h1 jhiTranslate="home.welcome" *ngIf="!isAuthenticated()">Welcome, Java Hipster!</h1>
-            <h1 jhiTranslate="home.welcomeWithName" *ngIf="isAuthenticated() && account"
+            <h1 id="home-logged-message" jhiTranslate="home.welcomeWithName" *ngIf="isAuthenticated() && account"
                 translateValues="{name: '{{account.firstName}}'}">Welcome, Java Hipster!</h1>
 
             <p class="lead" jhiTranslate="home.subtitle">This is your homepage</p>
