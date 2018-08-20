@@ -12,7 +12,6 @@ buildscript {
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.1"
         classpath 'gradle.plugin.com.heroku.sdk:heroku-gradle:0.2.0'
-        classpath 'com.github.vanroy:spring-boot-starter-data-jest:3.1.4.RELEASE'
         //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
     }
 }
@@ -173,6 +172,15 @@ dependencies {
     // needed to get around elasticsearch stacktrace about jna not found
     // https://github.com/elastic/elasticsearch/issues/13245
     compile "net.java.dev.jna:jna"
+    // Jest for Elasticsearch
+    runtime "com.github.vanroy:spring-boot-starter-data-jest:3.1.4.RELEASE"
+    runtime ("io.searchbox:jest:5.3.3") {
+        exclude module: 'commons-logging'
+    }
+    runtime "com.google.code.gson:gson:2.8.0"
+    runtime "org.apache.logging.log4j:log4j-api:2.7" // needed to create embedded elasticsearch instance
+    runtime "org.apache.logging.log4j:log4j-core:2.7"
+    // end of Jest dependencies
     compile "org.springframework.boot:spring-boot-starter-security"
     compile ("org.springframework.boot:spring-boot-starter-web") {
         exclude module: 'spring-boot-starter-tomcat'

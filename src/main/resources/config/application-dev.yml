@@ -50,12 +50,12 @@ spring:
             hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory
     data:
         elasticsearch:
-            cluster-name:
-            cluster-nodes: localhost:9300
             properties:
                 path:
-                    logs: build/elasticsearch/log
-                    data: build/elasticsearch/data
+                    home: build/elasticsearch
+                transport:
+                    tcp:
+                        connect_timeout: 120s
     liquibase:
         contexts: dev
     mail:
