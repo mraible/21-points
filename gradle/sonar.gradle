@@ -1,0 +1,12 @@
+apply plugin: "org.sonarqube"
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = '0.8.0'
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
