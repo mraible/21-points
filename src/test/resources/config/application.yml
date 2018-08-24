@@ -25,6 +25,11 @@ spring:
         name:
         username:
         password:
+    data:
+        elasticsearch:
+            properties:
+                path:
+                    home: build/elasticsearch
     jpa:
         database-platform: io.github.jhipster.domain.util.FixedH2Dialect
         database: H2
@@ -52,7 +57,7 @@ spring:
             enabled: false
     thymeleaf:
         mode: HTML
-        
+
 
 server:
     port: 10344

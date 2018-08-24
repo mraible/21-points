@@ -29,7 +29,7 @@ export class PointsUpdatePage {
     }
 
     async setDateInput(date) {
-        this.dateInput.clear()
+        this.dateInput.clear();
         await this.dateInput.sendKeys(date);
     }
 
