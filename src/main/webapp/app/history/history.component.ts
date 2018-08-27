@@ -51,6 +51,7 @@ const colors: any = {
 })
 export class HistoryComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
+    isCollapsed = true;
 
     view = 'month';
 
