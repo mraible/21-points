@@ -7,12 +7,15 @@
         Added the constraints for entity Weight.
     -->
     <changeSet id="20160831021351-2" author="jhipster">
-        
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists schemaName="public" foreignKeyName="fk_weight_user_id"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="weight"
                                  constraintName="fk_weight_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
-
     </changeSet>
 </databaseChangeLog>

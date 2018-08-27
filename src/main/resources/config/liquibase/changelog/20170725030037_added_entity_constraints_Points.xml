@@ -7,12 +7,15 @@
         Added the constraints for entity Points.
     -->
     <changeSet id="20170725030037-2" author="jhipster">
-        
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists schemaName="public" foreignKeyName="fk_points_user_id"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="points"
                                  constraintName="fk_points_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
-
     </changeSet>
 </databaseChangeLog>
