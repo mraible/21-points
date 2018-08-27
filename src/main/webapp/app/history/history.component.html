@@ -111,7 +111,8 @@
         (eventClicked)="handleEvent('Clicked', $event.event)"
         (eventTimesChanged)="eventTimesChanged($event)"
         (beforeViewRender)="beforeMonthViewRender($event)"
-        [cellTemplate]="customCellTemplate">
+        [cellTemplate]="customCellTemplate"
+        [weekStartsOn]="1">
     </mwl-calendar-month-view>
     <mwl-calendar-week-view
         *ngSwitchCase="'week'"
