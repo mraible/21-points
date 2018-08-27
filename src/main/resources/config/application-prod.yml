@@ -27,9 +27,9 @@ spring:
             enabled: false
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:postgresql://localhost:5432/TwentyOnePoints
-        username: TwentyOnePoints
-        password:
+        url: jdbc:postgresql://localhost:5432/twentyonepoints
+        username: twentyonepoints
+        password: 21points
     jpa:
         database-platform: io.github.jhipster.domain.util.FixedPostgreSQL82Dialect
         database: POSTGRESQL
@@ -41,9 +41,8 @@ spring:
             hibernate.generate_statistics: false
             hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory
     data:
-        elasticsearch:
-            cluster-name:
-            cluster-nodes: localhost:9300
+        jest:
+            uri: http://localhost:9200
     liquibase:
         contexts: prod
     mail:
