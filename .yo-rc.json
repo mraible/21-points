@@ -37,7 +37,7 @@
       "en",
       "fr"
     ],
-    "herokuAppName": "health-by-points-3",
+    "herokuAppName": null,
     "cacheProvider": "ehcache",
     "enableHibernateCache": true,
     "herokuDeployType": "git"
