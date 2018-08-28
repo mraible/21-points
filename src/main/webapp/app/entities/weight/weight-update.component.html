@@ -1,7 +1,8 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
-            <h2 id="jhi-weight-heading" jhiTranslate="twentyOnePointsApp.weight.home.createOrEditLabel">Create or edit a Weight</h2>
+            <h2 id="jhi-weight-heading" jhiTranslate="twentyOnePointsApp.weight.home.createOrEditLabel" *ngIf="weight.id">Create or edit a Weight</h2>
+            <h2 id="jhi-weight-heading" jhiTranslate="twentyOnePointsApp.weight.home.createLabel" *ngIf="!weight.id">Add Weight</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
                 <div class="form-group" [hidden]="!weight.id">

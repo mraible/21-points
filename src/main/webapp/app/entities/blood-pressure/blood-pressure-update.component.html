@@ -1,7 +1,8 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
-            <h2 id="jhi-blood-pressure-heading" jhiTranslate="twentyOnePointsApp.bloodPressure.home.createOrEditLabel">Create or edit a Blood Pressure</h2>
+            <h2 id="jhi-blood-pressure-heading" jhiTranslate="twentyOnePointsApp.bloodPressure.home.createOrEditLabel" *ngIf="bloodPressure.id">Create or edit a Points</h2>
+            <h2 id="jhi-blood-pressure-heading" jhiTranslate="twentyOnePointsApp.bloodPressure.home.createLabel" *ngIf="!bloodPressure.id">Add Blood Pressure</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
                 <div class="form-group" [hidden]="!bloodPressure.id">

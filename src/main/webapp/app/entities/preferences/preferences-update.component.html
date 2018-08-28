@@ -1,7 +1,8 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
-            <h2 id="jhi-preferences-heading" jhiTranslate="twentyOnePointsApp.preferences.home.createOrEditLabel">Create or edit a Preferences</h2>
+            <h2 id="jhi-preferences-heading" jhiTranslate="twentyOnePointsApp.preferences.home.createOrEditLabel" *ngIf="preferences.id">Create or edit a Preference</h2>
+            <h2 id="jhi-preferences-heading" jhiTranslate="twentyOnePointsApp.preferences.home.createLabel" *ngIf="!preferences.id">Add Preferences</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
                 <div class="form-group" [hidden]="!preferences.id">

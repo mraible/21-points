@@ -53,6 +53,7 @@ library.add(faSync);
 library.add(faEye);
 library.add(faBan);
 library.add(faTimes);
+library.add(faCheck);
 library.add(faArrowLeft);
 library.add(faSave);
 library.add(faPlus);
@@ -81,6 +82,5 @@ library.add(faTrashAlt);
 library.add(faAsterisk);
 library.add(faStar);
 library.add(faCalendarAlt);
-library.add(faCheck);
 
 // jhipster-needle-add-element-to-vendor - JHipster will add new menu items here

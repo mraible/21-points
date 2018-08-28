@@ -15,7 +15,8 @@
             </button>
             <form name="searchForm" class="form-inline">
                 <div class="input-group w-100 mr-1">
-                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch"
+                    <input type="text" class="form-control" [(ngModel)]="currentSearch"
+                           id="currentSearch" name="currentSearch"
                            placeholder="{{ 'twentyOnePointsApp.points.home.search' | translate }}">
                     <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
                         <fa-icon [icon]="'search'"></fa-icon>

@@ -1,7 +1,8 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
-            <h2 id="jhi-points-heading" jhiTranslate="twentyOnePointsApp.points.home.createOrEditLabel">Create or edit a Points</h2>
+            <h2 id="jhi-points-heading" jhiTranslate="twentyOnePointsApp.points.home.createOrEditLabel" *ngIf="points.id">Create or edit a Points</h2>
+            <h2 id="jhi-points-heading" jhiTranslate="twentyOnePointsApp.points.home.createLabel" *ngIf="!points.id">Add Points</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
                 <div class="form-group" [hidden]="!points.id">
