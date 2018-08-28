@@ -11,6 +11,8 @@ import { BloodPressureDetailComponent } from './blood-pressure-detail.component'
 import { BloodPressureUpdateComponent } from './blood-pressure-update.component';
 import { BloodPressureDeletePopupComponent } from './blood-pressure-delete-dialog.component';
 import { IBloodPressure } from 'app/shared/model/blood-pressure.model';
+import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
+import * as moment from 'moment';
 
 @Injectable({ providedIn: 'root' })
 export class BloodPressureResolve implements Resolve<IBloodPressure> {
@@ -21,7 +23,10 @@ export class BloodPressureResolve implements Resolve<IBloodPressure> {
         if (id) {
             return this.service.find(id).pipe(map((bloodPressure: HttpResponse<BloodPressure>) => bloodPressure.body));
         }
-        return of(new BloodPressure());
+        // populate date/time with current time if new
+        const bp = new BloodPressure();
+        bp.timestamp = moment(new Date(), DATE_TIME_FORMAT);
+        return of(bp);
     }
 }
 
