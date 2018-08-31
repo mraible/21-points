@@ -29,21 +29,6 @@
                     </div>
                     <div class="row">
                         <div class="col-md-11 col-xs-12">
-                            <ngb-progressbar max="21" [value]="pointsThisWeek.points"
-                                             [hidden]="!pointsThisWeek.points" [striped]="true">
-            <span *ngIf="pointsThisWeek.points">
-                {{pointsThisWeek.points}} / Goal: 10
-            </span>
-                            </ngb-progressbar>
-                            <ngb-alert [dismissible]="false" [hidden]="pointsThisWeek.points">
-            <span jhiTranslate="home.points.getMoving">
-                No points yet this week, better get moving!</span>
-                            </ngb-alert>
-                        </div>
-                    </div>
-
-                    <!--<div class="row">
-                        <div class="col-md-11 col-xs-12">
                             <ngb-progressbar max="21" [value]="pointsThisWeek.points" [striped]="true"
                                              [type]="pointsThisWeek.progress" [hidden]="!pointsThisWeek.points">
                                 <span *ngIf="pointsThisWeek.points">
@@ -55,7 +40,7 @@
                                     No points yet this week, better get moving!</span>
                             </ngb-alert>
                         </div>
-                    </div>-->
+                    </div>
                     <div class="row mt-4">
                         <div class="col-6 text-nowrap">
                             <h4 class="mt-1 d-none d-none d-md-inline" jhiTranslate="home.bloodPressure.title">Blood Pressure:</h4>
@@ -69,15 +54,14 @@
                     </div>
                     <div class="row mt-1">
                         <div class="col-md-11 col-xs-12">
-                            <img src="https://via.placeholder.com/540x140?text=Blood+Pressure+Graph">
-                            <!--<span *ngIf="bpReadings.readings && bpReadings.readings.length">
+                            <span *ngIf="bpReadings.readings && bpReadings.readings.length">
                                 <nvd3 [options]="bpOptions" [data]="bpData" class="with-3d-shadow with-transitions"></nvd3>
                             </span>
                             <ngb-alert [dismissible]="false" [hidden]="bpReadings.readings && bpReadings.readings.length">
                                 <span jhiTranslate="home.bloodPressure.noReadings">
                                     No blood pressure readings found.
                                 </span>
-                            </ngb-alert>-->
+                            </ngb-alert>
                         </div>
                     </div>
                     <div class="row mt-4">
@@ -92,15 +76,14 @@
                     </div>
                     <div class="row">
                         <div class="col-md-11 col-xs-12">
-                            <img src="https://via.placeholder.com/540x130?text=Weight+Graph">
-                            <!--<span *ngIf="weights.weighIns && weights.weighIns.length">
+                            <span *ngIf="weights.weighIns && weights.weighIns.length">
                                 <nvd3 [options]="weightOptions" [data]="weightData" class="with-3d-shadow with-transitions"></nvd3>
                             </span>
                             <ngb-alert [dismissible]="false" [hidden]="weights.weighIns && weights.weighIns.length">
                                 <span jhiTranslate="home.weight.noWeighIns">
                                     No weigh-ins found.
                                 </span>
-                            </ngb-alert>-->
+                            </ngb-alert>
                         </div>
                     </div>
 
@@ -112,10 +95,10 @@
                         </p>
                     </div>
 
-                    <!--<p *ngIf="account" class="logged-in-message" jhiTranslate="home.logged.message"
+                    <p *ngIf="account" class="logged-in-message" jhiTranslate="home.logged.message"
                        translateValues="{username: '{{account.login}}'}">
                         You are logged in as user "{{account.login}}".
-                    </p>-->
+                    </p>
                 </div>
 
                 <div *ngSwitchCase="false">
