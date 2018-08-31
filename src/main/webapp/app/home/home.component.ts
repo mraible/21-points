@@ -9,7 +9,7 @@ import { BloodPressureService } from 'app/entities/blood-pressure';
 import { WeightService } from 'app/entities/weight';
 import { D3ChartService } from './d3-chart.service';
 import { Preferences } from 'app/shared/model/preferences.model';
-import { Subscription } from 'rxjs/Rx';
+import { Subscription } from 'Rx';
 
 @Component({
     selector: 'jhi-home',
@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     registerAuthenticationSuccess() {
-        this.eventManager.subscribe('authenticationSuccess', message => {
+        this.eventManager.subscribe('authenticationSuccess', () => {
             this.principal.identity().then(account => {
                 this.account = account;
                 this.getUserData();

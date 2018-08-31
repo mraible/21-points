@@ -22,7 +22,7 @@ import { PreferencesService } from 'app/entities/preferences';
 import { JhiEventManager } from 'ng-jhipster';
 import { Router } from '@angular/router';
 import { Principal } from 'app/core';
-import { Subject, Subscription } from 'rxjs/Rx';
+import { Subject, Subscription } from 'Rx';
 
 const colors: any = {
     red: {
