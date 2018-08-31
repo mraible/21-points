@@ -1,6 +1,7 @@
 package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.jhipster.health.domain.Points;
 import org.jhipster.health.repository.PointsRepository;
 import org.jhipster.health.repository.UserRepository;
@@ -10,7 +11,6 @@ import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.jhipster.health.web.rest.vm.PointsPerMonth;
 import org.jhipster.health.web.rest.vm.PointsPerWeek;
 import org.slf4j.Logger;
@@ -26,16 +26,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * REST controller for managing Points.
@@ -133,10 +131,15 @@ public class PointsResource {
      */
     @GetMapping("/points-this-week")
     @Timed
-    public ResponseEntity<PointsPerWeek> getPointsThisWeek() {
-        // Get current date
-        // todo: get now() from user's timezone
+    public ResponseEntity<PointsPerWeek> getPointsThisWeek(
+        @RequestParam(value="tz", required=false) String timezone) {
+
+        // Get current date (with timezone if passed in)
         LocalDate now = LocalDate.now();
+        if (timezone != null) {
+            now = LocalDate.now(ZoneId.of(timezone));
+        }
+
         // Get first day of week
         LocalDate startOfWeek = now.with(DayOfWeek.MONDAY);
         // Get last day of week
