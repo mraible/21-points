@@ -18,12 +18,12 @@
                     </span>
                 </a>
             </li>
-            <li *ngSwitchCase="true" class="nav-item">
+            <!--<li *ngSwitchCase="true" class="nav-item">
                 <a class="nav-link" routerLink="history" routerLinkActive="active">
                     <fa-icon [icon]="'calendar-alt'"></fa-icon>
                     <span translate="global.menu.history">Calendar</span>
                 </a>
-            </li>
+            </li>-->
             <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
             <li *ngSwitchCase="true" ngbDropdown class="nav-item dropdown pointer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                 <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="entity-menu">
@@ -179,12 +179,12 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item">
+            <!--<li class="nav-item">
                 <a class="nav-link" routerLink="about" routerLinkActive="active">
                     <fa-icon [icon]="'star'"></fa-icon>
                     <span translate="global.menu.about">About</span>
                 </a>
-            </li>
+            </li>-->
         </ul>
     </div>
 </nav>
