@@ -1,62 +1,40 @@
 /* tslint:disable max-line-length */
-import { ComponentFixture, TestBed, async, inject } from '@angular/core/testing';
-import { OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { JhiDateUtils, JhiDataUtils, JhiEventManager } from 'ng-jhipster';
+import { of } from 'rxjs';
+
 import { TwentyOnePointsTestModule } from '../../../test.module';
-import { MockActivatedRoute } from '../../../helpers/mock-route.service';
-import { PreferencesDetailComponent } from '../../../../../../main/webapp/app/entities/preferences/preferences-detail.component';
-import { PreferencesService } from '../../../../../../main/webapp/app/entities/preferences/preferences.service';
-import { Preferences } from '../../../../../../main/webapp/app/entities/preferences/preferences.model';
+import { PreferencesDetailComponent } from 'app/entities/preferences/preferences-detail.component';
+import { Preferences } from 'app/shared/model/preferences.model';
 
 describe('Component Tests', () => {
-
     describe('Preferences Management Detail Component', () => {
         let comp: PreferencesDetailComponent;
         let fixture: ComponentFixture<PreferencesDetailComponent>;
-        let service: PreferencesService;
+        const route = ({ data: of({ preferences: new Preferences(123) }) } as any) as ActivatedRoute;
 
-        beforeEach(async(() => {
+        beforeEach(() => {
             TestBed.configureTestingModule({
                 imports: [TwentyOnePointsTestModule],
                 declarations: [PreferencesDetailComponent],
-                providers: [
-                    JhiDateUtils,
-                    JhiDataUtils,
-                    DatePipe,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: new MockActivatedRoute({id: 123})
-                    },
-                    PreferencesService,
-                    JhiEventManager
-                ]
-            }).overrideTemplate(PreferencesDetailComponent, '')
-            .compileComponents();
-        }));
-
-        beforeEach(() => {
+                providers: [{ provide: ActivatedRoute, useValue: route }]
+            })
+                .overrideTemplate(PreferencesDetailComponent, '')
+                .compileComponents();
             fixture = TestBed.createComponent(PreferencesDetailComponent);
             comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(PreferencesService);
         });
 
         describe('OnInit', () => {
             it('Should call load all on init', () => {
-            // GIVEN
+                // GIVEN
 
-            spyOn(service, 'find').and.returnValue(Observable.of(new Preferences(10)));
+                // WHEN
+                comp.ngOnInit();
 
-            // WHEN
-            comp.ngOnInit();
-
-            // THEN
-            expect(service.find).toHaveBeenCalledWith(123);
-            expect(comp.preferences).toEqual(jasmine.objectContaining({id: 10}));
+                // THEN
+                expect(comp.preferences).toEqual(jasmine.objectContaining({ id: 123 }));
             });
         });
     });
-
 });

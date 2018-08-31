@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { Weight } from './weight.model';
-import { WeightPopupService } from './weight-popup.service';
+import { IWeight } from 'app/shared/model/weight.model';
 import { WeightService } from './weight.service';
 
 @Component({
@@ -13,22 +12,16 @@ import { WeightService } from './weight.service';
     templateUrl: './weight-delete-dialog.component.html'
 })
 export class WeightDeleteDialogComponent {
+    weight: IWeight;
 
-    weight: Weight;
-
-    constructor(
-        private weightService: WeightService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+    constructor(private weightService: WeightService, public activeModal: NgbActiveModal, private eventManager: JhiEventManager) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.weightService.delete(id).subscribe((response) => {
+        this.weightService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'weightListModification',
                 content: 'Deleted an weight'
@@ -43,22 +36,30 @@ export class WeightDeleteDialogComponent {
     template: ''
 })
 export class WeightDeletePopupComponent implements OnInit, OnDestroy {
+    private ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private weightPopupService: WeightPopupService
-    ) {}
+    constructor(private activatedRoute: ActivatedRoute, private router: Router, private modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.weightPopupService
-                .open(WeightDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ weight }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(WeightDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+                this.ngbModalRef.componentInstance.weight = weight;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

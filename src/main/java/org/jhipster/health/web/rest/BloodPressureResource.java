@@ -2,15 +2,14 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import org.jhipster.health.domain.BloodPressure;
-
 import org.jhipster.health.repository.BloodPressureRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
+import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.jhipster.health.web.rest.vm.BloodPressureByPeriod;
 import org.slf4j.Logger;
@@ -34,6 +33,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -72,11 +73,11 @@ public class BloodPressureResource {
     public ResponseEntity<BloodPressure> createBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
         log.debug("REST request to save BloodPressure : {}", bloodPressure);
         if (bloodPressure.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new bloodPressure cannot already have an ID")).body(null);
+            throw new BadRequestAlertException("A new bloodPressure cannot already have an ID", ENTITY_NAME, "idexists");
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
-            bloodPressure.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get());
+            bloodPressure.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
         }
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(result);
@@ -99,7 +100,7 @@ public class BloodPressureResource {
     public ResponseEntity<BloodPressure> updateBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
         log.debug("REST request to update BloodPressure : {}", bloodPressure);
         if (bloodPressure.getId() == null) {
-            return createBloodPressure(bloodPressure);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(result);
@@ -116,7 +117,7 @@ public class BloodPressureResource {
      */
     @GetMapping("/blood-pressures")
     @Timed
-    public ResponseEntity<List<BloodPressure>> getAllBloodPressures(@ApiParam Pageable pageable) {
+    public ResponseEntity<List<BloodPressure>> getAllBloodPressures(Pageable pageable) {
         log.debug("REST request to get a page of BloodPressures");
         Page<BloodPressure> page;
         if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
@@ -139,7 +140,7 @@ public class BloodPressureResource {
 
         List<BloodPressure> readings =
             bloodPressureRepository.findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(
-                daysAgo, rightNow, SecurityUtils.getCurrentUserLogin());
+                daysAgo, rightNow, SecurityUtils.getCurrentUserLogin().get());
         BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", readings);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -157,7 +158,7 @@ public class BloodPressureResource {
 
         List<BloodPressure> readings = bloodPressureRepository.
             findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(firstDay.atStartOfDay(zonedDateTime.getZone()),
-                lastDay.plusDays(1).atStartOfDay(zonedDateTime.getZone()), SecurityUtils.getCurrentUserLogin());
+                lastDay.plusDays(1).atStartOfDay(zonedDateTime.getZone()), SecurityUtils.getCurrentUserLogin().get());
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
         String yearAndMonth = fmt.format(firstDay);
@@ -176,8 +177,8 @@ public class BloodPressureResource {
     @Timed
     public ResponseEntity<BloodPressure> getBloodPressure(@PathVariable Long id) {
         log.debug("REST request to get BloodPressure : {}", id);
-        BloodPressure bloodPressure = bloodPressureRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(bloodPressure));
+        Optional<BloodPressure> bloodPressure = bloodPressureRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(bloodPressure);
     }
 
     /**
@@ -190,8 +191,8 @@ public class BloodPressureResource {
     @Timed
     public ResponseEntity<Void> deleteBloodPressure(@PathVariable Long id) {
         log.debug("REST request to delete BloodPressure : {}", id);
-        bloodPressureRepository.delete(id);
-        bloodPressureSearchRepository.delete(id);
+        bloodPressureRepository.deleteById(id);
+        bloodPressureSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -205,7 +206,7 @@ public class BloodPressureResource {
      */
     @GetMapping("/_search/blood-pressures")
     @Timed
-    public ResponseEntity<List<BloodPressure>> searchBloodPressures(@RequestParam String query, @ApiParam Pageable pageable) {
+    public ResponseEntity<List<BloodPressure>> searchBloodPressures(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of BloodPressures for query {}", query);
         Page<BloodPressure> page = bloodPressureSearchRepository.search(queryStringQuery(query), pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/blood-pressures");

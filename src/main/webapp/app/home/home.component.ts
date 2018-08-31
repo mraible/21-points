@@ -2,14 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { Account, LoginModalService, Principal } from '../shared';
-import { PreferencesService } from '../entities/preferences/preferences.service';
-import { Preferences } from '../entities/preferences/preferences.model';
-import { PointsService } from '../entities/points/points.service';
-import { BloodPressureService } from '../entities/blood-pressure/blood-pressure.service';
-import { WeightService } from '../entities/weight/weight.service';
+import { Account, LoginModalService, Principal } from 'app/core';
+import { PreferencesService } from 'app/entities/preferences';
+import { PointsService } from 'app/entities/points';
+import { BloodPressureService } from 'app/entities/blood-pressure';
+import { WeightService } from 'app/entities/weight';
 import { D3ChartService } from './d3-chart.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Preferences } from 'app/shared/model/preferences.model';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'jhi-home',
@@ -30,17 +30,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     weightData: any;
     eventSubscriber: Subscription;
 
-    constructor(private principal: Principal,
-                private loginModalService: LoginModalService,
-                private eventManager: JhiEventManager,
-                private preferencesService: PreferencesService,
-                private pointsService: PointsService,
-                private bloodPressureService: BloodPressureService,
-                private weightService: WeightService) {
-    }
+    constructor(
+        private principal: Principal,
+        private loginModalService: LoginModalService,
+        private eventManager: JhiEventManager,
+        private preferencesService: PreferencesService,
+        private pointsService: PointsService,
+        private bloodPressureService: BloodPressureService,
+        private weightService: WeightService
+    ) {}
 
     ngOnInit() {
-        this.principal.identity().then((account) => {
+        this.principal.identity().then(account => {
             this.account = account;
             if (this.isAuthenticated()) {
                 this.getUserData();
@@ -54,8 +55,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     registerAuthenticationSuccess() {
-        this.eventManager.subscribe('authenticationSuccess', (message) => {
-            this.principal.identity().then((account) => {
+        this.eventManager.subscribe('authenticationSuccess', () => {
+            this.principal.identity().then(account => {
                 this.account = account;
                 this.getUserData();
             });
@@ -68,14 +69,14 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     getUserData() {
         // Get preferences
-        this.preferencesService.user().subscribe((preferences) => {
-            this.preferences = preferences;
+        this.preferencesService.user().subscribe((preferences: any) => {
+            this.preferences = preferences.body;
 
             // Get points for the current week
             this.pointsService.thisWeek().subscribe((points: any) => {
-                points = points.json;
+                points = points.body;
                 this.pointsThisWeek = points;
-                this.pointsPercentage = (points.points / this.preferences.weeklyGoal) * 100;
+                this.pointsPercentage = points.points / this.preferences.weeklyGoal * 100;
 
                 // calculate success, warning, or danger
                 if (points.points >= preferences.weeklyGoal) {
@@ -90,9 +91,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         // Get blood pressure readings for the last 30 days
         this.bloodPressureService.last30Days().subscribe((bpReadings: any) => {
+            bpReadings = bpReadings.body;
             this.bpReadings = bpReadings;
             // https://stackoverflow.com/a/34694155/65681
-            this.bpOptions = {... D3ChartService.getChartConfig() };
+            this.bpOptions = { ...D3ChartService.getChartConfig() };
             if (bpReadings.readings.length) {
                 this.bpOptions.title.text = bpReadings.period;
                 this.bpOptions.chart.yAxis.axisLabel = 'Blood Pressure';
@@ -101,7 +103,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 diastolics = [];
                 upperValues = [];
                 lowerValues = [];
-                bpReadings.readings.forEach((item) => {
+                bpReadings.readings.forEach(item => {
                     systolics.push({
                         x: new Date(item.timestamp),
                         y: item.systolic
@@ -113,15 +115,18 @@ export class HomeComponent implements OnInit, OnDestroy {
                     upperValues.push(item.systolic);
                     lowerValues.push(item.diastolic);
                 });
-                this.bpData = [{
-                    values: systolics,
-                    key: 'Systolic',
-                    color: '#673ab7'
-                }, {
-                    values: diastolics,
-                    key: 'Diastolic',
-                    color: '#03a9f4'
-                }];
+                this.bpData = [
+                    {
+                        values: systolics,
+                        key: 'Systolic',
+                        color: '#673ab7'
+                    },
+                    {
+                        values: diastolics,
+                        key: 'Diastolic',
+                        color: '#03a9f4'
+                    }
+                ];
                 // set y scale to be 10 more than max and min
                 this.bpOptions.chart.yDomain = [Math.min.apply(Math, lowerValues) - 10, Math.max.apply(Math, upperValues) + 10];
             } else {
@@ -130,26 +135,29 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
 
         this.weightService.last30Days().subscribe((weights: any) => {
+            weights = weights.body;
             this.weights = weights;
             if (weights.weighIns.length) {
-                this.weightOptions = {... D3ChartService.getChartConfig() };
+                this.weightOptions = { ...D3ChartService.getChartConfig() };
                 this.weightOptions.title.text = this.weights.period;
                 this.weightOptions.chart.yAxis.axisLabel = 'Weight';
                 const weightValues = [];
                 const values = [];
-                weights.weighIns.forEach((item) => {
+                weights.weighIns.forEach(item => {
                     weightValues.push({
                         x: new Date(item.timestamp),
                         y: item.weight
                     });
                     values.push(item.weight);
                 });
-                this.weightData = [{
-                    values: weightValues,
-                    key: 'Weight',
-                    color: '#ffeb3b',
-                    area: true
-                }];
+                this.weightData = [
+                    {
+                        values: weightValues,
+                        key: 'Weight',
+                        color: '#ffeb3b',
+                        area: true
+                    }
+                ];
                 // set y scale to be 10 more than max and min
                 this.weightOptions.chart.yDomain = [Math.min.apply(Math, values) - 10, Math.max.apply(Math, values) + 10];
             }

@@ -18,7 +18,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let entry of currentHealth.details | keys">
+                    <tr *ngFor="let entry of currentHealth.details.details | keys">
                         <td class="text-left">{{entry.key}}</td>
                         <td class="text-left">{{readableValue(entry.value)}}</td>
                     </tr>
@@ -32,5 +32,5 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button data-dismiss="modal" class="btn btn-secondary float-left" type="button" (click)="activeModal.dismiss('closed')">Done</button>
+    <button data-dismiss="modal" class="btn btn-outline-secondary float-left" type="button" (click)="activeModal.dismiss('closed')">Done</button>
 </div>

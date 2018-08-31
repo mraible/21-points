@@ -1,9 +1,10 @@
-import { ITEMS_PER_PAGE } from '../../shared';
 import { Injectable } from '@angular/core';
-import { NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
+import { NgbPaginationConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ITEMS_PER_PAGE } from 'app/shared';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class PaginationConfig {
+    // tslint:disable-next-line: no-unused-variable
     constructor(private config: NgbPaginationConfig) {
         config.boundaryLinks = true;
         config.maxSize = 5;

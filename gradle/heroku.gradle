@@ -1,6 +1,14 @@
 apply plugin: 'com.heroku.sdk.heroku-gradle'
 
 heroku {
-  appName = "health-by-points-2"
+  appName = "health-by-points-3"
 }
 
+gradle.taskGraph.whenReady {taskGraph ->
+    taskGraph.afterTask() {task ->
+        if (task.getName().equals('stage') && System.getenv("DYNO") != null) {
+            delete "node_modules"
+            delete fileTree(dir: "build/libs", exclude: "*.war")
+        }
+    }
+}

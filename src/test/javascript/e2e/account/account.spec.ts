@@ -1,108 +1,100 @@
-import { browser, element, by } from 'protractor';
+import { browser, element, by, ExpectedConditions as ec } from 'protractor';
+
+import { NavBarPage, SignInPage, PasswordPage, SettingsPage } from '../page-objects/jhi-page-objects';
 
 describe('account', () => {
+    let navBarPage: NavBarPage;
+    let signInPage: SignInPage;
+    let passwordPage: PasswordPage;
+    let settingsPage: SettingsPage;
 
-    const username = element(by.id('username'));
-    const password = element(by.id('password'));
-    const accountMenu = element(by.id('account-menu'));
-    const login = element(by.id('login'));
-    const logout = element(by.id('logout'));
-
-    beforeAll(() => {
-        browser.get('/');
+    beforeAll(async () => {
+        await browser.get('/');
+        navBarPage = new NavBarPage(true);
     });
 
-    it('should fail to login with bad password', () => {
+    it('should fail to login with bad password', async () => {
         const expect1 = /home.welcome/;
-        element.all(by.css('h1')).first().getAttribute('jhiTranslate').then((value) => {
-            expect(value).toMatch(expect1);
-        });
-        accountMenu.click();
-        login.click();
-
-        username.sendKeys('admin');
-        password.sendKeys('foo');
-        element(by.css('button[type=submit]')).click();
+        const value1 = await element(by.css('h1')).getAttribute('jhiTranslate');
+        expect(value1).toMatch(expect1);
+        signInPage = await navBarPage.getSignInPage();
+        await signInPage.autoSignInUsing('admin', 'foo');
 
         const expect2 = /login.messages.error.authentication/;
-        element.all(by.css('.alert-danger')).first().getAttribute('jhiTranslate').then((value) => {
-            expect(value).toMatch(expect2);
-        });
+        const value2 = await element(by.css('.alert-danger')).getAttribute('jhiTranslate');
+        expect(value2).toMatch(expect2);
     });
 
-    it('should login successfully with admin account', () => {
+    it('should login successfully with admin account', async () => {
+        await browser.get('/');
+        signInPage = await navBarPage.getSignInPage();
+
         const expect1 = /global.form.username/;
-        element.all(by.css('.modal-content label')).first().getAttribute('jhiTranslate').then((value) => {
-            expect(value).toMatch(expect1);
-        });
-        username.clear();
-        username.sendKeys('admin');
-        password.clear();
-        password.sendKeys('admin');
-        element(by.css('button[type=submit]')).click();
+        const value1 = await element(by.className('username-label')).getAttribute('jhiTranslate');
+        expect(value1).toMatch(expect1);
+        await signInPage.autoSignInUsing('admin', 'admin');
 
-        browser.waitForAngular();
-
-        const expect2 = /home.logged.message/;
-        element.all(by.css('.logged-in-message')).getAttribute('jhiTranslate').then((value) => {
-            expect(value).toMatch(expect2);
-        });
+        const expect2 = /home.welcomeWithName/;
+        const value2 = element(by.id('home-logged-message'));
+        await browser.wait(ec.visibilityOf(value2), 5000);
+        expect(await value2.getAttribute('jhiTranslate')).toMatch(expect2);
     });
 
-    it('should be able to update settings', () => {
-        accountMenu.click();
-        element(by.css('[routerLink="settings"]')).click();
+    it('should be able to update settings', async () => {
+        settingsPage = await navBarPage.getSettingsPage();
 
         const expect1 = /settings.title/;
-        element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
-            expect(value).toMatch(expect1);
-        });
-        element(by.css('button[type=submit]')).click();
+        const value1 = await settingsPage.getTitle();
+        expect(value1).toMatch(expect1);
+        await settingsPage.save();
 
         const expect2 = /settings.messages.success/;
-        element.all(by.css('.alert-success')).first().getAttribute('jhiTranslate').then((value) => {
-            expect(value).toMatch(expect2);
-        });
+        const value2 = await element(by.css('.alert-success')).getAttribute('jhiTranslate');
+        expect(value2).toMatch(expect2);
     });
 
-    it('should be able to update password', () => {
-        accountMenu.click();
-        element(by.css('[routerLink="password"]')).click();
+    it('should fail to update password when using incorrect current password', async () => {
+        passwordPage = await navBarPage.getPasswordPage();
 
-        const expect1 = /password.title/;
-        element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
-            expect(value).toMatch(expect1);
-        });
-        password.sendKeys('newpassword');
-        element(by.id('confirmPassword')).sendKeys('newpassword');
-        element(by.css('button[type=submit]')).click();
+        expect(await passwordPage.getTitle()).toMatch(/password.title/);
+
+        await passwordPage.setCurrentPassword('wrong_current_password');
+        await passwordPage.setPassword('new_password');
+        await passwordPage.setConfirmPassword('new_password');
+        await passwordPage.save();
+
+        const expect2 = /password.messages.error/;
+        const value2 = await element(by.css('.alert-danger')).getAttribute('jhiTranslate');
+        expect(value2).toMatch(expect2);
+        settingsPage = await navBarPage.getSettingsPage();
+    });
+
+    it('should be able to update password', async () => {
+        passwordPage = await navBarPage.getPasswordPage();
+
+        expect(await passwordPage.getTitle()).toMatch(/password.title/);
+
+        await passwordPage.setCurrentPassword('admin');
+        await passwordPage.setPassword('newpassword');
+        await passwordPage.setConfirmPassword('newpassword');
+        await passwordPage.save();
 
         const expect2 = /password.messages.success/;
-        element.all(by.css('.alert-success')).first().getAttribute('jhiTranslate').then((value) => {
-            expect(value).toMatch(expect2);
-        });
-        accountMenu.click();
-        logout.click();
+        const value2 = await element(by.css('.alert-success')).getAttribute('jhiTranslate');
+        expect(value2).toMatch(expect2);
+        await navBarPage.autoSignOut();
+        await navBarPage.goToSignInPage();
+        await signInPage.autoSignInUsing('admin', 'newpassword');
 
-        accountMenu.click();
-        login.click();
-
-        username.sendKeys('admin');
-        password.sendKeys('newpassword');
-        element(by.css('button[type=submit]')).click();
-
-        accountMenu.click();
-        element(by.css('[routerLink="password"]')).click();
         // change back to default
-        password.clear();
-        password.sendKeys('admin');
-        element(by.id('confirmPassword')).clear();
-        element(by.id('confirmPassword')).sendKeys('admin');
-        element(by.css('button[type=submit]')).click();
+        await navBarPage.goToPasswordMenu();
+        await passwordPage.setCurrentPassword('newpassword');
+        await passwordPage.setPassword('admin');
+        await passwordPage.setConfirmPassword('admin');
+        await passwordPage.save();
     });
 
-    afterAll(() => {
-        accountMenu.click();
-        logout.click();
+    afterAll(async () => {
+        await navBarPage.autoSignOut();
     });
 });

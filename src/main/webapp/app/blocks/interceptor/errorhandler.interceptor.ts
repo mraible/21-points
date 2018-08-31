@@ -1,24 +1,25 @@
-import { JhiHttpInterceptor, JhiEventManager } from 'ng-jhipster';
-import { RequestOptionsArgs, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { JhiEventManager } from 'ng-jhipster';
+import { HttpInterceptor, HttpRequest, HttpErrorResponse, HttpHandler, HttpEvent } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-export class ErrorHandlerInterceptor extends JhiHttpInterceptor {
+export class ErrorHandlerInterceptor implements HttpInterceptor {
+    constructor(private eventManager: JhiEventManager) {}
 
-    constructor(private eventManager: JhiEventManager) {
-        super();
-    }
-
-    requestIntercept(options?: RequestOptionsArgs): RequestOptionsArgs {
-        return options;
-    }
-
-    responseIntercept(observable: Observable<Response>): Observable<Response> {
-        return <Observable<Response>> observable.catch((error) => {
-            if (!(error.status === 401 && (error.text() === '' ||
-                (error.json().path && error.json().path.indexOf('/api/account') === 0 )))) {
-                this.eventManager.broadcast( {name: 'twentyOnePointsApp.httpError', content: error});
-            }
-            return Observable.throw(error);
-        });
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        return next.handle(request).pipe(
+            tap(
+                (event: HttpEvent<any>) => {},
+                (err: any) => {
+                    if (err instanceof HttpErrorResponse) {
+                        if (!(err.status === 401 && (err.message === '' || (err.url && err.url.includes('/api/account'))))) {
+                            if (this.eventManager !== undefined) {
+                                this.eventManager.broadcast({ name: 'twentyOnePointsApp.httpError', content: err });
+                            }
+                        }
+                    }
+                }
+            )
+        );
     }
 }

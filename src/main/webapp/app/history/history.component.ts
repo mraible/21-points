@@ -13,22 +13,16 @@ import {
     startOfMonth,
     getDaysInMonth
 } from 'date-fns';
-import { Subject } from 'rxjs/Subject';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import {
-    CalendarEvent,
-    CalendarEventAction,
-    CalendarEventTimesChangedEvent,
-    CalendarMonthViewDay
-} from 'angular-calendar';
-import { PointsService } from '../entities/points/points.service';
-import { BloodPressureService } from '../entities/blood-pressure/blood-pressure.service';
-import { WeightService } from '../entities/weight/weight.service';
-import { Principal } from '../shared';
-import { PreferencesService } from '../entities/preferences/preferences.service';
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
+import { PointsService } from 'app/entities/points';
+import { BloodPressureService } from 'app/entities/blood-pressure';
+import { WeightService } from 'app/entities/weight';
+import { PreferencesService } from 'app/entities/preferences';
 import { JhiEventManager } from 'ng-jhipster';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Principal } from 'app/core';
+import { Subject, Subscription } from 'rxjs';
 
 const colors: any = {
     red: {
@@ -57,6 +51,7 @@ const colors: any = {
 })
 export class HistoryComponent implements OnInit, OnDestroy {
     modalRef: NgbModalRef;
+    isCollapsed = true;
 
     view = 'month';
 
@@ -71,14 +66,14 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
     actions: CalendarEventAction[] = [
         {
-            label: '<i class="fa fa-fw fa-pencil"></i>',
-            onClick: ({event}: { event: CalendarEvent }): void => {
+            label: '✏️',
+            onClick: ({ event }: { event: CalendarEvent }): void => {
                 this.handleEvent('edit', event);
             }
         },
         {
-            label: '<i class="fa fa-fw fa-times"></i>',
-            onClick: ({event}: { event: CalendarEvent }): void => {
+            label: '❌',
+            onClick: ({ event }: { event: CalendarEvent }): void => {
                 this.handleEvent('delete', event);
             }
         }
@@ -92,14 +87,18 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
     currentAccount: any;
 
-    constructor(private pointsService: PointsService, private bloodPressureService: BloodPressureService,
-                private weightService: WeightService, private principal: Principal,
-                private preferencesService: PreferencesService, private router: Router,
-                private eventManager: JhiEventManager) {
-    }
+    constructor(
+        private pointsService: PointsService,
+        private bloodPressureService: BloodPressureService,
+        private weightService: WeightService,
+        private principal: Principal,
+        private preferencesService: PreferencesService,
+        private router: Router,
+        private eventManager: JhiEventManager
+    ) {}
 
     ngOnInit() {
-        this.principal.identity().then((account) => {
+        this.principal.identity().then(account => {
             this.currentAccount = account;
         });
         this.populateCalendar();
@@ -111,9 +110,9 @@ export class HistoryComponent implements OnInit, OnDestroy {
     }
 
     registerForChanges() {
-        this.eventSubscriber = this.eventManager.subscribe('pointsListModification', (response) => this.reset());
-        this.eventSubscriber = this.eventManager.subscribe('bloodPressureListModification', (response) => this.reset());
-        this.eventSubscriber = this.eventManager.subscribe('weightListModification', (response) => this.reset());
+        this.eventSubscriber = this.eventManager.subscribe('pointsListModification', () => this.reset());
+        this.eventSubscriber = this.eventManager.subscribe('bloodPressureListModification', () => this.reset());
+        this.eventSubscriber = this.eventManager.subscribe('weightListModification', () => this.reset());
     }
 
     reset() {
@@ -129,8 +128,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
         const monthEnd = endOfMonth(this.viewDate);
         const month = format(monthEnd, 'YYYY-MM');
 
-        this.pointsService.byMonth(month).subscribe((response) => {
-            response.json.points.forEach((item) => {
+        this.pointsService.byMonth(month).subscribe((response: any) => {
+            response.body.points.forEach(item => {
                 const value = item.exercise + item.meals + item.alcohol;
                 this.events.push({
                     start: startOfDay(item.date),
@@ -146,13 +145,12 @@ export class HistoryComponent implements OnInit, OnDestroy {
                         notes: item.notes ? item.notes : ''
                     }
                 });
-
             });
             this.refresh.next();
         });
 
-        this.bloodPressureService.byMonth(month).subscribe((response) => {
-            response.json.readings.forEach((item) => {
+        this.bloodPressureService.byMonth(month).subscribe((response: any) => {
+            response.body.readings.forEach(item => {
                 this.events.push({
                     start: new Date(item.timestamp),
                     title: item.systolic + '/' + item.diastolic,
@@ -168,10 +166,10 @@ export class HistoryComponent implements OnInit, OnDestroy {
             this.refresh.next();
         });
 
-        this.preferencesService.user().subscribe((preferences) => {
-            const weightUnits = preferences.weightUnits === null ? 'lbs' : preferences.weightUnits;
-            this.weightService.byMonth(month).subscribe((weightResponse) => {
-                weightResponse.json.weighIns.forEach((item) => {
+        this.preferencesService.user().subscribe((preferences: any) => {
+            const weightUnits = preferences.body.weightUnits === null ? 'lbs' : preferences.body.weightUnits;
+            this.weightService.byMonth(month).subscribe((weightResponse: any) => {
+                weightResponse.body.weighIns.forEach(item => {
                     this.events.push({
                         start: new Date(item.timestamp),
                         title: '' + item.weight + ' ' + weightUnits,
@@ -200,14 +198,14 @@ export class HistoryComponent implements OnInit, OnDestroy {
                 }
             }
 
-            sundays.forEach((sunday) => {
-                this.pointsService.byWeek(format(sunday, 'YYYY-MM-DD')).subscribe((data) => {
-                    const pointsByWeek = data.json;
+            sundays.forEach(sunday => {
+                this.pointsService.byWeek(format(sunday, 'YYYY-MM-DD')).subscribe(data => {
+                    const pointsByWeek: any = data.body;
                     this.events.push({
                         start: startOfDay(sunday),
                         end: endOfDay(sunday),
                         title: pointsByWeek.points + '/' + weeklyGoal + ' Points',
-                        color: (pointsByWeek.points >= 10) ? colors.green : colors.red,
+                        color: pointsByWeek.points >= 10 ? colors.green : colors.red,
                         cssClass: 'd-none', // hide as an event dot
                         draggable: false,
                         meta: {
@@ -217,24 +215,21 @@ export class HistoryComponent implements OnInit, OnDestroy {
                         }
                     });
                     this.refresh.next();
-                })
+                });
             });
         });
     }
 
-    beforeMonthViewRender({body}: { body: CalendarMonthViewDay[] }): void {
-        body.forEach((cell) => {
-            cell['dayPoints'] = cell.events.filter((e) => e.meta['entity'] === 'points');
-            cell['weekPoints'] = cell.events.filter((e) => e.meta['entity'] === 'totalPoints');
+    beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
+        body.forEach(cell => {
+            cell['dayPoints'] = cell.events.filter(e => e.meta['entity'] === 'points');
+            cell['weekPoints'] = cell.events.filter(e => e.meta['entity'] === 'totalPoints');
         });
     }
 
-    dayClicked({date, events}: { date: Date; events: CalendarEvent[] }): void {
+    dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
         if (isSameMonth(date, this.viewDate)) {
-            if (
-                (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
-                events.length === 0
-            ) {
+            if ((isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) || events.length === 0) {
                 this.activeDayIsOpen = false;
             } else {
                 this.activeDayIsOpen = true;
@@ -243,7 +238,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
         }
     }
 
-    eventTimesChanged({event, newStart, newEnd}: CalendarEventTimesChangedEvent): void {
+    eventTimesChanged({ event, newStart, newEnd }: CalendarEventTimesChangedEvent): void {
         event.start = newStart;
         event.end = newEnd;
         this.handleEvent('Dropped or resized', event);
@@ -251,9 +246,12 @@ export class HistoryComponent implements OnInit, OnDestroy {
     }
 
     handleEvent(action: string, event: CalendarEvent): void {
-        action = (action === 'Clicked') ? 'edit' : action;
-        this.modalData = {event, action};
-        const url = this.router.createUrlTree(['/', {outlets: {popup: event.meta.entity + '/' + event.meta.id + '/' + action}}]);
+        action = action === 'Clicked' ? 'edit' : action;
+        this.modalData = { event, action };
+        let url = this.router.createUrlTree(['/', { outlets: { popup: event.meta.entity + '/' + event.meta.id + '/' + action } }]);
+        if (action === 'edit') {
+            url = this.router.createUrlTree(['/' + event.meta.entity, event.meta.id, 'edit']);
+        }
         this.router.navigateByUrl(url.toString());
     }
 }

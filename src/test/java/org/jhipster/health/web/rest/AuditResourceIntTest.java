@@ -21,7 +21,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,7 +39,7 @@ public class AuditResourceIntTest {
     private static final String SAMPLE_PRINCIPAL = "SAMPLE_PRINCIPAL";
     private static final String SAMPLE_TYPE = "SAMPLE_TYPE";
     private static final Instant SAMPLE_TIMESTAMP = Instant.parse("2015-08-04T10:11:30Z");
-    private static final long SECONDS_PER_DAY = 60*60*24;
+    private static final long SECONDS_PER_DAY = 60 * 60 * 24;
 
     @Autowired
     private PersistenceAuditEventRepository auditEventRepository;
@@ -112,8 +111,8 @@ public class AuditResourceIntTest {
         auditEventRepository.save(auditEvent);
 
         // Generate dates for selecting audits by date, making sure the period will contain the audit
-        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0,10);
-        String toDate = SAMPLE_TIMESTAMP.plusSeconds(SECONDS_PER_DAY).toString().substring(0,10);
+        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
+        String toDate = SAMPLE_TIMESTAMP.plusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
 
         // Get the audit
         restAuditMockMvc.perform(get("/management/audits?fromDate="+fromDate+"&toDate="+toDate))
@@ -128,8 +127,8 @@ public class AuditResourceIntTest {
         auditEventRepository.save(auditEvent);
 
         // Generate dates for selecting audits by date, making sure the period will not contain the sample audit
-        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(2*SECONDS_PER_DAY).toString().substring(0,10);
-        String toDate = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0,10);
+        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(2*SECONDS_PER_DAY).toString().substring(0, 10);
+        String toDate = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
 
         // Query audits but expect no results
         restAuditMockMvc.perform(get("/management/audits?fromDate=" + fromDate + "&toDate=" + toDate))

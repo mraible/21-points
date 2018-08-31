@@ -2,22 +2,27 @@ const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const Visualizer = require('webpack-visualizer-plugin');
-const ngcWebpack = require('ngc-webpack');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
+const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
 const path = require('path');
 
 const utils = require('./utils.js');
 const commonConfig = require('./webpack.common.js');
 
 const ENV = 'production';
-const extractSASS = new ExtractTextPlugin(`[name]-sass.[hash].css`);
-const extractCSS = new ExtractTextPlugin(`[name].[hash].css`);
+const extractSASS = new ExtractTextPlugin(`content/[name]-sass.[hash].css`);
+const extractCSS = new ExtractTextPlugin(`content/[name].[hash].css`);
 
 module.exports = webpackMerge(commonConfig({ env: ENV }), {
-    // devtool: 'source-map', // Enable source maps. Please note that this will slow down the build
+    // Enable source maps. Please note that this will slow down the build.
+    // You have to enable it in UglifyJSPlugin config below and in tsconfig-aot.json as well
+    // devtool: 'source-map',
     entry: {
         polyfills: './src/main/webapp/app/polyfills',
         global: './src/main/webapp/content/scss/global.scss',
-        main: './src/main/webapp/app/app.main-aot'
+        main: './src/main/webapp/app/app.main'
     },
     output: {
         path: utils.root('build/www'),
@@ -26,17 +31,8 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
     },
     module: {
         rules: [{
-            test: /\.ts$/,
-            use: [
-                { loader: 'angular2-template-loader' },
-                {
-                    loader: 'awesome-typescript-loader',
-                    options: {
-                        configFileName: 'tsconfig-aot.json'
-                    },
-                }
-            ],
-            exclude: ['node_modules/generator-jhipster']
+            test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
+            use: [ '@ngtools/webpack' ]
         },
         {
             test: /\.scss$/,
@@ -47,7 +43,8 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
             test: /(vendor\.scss|global\.scss)/,
             use: extractSASS.extract({
                 fallback: 'style-loader',
-                use: ['css-loader', 'postcss-loader', 'sass-loader']
+                use: ['css-loader', 'postcss-loader', 'sass-loader'],
+                publicPath: '../'
             })
         },
         {
@@ -59,38 +56,79 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
             test: /(vendor\.css|global\.css)/,
             use: extractCSS.extract({
                 fallback: 'style-loader',
-                use: ['css-loader']
+                use: ['css-loader'],
+                publicPath: '../'
             })
         }]
+    },
+    optimization: {
+        runtimeChunk: false,
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all'
+                }
+            }
+        },
+        minimizer: [
+            new TerserPlugin({
+                parallel: true,
+                cache: true,
+                terserOptions: {
+                    ie8: false,
+                    // sourceMap: true, // Enable source maps. Please note that this will slow down the build
+                    compress: {
+                        dead_code: true,
+                        warnings: false,
+                        properties: true,
+                        drop_debugger: true,
+                        conditionals: true,
+                        booleans: true,
+                        loops: true,
+                        unused: true,
+                        toplevel: true,
+                        if_return: true,
+                        inline: true,
+                        join_vars: true
+                    },
+                    output: {
+                        comments: false,
+                        beautify: false,
+                        indent_level: 2
+                    }
+                }
+            })
+        ]
     },
     plugins: [
         extractSASS,
         extractCSS,
+        new MomentLocalesPlugin({
+            localesToKeep: [
+                    'en',
+                    'fr'
+                    // jhipster-needle-i18n-language-moment-webpack - JHipster will add/remove languages in this array
+                ]
+        }),
         new Visualizer({
             // Webpack statistics in target folder
             filename: '../stats.html'
         }),
-        new webpack.optimize.UglifyJsPlugin({
-            beautify: false,
-            comments: false,
-            // sourceMap: true, // Enable source maps. Please note that this will slow down the build
-            compress: {
-                screw_ie8: true,
-                warnings: false
-            },
-            mangle: {
-                keep_fnames: true,
-                screw_i8: true
-            }
-        }),
-        new ngcWebpack.NgcWebpackPlugin({
-            disabled: false,
-            tsConfig: utils.root('tsconfig-aot.json'),
-            resourceOverride: ''
+        new AngularCompilerPlugin({
+            mainPath: utils.root('src/main/webapp/app/app.main.ts'),
+            tsConfigPath: utils.root('tsconfig-aot.json'),
+            sourceMap: true
         }),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
             debug: false
+        }),
+        new WorkboxPlugin.GenerateSW({
+          clientsClaim: true,
+          skipWaiting: true,
         })
-    ]
+    ],
+    mode: 'production'
 });

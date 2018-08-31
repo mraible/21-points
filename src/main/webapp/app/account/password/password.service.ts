@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-@Injectable()
+import { SERVER_API_URL } from 'app/app.constants';
+
+@Injectable({ providedIn: 'root' })
 export class PasswordService {
+    constructor(private http: HttpClient) {}
 
-    constructor(private http: Http) {}
-
-    save(newPassword: string): Observable<any> {
-        return this.http.post('api/account/change_password', newPassword);
+    save(newPassword: string, currentPassword: string): Observable<any> {
+        return this.http.post(SERVER_API_URL + 'api/account/change-password', { currentPassword, newPassword });
     }
 }

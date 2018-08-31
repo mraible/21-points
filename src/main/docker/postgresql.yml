@@ -1,7 +1,7 @@
 version: '2'
 services:
     twentyonepoints-postgresql:
-        image: postgres:9.6.2
+        image: postgres:10.4
         # volumes:
         #     - ~/volumes/jhipster/TwentyOnePoints/postgresql/:/var/lib/postgresql/data/
         environment:
