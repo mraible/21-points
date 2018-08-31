@@ -6,6 +6,7 @@
         </div>
         <div class="col-sm-4 text-right">
             <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-preferences"
+                    [hidden]="preferences?.length && !isAdmin"
                     [routerLink]="['/preferences/new']"
                     [ngbTooltip]="addTooltip" placement="bottom">
                 <fa-icon [icon]="'plus'"></fa-icon>
