@@ -9,7 +9,7 @@ import { BloodPressureService } from 'app/entities/blood-pressure';
 import { WeightService } from 'app/entities/weight';
 import { D3ChartService } from './d3-chart.service';
 import { Preferences } from 'app/shared/model/preferences.model';
-import { Subscription } from 'Rx';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'jhi-home',
