@@ -27,7 +27,7 @@ describe('Points e2e test', () => {
     it('should load create Points page', async () => {
         await pointsComponentsPage.clickOnCreateButton();
         pointsUpdatePage = new PointsUpdatePage();
-        expect(await pointsUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.points.home.createOrEditLabel/);
+        expect(await pointsUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.points.home.createLabel/);
         await pointsUpdatePage.cancel();
     });
 
@@ -35,12 +35,9 @@ describe('Points e2e test', () => {
         await pointsComponentsPage.clickOnCreateButton();
         await pointsUpdatePage.setDateInput('2000-12-31');
         expect(await pointsUpdatePage.getDateInput()).toMatch('2000-12-31');
-        await pointsUpdatePage.setExerciseInput('5');
-        expect(await pointsUpdatePage.getExerciseInput()).toMatch('5');
-        await pointsUpdatePage.setMealsInput('5');
-        expect(await pointsUpdatePage.getMealsInput()).toMatch('5');
-        await pointsUpdatePage.setAlcoholInput('5');
-        expect(await pointsUpdatePage.getAlcoholInput()).toMatch('5');
+        expect(await pointsUpdatePage.getExerciseInput()).toBeTruthy();
+        expect(await pointsUpdatePage.getMealsInput()).toBeTruthy();
+        expect(await pointsUpdatePage.getAlcoholInput()).toBeTruthy();
         await pointsUpdatePage.setNotesInput('notes');
         expect(await pointsUpdatePage.getNotesInput()).toMatch('notes');
         await pointsUpdatePage.userSelectLastOption();

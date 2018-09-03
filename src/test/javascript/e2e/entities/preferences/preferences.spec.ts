@@ -27,14 +27,14 @@ describe('Preferences e2e test', () => {
     it('should load create Preferences page', async () => {
         await preferencesComponentsPage.clickOnCreateButton();
         preferencesUpdatePage = new PreferencesUpdatePage();
-        expect(await preferencesUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.preferences.home.createOrEditLabel/);
+        expect(await preferencesUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.preferences.home.createLabel/);
         await preferencesUpdatePage.cancel();
     });
 
     it('should create and save Preferences', async () => {
         await preferencesComponentsPage.clickOnCreateButton();
-        await preferencesUpdatePage.setWeeklyGoalInput('5');
-        expect(await preferencesUpdatePage.getWeeklyGoalInput()).toMatch('5');
+        await preferencesUpdatePage.setWeeklyGoalInput('10');
+        expect(await preferencesUpdatePage.getWeeklyGoalInput()).toMatch('10');
         await preferencesUpdatePage.weightUnitsSelectLastOption();
         await preferencesUpdatePage.userSelectLastOption();
         await preferencesUpdatePage.save();

@@ -27,7 +27,7 @@ describe('BloodPressure e2e test', () => {
     it('should load create BloodPressure page', async () => {
         await bloodPressureComponentsPage.clickOnCreateButton();
         bloodPressureUpdatePage = new BloodPressureUpdatePage();
-        expect(await bloodPressureUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.bloodPressure.home.createOrEditLabel/);
+        expect(await bloodPressureUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.bloodPressure.home.createLabel/);
         await bloodPressureUpdatePage.cancel();
     });
 
