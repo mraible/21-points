@@ -1,13 +1,14 @@
 import { browser, ExpectedConditions as ec, protractor } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
-import { WeightComponentsPage, WeightUpdatePage } from './weight.page-object';
+import { WeightComponentsPage, WeightDeleteDialog, WeightUpdatePage } from './weight.page-object';
 
 describe('Weight e2e test', () => {
     let navBarPage: NavBarPage;
     let signInPage: SignInPage;
     let weightUpdatePage: WeightUpdatePage;
     let weightComponentsPage: WeightComponentsPage;
+    let weightDeleteDialog: WeightDeleteDialog;
 
     beforeAll(async () => {
         await browser.get('/');
@@ -39,6 +40,17 @@ describe('Weight e2e test', () => {
         await weightUpdatePage.userSelectLastOption();
         await weightUpdatePage.save();
         expect(await weightUpdatePage.getSaveButton().isPresent()).toBeFalsy();
+    });
+
+    it('should delete last Weight', async () => {
+        const nbButtonsBeforeDelete = await weightComponentsPage.countDeleteButtons();
+        await weightComponentsPage.clickOnLastDeleteButton();
+
+        weightDeleteDialog = new WeightDeleteDialog();
+        expect(await weightDeleteDialog.getDialogTitle()).toMatch(/twentyOnePointsApp.weight.delete.question/);
+        await weightDeleteDialog.clickOnConfirmButton();
+
+        expect(await weightComponentsPage.countDeleteButtons()).toBe(nbButtonsBeforeDelete - 1);
     });
 
     afterAll(async () => {

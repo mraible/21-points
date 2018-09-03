@@ -1,13 +1,14 @@
 import { browser, ExpectedConditions as ec } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
-import { PreferencesComponentsPage, PreferencesUpdatePage } from './preferences.page-object';
+import { PreferencesComponentsPage, PreferencesDeleteDialog, PreferencesUpdatePage } from './preferences.page-object';
 
 describe('Preferences e2e test', () => {
     let navBarPage: NavBarPage;
     let signInPage: SignInPage;
     let preferencesUpdatePage: PreferencesUpdatePage;
     let preferencesComponentsPage: PreferencesComponentsPage;
+    let preferencesDeleteDialog: PreferencesDeleteDialog;
 
     beforeAll(async () => {
         await browser.get('/');
@@ -32,12 +33,23 @@ describe('Preferences e2e test', () => {
 
     it('should create and save Preferences', async () => {
         await preferencesComponentsPage.clickOnCreateButton();
-        await preferencesUpdatePage.setWeeklyGoalInput('10');
-        expect(await preferencesUpdatePage.getWeeklyGoalInput()).toMatch('10');
+        await preferencesUpdatePage.setWeeklyGoalInput('5');
+        expect(await preferencesUpdatePage.getWeeklyGoalInput()).toMatch('5');
         await preferencesUpdatePage.weightUnitsSelectLastOption();
         await preferencesUpdatePage.userSelectLastOption();
         await preferencesUpdatePage.save();
         expect(await preferencesUpdatePage.getSaveButton().isPresent()).toBeFalsy();
+    });
+
+    it('should delete last Preferences', async () => {
+        const nbButtonsBeforeDelete = await preferencesComponentsPage.countDeleteButtons();
+        await preferencesComponentsPage.clickOnLastDeleteButton();
+
+        preferencesDeleteDialog = new PreferencesDeleteDialog();
+        expect(await preferencesDeleteDialog.getDialogTitle()).toMatch(/twentyOnePointsApp.preferences.delete.question/);
+        await preferencesDeleteDialog.clickOnConfirmButton();
+
+        expect(await preferencesComponentsPage.countDeleteButtons()).toBe(nbButtonsBeforeDelete - 1);
     });
 
     afterAll(async () => {

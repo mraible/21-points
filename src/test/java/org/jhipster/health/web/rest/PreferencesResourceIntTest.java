@@ -295,7 +295,7 @@ public class PreferencesResourceIntTest {
 
         // Create the Preferences
 
-        // If the entity doesn't have an ID, it will throw BadRequestAlertException 
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPreferencesMockMvc.perform(put("/api/preferences")
             .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)

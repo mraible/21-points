@@ -2,10 +2,19 @@ import { element, by, ElementFinder } from 'protractor';
 
 export class PointsComponentsPage {
     createButton = element(by.id('jh-create-entity'));
+    deleteButtons = element.all(by.css('jhi-points div table .btn-danger'));
     title = element.all(by.css('jhi-points div h2#page-heading')).first();
 
     async clickOnCreateButton() {
         await this.createButton.click();
+    }
+
+    async clickOnLastDeleteButton() {
+        await this.deleteButtons.last().click();
+    }
+
+    async countDeleteButtons() {
+        return this.deleteButtons.count();
     }
 
     async getTitle() {
@@ -98,5 +107,18 @@ export class PointsUpdatePage {
 
     getSaveButton(): ElementFinder {
         return this.saveButton;
+    }
+}
+
+export class PointsDeleteDialog {
+    private dialogTitle = element(by.id('jhi-delete-points-heading'));
+    private confirmButton = element(by.id('jhi-confirm-delete-points'));
+
+    async getDialogTitle() {
+        return this.dialogTitle.getAttribute('jhiTranslate');
+    }
+
+    async clickOnConfirmButton() {
+        await this.confirmButton.click();
     }
 }

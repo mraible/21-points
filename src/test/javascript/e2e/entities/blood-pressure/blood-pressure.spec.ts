@@ -1,13 +1,14 @@
 import { browser, ExpectedConditions as ec, protractor } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
-import { BloodPressureComponentsPage, BloodPressureUpdatePage } from './blood-pressure.page-object';
+import { BloodPressureComponentsPage, BloodPressureDeleteDialog, BloodPressureUpdatePage } from './blood-pressure.page-object';
 
 describe('BloodPressure e2e test', () => {
     let navBarPage: NavBarPage;
     let signInPage: SignInPage;
     let bloodPressureUpdatePage: BloodPressureUpdatePage;
     let bloodPressureComponentsPage: BloodPressureComponentsPage;
+    let bloodPressureDeleteDialog: BloodPressureDeleteDialog;
 
     beforeAll(async () => {
         await browser.get('/');
@@ -41,6 +42,17 @@ describe('BloodPressure e2e test', () => {
         await bloodPressureUpdatePage.userSelectLastOption();
         await bloodPressureUpdatePage.save();
         expect(await bloodPressureUpdatePage.getSaveButton().isPresent()).toBeFalsy();
+    });
+
+    it('should delete last BloodPressure', async () => {
+        const nbButtonsBeforeDelete = await bloodPressureComponentsPage.countDeleteButtons();
+        await bloodPressureComponentsPage.clickOnLastDeleteButton();
+
+        bloodPressureDeleteDialog = new BloodPressureDeleteDialog();
+        expect(await bloodPressureDeleteDialog.getDialogTitle()).toMatch(/twentyOnePointsApp.bloodPressure.delete.question/);
+        await bloodPressureDeleteDialog.clickOnConfirmButton();
+
+        expect(await bloodPressureComponentsPage.countDeleteButtons()).toBe(nbButtonsBeforeDelete - 1);
     });
 
     afterAll(async () => {

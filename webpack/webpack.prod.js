@@ -12,6 +12,7 @@ const utils = require('./utils.js');
 const commonConfig = require('./webpack.common.js');
 
 const ENV = 'production';
+const sass = require('sass');
 const extractSASS = new ExtractTextPlugin(`content/[name]-sass.[hash].css`);
 const extractCSS = new ExtractTextPlugin(`content/[name].[hash].css`);
 
@@ -32,24 +33,30 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
     module: {
         rules: [{
             test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
-            use: [ '@ngtools/webpack' ]
+            loader: '@ngtools/webpack'
         },
         {
             test: /\.scss$/,
-            loaders: ['to-string-loader', 'css-loader', 'sass-loader'],
+            use: ['to-string-loader', 'css-loader', { 
+                loader: 'sass-loader', 
+                options: { implementation: sass }
+            }],
             exclude: /(vendor\.scss|global\.scss)/
         },
         {
             test: /(vendor\.scss|global\.scss)/,
             use: extractSASS.extract({
                 fallback: 'style-loader',
-                use: ['css-loader', 'postcss-loader', 'sass-loader'],
+                use: ['css-loader', 'postcss-loader', { 
+                    loader: 'sass-loader', 
+                    options: { implementation: sass }
+                }],
                 publicPath: '../'
             })
         },
         {
             test: /\.css$/,
-            loaders: ['to-string-loader', 'css-loader'],
+            use: ['to-string-loader', 'css-loader'],
             exclude: /(vendor\.css|global\.css)/
         },
         {

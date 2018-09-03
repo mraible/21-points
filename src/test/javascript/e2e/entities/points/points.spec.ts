@@ -1,13 +1,14 @@
 import { browser, ExpectedConditions as ec } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
-import { PointsComponentsPage, PointsUpdatePage } from './points.page-object';
+import { PointsComponentsPage, PointsDeleteDialog, PointsUpdatePage } from './points.page-object';
 
 describe('Points e2e test', () => {
     let navBarPage: NavBarPage;
     let signInPage: SignInPage;
     let pointsUpdatePage: PointsUpdatePage;
     let pointsComponentsPage: PointsComponentsPage;
+    let pointsDeleteDialog: PointsDeleteDialog;
 
     beforeAll(async () => {
         await browser.get('/');
@@ -34,14 +35,28 @@ describe('Points e2e test', () => {
         await pointsComponentsPage.clickOnCreateButton();
         await pointsUpdatePage.setDateInput('2000-12-31');
         expect(await pointsUpdatePage.getDateInput()).toMatch('2000-12-31');
-        expect(await pointsUpdatePage.getExerciseInput()).toBeTruthy();
-        expect(await pointsUpdatePage.getMealsInput()).toBeTruthy();
-        expect(await pointsUpdatePage.getAlcoholInput()).toBeTruthy();
+        await pointsUpdatePage.setExerciseInput('5');
+        expect(await pointsUpdatePage.getExerciseInput()).toMatch('5');
+        await pointsUpdatePage.setMealsInput('5');
+        expect(await pointsUpdatePage.getMealsInput()).toMatch('5');
+        await pointsUpdatePage.setAlcoholInput('5');
+        expect(await pointsUpdatePage.getAlcoholInput()).toMatch('5');
         await pointsUpdatePage.setNotesInput('notes');
         expect(await pointsUpdatePage.getNotesInput()).toMatch('notes');
         await pointsUpdatePage.userSelectLastOption();
         await pointsUpdatePage.save();
         expect(await pointsUpdatePage.getSaveButton().isPresent()).toBeFalsy();
+    });
+
+    it('should delete last Points', async () => {
+        const nbButtonsBeforeDelete = await pointsComponentsPage.countDeleteButtons();
+        await pointsComponentsPage.clickOnLastDeleteButton();
+
+        pointsDeleteDialog = new PointsDeleteDialog();
+        expect(await pointsDeleteDialog.getDialogTitle()).toMatch(/twentyOnePointsApp.points.delete.question/);
+        await pointsDeleteDialog.clickOnConfirmButton();
+
+        expect(await pointsComponentsPage.countDeleteButtons()).toBe(nbButtonsBeforeDelete - 1);
     });
 
     afterAll(async () => {
