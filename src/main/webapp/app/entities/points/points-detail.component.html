@@ -1,0 +1,47 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="points">
+            <h2><span jhiTranslate="twentyOnePointsApp.points.detail.title">Points</span> {{points.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="twentyOnePointsApp.points.date">Date</span></dt>
+                <dd>
+                    <span>{{points.date}}</span>
+                </dd>
+                <dt><span jhiTranslate="twentyOnePointsApp.points.exercise">Exercise</span></dt>
+                <dd>
+                    <span>{{points.exercise}}</span>
+                </dd>
+                <dt><span jhiTranslate="twentyOnePointsApp.points.meals">Meals</span></dt>
+                <dd>
+                    <span>{{points.meals}}</span>
+                </dd>
+                <dt><span jhiTranslate="twentyOnePointsApp.points.alcohol">Alcohol</span></dt>
+                <dd>
+                    <span>{{points.alcohol}}</span>
+                </dd>
+                <dt><span jhiTranslate="twentyOnePointsApp.points.notes">Notes</span></dt>
+                <dd>
+                    <span>{{points.notes}}</span>
+                </dd>
+                <dt><span jhiTranslate="twentyOnePointsApp.points.user">User</span></dt>
+                <dd>
+                    {{points.user?.login}}
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/points', points.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
