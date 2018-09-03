@@ -53,7 +53,6 @@ public class PreferencesResourceIntTest {
     @Autowired
     private PreferencesRepository preferencesRepository;
 
-
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
      *
@@ -202,7 +201,6 @@ public class PreferencesResourceIntTest {
             .andExpect(jsonPath("$.[*].weightUnits").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
     }
     
-
     @Test
     @Transactional
     public void getPreferences() throws Exception {
@@ -217,6 +215,7 @@ public class PreferencesResourceIntTest {
             .andExpect(jsonPath("$.weeklyGoal").value(DEFAULT_WEEKLY_GOAL))
             .andExpect(jsonPath("$.weightUnits").value(DEFAULT_WEIGHT_UNITS.toString()));
     }
+
     @Test
     @Transactional
     public void getNonExistingPreferences() throws Exception {
@@ -264,7 +263,7 @@ public class PreferencesResourceIntTest {
 
         // Create the Preferences
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPreferencesMockMvc.perform(put("/api/preferences")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(preferences)))

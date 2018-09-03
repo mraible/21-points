@@ -1,14 +1,23 @@
-import { element, by, promise, ElementFinder } from 'protractor';
+import { element, by, ElementFinder } from 'protractor';
 
 export class PreferencesComponentsPage {
     createButton = element(by.id('jh-create-entity'));
+    deleteButtons = element.all(by.css('jhi-preferences div table .btn-danger'));
     title = element.all(by.css('jhi-preferences div h2#page-heading span')).first();
 
-    clickOnCreateButton(): promise.Promise<void> {
-        return this.createButton.click();
+    async clickOnCreateButton() {
+        await this.createButton.click();
     }
 
-    getTitle(): any {
+    async clickOnLastDeleteButton() {
+        await this.deleteButtons.last().click();
+    }
+
+    async countDeleteButtons() {
+        return this.deleteButtons.count();
+    }
+
+    async getTitle() {
         return this.title.getAttribute('jhiTranslate');
     }
 }
@@ -21,60 +30,74 @@ export class PreferencesUpdatePage {
     weightUnitsSelect = element(by.id('field_weightUnits'));
     userSelect = element(by.id('field_user'));
 
-    getPageTitle() {
+    async getPageTitle() {
         return this.pageTitle.getAttribute('jhiTranslate');
     }
 
-    setWeeklyGoalInput(weeklyGoal): promise.Promise<void> {
-        return this.weeklyGoalInput.sendKeys(weeklyGoal);
+    async setWeeklyGoalInput(weeklyGoal) {
+        await this.weeklyGoalInput.sendKeys(weeklyGoal);
     }
 
-    getWeeklyGoalInput() {
+    async getWeeklyGoalInput() {
         return this.weeklyGoalInput.getAttribute('value');
     }
 
-    setWeightUnitsSelect(weightUnits): promise.Promise<void> {
-        return this.weightUnitsSelect.sendKeys(weightUnits);
+    async setWeightUnitsSelect(weightUnits) {
+        await this.weightUnitsSelect.sendKeys(weightUnits);
     }
 
-    getWeightUnitsSelect() {
+    async getWeightUnitsSelect() {
         return this.weightUnitsSelect.element(by.css('option:checked')).getText();
     }
 
-    weightUnitsSelectLastOption(): promise.Promise<void> {
-        return this.weightUnitsSelect
-            .all(by.tagName('option'))
-            .last()
-            .click();
-    }
-    userSelectLastOption(): promise.Promise<void> {
-        return this.userSelect
+    async weightUnitsSelectLastOption() {
+        await this.weightUnitsSelect
             .all(by.tagName('option'))
             .last()
             .click();
     }
 
-    userSelectOption(option): promise.Promise<void> {
-        return this.userSelect.sendKeys(option);
+    async userSelectLastOption() {
+        await this.userSelect
+            .all(by.tagName('option'))
+            .last()
+            .click();
+    }
+
+    async userSelectOption(option) {
+        await this.userSelect.sendKeys(option);
     }
 
     getUserSelect(): ElementFinder {
         return this.userSelect;
     }
 
-    getUserSelectedOption() {
+    async getUserSelectedOption() {
         return this.userSelect.element(by.css('option:checked')).getText();
     }
 
-    save(): promise.Promise<void> {
-        return this.saveButton.click();
+    async save() {
+        await this.saveButton.click();
     }
 
-    cancel(): promise.Promise<void> {
-        return this.cancelButton.click();
+    async cancel() {
+        await this.cancelButton.click();
     }
 
     getSaveButton(): ElementFinder {
         return this.saveButton;
+    }
+}
+
+export class PreferencesDeleteDialog {
+    private dialogTitle = element(by.id('jhi-delete-preferences-heading'));
+    private confirmButton = element(by.id('jhi-confirm-delete-preferences'));
+
+    async getDialogTitle() {
+        return this.dialogTitle.getAttribute('jhiTranslate');
+    }
+
+    async clickOnConfirmButton() {
+        await this.confirmButton.click();
     }
 }

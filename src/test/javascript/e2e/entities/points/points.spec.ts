@@ -1,51 +1,65 @@
-import { browser } from 'protractor';
-import { NavBarPage } from './../../page-objects/jhi-page-objects';
-import { PointsComponentsPage, PointsUpdatePage } from './points.page-object';
+import { browser, ExpectedConditions as ec } from 'protractor';
+import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
+
+import { PointsComponentsPage, PointsDeleteDialog, PointsUpdatePage } from './points.page-object';
 
 describe('Points e2e test', () => {
     let navBarPage: NavBarPage;
+    let signInPage: SignInPage;
     let pointsUpdatePage: PointsUpdatePage;
     let pointsComponentsPage: PointsComponentsPage;
+    let pointsDeleteDialog: PointsDeleteDialog;
 
-    beforeAll(() => {
-        browser.get('/');
-        browser.waitForAngular();
+    beforeAll(async () => {
+        await browser.get('/');
         navBarPage = new NavBarPage();
-        navBarPage.getSignInPage().autoSignInUsing('admin', 'admin');
-        browser.waitForAngular();
+        signInPage = await navBarPage.getSignInPage();
+        await signInPage.autoSignInUsing('admin', 'admin');
+        await browser.wait(ec.visibilityOf(navBarPage.entityMenu), 5000);
     });
 
-    it('should load Points', () => {
-        navBarPage.goToEntity('points');
+    it('should load Points', async () => {
+        await navBarPage.goToEntity('points');
         pointsComponentsPage = new PointsComponentsPage();
-        expect(pointsComponentsPage.getTitle()).toMatch(/twentyOnePointsApp.points.home.title/);
+        expect(await pointsComponentsPage.getTitle()).toMatch(/twentyOnePointsApp.points.home.title/);
     });
 
-    it('should load create Points page', () => {
-        pointsComponentsPage.clickOnCreateButton();
+    it('should load create Points page', async () => {
+        await pointsComponentsPage.clickOnCreateButton();
         pointsUpdatePage = new PointsUpdatePage();
-        expect(pointsUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.points.home.createOrEditLabel/);
-        pointsUpdatePage.cancel();
+        expect(await pointsUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.points.home.createOrEditLabel/);
+        await pointsUpdatePage.cancel();
     });
 
-    it('should create and save Points', () => {
-        pointsComponentsPage.clickOnCreateButton();
-        pointsUpdatePage.setDateInput('2000-12-31');
-        expect(pointsUpdatePage.getDateInput()).toMatch('2000-12-31');
-        pointsUpdatePage.setExerciseInput('5');
-        expect(pointsUpdatePage.getExerciseInput()).toMatch('5');
-        pointsUpdatePage.setMealsInput('5');
-        expect(pointsUpdatePage.getMealsInput()).toMatch('5');
-        pointsUpdatePage.setAlcoholInput('5');
-        expect(pointsUpdatePage.getAlcoholInput()).toMatch('5');
-        pointsUpdatePage.setNotesInput('notes');
-        expect(pointsUpdatePage.getNotesInput()).toMatch('notes');
-        pointsUpdatePage.userSelectLastOption();
-        pointsUpdatePage.save();
-        expect(pointsUpdatePage.getSaveButton().isPresent()).toBeFalsy();
+    it('should create and save Points', async () => {
+        await pointsComponentsPage.clickOnCreateButton();
+        await pointsUpdatePage.setDateInput('2000-12-31');
+        expect(await pointsUpdatePage.getDateInput()).toMatch('2000-12-31');
+        await pointsUpdatePage.setExerciseInput('5');
+        expect(await pointsUpdatePage.getExerciseInput()).toMatch('5');
+        await pointsUpdatePage.setMealsInput('5');
+        expect(await pointsUpdatePage.getMealsInput()).toMatch('5');
+        await pointsUpdatePage.setAlcoholInput('5');
+        expect(await pointsUpdatePage.getAlcoholInput()).toMatch('5');
+        await pointsUpdatePage.setNotesInput('notes');
+        expect(await pointsUpdatePage.getNotesInput()).toMatch('notes');
+        await pointsUpdatePage.userSelectLastOption();
+        await pointsUpdatePage.save();
+        expect(await pointsUpdatePage.getSaveButton().isPresent()).toBeFalsy();
     });
 
-    afterAll(() => {
-        navBarPage.autoSignOut();
+    it('should delete last Points', async () => {
+        const nbButtonsBeforeDelete = await pointsComponentsPage.countDeleteButtons();
+        await pointsComponentsPage.clickOnLastDeleteButton();
+
+        pointsDeleteDialog = new PointsDeleteDialog();
+        expect(await pointsDeleteDialog.getDialogTitle()).toMatch(/twentyOnePointsApp.points.delete.question/);
+        await pointsDeleteDialog.clickOnConfirmButton();
+
+        expect(await pointsComponentsPage.countDeleteButtons()).toBe(nbButtonsBeforeDelete - 1);
+    });
+
+    afterAll(async () => {
+        await navBarPage.autoSignOut();
     });
 });

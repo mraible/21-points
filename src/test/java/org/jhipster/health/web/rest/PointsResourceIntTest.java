@@ -65,7 +65,6 @@ public class PointsResourceIntTest {
     @Autowired
     private PointsRepository pointsRepository;
 
-
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
      *
@@ -205,7 +204,6 @@ public class PointsResourceIntTest {
             .andExpect(jsonPath("$.[*].notes").value(hasItem(DEFAULT_NOTES.toString())));
     }
     
-
     @Test
     @Transactional
     public void getPoints() throws Exception {
@@ -223,6 +221,7 @@ public class PointsResourceIntTest {
             .andExpect(jsonPath("$.alcohol").value(DEFAULT_ALCOHOL))
             .andExpect(jsonPath("$.notes").value(DEFAULT_NOTES.toString()));
     }
+
     @Test
     @Transactional
     public void getNonExistingPoints() throws Exception {
@@ -276,7 +275,7 @@ public class PointsResourceIntTest {
 
         // Create the Points
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPointsMockMvc.perform(put("/api/points")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(points)))

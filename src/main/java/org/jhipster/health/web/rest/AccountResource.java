@@ -7,6 +7,7 @@ import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.service.MailService;
 import org.jhipster.health.service.UserService;
+import org.jhipster.health.service.dto.PasswordChangeDTO;
 import org.jhipster.health.service.dto.UserDTO;
 import org.jhipster.health.web.rest.errors.*;
 import org.jhipster.health.web.rest.vm.KeyAndPasswordVM;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import org.jhipster.health.service.dto.PasswordChangeDTO;
 import java.util.*;
 
 /**
@@ -60,8 +60,6 @@ public class AccountResource {
         if (!checkPasswordLength(managedUserVM.getPassword())) {
             throw new InvalidPasswordException();
         }
-        userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> {throw new LoginAlreadyUsedException();});
-        userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {throw new EmailAlreadyUsedException();});
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
         mailService.sendActivationEmail(user);
     }

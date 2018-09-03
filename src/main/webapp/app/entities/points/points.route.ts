@@ -3,7 +3,8 @@ import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Points } from 'app/shared/model/points.model';
 import { PointsService } from './points.service';
 import { PointsComponent } from './points.component';
@@ -19,9 +20,9 @@ export class PointsResolve implements Resolve<IPoints> {
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         const id = route.params['id'] ? route.params['id'] : null;
         if (id) {
-            return this.service.find(id).map((points: HttpResponse<Points>) => points.body);
+            return this.service.find(id).pipe(map((points: HttpResponse<Points>) => points.body));
         }
-        return Observable.of(new Points());
+        return of(new Points());
     }
 }
 

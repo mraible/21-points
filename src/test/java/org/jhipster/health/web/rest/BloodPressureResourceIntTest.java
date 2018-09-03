@@ -62,7 +62,6 @@ public class BloodPressureResourceIntTest {
     @Autowired
     private BloodPressureRepository bloodPressureRepository;
 
-
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
      *
@@ -232,7 +231,6 @@ public class BloodPressureResourceIntTest {
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
     }
     
-
     @Test
     @Transactional
     public void getBloodPressure() throws Exception {
@@ -248,6 +246,7 @@ public class BloodPressureResourceIntTest {
             .andExpect(jsonPath("$.systolic").value(DEFAULT_SYSTOLIC))
             .andExpect(jsonPath("$.diastolic").value(DEFAULT_DIASTOLIC));
     }
+
     @Test
     @Transactional
     public void getNonExistingBloodPressure() throws Exception {
@@ -297,7 +296,7 @@ public class BloodPressureResourceIntTest {
 
         // Create the BloodPressure
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restBloodPressureMockMvc.perform(put("/api/blood-pressures")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(bloodPressure)))

@@ -59,7 +59,6 @@ public class WeightResourceIntTest {
     @Autowired
     private WeightRepository weightRepository;
 
-
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
      *
@@ -208,7 +207,6 @@ public class WeightResourceIntTest {
             .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.doubleValue())));
     }
     
-
     @Test
     @Transactional
     public void getWeight() throws Exception {
@@ -223,6 +221,7 @@ public class WeightResourceIntTest {
             .andExpect(jsonPath("$.timestamp").value(sameInstant(DEFAULT_TIMESTAMP)))
             .andExpect(jsonPath("$.weight").value(DEFAULT_WEIGHT.doubleValue()));
     }
+
     @Test
     @Transactional
     public void getNonExistingWeight() throws Exception {
@@ -270,7 +269,7 @@ public class WeightResourceIntTest {
 
         // Create the Weight
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restWeightMockMvc.perform(put("/api/weights")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(weight)))
