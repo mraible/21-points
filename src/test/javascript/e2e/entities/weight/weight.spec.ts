@@ -30,7 +30,7 @@ describe('Weight e2e test', () => {
     it('should load create Weight page', async () => {
         await weightComponentsPage.clickOnCreateButton();
         weightUpdatePage = new WeightUpdatePage();
-        expect(await weightUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.weight.home.createLabel/);
+        expect(await weightUpdatePage.getPageTitle()).to.eq('twentyOnePointsApp.weight.home.createLabel');
         await weightUpdatePage.cancel();
     });
 
