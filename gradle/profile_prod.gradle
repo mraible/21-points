@@ -31,6 +31,11 @@ war {
     webAppDirName = 'build/www/'
 }
 
+task copyIntoStatic (type: Copy) {
+    from 'build/www/'
+    into 'build/resources/main/static'
+}
+
 processResources {
     filesMatching('**/application.yml') {
         filter {
@@ -54,3 +59,5 @@ gitProperties {
 
 test.dependsOn webpack_test
 processResources.dependsOn webpack
+copyIntoStatic.dependsOn processResources
+bootJar.dependsOn copyIntoStatic

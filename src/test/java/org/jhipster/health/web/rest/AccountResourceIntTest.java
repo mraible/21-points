@@ -1,19 +1,19 @@
 package org.jhipster.health.web.rest;
 
-import org.jhipster.health.config.Constants;
 import org.jhipster.health.TwentyOnePointsApp;
+import org.jhipster.health.config.Constants;
 import org.jhipster.health.domain.Authority;
 import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.AuthorityRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.service.MailService;
-import org.jhipster.health.service.dto.UserDTO;
+import org.jhipster.health.service.UserService;
 import org.jhipster.health.service.dto.PasswordChangeDTO;
+import org.jhipster.health.service.dto.UserDTO;
 import org.jhipster.health.web.rest.errors.ExceptionTranslator;
 import org.jhipster.health.web.rest.vm.KeyAndPasswordVM;
 import org.jhipster.health.web.rest.vm.ManagedUserVM;
-import org.jhipster.health.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import org.junit.Before;
@@ -31,8 +31,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.Instant;
 
+import java.time.Instant;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -177,32 +177,6 @@ public class AccountResourceIntTest {
             .andExpect(status().isCreated());
 
         assertThat(userRepository.findOneByLogin("test-register-valid").isPresent()).isTrue();
-    }
-
-    @Test
-    @Transactional
-    public void testRegisterUppercaseEmail() throws Exception {
-        ManagedUserVM uppercaseEmailUser = new ManagedUserVM();
-        uppercaseEmailUser.setLogin("joe");
-        uppercaseEmailUser.setPassword("password");
-        uppercaseEmailUser.setFirstName("Joe");
-        uppercaseEmailUser.setLastName("Shmoe");
-        uppercaseEmailUser.setEmail("Joe@example.com");
-        uppercaseEmailUser.setActivated(true);
-        uppercaseEmailUser.setImageUrl("http://placehold.it/50x50");
-        uppercaseEmailUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        uppercaseEmailUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
-        assertThat(userRepository.findOneByLogin("joe").isPresent()).isFalse();
-
-        restMvc.perform(
-            post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(uppercaseEmailUser)))
-            .andExpect(status().isCreated());
-
-        Optional<User> user = userRepository.findOneByLogin("joe");
-        assertThat(user.isPresent()).isTrue();
-        assertThat(user.get().getEmail()).isEqualTo("joe@example.com");
     }
 
     @Test
@@ -408,7 +382,7 @@ public class AccountResourceIntTest {
         // Duplicate email - with uppercase email address
         ManagedUserVM userWithUpperCaseEmail = new ManagedUserVM();
         userWithUpperCaseEmail.setId(firstUser.getId());
-        userWithUpperCaseEmail.setLogin("test-register-duplicate-email-2");
+        userWithUpperCaseEmail.setLogin("test-register-duplicate-email-3");
         userWithUpperCaseEmail.setPassword(firstUser.getPassword());
         userWithUpperCaseEmail.setFirstName(firstUser.getFirstName());
         userWithUpperCaseEmail.setLastName(firstUser.getLastName());
@@ -424,12 +398,12 @@ public class AccountResourceIntTest {
                 .content(TestUtil.convertObjectToJsonBytes(userWithUpperCaseEmail)))
             .andExpect(status().isCreated());
 
-        Optional<User> testUser4 = userRepository.findOneByLogin("test-register-duplicate-email-2");
+        Optional<User> testUser4 = userRepository.findOneByLogin("test-register-duplicate-email-3");
         assertThat(testUser4.isPresent()).isTrue();
         assertThat(testUser4.get().getEmail()).isEqualTo("test-register-duplicate-email@example.com");
 
         testUser4.get().setActivated(true);
-        userRepository.save(testUser4.get());
+        userService.updateUser((new UserDTO(testUser4.get())));
 
         // Register 4th (already activated) user
         restMvc.perform(
@@ -645,8 +619,9 @@ public class AccountResourceIntTest {
         user.setEmail("change-password-wrong-existing-password@example.com");
         userRepository.saveAndFlush(user);
 
-        restMvc.perform(post("/api/account/change-password").contentType(TestUtil.APPLICATION_JSON_UTF8)
-        .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO("1"+currentPassword, "new password"))))
+        restMvc.perform(post("/api/account/change-password")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO("1"+currentPassword, "new password"))))
             .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin("change-password-wrong-existing-password").orElse(null);
@@ -665,9 +640,10 @@ public class AccountResourceIntTest {
         user.setEmail("change-password@example.com");
         userRepository.saveAndFlush(user);
 
-        restMvc.perform(post("/api/account/change-password").contentType(TestUtil.APPLICATION_JSON_UTF8)
+        restMvc.perform(post("/api/account/change-password")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, "new password"))))
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
 
         User updatedUser = userRepository.findOneByLogin("change-password").orElse(null);
         assertThat(passwordEncoder.matches("new password", updatedUser.getPassword())).isTrue();
@@ -684,9 +660,10 @@ public class AccountResourceIntTest {
         user.setEmail("change-password-too-small@example.com");
         userRepository.saveAndFlush(user);
 
-        restMvc.perform(post("/api/account/change-password").contentType(TestUtil.APPLICATION_JSON_UTF8)
+        restMvc.perform(post("/api/account/change-password")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, "new"))))
-                .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin("change-password-too-small").orElse(null);
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
@@ -703,9 +680,10 @@ public class AccountResourceIntTest {
         user.setEmail("change-password-too-long@example.com");
         userRepository.saveAndFlush(user);
 
-        restMvc.perform(post("/api/account/change-password").contentType(TestUtil.APPLICATION_JSON_UTF8)
+        restMvc.perform(post("/api/account/change-password")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, RandomStringUtils.random(101)))))
-                .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin("change-password-too-long").orElse(null);
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
