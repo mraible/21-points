@@ -70,7 +70,7 @@ export class PreferencesComponent implements OnInit, OnDestroy {
         this.loadAll();
         this.principal.identity().then(account => {
             this.currentAccount = account;
-            this.isAdmin = account.authorities.indexOf('ROLE_ADMIN') !== -1;
+            this.isAdmin = !account.authorities ? false : account.authorities.indexOf('ROLE_ADMIN') !== -1;
         });
         this.registerChangeInPreferences();
     }
