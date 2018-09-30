@@ -1,50 +1,34 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { TwentyOnePointsSharedModule } from '../../shared';
-import { TwentyOnePointsAdminModule } from '../../admin/admin.module';
+import { TwentyOnePointsSharedModule } from 'app/shared';
+import { TwentyOnePointsAdminModule } from 'app/admin/admin.module';
 import {
-    BloodPressureService,
-    BloodPressurePopupService,
     BloodPressureComponent,
     BloodPressureDetailComponent,
-    BloodPressureDialogComponent,
-    BloodPressurePopupComponent,
+    BloodPressureUpdateComponent,
     BloodPressureDeletePopupComponent,
     BloodPressureDeleteDialogComponent,
     bloodPressureRoute,
-    bloodPressurePopupRoute,
+    bloodPressurePopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...bloodPressureRoute,
-    ...bloodPressurePopupRoute,
-];
+const ENTITY_STATES = [...bloodPressureRoute, ...bloodPressurePopupRoute];
 
 @NgModule({
-    imports: [
-        TwentyOnePointsSharedModule,
-        TwentyOnePointsAdminModule,
-        RouterModule.forRoot(ENTITY_STATES, { useHash: true })
-    ],
+    imports: [TwentyOnePointsSharedModule, TwentyOnePointsAdminModule, RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         BloodPressureComponent,
         BloodPressureDetailComponent,
-        BloodPressureDialogComponent,
+        BloodPressureUpdateComponent,
         BloodPressureDeleteDialogComponent,
-        BloodPressurePopupComponent,
-        BloodPressureDeletePopupComponent,
+        BloodPressureDeletePopupComponent
     ],
     entryComponents: [
         BloodPressureComponent,
-        BloodPressureDialogComponent,
-        BloodPressurePopupComponent,
+        BloodPressureUpdateComponent,
         BloodPressureDeleteDialogComponent,
-        BloodPressureDeletePopupComponent,
-    ],
-    providers: [
-        BloodPressureService,
-        BloodPressurePopupService,
+        BloodPressureDeletePopupComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

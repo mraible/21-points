@@ -42,6 +42,8 @@
         "form": {
             "username": "Nom d'utilisateur",
             "username.placeholder": "Votre nom d'utilisateur",
+            "currentpassword": "Current password",
+            "currentpassword.placeholder": "Current password",
             "newpassword": "Nouveau mot de passe",
             "newpassword.placeholder": "Nouveau mot de passe",
             "confirmpassword": "Confirmation du nouveau mot de passe",
@@ -81,7 +83,9 @@
                     "minlength": "Votre email doit comporter au moins 5 caractères.",
                     "maxlength": "Votre email ne doit pas comporter plus de 50 caractères.",
                     "invalid": "Votre email n'est pas valide."
-                }
+                },
+                "hide": "Cacher",
+                "show": "Montrer"
             }
         },
         "field": {
@@ -132,7 +136,8 @@
         "Size": "Le champ {{fieldName}} ne respecte pas les critères minimum et maximum !",
         "userexists": "Login déjà utilisé !",
         "emailexists": "Email déjà utilisé !",
-        "idexists": "Une nouvelle entité {{entityName}} ne peut pas avoir d'ID !"
+        "idexists": "Une nouvelle entité {{entityName}} ne peut pas avoir d'ID !",
+        "idnull": "Invalid ID"
     },
     "footer": "<strong>21-Points Health</strong> | Une application développée pour une meilleure vie et <a href='http://www.jhipster-book.com' target='_blank'>Le Mini-Livre JHipster</a> | By <a href='http://raibledesigns.com' target='_blank'>Matt Raible</a>"
 }

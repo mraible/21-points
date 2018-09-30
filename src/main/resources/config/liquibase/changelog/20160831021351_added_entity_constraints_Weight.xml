@@ -17,6 +17,5 @@
                                  constraintName="fk_weight_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
-
     </changeSet>
 </databaseChangeLog>

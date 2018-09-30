@@ -1,0 +1,68 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-preferences-heading" jhiTranslate="twentyOnePointsApp.preferences.home.createOrEditLabel" *ngIf="preferences.id">Create or edit a Preference</h2>
+            <h2 id="jhi-preferences-heading" jhiTranslate="twentyOnePointsApp.preferences.home.createLabel" *ngIf="!preferences.id">Add Preferences</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!preferences.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="preferences.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.weeklyGoal" for="field_weeklyGoal">Weekly Goal</label>
+                    <input type="number" class="form-control" name="weeklyGoal" id="field_weeklyGoal"
+                        [(ngModel)]="preferences.weeklyGoal" required min="10" jhiMin="10" max="21" jhiMax="21"/>
+                    <div [hidden]="!(editForm.controls.weeklyGoal?.dirty && editForm.controls.weeklyGoal?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.weeklyGoal?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.weeklyGoal?.errors?.min" jhiTranslate="entity.validation.min" translateValues="{ min: 10 }">
+                            This field should be at least 10.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.weeklyGoal?.errors?.max" jhiTranslate="entity.validation.max" translateValues="{ max: 21 }">
+                            This field cannot be more than 21.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.weeklyGoal?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.weightUnits" for="field_weightUnits">Weight Units</label>
+                    <select class="form-control" name="weightUnits" [(ngModel)]="preferences.weightUnits" id="field_weightUnits"  required>
+                        <option value="kg">{{'twentyOnePointsApp.Units.kg' | translate}}</option>
+                        <option value="lb">{{'twentyOnePointsApp.Units.lb' | translate}}</option>
+                    </select>
+                    <div [hidden]="!(editForm.controls.weightUnits?.dirty && editForm.controls.weightUnits?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.weightUnits?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group" *jhiHasAnyAuthority="'ROLE_ADMIN'">
+                    <label class="form-control-label" jhiTranslate="twentyOnePointsApp.preferences.user" for="field_user">User</label>
+                    <select class="form-control" id="field_user" name="user" [(ngModel)]="preferences.user" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="userOption.id === preferences.user?.id ? preferences.user : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-outline-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

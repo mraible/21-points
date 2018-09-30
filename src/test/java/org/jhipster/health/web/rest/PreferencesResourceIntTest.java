@@ -23,10 +23,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
 
+
+import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -54,10 +61,15 @@ public class PreferencesResourceIntTest {
     private PreferencesRepository preferencesRepository;
 
     @Autowired
-    private PreferencesSearchRepository preferencesSearchRepository;
-
-    @Autowired
     private UserRepository userRepository;
+
+    /**
+     * This repository is mocked in the org.jhipster.health.repository.search test package.
+     *
+     * @see org.jhipster.health.repository.search.PreferencesSearchRepositoryMockConfiguration
+     */
+    @Autowired
+    private PreferencesSearchRepository mockPreferencesSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -81,10 +93,11 @@ public class PreferencesResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        PreferencesResource preferencesResource = new PreferencesResource(preferencesRepository, preferencesSearchRepository, userRepository);
+        final PreferencesResource preferencesResource = new PreferencesResource(preferencesRepository, mockPreferencesSearchRepository, userRepository);
         this.restPreferencesMockMvc = MockMvcBuilders.standaloneSetup(preferencesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -103,7 +116,6 @@ public class PreferencesResourceIntTest {
 
     @Before
     public void initTest() {
-        preferencesSearchRepository.deleteAll();
         preferences = createEntity(em);
     }
 
@@ -133,8 +145,7 @@ public class PreferencesResourceIntTest {
         assertThat(testPreferences.getWeightUnits()).isEqualTo(DEFAULT_WEIGHT_UNITS);
 
         // Validate the Preferences in Elasticsearch
-        Preferences preferencesEs = preferencesSearchRepository.findOne(testPreferences.getId());
-        assertThat(preferencesEs).isEqualToComparingFieldByField(testPreferences);
+        verify(mockPreferencesSearchRepository, times(1)).save(testPreferences);
     }
 
     @Test
@@ -151,9 +162,12 @@ public class PreferencesResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(preferences)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Preferences in the database
         List<Preferences> preferencesList = preferencesRepository.findAll();
         assertThat(preferencesList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Preferences in Elasticsearch
+        verify(mockPreferencesSearchRepository, times(0)).save(preferences);
     }
 
     @Test
@@ -164,6 +178,7 @@ public class PreferencesResourceIntTest {
         preferences.setWeeklyGoal(null);
 
         // Create the Preferences, which fails.
+
         restPreferencesMockMvc.perform(post("/api/preferences")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(preferences)))
@@ -241,11 +256,12 @@ public class PreferencesResourceIntTest {
     public void updatePreferences() throws Exception {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
-        preferencesSearchRepository.save(preferences);
         int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
 
         // Update the preferences
-        Preferences updatedPreferences = preferencesRepository.findOne(preferences.getId());
+        Preferences updatedPreferences = preferencesRepository.findById(preferences.getId()).get();
+        // Disconnect from session so that the updates on updatedPreferences are not directly saved in db
+        em.detach(updatedPreferences);
         updatedPreferences
             .weeklyGoal(UPDATED_WEEKLY_GOAL)
             .weightUnits(UPDATED_WEIGHT_UNITS);
@@ -263,8 +279,7 @@ public class PreferencesResourceIntTest {
         assertThat(testPreferences.getWeightUnits()).isEqualTo(UPDATED_WEIGHT_UNITS);
 
         // Validate the Preferences in Elasticsearch
-        Preferences preferencesEs = preferencesSearchRepository.findOne(testPreferences.getId());
-        assertThat(preferencesEs).isEqualToComparingFieldByField(testPreferences);
+        verify(mockPreferencesSearchRepository, times(1)).save(testPreferences);
     }
 
     @Test
@@ -280,16 +295,19 @@ public class PreferencesResourceIntTest {
 
         // Create the Preferences
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPreferencesMockMvc.perform(put("/api/preferences")
             .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(preferences)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Preferences in the database
         List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Preferences in Elasticsearch
+        verify(mockPreferencesSearchRepository, times(0)).save(preferences);
     }
 
     @Test
@@ -297,7 +315,6 @@ public class PreferencesResourceIntTest {
     public void deletePreferences() throws Exception {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
-        preferencesSearchRepository.save(preferences);
         int databaseSizeBeforeDelete = preferencesRepository.findAll().size();
 
         // Get the preferences
@@ -305,13 +322,12 @@ public class PreferencesResourceIntTest {
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean preferencesExistsInEs = preferencesSearchRepository.exists(preferences.getId());
-        assertThat(preferencesExistsInEs).isFalse();
-
         // Validate the database is empty
         List<Preferences> preferencesList = preferencesRepository.findAll();
         assertThat(preferencesList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Preferences in Elasticsearch
+        verify(mockPreferencesSearchRepository, times(1)).deleteById(preferences.getId());
     }
 
     @Test
@@ -319,8 +335,8 @@ public class PreferencesResourceIntTest {
     public void searchPreferences() throws Exception {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
-        preferencesSearchRepository.save(preferences);
-
+        when(mockPreferencesSearchRepository.search(queryStringQuery("id:" + preferences.getId())))
+            .thenReturn(Collections.singletonList(preferences));
         // Search the preferences
         restPreferencesMockMvc.perform(get("/api/_search/preferences?query=id:" + preferences.getId()))
             .andExpect(status().isOk())

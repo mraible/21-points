@@ -1,67 +1,48 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { Preferences } from './preferences.model';
-import { ResponseWrapper, createRequestOption } from '../../shared';
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared';
+import { IPreferences } from 'app/shared/model/preferences.model';
 
-@Injectable()
+type EntityResponseType = HttpResponse<IPreferences>;
+type EntityArrayResponseType = HttpResponse<IPreferences[]>;
+
+@Injectable({ providedIn: 'root' })
 export class PreferencesService {
+    private resourceUrl = SERVER_API_URL + 'api/preferences';
+    private resourceSearchUrl = SERVER_API_URL + 'api/_search/preferences';
 
-    private resourceUrl = 'api/preferences';
-    private resourceSearchUrl = 'api/_search/preferences';
+    constructor(private http: HttpClient) {}
 
-    constructor(private http: Http) { }
-
-    create(preferences: Preferences): Observable<Preferences> {
-        const copy = this.convert(preferences);
-        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
-        });
+    create(preferences: IPreferences): Observable<EntityResponseType> {
+        return this.http.post<IPreferences>(this.resourceUrl, preferences, { observe: 'response' });
     }
 
-    update(preferences: Preferences): Observable<Preferences> {
-        const copy = this.convert(preferences);
-        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-            return res.json();
-        });
+    update(preferences: IPreferences): Observable<EntityResponseType> {
+        return this.http.put<IPreferences>(this.resourceUrl, preferences, { observe: 'response' });
     }
 
-    find(id: number): Observable<Preferences> {
-        return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-            return res.json();
-        });
+    find(id: number): Observable<EntityResponseType> {
+        return this.http.get<IPreferences>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
 
-    query(req?: any): Observable<ResponseWrapper> {
+    query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get(this.resourceUrl, options)
-            .map((res: Response) => this.convertResponse(res));
+        return this.http.get<IPreferences[]>(this.resourceUrl, { params: options, observe: 'response' });
     }
 
-    delete(id: number): Observable<Response> {
-        return this.http.delete(`${this.resourceUrl}/${id}`);
+    delete(id: number): Observable<HttpResponse<any>> {
+        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
 
-    search(req?: any): Observable<ResponseWrapper> {
+    search(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get(this.resourceSearchUrl, options)
-            .map((res: any) => this.convertResponse(res));
+        return this.http.get<IPreferences[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
     }
 
-    user(): Observable<Preferences> {
-        return this.http.get('api/my-preferences').map((res: Response) => {
-            return res.json();
-        });
-    }
-
-    private convertResponse(res: Response): ResponseWrapper {
-        const jsonResponse = res.json();
-        return new ResponseWrapper(res.headers, jsonResponse, res.status);
-    }
-
-    private convert(preferences: Preferences): Preferences {
-        const copy: Preferences = Object.assign({}, preferences);
-        return copy;
+    user(): Observable<EntityResponseType> {
+        return this.http.get<IPreferences>('api/my-preferences', { observe: 'response' });
     }
 }

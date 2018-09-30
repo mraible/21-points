@@ -27,15 +27,15 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="jhi_timestamp" type="timestamp">
-                <constraints nullable="false"/>
+                <constraints nullable="false" />
             </column>
 
             <column name="weight" type="double">
-                <constraints nullable="false"/>
+                <constraints nullable="false" />
             </column>
 
             <column name="user_id" type="bigint">
-                <constraints nullable="true"/>
+                <constraints nullable="true" />
             </column>
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
@@ -43,4 +43,5 @@
         <dropDefaultValue tableName="weight" columnName="jhi_timestamp" columnDataType="datetime"/>
 
     </changeSet>
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

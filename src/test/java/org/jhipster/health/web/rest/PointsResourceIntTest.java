@@ -15,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -30,11 +32,17 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import java.util.Collections;
 import java.util.List;
 
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -69,10 +77,15 @@ public class PointsResourceIntTest {
     private PointsRepository pointsRepository;
 
     @Autowired
-    private PointsSearchRepository pointsSearchRepository;
-
-    @Autowired
     private UserRepository userRepository;
+
+    /**
+     * This repository is mocked in the org.jhipster.health.repository.search test package.
+     *
+     * @see org.jhipster.health.repository.search.PointsSearchRepositoryMockConfiguration
+     */
+    @Autowired
+    private PointsSearchRepository mockPointsSearchRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -96,10 +109,11 @@ public class PointsResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        PointsResource pointsResource = new PointsResource(pointsRepository, pointsSearchRepository, userRepository);
+        final PointsResource pointsResource = new PointsResource(pointsRepository, mockPointsSearchRepository, userRepository);
         this.restPointsMockMvc = MockMvcBuilders.standaloneSetup(pointsResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
@@ -121,7 +135,6 @@ public class PointsResourceIntTest {
 
     @Before
     public void initTest() {
-        pointsSearchRepository.deleteAll();
         points = createEntity(em);
     }
 
@@ -154,8 +167,7 @@ public class PointsResourceIntTest {
         assertThat(testPoints.getNotes()).isEqualTo(DEFAULT_NOTES);
 
         // Validate the Points in Elasticsearch
-        Points pointsEs = pointsSearchRepository.findOne(testPoints.getId());
-        assertThat(pointsEs).isEqualToComparingFieldByField(testPoints);
+        verify(mockPointsSearchRepository, times(1)).save(testPoints);
     }
 
     @Test
@@ -172,9 +184,12 @@ public class PointsResourceIntTest {
             .content(TestUtil.convertObjectToJsonBytes(points)))
             .andExpect(status().isBadRequest());
 
-        // Validate the Alice in the database
+        // Validate the Points in the database
         List<Points> pointsList = pointsRepository.findAll();
         assertThat(pointsList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Points in Elasticsearch
+        verify(mockPointsSearchRepository, times(0)).save(points);
     }
 
     @Test
@@ -250,11 +265,12 @@ public class PointsResourceIntTest {
     public void updatePoints() throws Exception {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
-        pointsSearchRepository.save(points);
         int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
 
         // Update the points
-        Points updatedPoints = pointsRepository.findOne(points.getId());
+        Points updatedPoints = pointsRepository.findById(points.getId()).get();
+        // Disconnect from session so that the updates on updatedPoints are not directly saved in db
+        em.detach(updatedPoints);
         updatedPoints
             .date(UPDATED_DATE)
             .exercise(UPDATED_EXERCISE)
@@ -278,8 +294,7 @@ public class PointsResourceIntTest {
         assertThat(testPoints.getNotes()).isEqualTo(UPDATED_NOTES);
 
         // Validate the Points in Elasticsearch
-        Points pointsEs = pointsSearchRepository.findOne(testPoints.getId());
-        assertThat(pointsEs).isEqualToComparingFieldByField(testPoints);
+        verify(mockPointsSearchRepository, times(1)).save(testPoints);
     }
 
     @Test
@@ -295,16 +310,19 @@ public class PointsResourceIntTest {
 
         // Create the Points
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPointsMockMvc.perform(put("/api/points")
             .with(user("user"))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(points)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Points in the database
         List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
+
+        // Validate the Points in Elasticsearch
+        verify(mockPointsSearchRepository, times(0)).save(points);
     }
 
     @Test
@@ -312,7 +330,6 @@ public class PointsResourceIntTest {
     public void deletePoints() throws Exception {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
-        pointsSearchRepository.save(points);
         int databaseSizeBeforeDelete = pointsRepository.findAll().size();
 
         // Get the points
@@ -320,13 +337,12 @@ public class PointsResourceIntTest {
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
-        // Validate Elasticsearch is empty
-        boolean pointsExistsInEs = pointsSearchRepository.exists(points.getId());
-        assertThat(pointsExistsInEs).isFalse();
-
         // Validate the database is empty
         List<Points> pointsList = pointsRepository.findAll();
         assertThat(pointsList).hasSize(databaseSizeBeforeDelete - 1);
+
+        // Validate the Points in Elasticsearch
+        verify(mockPointsSearchRepository, times(1)).deleteById(points.getId());
     }
 
     @Test
@@ -334,8 +350,8 @@ public class PointsResourceIntTest {
     public void searchPoints() throws Exception {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
-        pointsSearchRepository.save(points);
-
+        when(mockPointsSearchRepository.search(queryStringQuery("id:" + points.getId()), PageRequest.of(0, 20)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(points), PageRequest.of(0, 1), 1));
         // Search the points
         restPointsMockMvc.perform(get("/api/_search/points?query=id:" + points.getId()))
             .andExpect(status().isOk())

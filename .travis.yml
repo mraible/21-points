@@ -4,10 +4,17 @@ services:
   - docker
 language: node_js
 node_js:
-  - "6.11.1"
+  - "8.11.3"
 jdk:
   - oraclejdk8
 sudo: false
+# Install Chrome
+addons:
+  apt:
+    sources:
+    - google-chrome
+    packages:
+    - google-chrome-stable
 cache:
   directories:
     - node
@@ -16,9 +23,11 @@ cache:
     - $HOME/.yarn-cache
 env:
   global:
-    - NODE_VERSION=6.11.1
+    - NODE_VERSION=8.11.3
     - SPRING_OUTPUT_ANSI_ENABLED=ALWAYS
     - SPRING_JPA_SHOW_SQL=false
+    # Disable Gradle progress bar
+    - TERM=dumb
 before_install:
   - jdk_switcher use oraclejdk8
   - java -version
@@ -27,13 +36,20 @@ before_install:
   # Repo for Yarn
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH=$HOME/.yarn/bin:$PATH
+  # Setup Protractor
+  - export CHROME_BIN=/usr/bin/google-chrome
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
 install:
   - yarn install
 script:
   - chmod +x gradlew
-  - ./gradlew clean test
+  - ./gradlew -q clean test
   - yarn test
-  - ./gradlew bootRepackage -Pprod -x test
+  #- ./gradlew &
+  #- sleep 45s
+  #- yarn e2e
+  - ./gradlew -q bootWar -Pprod -x test
 notifications:
   webhooks:
     on_success: change  # options: [always|never|change] default: always
