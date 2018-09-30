@@ -43,7 +43,7 @@ export class PointsUpdatePage {
     }
 
     async getDateInput() {
-        return this.dateInput.isSelected();
+        return this.dateInput.getAttribute('value');
     }
 
     async setExerciseInput(exercise) {
@@ -67,7 +67,7 @@ export class PointsUpdatePage {
     }
 
     async getAlcoholInput() {
-        return this.alcoholInput.getAttribute('checked');
+        return this.alcoholInput.isSelected();
     }
 
     async setNotesInput(notes) {
