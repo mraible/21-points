@@ -28,8 +28,9 @@ module.exports = (options) => webpackMerge(commonConfig({ env: ENV }), {
                 '/h2-console',
                 '/auth'
             ],
-            target: 'http://127.0.0.1:8080',
+            target: `http${options.tls ? 's' : ''}://127.0.0.1:8080`,
             secure: false,
+            changeOrigin: options.tls,
             headers: { host: 'localhost:9000' }
         }],
         stats: options.stats,
@@ -84,16 +85,16 @@ module.exports = (options) => webpackMerge(commonConfig({ env: ENV }), {
         },
         {
             test: /\.scss$/,
-            use: ['to-string-loader', 'css-loader', { 
-                loader: 'sass-loader', 
+            use: ['to-string-loader', 'css-loader', {
+                loader: 'sass-loader',
                 options: { implementation: sass }
             }],
             exclude: /(vendor\.scss|global\.scss)/
         },
         {
             test: /(vendor\.scss|global\.scss)/,
-            use: ['style-loader', 'css-loader', 'postcss-loader', { 
-                loader: 'sass-loader', 
+            use: ['style-loader', 'css-loader', 'postcss-loader', {
+                loader: 'sass-loader',
                 options: { implementation: sass }
             }]
         },
@@ -107,11 +108,13 @@ module.exports = (options) => webpackMerge(commonConfig({ env: ENV }), {
             use: ['style-loader', 'css-loader']
         }]
     },
-    stats: options.stats,
+    stats: process.env.DISABLE_WEBPACK_LOGS ? 'none' : options.stats,
     plugins: [
-        new SimpleProgressWebpackPlugin({
-            format: options.stats === 'minimal' ? 'compact' : 'expanded'
-        }),
+        process.env.DISABLE_WEBPACK_LOGS
+            ? null
+            : new SimpleProgressWebpackPlugin({
+                format: options.stats === 'minimal' ? 'compact' : 'expanded'
+              }),
         new FriendlyErrorsWebpackPlugin(),
         new ForkTsCheckerWebpackPlugin(),
         new BrowserSyncPlugin({
@@ -119,6 +122,11 @@ module.exports = (options) => webpackMerge(commonConfig({ env: ENV }), {
             port: 9000,
             proxy: {
                 target: 'http://localhost:9060'
+            },
+            socket: {
+                clients: {
+                    heartbeatTimeout: 60000
+                }
             }
         }, {
             reload: false
@@ -135,6 +143,6 @@ module.exports = (options) => webpackMerge(commonConfig({ env: ENV }), {
             title: 'JHipster',
             contentImage: path.join(__dirname, 'logo-jhipster.png')
         })
-    ],
+    ].filter(Boolean),
     mode: 'development'
 });

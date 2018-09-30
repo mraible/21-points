@@ -1,7 +1,10 @@
+/* tslint:disable no-unused-expression */
 import { browser, ExpectedConditions as ec } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
 import { PreferencesComponentsPage, PreferencesDeleteDialog, PreferencesUpdatePage } from './preferences.page-object';
+
+const expect = chai.expect;
 
 describe('Preferences e2e test', () => {
     let navBarPage: NavBarPage;
@@ -10,7 +13,7 @@ describe('Preferences e2e test', () => {
     let preferencesComponentsPage: PreferencesComponentsPage;
     let preferencesDeleteDialog: PreferencesDeleteDialog;
 
-    beforeAll(async () => {
+    before(async () => {
         await browser.get('/');
         navBarPage = new NavBarPage();
         signInPage = await navBarPage.getSignInPage();
@@ -21,24 +24,28 @@ describe('Preferences e2e test', () => {
     it('should load Preferences', async () => {
         await navBarPage.goToEntity('preferences');
         preferencesComponentsPage = new PreferencesComponentsPage();
-        expect(await preferencesComponentsPage.getTitle()).toMatch(/twentyOnePointsApp.preferences.home.title/);
+        expect(await preferencesComponentsPage.getTitle()).to.eq('twentyOnePointsApp.preferences.home.title');
     });
 
     it('should load create Preferences page', async () => {
         await preferencesComponentsPage.clickOnCreateButton();
         preferencesUpdatePage = new PreferencesUpdatePage();
-        expect(await preferencesUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.preferences.home.createOrEditLabel/);
+        expect(await preferencesUpdatePage.getPageTitle()).to.eq('twentyOnePointsApp.preferences.home.createOrEditLabel');
         await preferencesUpdatePage.cancel();
     });
 
     it('should create and save Preferences', async () => {
+        const nbButtonsBeforeCreate = await preferencesComponentsPage.countDeleteButtons();
+
         await preferencesComponentsPage.clickOnCreateButton();
         await preferencesUpdatePage.setWeeklyGoalInput('5');
-        expect(await preferencesUpdatePage.getWeeklyGoalInput()).toMatch('5');
+        expect(await preferencesUpdatePage.getWeeklyGoalInput()).to.eq('5');
         await preferencesUpdatePage.weightUnitsSelectLastOption();
         await preferencesUpdatePage.userSelectLastOption();
         await preferencesUpdatePage.save();
-        expect(await preferencesUpdatePage.getSaveButton().isPresent()).toBeFalsy();
+        expect(await preferencesUpdatePage.getSaveButton().isPresent()).to.be.false;
+
+        expect(await preferencesComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeCreate + 1);
     });
 
     it('should delete last Preferences', async () => {
@@ -46,13 +53,13 @@ describe('Preferences e2e test', () => {
         await preferencesComponentsPage.clickOnLastDeleteButton();
 
         preferencesDeleteDialog = new PreferencesDeleteDialog();
-        expect(await preferencesDeleteDialog.getDialogTitle()).toMatch(/twentyOnePointsApp.preferences.delete.question/);
+        expect(await preferencesDeleteDialog.getDialogTitle()).to.eq('twentyOnePointsApp.preferences.delete.question');
         await preferencesDeleteDialog.clickOnConfirmButton();
 
-        expect(await preferencesComponentsPage.countDeleteButtons()).toBe(nbButtonsBeforeDelete - 1);
+        expect(await preferencesComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeDelete - 1);
     });
 
-    afterAll(async () => {
+    after(async () => {
         await navBarPage.autoSignOut();
     });
 });

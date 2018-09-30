@@ -1,7 +1,10 @@
+/* tslint:disable no-unused-expression */
 import { browser, ExpectedConditions as ec } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
 import { PointsComponentsPage, PointsDeleteDialog, PointsUpdatePage } from './points.page-object';
+
+const expect = chai.expect;
 
 describe('Points e2e test', () => {
     let navBarPage: NavBarPage;
@@ -10,7 +13,7 @@ describe('Points e2e test', () => {
     let pointsComponentsPage: PointsComponentsPage;
     let pointsDeleteDialog: PointsDeleteDialog;
 
-    beforeAll(async () => {
+    before(async () => {
         await browser.get('/');
         navBarPage = new NavBarPage();
         signInPage = await navBarPage.getSignInPage();
@@ -21,31 +24,35 @@ describe('Points e2e test', () => {
     it('should load Points', async () => {
         await navBarPage.goToEntity('points');
         pointsComponentsPage = new PointsComponentsPage();
-        expect(await pointsComponentsPage.getTitle()).toMatch(/twentyOnePointsApp.points.home.title/);
+        expect(await pointsComponentsPage.getTitle()).to.eq('twentyOnePointsApp.points.home.title');
     });
 
     it('should load create Points page', async () => {
         await pointsComponentsPage.clickOnCreateButton();
         pointsUpdatePage = new PointsUpdatePage();
-        expect(await pointsUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.points.home.createOrEditLabel/);
+        expect(await pointsUpdatePage.getPageTitle()).to.eq('twentyOnePointsApp.points.home.createOrEditLabel');
         await pointsUpdatePage.cancel();
     });
 
     it('should create and save Points', async () => {
+        const nbButtonsBeforeCreate = await pointsComponentsPage.countDeleteButtons();
+
         await pointsComponentsPage.clickOnCreateButton();
         await pointsUpdatePage.setDateInput('2000-12-31');
-        expect(await pointsUpdatePage.getDateInput()).toMatch('2000-12-31');
+        expect(await pointsUpdatePage.getDateInput()).to.eq('2000-12-31');
         await pointsUpdatePage.setExerciseInput('5');
-        expect(await pointsUpdatePage.getExerciseInput()).toMatch('5');
+        expect(await pointsUpdatePage.getExerciseInput()).to.eq('5');
         await pointsUpdatePage.setMealsInput('5');
-        expect(await pointsUpdatePage.getMealsInput()).toMatch('5');
+        expect(await pointsUpdatePage.getMealsInput()).to.eq('5');
         await pointsUpdatePage.setAlcoholInput('5');
-        expect(await pointsUpdatePage.getAlcoholInput()).toMatch('5');
+        expect(await pointsUpdatePage.getAlcoholInput()).to.eq('5');
         await pointsUpdatePage.setNotesInput('notes');
-        expect(await pointsUpdatePage.getNotesInput()).toMatch('notes');
+        expect(await pointsUpdatePage.getNotesInput()).to.eq('notes');
         await pointsUpdatePage.userSelectLastOption();
         await pointsUpdatePage.save();
-        expect(await pointsUpdatePage.getSaveButton().isPresent()).toBeFalsy();
+        expect(await pointsUpdatePage.getSaveButton().isPresent()).to.be.false;
+
+        expect(await pointsComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeCreate + 1);
     });
 
     it('should delete last Points', async () => {
@@ -53,13 +60,13 @@ describe('Points e2e test', () => {
         await pointsComponentsPage.clickOnLastDeleteButton();
 
         pointsDeleteDialog = new PointsDeleteDialog();
-        expect(await pointsDeleteDialog.getDialogTitle()).toMatch(/twentyOnePointsApp.points.delete.question/);
+        expect(await pointsDeleteDialog.getDialogTitle()).to.eq('twentyOnePointsApp.points.delete.question');
         await pointsDeleteDialog.clickOnConfirmButton();
 
-        expect(await pointsComponentsPage.countDeleteButtons()).toBe(nbButtonsBeforeDelete - 1);
+        expect(await pointsComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeDelete - 1);
     });
 
-    afterAll(async () => {
+    after(async () => {
         await navBarPage.autoSignOut();
     });
 });
