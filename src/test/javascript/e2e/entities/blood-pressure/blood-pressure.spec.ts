@@ -1,7 +1,10 @@
+/* tslint:disable no-unused-expression */
 import { browser, ExpectedConditions as ec, protractor } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
 import { BloodPressureComponentsPage, BloodPressureDeleteDialog, BloodPressureUpdatePage } from './blood-pressure.page-object';
+
+const expect = chai.expect;
 
 describe('BloodPressure e2e test', () => {
     let navBarPage: NavBarPage;
@@ -10,7 +13,7 @@ describe('BloodPressure e2e test', () => {
     let bloodPressureComponentsPage: BloodPressureComponentsPage;
     let bloodPressureDeleteDialog: BloodPressureDeleteDialog;
 
-    beforeAll(async () => {
+    before(async () => {
         await browser.get('/');
         navBarPage = new NavBarPage();
         signInPage = await navBarPage.getSignInPage();
@@ -21,27 +24,31 @@ describe('BloodPressure e2e test', () => {
     it('should load BloodPressures', async () => {
         await navBarPage.goToEntity('blood-pressure');
         bloodPressureComponentsPage = new BloodPressureComponentsPage();
-        expect(await bloodPressureComponentsPage.getTitle()).toMatch(/twentyOnePointsApp.bloodPressure.home.title/);
+        expect(await bloodPressureComponentsPage.getTitle()).to.eq('twentyOnePointsApp.bloodPressure.home.title');
     });
 
     it('should load create BloodPressure page', async () => {
         await bloodPressureComponentsPage.clickOnCreateButton();
         bloodPressureUpdatePage = new BloodPressureUpdatePage();
-        expect(await bloodPressureUpdatePage.getPageTitle()).toMatch(/twentyOnePointsApp.bloodPressure.home.createLabel/);
+        expect(await bloodPressureUpdatePage.getPageTitle()).to.eq('twentyOnePointsApp.bloodPressure.home.createLabel');
         await bloodPressureUpdatePage.cancel();
     });
 
     it('should create and save BloodPressures', async () => {
+        const nbButtonsBeforeCreate = await bloodPressureComponentsPage.countDeleteButtons();
+
         await bloodPressureComponentsPage.clickOnCreateButton();
         await bloodPressureUpdatePage.setTimestampInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-        expect(await bloodPressureUpdatePage.getTimestampInput()).toContain('2001-01-01T02:30');
+        expect(await bloodPressureUpdatePage.getTimestampInput()).to.contain('2001-01-01T02:30');
         await bloodPressureUpdatePage.setSystolicInput('5');
-        expect(await bloodPressureUpdatePage.getSystolicInput()).toMatch('5');
+        expect(await bloodPressureUpdatePage.getSystolicInput()).to.eq('5');
         await bloodPressureUpdatePage.setDiastolicInput('5');
-        expect(await bloodPressureUpdatePage.getDiastolicInput()).toMatch('5');
+        expect(await bloodPressureUpdatePage.getDiastolicInput()).to.eq('5');
         await bloodPressureUpdatePage.userSelectLastOption();
         await bloodPressureUpdatePage.save();
-        expect(await bloodPressureUpdatePage.getSaveButton().isPresent()).toBeFalsy();
+        expect(await bloodPressureUpdatePage.getSaveButton().isPresent()).to.be.false;
+
+        expect(await bloodPressureComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeCreate + 1);
     });
 
     it('should delete last BloodPressure', async () => {
@@ -49,13 +56,13 @@ describe('BloodPressure e2e test', () => {
         await bloodPressureComponentsPage.clickOnLastDeleteButton();
 
         bloodPressureDeleteDialog = new BloodPressureDeleteDialog();
-        expect(await bloodPressureDeleteDialog.getDialogTitle()).toMatch(/twentyOnePointsApp.bloodPressure.delete.question/);
+        expect(await bloodPressureDeleteDialog.getDialogTitle()).to.eq('twentyOnePointsApp.bloodPressure.delete.question');
         await bloodPressureDeleteDialog.clickOnConfirmButton();
 
-        expect(await bloodPressureComponentsPage.countDeleteButtons()).toBe(nbButtonsBeforeDelete - 1);
+        expect(await bloodPressureComponentsPage.countDeleteButtons()).to.eq(nbButtonsBeforeDelete - 1);
     });
 
-    afterAll(async () => {
+    after(async () => {
         await navBarPage.autoSignOut();
     });
 });

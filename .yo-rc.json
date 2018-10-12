@@ -4,7 +4,7 @@
       "packageName": "org.jhipster.health",
       "nativeLanguage": "en"
     },
-    "jhipsterVersion": "5.0.1",
+    "jhipsterVersion": "5.3.4",
     "baseName": "TwentyOnePoints",
     "packageName": "org.jhipster.health",
     "packageFolder": "org/jhipster/health",
@@ -37,7 +37,7 @@
       "en",
       "fr"
     ],
-    "herokuAppName": null,
+    "herokuAppName": "health-by-points",
     "cacheProvider": "ehcache",
     "enableHibernateCache": true,
     "herokuDeployType": "git"

@@ -51,7 +51,7 @@ export class PointsUpdatePage {
     }
 
     async getExerciseInput() {
-        return this.exerciseInput.getAttribute('checked');
+        return this.exerciseInput.isSelected();
     }
 
     async setMealsInput(meals) {
@@ -59,7 +59,7 @@ export class PointsUpdatePage {
     }
 
     async getMealsInput() {
-        return this.mealsInput.getAttribute('checked');
+        return this.mealsInput.isSelected();
     }
 
     async setAlcoholInput(alcohol) {
@@ -67,7 +67,7 @@ export class PointsUpdatePage {
     }
 
     async getAlcoholInput() {
-        return this.alcoholInput.getAttribute('checked');
+        return this.alcoholInput.isSelected();
     }
 
     async setNotesInput(notes) {
