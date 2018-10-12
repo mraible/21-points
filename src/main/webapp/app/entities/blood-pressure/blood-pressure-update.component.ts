@@ -15,7 +15,7 @@ import { IUser, UserService } from 'app/core';
     templateUrl: './blood-pressure-update.component.html'
 })
 export class BloodPressureUpdateComponent implements OnInit {
-    private _bloodPressure: IBloodPressure;
+    bloodPressure: IBloodPressure;
     isSaving: boolean;
 
     users: IUser[];
@@ -32,6 +32,7 @@ export class BloodPressureUpdateComponent implements OnInit {
         this.isSaving = false;
         this.activatedRoute.data.subscribe(({ bloodPressure }) => {
             this.bloodPressure = bloodPressure;
+            this.timestamp = this.bloodPressure.timestamp != null ? this.bloodPressure.timestamp.format(DATE_TIME_FORMAT) : null;
         });
         this.userService.query().subscribe(
             (res: HttpResponse<IUser[]>) => {
@@ -47,7 +48,7 @@ export class BloodPressureUpdateComponent implements OnInit {
 
     save() {
         this.isSaving = true;
-        this.bloodPressure.timestamp = moment(this.timestamp, DATE_TIME_FORMAT);
+        this.bloodPressure.timestamp = this.timestamp != null ? moment(this.timestamp, DATE_TIME_FORMAT) : null;
         if (this.bloodPressure.id !== undefined) {
             this.subscribeToSaveResponse(this.bloodPressureService.update(this.bloodPressure));
         } else {
@@ -74,13 +75,5 @@ export class BloodPressureUpdateComponent implements OnInit {
 
     trackUserById(index: number, item: IUser) {
         return item.id;
-    }
-    get bloodPressure() {
-        return this._bloodPressure;
-    }
-
-    set bloodPressure(bloodPressure: IBloodPressure) {
-        this._bloodPressure = bloodPressure;
-        this.timestamp = moment(bloodPressure.timestamp).format(DATE_TIME_FORMAT);
     }
 }

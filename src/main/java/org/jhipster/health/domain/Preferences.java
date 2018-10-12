@@ -39,8 +39,7 @@ public class Preferences implements Serializable {
     @Column(name = "weight_units", nullable = false)
     private Units weightUnits;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @OneToOne    @JoinColumn(unique = true)
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

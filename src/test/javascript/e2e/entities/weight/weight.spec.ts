@@ -1,5 +1,5 @@
 /* tslint:disable no-unused-expression */
-import { browser, ExpectedConditions as ec, protractor } from 'protractor';
+import { browser, ExpectedConditions as ec, protractor, promise } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
 import { WeightComponentsPage, WeightDeleteDialog, WeightUpdatePage } from './weight.page-object';
@@ -38,11 +38,13 @@ describe('Weight e2e test', () => {
         const nbButtonsBeforeCreate = await weightComponentsPage.countDeleteButtons();
 
         await weightComponentsPage.clickOnCreateButton();
-        await weightUpdatePage.setTimestampInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
+        await promise.all([
+            weightUpdatePage.setTimestampInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
+            weightUpdatePage.setWeightInput('5'),
+            weightUpdatePage.userSelectLastOption()
+        ]);
         expect(await weightUpdatePage.getTimestampInput()).to.contain('2001-01-01T02:30');
-        await weightUpdatePage.setWeightInput('5');
         expect(await weightUpdatePage.getWeightInput()).to.eq('5');
-        await weightUpdatePage.userSelectLastOption();
         await weightUpdatePage.save();
         expect(await weightUpdatePage.getSaveButton().isPresent()).to.be.false;
 

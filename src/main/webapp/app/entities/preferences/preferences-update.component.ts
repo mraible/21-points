@@ -13,7 +13,7 @@ import { IUser, UserService } from 'app/core';
     templateUrl: './preferences-update.component.html'
 })
 export class PreferencesUpdateComponent implements OnInit {
-    private _preferences: IPreferences;
+    preferences: IPreferences;
     isSaving: boolean;
 
     users: IUser[];
@@ -70,12 +70,5 @@ export class PreferencesUpdateComponent implements OnInit {
 
     trackUserById(index: number, item: IUser) {
         return item.id;
-    }
-    get preferences() {
-        return this._preferences;
-    }
-
-    set preferences(preferences: IPreferences) {
-        this._preferences = preferences;
     }
 }
