@@ -1,5 +1,5 @@
 /* tslint:disable no-unused-expression */
-import { browser, ExpectedConditions as ec } from 'protractor';
+import { browser, ExpectedConditions as ec, promise } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
 import { PointsComponentsPage, PointsDeleteDialog, PointsUpdatePage } from './points.page-object';
@@ -38,17 +38,19 @@ describe('Points e2e test', () => {
         const nbButtonsBeforeCreate = await pointsComponentsPage.countDeleteButtons();
 
         await pointsComponentsPage.clickOnCreateButton();
-        await pointsUpdatePage.setDateInput('2000-12-31');
+        await promise.all([
+            pointsUpdatePage.setDateInput('2000-12-31'),
+            pointsUpdatePage.setExerciseInput('5'),
+            pointsUpdatePage.setMealsInput('5'),
+            pointsUpdatePage.setAlcoholInput('5'),
+            pointsUpdatePage.setNotesInput('notes'),
+            pointsUpdatePage.userSelectLastOption()
+        ]);
         expect(await pointsUpdatePage.getDateInput()).to.eq('2000-12-31');
-        await pointsUpdatePage.setExerciseInput('5');
         expect(await pointsUpdatePage.getExerciseInput()).to.eq('5');
-        await pointsUpdatePage.setMealsInput('5');
         expect(await pointsUpdatePage.getMealsInput()).to.eq('5');
-        await pointsUpdatePage.setAlcoholInput('5');
         expect(await pointsUpdatePage.getAlcoholInput()).to.eq('5');
-        await pointsUpdatePage.setNotesInput('notes');
         expect(await pointsUpdatePage.getNotesInput()).to.eq('notes');
-        await pointsUpdatePage.userSelectLastOption();
         await pointsUpdatePage.save();
         expect(await pointsUpdatePage.getSaveButton().isPresent()).to.be.false;
 

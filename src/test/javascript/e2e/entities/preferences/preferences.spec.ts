@@ -1,5 +1,5 @@
 /* tslint:disable no-unused-expression */
-import { browser, ExpectedConditions as ec } from 'protractor';
+import { browser, ExpectedConditions as ec, promise } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
 import { PreferencesComponentsPage, PreferencesDeleteDialog, PreferencesUpdatePage } from './preferences.page-object';
@@ -38,10 +38,12 @@ describe('Preferences e2e test', () => {
         const nbButtonsBeforeCreate = await preferencesComponentsPage.countDeleteButtons();
 
         await preferencesComponentsPage.clickOnCreateButton();
-        await preferencesUpdatePage.setWeeklyGoalInput('5');
+        await promise.all([
+            preferencesUpdatePage.setWeeklyGoalInput('5'),
+            preferencesUpdatePage.weightUnitsSelectLastOption(),
+            preferencesUpdatePage.userSelectLastOption()
+        ]);
         expect(await preferencesUpdatePage.getWeeklyGoalInput()).to.eq('5');
-        await preferencesUpdatePage.weightUnitsSelectLastOption();
-        await preferencesUpdatePage.userSelectLastOption();
         await preferencesUpdatePage.save();
         expect(await preferencesUpdatePage.getSaveButton().isPresent()).to.be.false;
 

@@ -1,5 +1,5 @@
 /* tslint:disable no-unused-expression */
-import { browser, ExpectedConditions as ec, protractor } from 'protractor';
+import { browser, ExpectedConditions as ec, protractor, promise } from 'protractor';
 import { NavBarPage, SignInPage } from '../../page-objects/jhi-page-objects';
 
 import { BloodPressureComponentsPage, BloodPressureDeleteDialog, BloodPressureUpdatePage } from './blood-pressure.page-object';
@@ -38,13 +38,15 @@ describe('BloodPressure e2e test', () => {
         const nbButtonsBeforeCreate = await bloodPressureComponentsPage.countDeleteButtons();
 
         await bloodPressureComponentsPage.clickOnCreateButton();
-        await bloodPressureUpdatePage.setTimestampInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
+        await promise.all([
+            bloodPressureUpdatePage.setTimestampInput('01/01/2001' + protractor.Key.TAB + '02:30AM'),
+            bloodPressureUpdatePage.setSystolicInput('5'),
+            bloodPressureUpdatePage.setDiastolicInput('5'),
+            bloodPressureUpdatePage.userSelectLastOption()
+        ]);
         expect(await bloodPressureUpdatePage.getTimestampInput()).to.contain('2001-01-01T02:30');
-        await bloodPressureUpdatePage.setSystolicInput('5');
         expect(await bloodPressureUpdatePage.getSystolicInput()).to.eq('5');
-        await bloodPressureUpdatePage.setDiastolicInput('5');
         expect(await bloodPressureUpdatePage.getDiastolicInput()).to.eq('5');
-        await bloodPressureUpdatePage.userSelectLastOption();
         await bloodPressureUpdatePage.save();
         expect(await bloodPressureUpdatePage.getSaveButton().isPresent()).to.be.false;
 

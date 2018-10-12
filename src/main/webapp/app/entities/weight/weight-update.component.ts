@@ -15,7 +15,7 @@ import { IUser, UserService } from 'app/core';
     templateUrl: './weight-update.component.html'
 })
 export class WeightUpdateComponent implements OnInit {
-    private _weight: IWeight;
+    weight: IWeight;
     isSaving: boolean;
 
     users: IUser[];
@@ -32,6 +32,7 @@ export class WeightUpdateComponent implements OnInit {
         this.isSaving = false;
         this.activatedRoute.data.subscribe(({ weight }) => {
             this.weight = weight;
+            this.timestamp = this.weight.timestamp != null ? this.weight.timestamp.format(DATE_TIME_FORMAT) : null;
         });
         this.userService.query().subscribe(
             (res: HttpResponse<IUser[]>) => {
@@ -47,7 +48,7 @@ export class WeightUpdateComponent implements OnInit {
 
     save() {
         this.isSaving = true;
-        this.weight.timestamp = moment(this.timestamp, DATE_TIME_FORMAT);
+        this.weight.timestamp = this.timestamp != null ? moment(this.timestamp, DATE_TIME_FORMAT) : null;
         if (this.weight.id !== undefined) {
             this.subscribeToSaveResponse(this.weightService.update(this.weight));
         } else {
@@ -74,13 +75,5 @@ export class WeightUpdateComponent implements OnInit {
 
     trackUserById(index: number, item: IUser) {
         return item.id;
-    }
-    get weight() {
-        return this._weight;
-    }
-
-    set weight(weight: IWeight) {
-        this._weight = weight;
-        this.timestamp = moment(weight.timestamp).format(DATE_TIME_FORMAT);
     }
 }

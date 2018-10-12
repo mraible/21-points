@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import * as moment from 'moment';
 import { JhiAlertService } from 'ng-jhipster';
 
 import { IPoints } from 'app/shared/model/points.model';
@@ -13,7 +14,7 @@ import { IUser, UserService } from 'app/core';
     templateUrl: './points-update.component.html'
 })
 export class PointsUpdateComponent implements OnInit {
-    private _points: IPoints;
+    points: IPoints;
     isSaving: boolean;
 
     users: IUser[];
@@ -71,12 +72,5 @@ export class PointsUpdateComponent implements OnInit {
 
     trackUserById(index: number, item: IUser) {
         return item.id;
-    }
-    get points() {
-        return this._points;
-    }
-
-    set points(points: IPoints) {
-        this._points = points;
     }
 }
