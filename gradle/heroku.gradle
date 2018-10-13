@@ -1,7 +1,7 @@
 apply plugin: 'com.heroku.sdk.heroku-gradle'
 
 heroku {
-  appName = "health-by-points-3"
+  appName = "health-by-points"
 }
 
 gradle.taskGraph.whenReady {taskGraph ->
