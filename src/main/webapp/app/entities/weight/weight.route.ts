@@ -11,6 +11,8 @@ import { WeightDetailComponent } from './weight-detail.component';
 import { WeightUpdateComponent } from './weight-update.component';
 import { WeightDeletePopupComponent } from './weight-delete-dialog.component';
 import { IWeight } from 'app/shared/model/weight.model';
+import * as moment from 'moment';
+import { DATE_TIME_FORMAT } from 'app/shared';
 
 @Injectable({ providedIn: 'root' })
 export class WeightResolve implements Resolve<IWeight> {
@@ -21,7 +23,10 @@ export class WeightResolve implements Resolve<IWeight> {
         if (id) {
             return this.service.find(id).pipe(map((weight: HttpResponse<Weight>) => weight.body));
         }
-        return of(new Weight());
+        // populate date/time with current time if new
+        const w = new Weight();
+        w.timestamp = moment(new Date(), DATE_TIME_FORMAT);
+        return of(w);
     }
 }
 
