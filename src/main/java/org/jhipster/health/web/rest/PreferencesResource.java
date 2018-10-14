@@ -68,7 +68,7 @@ public class PreferencesResource {
         }
 
         log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentUserLogin());
-        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get();
+        User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
         preferences.setUser(user);
 
         Preferences result = preferencesRepository.save(preferences);
@@ -129,7 +129,7 @@ public class PreferencesResource {
     @GetMapping("/my-preferences")
     @Timed
     public ResponseEntity<Preferences> getUserPreferences() {
-        String username = SecurityUtils.getCurrentUserLogin().get();
+        String username = SecurityUtils.getCurrentUserLogin().orElse(null);
         log.debug("REST request to get Preferences : {}", username);
         Optional<Preferences> preferences = preferencesRepository.findOneByUserLogin(username);
 

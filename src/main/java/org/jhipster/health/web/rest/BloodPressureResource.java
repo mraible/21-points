@@ -77,7 +77,7 @@ public class BloodPressureResource {
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
-            bloodPressure.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
+            bloodPressure.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
         }
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(result);
@@ -140,7 +140,7 @@ public class BloodPressureResource {
 
         List<BloodPressure> readings =
             bloodPressureRepository.findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(
-                daysAgo, rightNow, SecurityUtils.getCurrentUserLogin().get());
+                daysAgo, rightNow, SecurityUtils.getCurrentUserLogin().orElse(null));
         BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", readings);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -158,7 +158,7 @@ public class BloodPressureResource {
 
         List<BloodPressure> readings = bloodPressureRepository.
             findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(firstDay.atStartOfDay(zonedDateTime.getZone()),
-                lastDay.plusDays(1).atStartOfDay(zonedDateTime.getZone()), SecurityUtils.getCurrentUserLogin().get());
+                lastDay.plusDays(1).atStartOfDay(zonedDateTime.getZone()), SecurityUtils.getCurrentUserLogin().orElse(null));
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
         String yearAndMonth = fmt.format(firstDay);

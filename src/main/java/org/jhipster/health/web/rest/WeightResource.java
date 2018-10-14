@@ -75,7 +75,7 @@ public class WeightResource {
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
-            weight.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
+            weight.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null));
         }
         if (weight.getTimestamp() == null) {
             // todo: get user's timezone from preferences
@@ -169,7 +169,7 @@ public class WeightResource {
 
     private List<Weight> filterByUser(List<Weight> readings) {
         Stream<Weight> userReadings = readings.stream()
-            .filter(bp -> bp.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get()));
+            .filter(bp -> bp.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(null)));
         return userReadings.collect(Collectors.toList());
     }
 
