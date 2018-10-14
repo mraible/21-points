@@ -1,0 +1,16 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="mraible (generated)" id="1539477515245-1">
+        <modifyDataType columnName="email" newDataType="varchar(254)" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1539477515245-2">
+        <modifyDataType columnName="id" newDataType="bigint" tableName="blood_pressure"/>
+        <dropDefaultValue columnDataType="bigint" columnName="id" tableName="blood_pressure"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1539477515245-3">
+        <modifyDataType columnName="lang_key" newDataType="varchar(6)" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1539477515245-4">
+        <addNotNullConstraint columnDataType="varchar(60)" columnName="password_hash" tableName="jhi_user"/>
+    </changeSet>
+</databaseChangeLog>
