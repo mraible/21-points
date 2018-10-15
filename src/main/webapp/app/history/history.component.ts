@@ -231,6 +231,10 @@ export class HistoryComponent implements OnInit, OnDestroy {
         if (isSameMonth(date, this.viewDate)) {
             if ((isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) || events.length === 0) {
                 this.activeDayIsOpen = false;
+                // if no events, clicking on day brings up add points
+                if (events.length === 0) {
+                    this.router.navigateByUrl('/points/new?date=' + format(date, 'YYYY-MM-DD'));
+                }
             } else {
                 this.activeDayIsOpen = true;
                 this.viewDate = date;
