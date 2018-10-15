@@ -185,7 +185,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
                 this.refresh.next();
             });
 
-            const weeklyGoal = preferences.weeklyGoal;
+            const weeklyGoal = preferences.body.weeklyGoal;
             const monthStart = startOfMonth(month);
             const daysInMonth = getDaysInMonth(month);
 
