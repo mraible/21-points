@@ -23,9 +23,14 @@ export class PointsResolve implements Resolve<IPoints> {
         if (id) {
             return this.service.find(id).pipe(map((points: HttpResponse<Points>) => points.body));
         } else {
-            // populate date with current date if new
             const points = new Points();
-            points.date = moment();
+            // populate date with current date if date not passed in
+            const date = route.queryParams['date'];
+            if (date) {
+                points.date = moment(date);
+            } else {
+                points.date = moment();
+            }
             // default to the best day possible
             points.exercise = 1;
             points.meals = 1;
