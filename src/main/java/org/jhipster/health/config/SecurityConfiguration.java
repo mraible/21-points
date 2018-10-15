@@ -111,7 +111,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/management/info").permitAll()
             .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
         .and()
-            .apply(securityConfigurerAdapter());
+            .apply(securityConfigurerAdapter())
+        .and()
+            .requiresChannel()
+            .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+            .requiresSecure();
 
     }
 

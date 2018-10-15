@@ -1,6 +1,6 @@
 {
   "name": "21-points",
-  "version": "5.0.1-SNAPSHOT",
+  "version": "5.0.1",
   "description": "21-Points Health is an app you can use to monitor your health.",
   "private": true,
   "license": "Apache-2.0",
