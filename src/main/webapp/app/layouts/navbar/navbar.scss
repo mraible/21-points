@@ -76,3 +76,10 @@ Logo styles
         }
     }
 }
+
+// remove left-padding on logo for mobile
+@media screen and (max-width: 768px) {
+    .navbar-brand.logo {
+        padding-left: 0;
+    }
+}
