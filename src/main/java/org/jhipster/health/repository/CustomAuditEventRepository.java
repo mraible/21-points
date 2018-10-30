@@ -49,7 +49,7 @@ public class CustomAuditEventRepository implements AuditEventRepository {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor=Exception.class)
     public void add(AuditEvent event) {
         if (!AUTHORIZATION_FAILURE.equals(event.getType()) &&
             !Constants.ANONYMOUS_USER.equals(event.getPrincipal())) {
