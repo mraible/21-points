@@ -2,6 +2,8 @@ package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.Points;
 import org.jhipster.health.repository.PointsRepository;
 import org.jhipster.health.repository.UserRepository;
@@ -33,6 +35,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
@@ -67,10 +70,14 @@ public class PointsResource {
      */
     @PostMapping("/points")
     @Timed
-    public ResponseEntity<Points> createPoints(@Valid @RequestBody Points points) throws URISyntaxException {
+    public ResponseEntity<?> createPoints(@Valid @RequestBody Points points) throws URISyntaxException {
         log.debug("REST request to save Points : {}", points);
         if (points.getId() != null) {
             throw new BadRequestAlertException("A new points cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (points.getUser() != null &&
+            !points.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
@@ -90,14 +97,17 @@ public class PointsResource {
      * @return the ResponseEntity with status 200 (OK) and with body the updated points,
      * or with status 400 (Bad Request) if the points is not valid,
      * or with status 500 (Internal Server Error) if the points couldn't be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/points")
     @Timed
-    public ResponseEntity<Points> updatePoints(@Valid @RequestBody Points points) throws URISyntaxException {
+    public ResponseEntity<?> updatePoints(@Valid @RequestBody Points points) {
         log.debug("REST request to update Points : {}", points);
         if (points.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (points.getUser() != null &&
+            !points.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         Points result = pointsRepository.save(points);
         pointsSearchRepository.save(result);
@@ -193,9 +203,13 @@ public class PointsResource {
      */
     @GetMapping("/points/{id}")
     @Timed
-    public ResponseEntity<Points> getPoints(@PathVariable Long id) {
+    public ResponseEntity<?> getPoints(@PathVariable Long id) {
         log.debug("REST request to get Points : {}", id);
         Optional<Points> points = pointsRepository.findById(id);
+        if (points.isPresent() && points.get().getUser() != null &&
+            !points.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         return ResponseUtil.wrapOrNotFound(points);
     }
 
@@ -207,8 +221,13 @@ public class PointsResource {
      */
     @DeleteMapping("/points/{id}")
     @Timed
-    public ResponseEntity<Void> deletePoints(@PathVariable Long id) {
+    public ResponseEntity<?> deletePoints(@PathVariable Long id) {
         log.debug("REST request to delete Points : {}", id);
+        Optional<Points> points = pointsRepository.findById(id);
+        if (points.isPresent() && points.get().getUser() != null &&
+            !points.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         pointsRepository.deleteById(id);
         pointsSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
@@ -226,7 +245,12 @@ public class PointsResource {
     @Timed
     public ResponseEntity<List<Points>> searchPoints(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Points for query {}", query);
-        Page<Points> page = pointsSearchRepository.search(queryStringQuery(query), pageable);
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
+        if (SecurityUtils.isAuthenticated() && !SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            queryBuilder = queryBuilder.filter(matchQuery("user.login",
+                SecurityUtils.getCurrentUserLogin().orElse("")));
+        }
+        Page<Points> page = pointsSearchRepository.search(queryBuilder, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/points");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

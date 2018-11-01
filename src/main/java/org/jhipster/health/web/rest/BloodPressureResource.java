@@ -1,6 +1,9 @@
 package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.github.jhipster.web.util.ResponseUtil;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.BloodPressure;
 import org.jhipster.health.repository.BloodPressureRepository;
 import org.jhipster.health.repository.UserRepository;
@@ -10,7 +13,6 @@ import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.jhipster.health.web.rest.vm.BloodPressureByPeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
@@ -33,10 +34,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * REST controller for managing BloodPressure.
@@ -70,10 +70,14 @@ public class BloodPressureResource {
      */
     @PostMapping("/blood-pressures")
     @Timed
-    public ResponseEntity<BloodPressure> createBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
+    public ResponseEntity<?> createBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
         log.debug("REST request to save BloodPressure : {}", bloodPressure);
         if (bloodPressure.getId() != null) {
             throw new BadRequestAlertException("A new bloodPressure cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (bloodPressure.getUser() != null &&
+            !bloodPressure.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
@@ -93,14 +97,17 @@ public class BloodPressureResource {
      * @return the ResponseEntity with status 200 (OK) and with body the updated bloodPressure,
      * or with status 400 (Bad Request) if the bloodPressure is not valid,
      * or with status 500 (Internal Server Error) if the bloodPressure couldn't be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/blood-pressures")
     @Timed
-    public ResponseEntity<BloodPressure> updateBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
+    public ResponseEntity<?> updateBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) {
         log.debug("REST request to update BloodPressure : {}", bloodPressure);
         if (bloodPressure.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (bloodPressure.getUser() != null &&
+            !bloodPressure.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         BloodPressure result = bloodPressureRepository.save(bloodPressure);
         bloodPressureSearchRepository.save(result);
@@ -175,9 +182,13 @@ public class BloodPressureResource {
      */
     @GetMapping("/blood-pressures/{id}")
     @Timed
-    public ResponseEntity<BloodPressure> getBloodPressure(@PathVariable Long id) {
+    public ResponseEntity<?> getBloodPressure(@PathVariable Long id) {
         log.debug("REST request to get BloodPressure : {}", id);
         Optional<BloodPressure> bloodPressure = bloodPressureRepository.findById(id);
+        if (bloodPressure.isPresent() && bloodPressure.get().getUser() != null &&
+            !bloodPressure.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         return ResponseUtil.wrapOrNotFound(bloodPressure);
     }
 
@@ -189,8 +200,13 @@ public class BloodPressureResource {
      */
     @DeleteMapping("/blood-pressures/{id}")
     @Timed
-    public ResponseEntity<Void> deleteBloodPressure(@PathVariable Long id) {
+    public ResponseEntity<?> deleteBloodPressure(@PathVariable Long id) {
         log.debug("REST request to delete BloodPressure : {}", id);
+        Optional<BloodPressure> bloodPressure = bloodPressureRepository.findById(id);
+        if (bloodPressure.isPresent() && bloodPressure.get().getUser() != null &&
+            !bloodPressure.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         bloodPressureRepository.deleteById(id);
         bloodPressureSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
@@ -208,7 +224,12 @@ public class BloodPressureResource {
     @Timed
     public ResponseEntity<List<BloodPressure>> searchBloodPressures(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of BloodPressures for query {}", query);
-        Page<BloodPressure> page = bloodPressureSearchRepository.search(queryStringQuery(query), pageable);
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
+        if (SecurityUtils.isAuthenticated() && !SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            queryBuilder = queryBuilder.filter(matchQuery("user.login",
+                SecurityUtils.getCurrentUserLogin().orElse("")));
+        }
+        Page<BloodPressure> page = bloodPressureSearchRepository.search(queryBuilder, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/blood-pressures");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
