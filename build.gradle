@@ -51,7 +51,7 @@ dependencyManagement {
 defaultTasks 'bootRun'
 
 group = 'org.jhipster.health'
-version = '5.0.2'
+version = '5.0.3-SNAPSHOT'
 
 description = '21-Points Health is an app you can use to monitor your health.'
 
