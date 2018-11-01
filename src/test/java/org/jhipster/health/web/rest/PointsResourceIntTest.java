@@ -1,5 +1,7 @@
 package org.jhipster.health.web.rest;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.TwentyOnePointsApp;
 
 import org.jhipster.health.domain.Points;
@@ -350,7 +352,8 @@ public class PointsResourceIntTest {
     public void searchPoints() throws Exception {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
-        when(mockPointsSearchRepository.search(queryStringQuery("id:" + points.getId()), PageRequest.of(0, 20)))
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery("id:" + points.getId()));
+        when(mockPointsSearchRepository.search(queryBuilder, PageRequest.of(0, 20)))
             .thenReturn(new PageImpl<>(Collections.singletonList(points), PageRequest.of(0, 1), 1));
         // Search the points
         restPointsMockMvc.perform(get("/api/_search/points?query=id:" + points.getId()))
@@ -502,6 +505,14 @@ public class PointsResourceIntTest {
         // see if adding days takes you into next month
         if (today.getMonthValue() < firstDate.getMonthValue() || today.getMonthValue() < secondDate.getMonthValue()) {
             // if so, look for second set of dates
+            firstDate = lastMonday.plusDays(3);
+            secondDate = lastMonday.plusDays(4);
+        }
+
+        // see if this Monday is in different month from today
+        // if so, use last month as the start date
+        if (thisMonday.getMonthValue() < today.getMonthValue()) {
+            startDate = fmt.format(thisMonday.withDayOfMonth(1));
             firstDate = lastMonday.plusDays(3);
             secondDate = lastMonday.plusDays(4);
         }

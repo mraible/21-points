@@ -68,7 +68,8 @@ public class PreferencesResource {
         if (preferences.getId() != null) {
             throw new BadRequestAlertException("A new preferences cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        if (!preferences.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+        if (preferences.getUser() != null &&
+            !preferences.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentUserLogin());
@@ -199,7 +200,7 @@ public class PreferencesResource {
     public List<Preferences> searchPreferences(@RequestParam String query) {
         log.debug("REST request to search Preferences for query {}", query);
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+        if (SecurityUtils.isAuthenticated() && !SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             queryBuilder = queryBuilder.filter(matchQuery("user.login",
                 SecurityUtils.getCurrentUserLogin().orElse("")));
         }

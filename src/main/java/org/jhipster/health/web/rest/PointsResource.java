@@ -75,7 +75,8 @@ public class PointsResource {
         if (points.getId() != null) {
             throw new BadRequestAlertException("A new points cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        if (!points.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+        if (points.getUser() != null &&
+            !points.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
@@ -245,7 +246,7 @@ public class PointsResource {
     public ResponseEntity<List<Points>> searchPoints(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Points for query {}", query);
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+        if (SecurityUtils.isAuthenticated() && !SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             queryBuilder = queryBuilder.filter(matchQuery("user.login",
                 SecurityUtils.getCurrentUserLogin().orElse("")));
         }

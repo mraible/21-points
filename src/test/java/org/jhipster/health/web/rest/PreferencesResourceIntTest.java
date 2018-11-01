@@ -1,13 +1,14 @@
 package org.jhipster.health.web.rest;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.TwentyOnePointsApp;
-
 import org.jhipster.health.domain.Preferences;
+import org.jhipster.health.domain.enumeration.Units;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
 import org.jhipster.health.web.rest.errors.ExceptionTranslator;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,26 +22,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
 
-
-import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.jhipster.health.web.rest.TestUtil.createFormattingConversionService;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import org.jhipster.health.domain.enumeration.Units;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Test class for the PreferencesResource REST controller.
@@ -103,7 +99,7 @@ public class PreferencesResourceIntTest {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -335,7 +331,8 @@ public class PreferencesResourceIntTest {
     public void searchPreferences() throws Exception {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
-        when(mockPreferencesSearchRepository.search(queryStringQuery("id:" + preferences.getId())))
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery("id:" + preferences.getId()));
+        when(mockPreferencesSearchRepository.search(queryBuilder))
             .thenReturn(Collections.singletonList(preferences));
         // Search the preferences
         restPreferencesMockMvc.perform(get("/api/_search/preferences?query=id:" + preferences.getId()))

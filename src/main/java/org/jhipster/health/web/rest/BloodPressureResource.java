@@ -75,7 +75,8 @@ public class BloodPressureResource {
         if (bloodPressure.getId() != null) {
             throw new BadRequestAlertException("A new bloodPressure cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        if (!bloodPressure.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+        if (bloodPressure.getUser() != null &&
+            !bloodPressure.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
@@ -224,7 +225,7 @@ public class BloodPressureResource {
     public ResponseEntity<List<BloodPressure>> searchBloodPressures(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of BloodPressures for query {}", query);
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+        if (SecurityUtils.isAuthenticated() && !SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             queryBuilder = queryBuilder.filter(matchQuery("user.login",
                 SecurityUtils.getCurrentUserLogin().orElse("")));
         }

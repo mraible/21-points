@@ -1,5 +1,7 @@
 package org.jhipster.health.web.rest;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.TwentyOnePointsApp;
 
 import org.jhipster.health.domain.BloodPressure;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -371,7 +374,8 @@ public class BloodPressureResourceIntTest {
     public void searchBloodPressure() throws Exception {
         // Initialize the database
         bloodPressureRepository.saveAndFlush(bloodPressure);
-        when(mockBloodPressureSearchRepository.search(queryStringQuery("id:" + bloodPressure.getId()), PageRequest.of(0, 20)))
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery("id:" + bloodPressure.getId()));
+        when(mockBloodPressureSearchRepository.search(queryBuilder, PageRequest.of(0, 20)))
             .thenReturn(new PageImpl<>(Collections.singletonList(bloodPressure), PageRequest.of(0, 1), 1));
         // Search the bloodPressure
         restBloodPressureMockMvc.perform(get("/api/_search/blood-pressures?query=id:" + bloodPressure.getId()))

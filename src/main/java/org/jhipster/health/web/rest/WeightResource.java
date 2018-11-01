@@ -74,7 +74,8 @@ public class WeightResource {
         if (weight.getId() != null) {
             throw new BadRequestAlertException("A new weight cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        if (!weight.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+        if (weight.getUser() != null &&
+            !weight.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
@@ -232,7 +233,7 @@ public class WeightResource {
     public ResponseEntity<List<Weight>> searchWeights(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Weights for query {}", query);
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+        if (SecurityUtils.isAuthenticated() && !SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             queryBuilder = queryBuilder.filter(matchQuery("user.login",
                 SecurityUtils.getCurrentUserLogin().orElse("")));
         }
