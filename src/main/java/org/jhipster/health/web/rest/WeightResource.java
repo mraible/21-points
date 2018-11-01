@@ -1,6 +1,9 @@
 package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.github.jhipster.web.util.ResponseUtil;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.Weight;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.WeightRepository;
@@ -11,7 +14,6 @@ import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
 import org.jhipster.health.web.rest.util.PaginationUtil;
 import org.jhipster.health.web.rest.vm.WeightByPeriod;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -25,16 +27,15 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * REST controller for managing Weight.
@@ -68,10 +69,13 @@ public class WeightResource {
      */
     @PostMapping("/weights")
     @Timed
-    public ResponseEntity<Weight> createWeight(@Valid @RequestBody Weight weight) throws URISyntaxException {
+    public ResponseEntity<?> createWeight(@Valid @RequestBody Weight weight) throws URISyntaxException {
         log.debug("REST request to save Weight : {}", weight);
         if (weight.getId() != null) {
             throw new BadRequestAlertException("A new weight cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (!weight.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin());
@@ -99,10 +103,14 @@ public class WeightResource {
      */
     @PutMapping("/weights")
     @Timed
-    public ResponseEntity<Weight> updateWeight(@Valid @RequestBody Weight weight) throws URISyntaxException {
+    public ResponseEntity<?> updateWeight(@Valid @RequestBody Weight weight) throws URISyntaxException {
         log.debug("REST request to update Weight : {}", weight);
         if (weight.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (weight.getUser() != null &&
+            !weight.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         Weight result = weightRepository.save(weight);
         weightSearchRepository.save(result);
@@ -181,9 +189,13 @@ public class WeightResource {
      */
     @GetMapping("/weights/{id}")
     @Timed
-    public ResponseEntity<Weight> getWeight(@PathVariable Long id) {
+    public ResponseEntity<?> getWeight(@PathVariable Long id) {
         log.debug("REST request to get Weight : {}", id);
         Optional<Weight> weight = weightRepository.findById(id);
+        if (weight.isPresent() && weight.get().getUser() != null &&
+            !weight.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         return ResponseUtil.wrapOrNotFound(weight);
     }
 
@@ -195,8 +207,13 @@ public class WeightResource {
      */
     @DeleteMapping("/weights/{id}")
     @Timed
-    public ResponseEntity<Void> deleteWeight(@PathVariable Long id) {
+    public ResponseEntity<?> deleteWeight(@PathVariable Long id) {
         log.debug("REST request to delete Weight : {}", id);
+        Optional<Weight> weight = weightRepository.findById(id);
+        if (weight.isPresent() && weight.get().getUser() != null &&
+            !weight.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         weightRepository.deleteById(id);
         weightSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
@@ -214,7 +231,12 @@ public class WeightResource {
     @Timed
     public ResponseEntity<List<Weight>> searchWeights(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Weights for query {}", query);
-        Page<Weight> page = weightSearchRepository.search(queryStringQuery(query), pageable);
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            queryBuilder = queryBuilder.filter(matchQuery("user.login",
+                SecurityUtils.getCurrentUserLogin().orElse("")));
+        }
+        Page<Weight> page = weightSearchRepository.search(queryBuilder, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/weights");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

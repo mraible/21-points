@@ -1,6 +1,9 @@
 package org.jhipster.health.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.github.jhipster.web.util.ResponseUtil;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.Preferences;
 import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
@@ -10,7 +13,6 @@ import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
 import org.jhipster.health.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,14 +22,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * REST controller for managing Preferences.
@@ -61,12 +63,14 @@ public class PreferencesResource {
      */
     @PostMapping("/preferences")
     @Timed
-    public ResponseEntity<Preferences> createPreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
+    public ResponseEntity<?> createPreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
         log.debug("REST request to save Preferences : {}", preferences);
         if (preferences.getId() != null) {
             throw new BadRequestAlertException("A new preferences cannot already have an ID", ENTITY_NAME, "idexists");
         }
-
+        if (!preferences.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         log.debug("Settings preferences for current user: {}", SecurityUtils.getCurrentUserLogin());
         User user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse(null)).orElse(null);
         preferences.setUser(user);
@@ -85,14 +89,17 @@ public class PreferencesResource {
      * @return the ResponseEntity with status 200 (OK) and with body the updated preferences,
      * or with status 400 (Bad Request) if the preferences is not valid,
      * or with status 500 (Internal Server Error) if the preferences couldn't be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/preferences")
     @Timed
-    public ResponseEntity<Preferences> updatePreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
+    public ResponseEntity<?> updatePreferences(@Valid @RequestBody Preferences preferences) {
         log.debug("REST request to update Preferences : {}", preferences);
         if (preferences.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (preferences.getUser() != null &&
+            !preferences.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.save(result);
@@ -150,9 +157,13 @@ public class PreferencesResource {
      */
     @GetMapping("/preferences/{id}")
     @Timed
-    public ResponseEntity<Preferences> getPreferences(@PathVariable Long id) {
+    public ResponseEntity<?> getPreferences(@PathVariable Long id) {
         log.debug("REST request to get Preferences : {}", id);
         Optional<Preferences> preferences = preferencesRepository.findById(id);
+        if (preferences.isPresent() && preferences.get().getUser() != null &&
+            !preferences.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         return ResponseUtil.wrapOrNotFound(preferences);
     }
 
@@ -164,8 +175,13 @@ public class PreferencesResource {
      */
     @DeleteMapping("/preferences/{id}")
     @Timed
-    public ResponseEntity<Void> deletePreferences(@PathVariable Long id) {
+    public ResponseEntity<?> deletePreferences(@PathVariable Long id) {
         log.debug("REST request to delete Preferences : {}", id);
+        Optional<Preferences> preferences = preferencesRepository.findById(id);
+        if (preferences.isPresent() && preferences.get().getUser() != null &&
+            !preferences.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         preferencesRepository.deleteById(id);
         preferencesSearchRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
@@ -182,8 +198,13 @@ public class PreferencesResource {
     @Timed
     public List<Preferences> searchPreferences(@RequestParam String query) {
         log.debug("REST request to search Preferences for query {}", query);
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            queryBuilder = queryBuilder.filter(matchQuery("user.login",
+                SecurityUtils.getCurrentUserLogin().orElse("")));
+        }
         return StreamSupport
-            .stream(preferencesSearchRepository.search(queryStringQuery(query)).spliterator(), false)
+            .stream(preferencesSearchRepository.search(queryBuilder).spliterator(), false)
             .collect(Collectors.toList());
     }
 
