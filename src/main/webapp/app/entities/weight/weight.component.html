@@ -41,7 +41,7 @@
             </thead>
             <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
             <tr *ngFor="let weight of weights ;trackBy: trackId">
-                <td><a [routerLink]="['/weight', weight.id, 'view' ]">{{weight.timestamp | date:'medium': 'UTC'}}</a></td>
+                <td><a [routerLink]="['/weight', weight.id, 'view' ]">{{weight.timestamp | date:'medium'}}</a></td>
                 <td>{{weight.weight}}</td>
                 <td>
                     {{weight.user?.login}}

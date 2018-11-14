@@ -42,7 +42,7 @@
             </thead>
             <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
             <tr *ngFor="let bloodPressure of bloodPressures ;trackBy: trackId">
-                <td><a [routerLink]="['/blood-pressure', bloodPressure.id, 'view' ]">{{bloodPressure.timestamp | date:'short': 'UTC'}}</a></td>
+                <td><a [routerLink]="['/blood-pressure', bloodPressure.id, 'view' ]">{{bloodPressure.timestamp | date:'short'}}</a></td>
                 <td>{{bloodPressure.systolic}}</td>
                 <td>{{bloodPressure.diastolic}}</td>
                 <td>
