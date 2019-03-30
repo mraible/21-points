@@ -264,7 +264,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthorities(Long id) {
+    public Optional<User> getUserWithAuthorities(UUID id) {
         return userRepository.findOneWithAuthoritiesById(id);
     }
 
