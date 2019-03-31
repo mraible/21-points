@@ -34,6 +34,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -182,7 +183,7 @@ public class BloodPressureResource {
      */
     @GetMapping("/blood-pressures/{id}")
     @Timed
-    public ResponseEntity<?> getBloodPressure(@PathVariable Long id) {
+    public ResponseEntity<?> getBloodPressure(@PathVariable UUID id) {
         log.debug("REST request to get BloodPressure : {}", id);
         Optional<BloodPressure> bloodPressure = bloodPressureRepository.findById(id);
         if (bloodPressure.isPresent() && bloodPressure.get().getUser() != null &&
@@ -200,7 +201,7 @@ public class BloodPressureResource {
      */
     @DeleteMapping("/blood-pressures/{id}")
     @Timed
-    public ResponseEntity<?> deleteBloodPressure(@PathVariable Long id) {
+    public ResponseEntity<?> deleteBloodPressure(@PathVariable UUID id) {
         log.debug("REST request to delete BloodPressure : {}", id);
         Optional<BloodPressure> bloodPressure = bloodPressureRepository.findById(id);
         if (bloodPressure.isPresent() && bloodPressure.get().getUser() != null &&

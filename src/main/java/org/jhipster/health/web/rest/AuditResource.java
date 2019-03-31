@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * REST controller for getting the audit events.
@@ -71,7 +72,7 @@ public class AuditResource {
      * @return the ResponseEntity with status 200 (OK) and the AuditEvent in body, or status 404 (Not Found)
      */
     @GetMapping("/{id:.+}")
-    public ResponseEntity<AuditEvent> get(@PathVariable Long id) {
+    public ResponseEntity<AuditEvent> get(@PathVariable UUID id) {
         return ResponseUtil.wrapOrNotFound(auditEventService.find(id));
     }
 }

@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -158,7 +159,7 @@ public class PreferencesResource {
      */
     @GetMapping("/preferences/{id}")
     @Timed
-    public ResponseEntity<?> getPreferences(@PathVariable Long id) {
+    public ResponseEntity<?> getPreferences(@PathVariable UUID id) {
         log.debug("REST request to get Preferences : {}", id);
         Optional<Preferences> preferences = preferencesRepository.findById(id);
         if (preferences.isPresent() && preferences.get().getUser() != null &&
@@ -176,7 +177,7 @@ public class PreferencesResource {
      */
     @DeleteMapping("/preferences/{id}")
     @Timed
-    public ResponseEntity<?> deletePreferences(@PathVariable Long id) {
+    public ResponseEntity<?> deletePreferences(@PathVariable UUID id) {
         log.debug("REST request to delete Preferences : {}", id);
         Optional<Preferences> preferences = preferencesRepository.findById(id);
         if (preferences.isPresent() && preferences.get().getUser() != null &&

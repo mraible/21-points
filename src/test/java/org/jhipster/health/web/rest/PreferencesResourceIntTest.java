@@ -27,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -150,7 +151,7 @@ public class PreferencesResourceIntTest {
         int databaseSizeBeforeCreate = preferencesRepository.findAll().size();
 
         // Create the Preferences with an existing ID
-        preferences.setId(1L);
+        preferences.setId(UUID.randomUUID());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPreferencesMockMvc.perform(post("/api/preferences")
@@ -219,7 +220,7 @@ public class PreferencesResourceIntTest {
             .with(user("admin").roles("ADMIN")))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().toString())))
             .andExpect(jsonPath("$.[*].weeklyGoal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
             .andExpect(jsonPath("$.[*].weightUnits").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
     }
@@ -234,7 +235,7 @@ public class PreferencesResourceIntTest {
         restPreferencesMockMvc.perform(get("/api/preferences/{id}", preferences.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(preferences.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(preferences.getId().toString()))
             .andExpect(jsonPath("$.weeklyGoal").value(DEFAULT_WEEKLY_GOAL))
             .andExpect(jsonPath("$.weightUnits").value(DEFAULT_WEIGHT_UNITS.toString()));
     }
@@ -243,7 +244,7 @@ public class PreferencesResourceIntTest {
     @Transactional
     public void getNonExistingPreferences() throws Exception {
         // Get the preferences
-        restPreferencesMockMvc.perform(get("/api/preferences/{id}", Long.MAX_VALUE))
+        restPreferencesMockMvc.perform(get("/api/preferences/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
 
@@ -338,7 +339,7 @@ public class PreferencesResourceIntTest {
         restPreferencesMockMvc.perform(get("/api/_search/preferences?query=id:" + preferences.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(preferences.getId().toString()))
             .andExpect(jsonPath("$.[*].weeklyGoal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
             .andExpect(jsonPath("$.[*].weightUnits").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
     }
@@ -348,11 +349,11 @@ public class PreferencesResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Preferences.class);
         Preferences preferences1 = new Preferences();
-        preferences1.setId(1L);
+        preferences1.setId(UUID.randomUUID());
         Preferences preferences2 = new Preferences();
         preferences2.setId(preferences1.getId());
         assertThat(preferences1).isEqualTo(preferences2);
-        preferences2.setId(2L);
+        preferences2.setId(UUID.randomUUID());
         assertThat(preferences1).isNotEqualTo(preferences2);
         preferences1.setId(null);
         assertThat(preferences1).isNotEqualTo(preferences2);

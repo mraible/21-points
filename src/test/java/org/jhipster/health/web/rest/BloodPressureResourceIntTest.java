@@ -37,6 +37,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.jhipster.health.web.rest.TestUtil.sameInstant;
@@ -170,7 +171,7 @@ public class BloodPressureResourceIntTest {
         int databaseSizeBeforeCreate = bloodPressureRepository.findAll().size();
 
         // Create the BloodPressure with an existing ID
-        bloodPressure.setId(1L);
+        bloodPressure.setId(UUID.randomUUID());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restBloodPressureMockMvc.perform(post("/api/blood-pressures")
@@ -256,7 +257,7 @@ public class BloodPressureResourceIntTest {
             .with(user("admin").roles("ADMIN")))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().toString())))
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
             .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
@@ -272,7 +273,7 @@ public class BloodPressureResourceIntTest {
         restBloodPressureMockMvc.perform(get("/api/blood-pressures/{id}", bloodPressure.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(bloodPressure.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(bloodPressure.getId().toString()))
             .andExpect(jsonPath("$.timestamp").value(sameInstant(DEFAULT_TIMESTAMP)))
             .andExpect(jsonPath("$.systolic").value(DEFAULT_SYSTOLIC))
             .andExpect(jsonPath("$.diastolic").value(DEFAULT_DIASTOLIC));
@@ -282,7 +283,7 @@ public class BloodPressureResourceIntTest {
     @Transactional
     public void getNonExistingBloodPressure() throws Exception {
         // Get the bloodPressure
-        restBloodPressureMockMvc.perform(get("/api/blood-pressures/{id}", Long.MAX_VALUE))
+        restBloodPressureMockMvc.perform(get("/api/blood-pressures/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
 
@@ -381,7 +382,7 @@ public class BloodPressureResourceIntTest {
         restBloodPressureMockMvc.perform(get("/api/_search/blood-pressures?query=id:" + bloodPressure.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(bloodPressure.getId().toString())))
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
             .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
@@ -392,11 +393,11 @@ public class BloodPressureResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(BloodPressure.class);
         BloodPressure bloodPressure1 = new BloodPressure();
-        bloodPressure1.setId(1L);
+        bloodPressure1.setId(UUID.randomUUID());
         BloodPressure bloodPressure2 = new BloodPressure();
         bloodPressure2.setId(bloodPressure1.getId());
         assertThat(bloodPressure1).isEqualTo(bloodPressure2);
-        bloodPressure2.setId(2L);
+        bloodPressure2.setId(UUID.randomUUID());
         assertThat(bloodPressure1).isNotEqualTo(bloodPressure2);
         bloodPressure1.setId(null);
         assertThat(bloodPressure1).isNotEqualTo(bloodPressure2);

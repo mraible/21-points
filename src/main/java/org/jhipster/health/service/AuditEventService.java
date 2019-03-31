@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service for managing audit events.
@@ -42,7 +43,7 @@ public class AuditEventService {
             .map(auditEventConverter::convertToAuditEvent);
     }
 
-    public Optional<AuditEvent> find(Long id) {
+    public Optional<AuditEvent> find(UUID id) {
         return Optional.ofNullable(persistenceAuditEventRepository.findById(id))
             .filter(Optional::isPresent)
             .map(Optional::get)

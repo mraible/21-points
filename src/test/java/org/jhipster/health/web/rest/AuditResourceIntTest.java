@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -140,7 +141,7 @@ public class AuditResourceIntTest {
     @Test
     public void getNonExistingAudit() throws Exception {
         // Get the audit
-        restAuditMockMvc.perform(get("/management/audits/{id}", Long.MAX_VALUE))
+        restAuditMockMvc.perform(get("/management/audits/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
 }

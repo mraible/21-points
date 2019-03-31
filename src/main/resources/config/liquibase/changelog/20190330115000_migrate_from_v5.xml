@@ -6,7 +6,7 @@
     <property name="uuid_function" value="uid.uuid_generate_v4()" dbms="postgresql"/>
     <property name="uuid_function" value="RANDOM_UUID()" dbms="h2"/>
 
-    <changeSet author="mraible" id="1">
+    <changeSet id="1" author="mraible">
         <modifyDataType columnName="id" newDataType="${uuid_type}" tableName="jhi_user"/>
         <!--addDefaultValue columnName="id" defaultValueComputed="${uuid_function}" tableName="jhi_user"/-->
         <modifyDataType columnName="user_id" newDataType="${uuid_type}" tableName="jhi_user_authority"/>
@@ -14,5 +14,13 @@
         <modifyDataType columnName="user_id" newDataType="${uuid_type}" tableName="points"/>
         <modifyDataType columnName="user_id" newDataType="${uuid_type}" tableName="preferences"/>
         <modifyDataType columnName="user_id" newDataType="${uuid_type}" tableName="weight"/>
+    </changeSet>
+    <changeSet id="2" author="mraible">
+        <modifyDataType columnName="id" newDataType="${uuid_type}" tableName="blood_pressure"/>
+        <modifyDataType columnName="event_id" newDataType="${uuid_type}" tableName="jhi_persistent_audit_event"/>
+        <modifyDataType columnName="event_id" newDataType="${uuid_type}" tableName="jhi_persistent_audit_evt_data"/>
+        <modifyDataType columnName="id" newDataType="${uuid_type}" tableName="points"/>
+        <modifyDataType columnName="id" newDataType="${uuid_type}" tableName="preferences"/>
+        <modifyDataType columnName="id" newDataType="${uuid_type}" tableName="weight"/>
     </changeSet>
 </databaseChangeLog>

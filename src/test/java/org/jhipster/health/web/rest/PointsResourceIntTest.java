@@ -36,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -178,7 +179,7 @@ public class PointsResourceIntTest {
         int databaseSizeBeforeCreate = pointsRepository.findAll().size();
 
         // Create the Points with an existing ID
-        points.setId(1L);
+        points.setId(UUID.randomUUID());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPointsMockMvc.perform(post("/api/points")
@@ -228,7 +229,7 @@ public class PointsResourceIntTest {
             .with(user("admin").roles("ADMIN")))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(points.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(points.getId().toString())))
             .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
             .andExpect(jsonPath("$.[*].exercise").value(hasItem(DEFAULT_EXERCISE)))
             .andExpect(jsonPath("$.[*].meals").value(hasItem(DEFAULT_MEALS)))
@@ -246,7 +247,7 @@ public class PointsResourceIntTest {
         restPointsMockMvc.perform(get("/api/points/{id}", points.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(points.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(points.getId().toString()))
             .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()))
             .andExpect(jsonPath("$.exercise").value(DEFAULT_EXERCISE))
             .andExpect(jsonPath("$.meals").value(DEFAULT_MEALS))
@@ -258,7 +259,7 @@ public class PointsResourceIntTest {
     @Transactional
     public void getNonExistingPoints() throws Exception {
         // Get the points
-        restPointsMockMvc.perform(get("/api/points/{id}", Long.MAX_VALUE))
+        restPointsMockMvc.perform(get("/api/points/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
 
@@ -359,7 +360,7 @@ public class PointsResourceIntTest {
         restPointsMockMvc.perform(get("/api/_search/points?query=id:" + points.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(points.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(points.getId().toString())))
             .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
             .andExpect(jsonPath("$.[*].exercise").value(hasItem(DEFAULT_EXERCISE)))
             .andExpect(jsonPath("$.[*].meals").value(hasItem(DEFAULT_MEALS)))
@@ -372,11 +373,11 @@ public class PointsResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Points.class);
         Points points1 = new Points();
-        points1.setId(1L);
+        points1.setId(UUID.randomUUID());
         Points points2 = new Points();
         points2.setId(points1.getId());
         assertThat(points1).isEqualTo(points2);
-        points2.setId(2L);
+        points2.setId(UUID.randomUUID());
         assertThat(points1).isNotEqualTo(points2);
         points1.setId(null);
         assertThat(points1).isNotEqualTo(points2);
