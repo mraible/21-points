@@ -339,7 +339,7 @@ public class PreferencesResourceIntTest {
         restPreferencesMockMvc.perform(get("/api/_search/preferences?query=id:" + preferences.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(preferences.getId().toString()))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().toString())))
             .andExpect(jsonPath("$.[*].weeklyGoal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
             .andExpect(jsonPath("$.[*].weightUnits").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
     }
