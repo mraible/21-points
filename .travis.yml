@@ -29,7 +29,6 @@ env:
     # Disable Gradle progress bar
     - TERM=dumb
 before_install:
-  - jdk_switcher use oraclejdk8
   - java -version
   - sudo /etc/init.d/mysql stop
   - sudo /etc/init.d/postgresql stop
