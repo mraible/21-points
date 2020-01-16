@@ -6,17 +6,13 @@ services:
   - xvfb
 language: node_js
 node_js:
-  - "8.11.3"
+  - "10.16.3"
 jdk:
-  - oraclejdk8 
-sudo: false
-# Install Chrome
+  - oraclejdk8
 addons:
   apt:
-    sources:
-    - google-chrome
     packages:
-    - google-chrome-stable
+      - dpkg
 cache:
   directories:
     - node
@@ -25,7 +21,7 @@ cache:
     - $HOME/.yarn-cache
 env:
   global:
-    - NODE_VERSION=8.11.3
+    - NODE_VERSION=10.16.3
     - SPRING_OUTPUT_ANSI_ENABLED=ALWAYS
     - SPRING_JPA_SHOW_SQL=false
     # Disable Gradle progress bar
