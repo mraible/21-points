@@ -1,18 +1,5 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
-import {
-    startOfDay,
-    endOfDay,
-    subDays,
-    addDays,
-    endOfMonth,
-    isSameDay,
-    isSameMonth,
-    addHours,
-    addMinutes,
-    format,
-    startOfMonth,
-    getDaysInMonth
-} from 'date-fns';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { endOfDay, endOfMonth, format, getDaysInMonth, isSameDay, isSameMonth, parseISO, startOfDay, startOfMonth } from 'date-fns';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
 import { PointsService } from 'app/entities/points';
@@ -126,14 +113,14 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
     populateCalendar() {
         const monthEnd = endOfMonth(this.viewDate);
-        const month = format(monthEnd, 'YYYY-MM');
+        const month = format(monthEnd, 'yyyy-MM');
 
         this.pointsService.byMonth(month).subscribe((response: any) => {
             response.body.points.forEach(item => {
                 const value = item.exercise + item.meals + item.alcohol;
                 this.events.push({
-                    start: startOfDay(item.date),
-                    end: endOfDay(item.date),
+                    start: startOfDay(parseISO(item.date)),
+                    end: endOfDay(parseISO(item.date)),
                     title: value + ' Points',
                     color: colors.green,
                     draggable: false,
@@ -199,7 +186,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
             }
 
             sundays.forEach(sunday => {
-                this.pointsService.byWeek(format(sunday, 'YYYY-MM-DD')).subscribe(data => {
+                this.pointsService.byWeek(format(sunday, 'yyyy-MM-DD')).subscribe(data => {
                     const pointsByWeek: any = data.body;
                     this.events.push({
                         start: startOfDay(sunday),
@@ -233,7 +220,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
                 this.activeDayIsOpen = false;
                 // if no events, clicking on day brings up add points
                 if (events.length === 0) {
-                    this.router.navigateByUrl('/points/new?date=' + format(date, 'YYYY-MM-DD'));
+                    this.router.navigateByUrl('/points/new?date=' + format(date, 'yyyy-MM-dd'));
                 }
             } else {
                 this.activeDayIsOpen = true;
