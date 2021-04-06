@@ -8,7 +8,7 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IBloodPressure } from 'app/shared/model/blood-pressure.model';
 import { BloodPressureService } from './blood-pressure.service';
-import { IUser, UserService } from 'app/core';
+import { IUser, Principal, UserService } from 'app/core';
 
 @Component({
     selector: 'jhi-blood-pressure-update',
@@ -25,7 +25,8 @@ export class BloodPressureUpdateComponent implements OnInit {
         private jhiAlertService: JhiAlertService,
         private bloodPressureService: BloodPressureService,
         private userService: UserService,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private principal: Principal
     ) {}
 
     ngOnInit() {
@@ -34,12 +35,16 @@ export class BloodPressureUpdateComponent implements OnInit {
             this.bloodPressure = bloodPressure;
             this.timestamp = this.bloodPressure.timestamp != null ? this.bloodPressure.timestamp.format(DATE_TIME_FORMAT) : null;
         });
-        this.userService.query().subscribe(
-            (res: HttpResponse<IUser[]>) => {
-                this.users = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.principal.hasAuthority('ROLE_ADMIN').then(isAdmin => {
+            if (isAdmin) {
+                this.userService.query().subscribe(
+                    (res: HttpResponse<IUser[]>) => {
+                        this.users = res.body;
+                    },
+                    (res: HttpErrorResponse) => this.onError(res.message)
+                );
+            }
+        });
     }
 
     previousState() {
