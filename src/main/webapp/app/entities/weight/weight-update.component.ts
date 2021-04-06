@@ -8,7 +8,7 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IWeight } from 'app/shared/model/weight.model';
 import { WeightService } from './weight.service';
-import { IUser, UserService } from 'app/core';
+import { IUser, Principal, UserService } from 'app/core';
 
 @Component({
     selector: 'jhi-weight-update',
@@ -25,7 +25,8 @@ export class WeightUpdateComponent implements OnInit {
         private jhiAlertService: JhiAlertService,
         private weightService: WeightService,
         private userService: UserService,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private principal: Principal
     ) {}
 
     ngOnInit() {
@@ -34,12 +35,16 @@ export class WeightUpdateComponent implements OnInit {
             this.weight = weight;
             this.timestamp = this.weight.timestamp != null ? this.weight.timestamp.format(DATE_TIME_FORMAT) : null;
         });
-        this.userService.query().subscribe(
-            (res: HttpResponse<IUser[]>) => {
-                this.users = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.principal.hasAuthority('ROLE_ADMIN').then(isAdmin => {
+            if (isAdmin) {
+                this.userService.query().subscribe(
+                    (res: HttpResponse<IUser[]>) => {
+                        this.users = res.body;
+                    },
+                    (res: HttpErrorResponse) => this.onError(res.message)
+                );
+            }
+        });
     }
 
     previousState() {

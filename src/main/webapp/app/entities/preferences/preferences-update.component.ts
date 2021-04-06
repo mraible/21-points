@@ -6,7 +6,7 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IPreferences } from 'app/shared/model/preferences.model';
 import { PreferencesService } from './preferences.service';
-import { IUser, UserService } from 'app/core';
+import { IUser, Principal, UserService } from 'app/core';
 
 @Component({
     selector: 'jhi-preferences-update',
@@ -22,7 +22,8 @@ export class PreferencesUpdateComponent implements OnInit {
         private jhiAlertService: JhiAlertService,
         private preferencesService: PreferencesService,
         private userService: UserService,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private principal: Principal
     ) {}
 
     ngOnInit() {
@@ -30,12 +31,16 @@ export class PreferencesUpdateComponent implements OnInit {
         this.activatedRoute.data.subscribe(({ preferences }) => {
             this.preferences = preferences;
         });
-        this.userService.query().subscribe(
-            (res: HttpResponse<IUser[]>) => {
-                this.users = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.principal.hasAuthority('ROLE_ADMIN').then(isAdmin => {
+            if (isAdmin) {
+                this.userService.query().subscribe(
+                    (res: HttpResponse<IUser[]>) => {
+                        this.users = res.body;
+                    },
+                    (res: HttpErrorResponse) => this.onError(res.message)
+                );
+            }
+        });
     }
 
     previousState() {

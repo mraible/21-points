@@ -7,7 +7,7 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IPoints } from 'app/shared/model/points.model';
 import { PointsService } from './points.service';
-import { IUser, UserService } from 'app/core';
+import { IUser, Principal, UserService } from 'app/core';
 
 @Component({
     selector: 'jhi-points-update',
@@ -24,7 +24,8 @@ export class PointsUpdateComponent implements OnInit {
         private jhiAlertService: JhiAlertService,
         private pointsService: PointsService,
         private userService: UserService,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private principal: Principal
     ) {}
 
     ngOnInit() {
@@ -32,12 +33,16 @@ export class PointsUpdateComponent implements OnInit {
         this.activatedRoute.data.subscribe(({ points }) => {
             this.points = points;
         });
-        this.userService.query().subscribe(
-            (res: HttpResponse<IUser[]>) => {
-                this.users = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.principal.hasAuthority('ROLE_ADMIN').then(isAdmin => {
+            if (isAdmin) {
+                this.userService.query().subscribe(
+                    (res: HttpResponse<IUser[]>) => {
+                        this.users = res.body;
+                    },
+                    (res: HttpErrorResponse) => this.onError(res.message)
+                );
+            }
+        });
     }
 
     previousState() {
