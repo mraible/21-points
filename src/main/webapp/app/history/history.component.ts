@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { endOfDay, endOfMonth, format, getDaysInMonth, isSameDay, isSameMonth, parseISO, startOfDay, startOfMonth } from 'date-fns';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
 import { PointsService } from 'app/entities/points';
 import { BloodPressureService } from 'app/entities/blood-pressure';
@@ -37,7 +36,6 @@ const colors: any = {
     styleUrls: ['history.component.css']
 })
 export class HistoryComponent implements OnInit, OnDestroy {
-    modalRef: NgbModalRef;
     isCollapsed = true;
 
     view = 'month';
@@ -173,8 +171,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
             });
 
             const weeklyGoal = preferences.body.weeklyGoal;
-            const monthStart = startOfMonth(+month);
-            const daysInMonth = getDaysInMonth(+month);
+            const monthStart = startOfMonth(this.viewDate);
+            const daysInMonth = getDaysInMonth(this.viewDate);
 
             const sundays = [];
             for (let i = 0; i <= daysInMonth; i++) {
@@ -186,7 +184,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
             }
 
             sundays.forEach(sunday => {
-                this.pointsService.byWeek(format(sunday, 'yyyy-MM-DD')).subscribe(data => {
+                this.pointsService.byWeek(format(sunday, 'yyyy-MM-dd')).subscribe(data => {
                     const pointsByWeek: any = data.body;
                     this.events.push({
                         start: startOfDay(sunday),
