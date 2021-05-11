@@ -31,6 +31,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -190,7 +191,7 @@ public class WeightResource {
      */
     @GetMapping("/weights/{id}")
     @Timed
-    public ResponseEntity<?> getWeight(@PathVariable Long id) {
+    public ResponseEntity<?> getWeight(@PathVariable UUID id) {
         log.debug("REST request to get Weight : {}", id);
         Optional<Weight> weight = weightRepository.findById(id);
         if (weight.isPresent() && weight.get().getUser() != null &&
@@ -208,7 +209,7 @@ public class WeightResource {
      */
     @DeleteMapping("/weights/{id}")
     @Timed
-    public ResponseEntity<?> deleteWeight(@PathVariable Long id) {
+    public ResponseEntity<?> deleteWeight(@PathVariable UUID id) {
         log.debug("REST request to delete Weight : {}", id);
         Optional<Weight> weight = weightRepository.findById(id);
         if (weight.isPresent() && weight.get().getUser() != null &&

@@ -38,6 +38,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.jhipster.health.web.rest.TestUtil.sameInstant;
@@ -167,7 +168,7 @@ public class WeightResourceIntTest {
         int databaseSizeBeforeCreate = weightRepository.findAll().size();
 
         // Create the Weight with an existing ID
-        weight.setId(1L);
+        weight.setId(UUID.randomUUID());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restWeightMockMvc.perform(post("/api/weights")
@@ -236,9 +237,9 @@ public class WeightResourceIntTest {
             .with(user("admin").roles("ADMIN")))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(weight.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(weight.getId().toString())))
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
-            .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.doubleValue())));
+            .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT)));
     }
 
     @Test
@@ -251,16 +252,16 @@ public class WeightResourceIntTest {
         restWeightMockMvc.perform(get("/api/weights/{id}", weight.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(weight.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(weight.getId().toString()))
             .andExpect(jsonPath("$.timestamp").value(sameInstant(DEFAULT_TIMESTAMP)))
-            .andExpect(jsonPath("$.weight").value(DEFAULT_WEIGHT.doubleValue()));
+            .andExpect(jsonPath("$.weight").value(DEFAULT_WEIGHT));
     }
 
     @Test
     @Transactional
     public void getNonExistingWeight() throws Exception {
         // Get the weight
-        restWeightMockMvc.perform(get("/api/weights/{id}", Long.MAX_VALUE))
+        restWeightMockMvc.perform(get("/api/weights/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
 
@@ -356,7 +357,7 @@ public class WeightResourceIntTest {
         restWeightMockMvc.perform(get("/api/_search/weights?query=id:" + weight.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(weight.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(weight.getId().toString())))
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
             .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT)));
     }
@@ -366,11 +367,11 @@ public class WeightResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Weight.class);
         Weight weight1 = new Weight();
-        weight1.setId(1L);
+        weight1.setId(UUID.randomUUID());
         Weight weight2 = new Weight();
         weight2.setId(weight1.getId());
         assertThat(weight1).isEqualTo(weight2);
-        weight2.setId(2L);
+        weight2.setId(UUID.randomUUID());
         assertThat(weight1).isNotEqualTo(weight2);
         weight1.setId(null);
         assertThat(weight1).isNotEqualTo(weight2);

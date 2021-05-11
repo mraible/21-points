@@ -34,6 +34,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -203,7 +204,7 @@ public class PointsResource {
      */
     @GetMapping("/points/{id}")
     @Timed
-    public ResponseEntity<?> getPoints(@PathVariable Long id) {
+    public ResponseEntity<?> getPoints(@PathVariable UUID id) {
         log.debug("REST request to get Points : {}", id);
         Optional<Points> points = pointsRepository.findById(id);
         if (points.isPresent() && points.get().getUser() != null &&
@@ -221,7 +222,7 @@ public class PointsResource {
      */
     @DeleteMapping("/points/{id}")
     @Timed
-    public ResponseEntity<?> deletePoints(@PathVariable Long id) {
+    public ResponseEntity<?> deletePoints(@PathVariable UUID id) {
         log.debug("REST request to delete Points : {}", id);
         Optional<Points> points = pointsRepository.findById(id);
         if (points.isPresent() && points.get().getUser() != null &&

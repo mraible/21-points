@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 
 /**
@@ -12,7 +13,7 @@ import java.util.Optional;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface PreferencesRepository extends JpaRepository<Preferences, Long> {
+public interface PreferencesRepository extends JpaRepository<Preferences, UUID> {
 
     Optional<Preferences> findOneByUserLogin(String login);
 }

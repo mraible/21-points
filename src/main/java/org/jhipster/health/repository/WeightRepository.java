@@ -9,13 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Spring Data  repository for the Weight entity.
  */
 @SuppressWarnings("unused")
 @Repository
-public interface WeightRepository extends JpaRepository<Weight, Long> {
+public interface WeightRepository extends JpaRepository<Weight, UUID> {
 
     @Query("select weight from Weight weight where weight.user.login = ?#{principal.username} order by weight.timestamp desc")
     Page<Weight> findByUserIsCurrentUser(Pageable pageable);

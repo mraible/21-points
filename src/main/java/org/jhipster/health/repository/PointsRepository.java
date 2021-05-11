@@ -9,13 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Spring Data JPA repository for the Points entity.
  */
 @SuppressWarnings("unused")
 @Repository
-public interface PointsRepository extends JpaRepository<Points, Long> {
+public interface PointsRepository extends JpaRepository<Points, UUID> {
 
     @Query("select points from Points points where points.user.login = ?#{principal.username} order by points.date desc")
     Page<Points> findByUserIsCurrentUser(Pageable pageable);
