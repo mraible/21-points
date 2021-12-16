@@ -13,17 +13,17 @@
             <div [ngSwitch]="isAuthenticated()">
                 <div *ngSwitchCase="true">
                     <div class="row">
-                        <div class="col-8">
+                        <div class="col-7">
                             <h4 jhiTranslate="home.points.thisWeek" class="mt-1 d-none d-md-inline"
                                 translateValues="{date: '{{pointsThisWeek.week | date: 'longDate'}}'}">
                                 Points for the week of {{pointsThisWeek.week | date: 'longDate'}}:
                             </h4>
                             <h4 jhiTranslate="home.points.thisWeekMobile" class="mt-1 d-sm-none"
-                                translateValues="{date: '{{pointsThisWeek.week | date: 'mediumDate'}}'}">
+                                translateValues="{date: '{{pointsThisWeek.week | date: 'MMM d'}}'}">
                                 Points for {{pointsThisWeek.week | date: 'mediumDate'}}:
                             </h4>
                         </div>
-                        <div class="col-3 col-xs-2 text-right">
+                        <div class="col-5 text-right">
                             <a [routerLink]="['/points/new']" class="btn btn-primary m-0 mb-1 text-white">Add Points</a>
                         </div>
                     </div>
