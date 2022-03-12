@@ -1,24 +1,14 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { TwentyOnePointsSharedModule } from 'app/shared';
-import { TwentyOnePointsAdminModule } from 'app/admin/admin.module';
-import {
-    PointsComponent,
-    PointsDetailComponent,
-    PointsUpdateComponent,
-    PointsDeletePopupComponent,
-    PointsDeleteDialogComponent,
-    pointsRoute,
-    pointsPopupRoute
-} from './';
-
-const ENTITY_STATES = [...pointsRoute, ...pointsPopupRoute];
+import { NgModule } from '@angular/core';
+import { SharedModule } from 'app/shared/shared.module';
+import { PointsComponent } from './list/points.component';
+import { PointsDetailComponent } from './detail/points-detail.component';
+import { PointsUpdateComponent } from './update/points-update.component';
+import { PointsDeleteDialogComponent } from './delete/points-delete-dialog.component';
+import { PointsRoutingModule } from './route/points-routing.module';
 
 @NgModule({
-    imports: [TwentyOnePointsSharedModule, TwentyOnePointsAdminModule, RouterModule.forChild(ENTITY_STATES)],
-    declarations: [PointsComponent, PointsDetailComponent, PointsUpdateComponent, PointsDeleteDialogComponent, PointsDeletePopupComponent],
-    entryComponents: [PointsComponent, PointsUpdateComponent, PointsDeleteDialogComponent, PointsDeletePopupComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [SharedModule, PointsRoutingModule],
+  declarations: [PointsComponent, PointsDetailComponent, PointsUpdateComponent, PointsDeleteDialogComponent],
+  entryComponents: [PointsDeleteDialogComponent],
 })
-export class TwentyOnePointsPointsModule {}
+export class PointsModule {}

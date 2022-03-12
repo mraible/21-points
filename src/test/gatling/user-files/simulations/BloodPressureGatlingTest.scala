@@ -20,13 +20,14 @@ class BloodPressureGatlingTest extends Simulation {
     val baseURL = Option(System.getProperty("baseURL")) getOrElse """http://localhost:8080"""
 
     val httpConf = http
-        .baseURL(baseURL)
+        .baseUrl(baseURL)
         .inferHtmlResources()
         .acceptHeader("*/*")
         .acceptEncodingHeader("gzip, deflate")
         .acceptLanguageHeader("fr,fr-fr;q=0.8,en-us;q=0.5,en;q=0.3")
         .connectionHeader("keep-alive")
         .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) Gecko/20100101 Firefox/33.0")
+        .silentResources // Silence all resources like css or css so they don't clutter the results
 
     val headers_http = Map(
         "Accept" -> """application/json"""
@@ -46,14 +47,15 @@ class BloodPressureGatlingTest extends Simulation {
         .exec(http("First unauthenticated request")
         .get("/api/account")
         .headers(headers_http)
-        .check(status.is(401))).exitHereIfFailed
+        .check(status.is(401))
+        ).exitHereIfFailed
         .pause(10)
         .exec(http("Authentication")
         .post("/api/authenticate")
         .headers(headers_http_authentication)
-        .body(StringBody("""{"username":"admin", "password":"admin"}""")).asJSON
-        .check(header.get("Authorization").saveAs("access_token"))).exitHereIfFailed
-        .pause(1)
+        .body(StringBody("""{"username":"admin", "password":"admin"}""")).asJson
+        .check(header("Authorization").saveAs("access_token"))).exitHereIfFailed
+        .pause(2)
         .exec(http("Authenticated request")
         .get("/api/account")
         .headers(headers_http_authenticated)
@@ -68,7 +70,11 @@ class BloodPressureGatlingTest extends Simulation {
             .exec(http("Create new bloodPressure")
             .post("/api/blood-pressures")
             .headers(headers_http_authenticated)
-            .body(StringBody("""{"id":null, "timestamp":"2020-01-01T00:00:00.000Z", "systolic":"0", "diastolic":"0"}""")).asJSON
+            .body(StringBody("""{
+                "timestamp":"2020-01-01T00:00:00.000Z"
+                , "systolic":"0"
+                , "diastolic":"0"
+                }""")).asJson
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_bloodPressure_url"))).exitHereIfFailed
             .pause(10)
@@ -87,6 +93,6 @@ class BloodPressureGatlingTest extends Simulation {
     val users = scenario("Users").exec(scn)
 
     setUp(
-        users.inject(rampUsers(Integer.getInteger("users", 100)) over (Integer.getInteger("ramp", 1) minutes))
+        users.inject(rampUsers(Integer.getInteger("users", 100)) during (Integer.getInteger("ramp", 1) minutes))
     ).protocols(httpConf)
 }
