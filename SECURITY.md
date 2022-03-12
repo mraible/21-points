@@ -7,7 +7,7 @@ This project will fix security vulnerabilities founds in its current release.
 | Version | Supported          |
 | ------- | ------------------ |
 | 5.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| < 5.0   | :x:                |
 
 ## Reporting a Vulnerability
 
