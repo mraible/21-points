@@ -1,40 +1,36 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager } from 'ng-jhipster';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { LoginModalService, Principal, Account } from 'app/core';
+import { AccountService } from 'app/core/auth/account.service';
+import { Account } from 'app/core/auth/account.model';
 
 @Component({
-    selector: 'jhi-home',
-    templateUrl: './home.component.html',
-    styleUrls: ['home.scss']
+  selector: 'jhi-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
-    account: Account;
-    modalRef: NgbModalRef;
+export class HomeComponent implements OnInit, OnDestroy {
+  account: Account | null = null;
 
-    constructor(private principal: Principal, private loginModalService: LoginModalService, private eventManager: JhiEventManager) {}
+  private readonly destroy$ = new Subject<void>();
 
-    ngOnInit() {
-        this.principal.identity().then(account => {
-            this.account = account;
-        });
-        this.registerAuthenticationSuccess();
-    }
+  constructor(private accountService: AccountService, private router: Router) {}
 
-    registerAuthenticationSuccess() {
-        this.eventManager.subscribe('authenticationSuccess', message => {
-            this.principal.identity().then(account => {
-                this.account = account;
-            });
-        });
-    }
+  ngOnInit(): void {
+    this.accountService
+      .getAuthenticationState()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(account => (this.account = account));
+  }
 
-    isAuthenticated() {
-        return this.principal.isAuthenticated();
-    }
+  login(): void {
+    this.router.navigate(['/login']);
+  }
 
-    login() {
-        this.modalRef = this.loginModalService.open();
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

@@ -1,30 +1,14 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { TwentyOnePointsSharedModule } from 'app/shared';
-import { TwentyOnePointsAdminModule } from 'app/admin/admin.module';
-import {
-    PreferencesComponent,
-    PreferencesDetailComponent,
-    PreferencesUpdateComponent,
-    PreferencesDeletePopupComponent,
-    PreferencesDeleteDialogComponent,
-    preferencesRoute,
-    preferencesPopupRoute
-} from './';
-
-const ENTITY_STATES = [...preferencesRoute, ...preferencesPopupRoute];
+import { NgModule } from '@angular/core';
+import { SharedModule } from 'app/shared/shared.module';
+import { PreferencesComponent } from './list/preferences.component';
+import { PreferencesDetailComponent } from './detail/preferences-detail.component';
+import { PreferencesUpdateComponent } from './update/preferences-update.component';
+import { PreferencesDeleteDialogComponent } from './delete/preferences-delete-dialog.component';
+import { PreferencesRoutingModule } from './route/preferences-routing.module';
 
 @NgModule({
-    imports: [TwentyOnePointsSharedModule, TwentyOnePointsAdminModule, RouterModule.forChild(ENTITY_STATES)],
-    declarations: [
-        PreferencesComponent,
-        PreferencesDetailComponent,
-        PreferencesUpdateComponent,
-        PreferencesDeleteDialogComponent,
-        PreferencesDeletePopupComponent
-    ],
-    entryComponents: [PreferencesComponent, PreferencesUpdateComponent, PreferencesDeleteDialogComponent, PreferencesDeletePopupComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [SharedModule, PreferencesRoutingModule],
+  declarations: [PreferencesComponent, PreferencesDetailComponent, PreferencesUpdateComponent, PreferencesDeleteDialogComponent],
+  entryComponents: [PreferencesDeleteDialogComponent],
 })
-export class TwentyOnePointsPreferencesModule {}
+export class PreferencesModule {}

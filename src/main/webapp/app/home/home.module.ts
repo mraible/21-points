@@ -1,12 +1,12 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { TwentyOnePointsSharedModule } from 'app/shared';
-import { HOME_ROUTE, HomeComponent } from './';
+import { SharedModule } from 'app/shared/shared.module';
+import { HOME_ROUTE } from './home.route';
+import { HomeComponent } from './home.component';
 
 @NgModule({
-    imports: [TwentyOnePointsSharedModule, RouterModule.forChild([HOME_ROUTE])],
-    declarations: [HomeComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [SharedModule, RouterModule.forChild([HOME_ROUTE])],
+  declarations: [HomeComponent],
 })
-export class TwentyOnePointsHomeModule {}
+export class HomeModule {}

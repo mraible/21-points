@@ -1,24 +1,19 @@
 package org.jhipster.health.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
-import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.Objects;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Weight.
  */
 @Entity
 @Table(name = "weight")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "weight")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "weight")
 public class Weight implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,10 +21,11 @@ public class Weight implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Long id;
 
     @NotNull
-    @Column(name = "jhi_timestamp", nullable = false)
+    @Column(name = "timestamp", nullable = false)
     private ZonedDateTime timestamp;
 
     @NotNull
@@ -37,12 +33,17 @@ public class Weight implements Serializable {
     private Double weight;
 
     @ManyToOne
-    @JsonIgnoreProperties("")
     private User user;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Weight id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -50,11 +51,11 @@ public class Weight implements Serializable {
     }
 
     public ZonedDateTime getTimestamp() {
-        return timestamp;
+        return this.timestamp;
     }
 
     public Weight timestamp(ZonedDateTime timestamp) {
-        this.timestamp = timestamp;
+        this.setTimestamp(timestamp);
         return this;
     }
 
@@ -63,11 +64,11 @@ public class Weight implements Serializable {
     }
 
     public Double getWeight() {
-        return weight;
+        return this.weight;
     }
 
     public Weight weight(Double weight) {
-        this.weight = weight;
+        this.setWeight(weight);
         return this;
     }
 
@@ -76,39 +77,38 @@ public class Weight implements Serializable {
     }
 
     public User getUser() {
-        return user;
-    }
-
-    public Weight user(User user) {
-        this.user = user;
-        return this;
+        return this.user;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    public Weight user(User user) {
+        this.setUser(user);
+        return this;
+    }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Weight)) {
             return false;
         }
-        Weight weight = (Weight) o;
-        if (weight.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), weight.getId());
+        return id != null && id.equals(((Weight) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "Weight{" +

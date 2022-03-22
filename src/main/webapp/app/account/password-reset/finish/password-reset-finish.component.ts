@@ -1,65 +1,59 @@
-import { Component, OnInit, AfterViewInit, Renderer, ElementRef } from '@angular/core';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
-import { LoginModalService } from 'app/core';
 import { PasswordResetFinishService } from './password-reset-finish.service';
 
 @Component({
-    selector: 'jhi-password-reset-finish',
-    templateUrl: './password-reset-finish.component.html'
+  selector: 'jhi-password-reset-finish',
+  templateUrl: './password-reset-finish.component.html',
 })
 export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
-    confirmPassword: string;
-    doNotMatch: string;
-    error: string;
-    keyMissing: boolean;
-    resetAccount: any;
-    success: string;
-    modalRef: NgbModalRef;
-    key: string;
+  @ViewChild('newPassword', { static: false })
+  newPassword?: ElementRef;
 
-    constructor(
-        private passwordResetFinishService: PasswordResetFinishService,
-        private loginModalService: LoginModalService,
-        private route: ActivatedRoute,
-        private elementRef: ElementRef,
-        private renderer: Renderer
-    ) {}
+  initialized = false;
+  doNotMatch = false;
+  error = false;
+  success = false;
+  key = '';
 
-    ngOnInit() {
-        this.route.queryParams.subscribe(params => {
-            this.key = params['key'];
-        });
-        this.resetAccount = {};
-        this.keyMissing = !this.key;
+  passwordForm = this.fb.group({
+    newPassword: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
+    confirmPassword: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
+  });
+
+  constructor(private passwordResetFinishService: PasswordResetFinishService, private route: ActivatedRoute, private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['key']) {
+        this.key = params['key'];
+      }
+      this.initialized = true;
+    });
+  }
+
+  ngAfterViewInit(): void {
+    if (this.newPassword) {
+      this.newPassword.nativeElement.focus();
     }
+  }
 
-    ngAfterViewInit() {
-        if (this.elementRef.nativeElement.querySelector('#password') != null) {
-            this.renderer.invokeElementMethod(this.elementRef.nativeElement.querySelector('#password'), 'focus', []);
-        }
-    }
+  finishReset(): void {
+    this.doNotMatch = false;
+    this.error = false;
 
-    finishReset() {
-        this.doNotMatch = null;
-        this.error = null;
-        if (this.resetAccount.password !== this.confirmPassword) {
-            this.doNotMatch = 'ERROR';
-        } else {
-            this.passwordResetFinishService.save({ key: this.key, newPassword: this.resetAccount.password }).subscribe(
-                () => {
-                    this.success = 'OK';
-                },
-                () => {
-                    this.success = null;
-                    this.error = 'ERROR';
-                }
-            );
-        }
-    }
+    const newPassword = this.passwordForm.get(['newPassword'])!.value;
+    const confirmPassword = this.passwordForm.get(['confirmPassword'])!.value;
 
-    login() {
-        this.modalRef = this.loginModalService.open();
+    if (newPassword !== confirmPassword) {
+      this.doNotMatch = true;
+    } else {
+      this.passwordResetFinishService.save(this.key, newPassword).subscribe({
+        next: () => (this.success = true),
+        error: () => (this.error = true),
+      });
     }
+  }
 }
