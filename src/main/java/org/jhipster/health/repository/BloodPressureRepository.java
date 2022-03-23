@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BloodPressureRepository extends JpaRepository<BloodPressure, Long> {
     @Query(
-        "select bloodPressure from BloodPressure bloodPressure where bloodPressure.user.login = ?#{principal.username} order by blood_pressure.timestamp desc"
+        "select bloodPressure from BloodPressure bloodPressure where bloodPressure.user.login = ?#{principal.username} order by bloodPressure.timestamp desc"
     )
     Page<BloodPressure> findByUserIsCurrentUser(Pageable pageable);
 

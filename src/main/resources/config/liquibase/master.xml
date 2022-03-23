@@ -22,10 +22,10 @@
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20170725030037_added_entity_constraints_Points.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20160831021351_added_entity_constraints_Weight.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20171024115100_migrate_from_v1.xml" relativeToChangelogFile="false"/>
+    <!--include file="config/liquibase/changelog/20171024115100_migrate_from_v1.xml" relativeToChangelogFile="false"/-->
     <include file="config/liquibase/changelog/20170725033721_added_entity_constraints_Preferences.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20160831021230_added_entity_constraints_BloodPressure.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181013183900_migrate_from_v4.xml" relativeToChangelogFile="false"/>
+    <!--include file="config/liquibase/changelog/20181013183900_migrate_from_v4.xml" relativeToChangelogFile="false"/-->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

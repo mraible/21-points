@@ -93,6 +93,11 @@
         <dropColumn columnName="preferences_id" tableName="jhi_user"/>
     </changeSet>
     <changeSet author="mraible (generated)" id="1508867356214-18">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="public" tableName="jhi_persistent_audit_event"/>
+            </not>
+        </preConditions>
         <modifyDataType columnName="event_id" newDataType="bigint" tableName="jhi_persistent_audit_event"/>
         <dropDefaultValue columnDataType="bigint" columnName="event_id" tableName="jhi_persistent_audit_event"/>
     </changeSet>
@@ -113,9 +118,19 @@
         <dropDefaultValue columnDataType="bigint" columnName="id" tableName="weight"/>
     </changeSet>
     <changeSet author="mraible (generated)" id="1508867356214-23">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="public" tableName="jhi_persistent_audit_evt_data"/>
+            </not>
+        </preConditions>
         <modifyDataType columnName="name" newDataType="varchar(150)" tableName="jhi_persistent_audit_evt_data"/>
     </changeSet>
     <changeSet author="mraible (generated)" id="1508867356214-24">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="public" tableName="jhi_persistent_audit_event"/>
+            </not>
+        </preConditions>
         <modifyDataType columnName="principal" newDataType="varchar(50)" tableName="jhi_persistent_audit_event"/>
     </changeSet>
     <changeSet author="mraible" id="1508867356214-25">
