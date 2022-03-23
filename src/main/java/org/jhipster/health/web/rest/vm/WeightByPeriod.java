@@ -1,10 +1,10 @@
 package org.jhipster.health.web.rest.vm;
 
+import java.util.List;
 import org.jhipster.health.domain.Weight;
 
-import java.util.List;
-
 public class WeightByPeriod {
+
     private String period;
     private List<Weight> weighIns;
 
@@ -31,10 +31,6 @@ public class WeightByPeriod {
 
     @Override
     public String toString() {
-        return "WeightByPeriod{" +
-            "period='" + period + '\'' +
-            ", weighIns=" + weighIns +
-            '}';
+        return "WeightByPeriod{" + "period='" + period + '\'' + ", weighIns=" + weighIns + '}';
     }
 }
-

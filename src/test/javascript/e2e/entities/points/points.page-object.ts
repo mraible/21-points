@@ -1,124 +1,133 @@
 import { element, by, ElementFinder } from 'protractor';
 
 export class PointsComponentsPage {
-    createButton = element(by.id('jh-create-entity'));
-    deleteButtons = element.all(by.css('jhi-points div table .btn-danger'));
-    title = element.all(by.css('jhi-points div h2#page-heading')).first();
+  createButton = element(by.id('jh-create-entity'));
+  deleteButtons = element.all(by.css('jhi-points div table .btn-danger'));
+  title = element.all(by.css('jhi-points div h2#page-heading span')).first();
+  noResult = element(by.id('no-result'));
+  entities = element(by.id('entities'));
 
-    async clickOnCreateButton() {
-        await this.createButton.click();
-    }
+  async clickOnCreateButton(): Promise<void> {
+    await this.createButton.click();
+  }
 
-    async clickOnLastDeleteButton() {
-        await this.deleteButtons.last().click();
-    }
+  async clickOnLastDeleteButton(): Promise<void> {
+    await this.deleteButtons.last().click();
+  }
 
-    async countDeleteButtons() {
-        return this.deleteButtons.count();
-    }
+  async countDeleteButtons(): Promise<number> {
+    return this.deleteButtons.count();
+  }
 
-    async getTitle() {
-        return this.title.getAttribute('jhiTranslate');
-    }
+  async getTitle(): Promise<string> {
+    return this.title.getAttribute('jhiTranslate');
+  }
 }
 
 export class PointsUpdatePage {
-    pageTitle = element(by.id('jhi-points-heading'));
-    saveButton = element(by.id('save-entity'));
-    cancelButton = element(by.id('cancel-save'));
-    dateInput = element(by.id('field_date'));
-    exerciseInput = element(by.id('field_exercise'));
-    mealsInput = element(by.id('field_meals'));
-    alcoholInput = element(by.id('field_alcohol'));
-    notesInput = element(by.id('field_notes'));
-    userSelect = element(by.id('field_user'));
+  pageTitle = element(by.id('jhi-points-heading'));
+  saveButton = element(by.id('save-entity'));
+  cancelButton = element(by.id('cancel-save'));
 
-    async getPageTitle() {
-        return this.pageTitle.getAttribute('jhiTranslate');
-    }
+  idInput = element(by.id('field_id'));
+  dateInput = element(by.id('field_date'));
+  exerciseInput = element(by.id('field_exercise'));
+  mealsInput = element(by.id('field_meals'));
+  alcoholInput = element(by.id('field_alcohol'));
+  notesInput = element(by.id('field_notes'));
 
-    async setDateInput(date) {
-        this.dateInput.clear();
-        await this.dateInput.sendKeys(date);
-    }
+  userSelect = element(by.id('field_user'));
 
-    async getDateInput() {
-        return this.dateInput.getAttribute('value');
-    }
+  async getPageTitle(): Promise<string> {
+    return this.pageTitle.getAttribute('jhiTranslate');
+  }
 
-    async setExerciseInput(exercise) {
-        await this.exerciseInput.click();
-    }
+  async setIdInput(id: string): Promise<void> {
+    await this.idInput.sendKeys(id);
+  }
 
-    async getExerciseInput() {
-        return this.exerciseInput.isSelected();
-    }
+  async getIdInput(): Promise<string> {
+    return await this.idInput.getAttribute('value');
+  }
 
-    async setMealsInput(meals) {
-        await this.mealsInput.click();
-    }
+  async setDateInput(date: string): Promise<void> {
+    await this.dateInput.sendKeys(date);
+  }
 
-    async getMealsInput() {
-        return this.mealsInput.isSelected();
-    }
+  async getDateInput(): Promise<string> {
+    return await this.dateInput.getAttribute('value');
+  }
 
-    async setAlcoholInput(alcohol) {
-        await this.alcoholInput.click();
-    }
+  async setExerciseInput(exercise: string): Promise<void> {
+    await this.exerciseInput.sendKeys(exercise);
+  }
 
-    async getAlcoholInput() {
-        return this.alcoholInput.isSelected();
-    }
+  async getExerciseInput(): Promise<string> {
+    return await this.exerciseInput.getAttribute('value');
+  }
 
-    async setNotesInput(notes) {
-        await this.notesInput.sendKeys(notes);
-    }
+  async setMealsInput(meals: string): Promise<void> {
+    await this.mealsInput.sendKeys(meals);
+  }
 
-    async getNotesInput() {
-        return this.notesInput.getAttribute('value');
-    }
+  async getMealsInput(): Promise<string> {
+    return await this.mealsInput.getAttribute('value');
+  }
 
-    async userSelectLastOption() {
-        await this.userSelect
-            .all(by.tagName('option'))
-            .last()
-            .click();
-    }
+  async setAlcoholInput(alcohol: string): Promise<void> {
+    await this.alcoholInput.sendKeys(alcohol);
+  }
 
-    async userSelectOption(option) {
-        await this.userSelect.sendKeys(option);
-    }
+  async getAlcoholInput(): Promise<string> {
+    return await this.alcoholInput.getAttribute('value');
+  }
 
-    getUserSelect(): ElementFinder {
-        return this.userSelect;
-    }
+  async setNotesInput(notes: string): Promise<void> {
+    await this.notesInput.sendKeys(notes);
+  }
 
-    async getUserSelectedOption() {
-        return this.userSelect.element(by.css('option:checked')).getText();
-    }
+  async getNotesInput(): Promise<string> {
+    return await this.notesInput.getAttribute('value');
+  }
 
-    async save() {
-        await this.saveButton.click();
-    }
+  async userSelectLastOption(): Promise<void> {
+    await this.userSelect.all(by.tagName('option')).last().click();
+  }
 
-    async cancel() {
-        await this.cancelButton.click();
-    }
+  async userSelectOption(option: string): Promise<void> {
+    await this.userSelect.sendKeys(option);
+  }
 
-    getSaveButton(): ElementFinder {
-        return this.saveButton;
-    }
+  getUserSelect(): ElementFinder {
+    return this.userSelect;
+  }
+
+  async getUserSelectedOption(): Promise<string> {
+    return await this.userSelect.element(by.css('option:checked')).getText();
+  }
+
+  async save(): Promise<void> {
+    await this.saveButton.click();
+  }
+
+  async cancel(): Promise<void> {
+    await this.cancelButton.click();
+  }
+
+  getSaveButton(): ElementFinder {
+    return this.saveButton;
+  }
 }
 
 export class PointsDeleteDialog {
-    private dialogTitle = element(by.id('jhi-delete-points-heading'));
-    private confirmButton = element(by.id('jhi-confirm-delete-points'));
+  private dialogTitle = element(by.id('jhi-delete-points-heading'));
+  private confirmButton = element(by.id('jhi-confirm-delete-points'));
 
-    async getDialogTitle() {
-        return this.dialogTitle.getAttribute('jhiTranslate');
-    }
+  async getDialogTitle(): Promise<string> {
+    return this.dialogTitle.getAttribute('jhiTranslate');
+  }
 
-    async clickOnConfirmButton() {
-        await this.confirmButton.click();
-    }
+  async clickOnConfirmButton(): Promise<void> {
+    await this.confirmButton.click();
+  }
 }

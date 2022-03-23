@@ -1,59 +1,69 @@
-import org.gradle.internal.os.OperatingSystem
-
-apply plugin: 'org.springframework.boot'
-apply plugin: 'com.moowork.node'
-
 dependencies {
-    compile "org.springframework.boot:spring-boot-devtools"
-    compile "com.h2database:h2"
+    developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
+    implementation "com.h2database:h2"
 }
 
-def profiles = 'dev'
-if (project.hasProperty('no-liquibase')) {
-    profiles += ',no-liquibase'
+def profiles = "dev"
+if (project.hasProperty("no-liquibase")) {
+    profiles += ",no-liquibase"
 }
-if (project.hasProperty('tls')) {
-    profiles += ',tls'
+if (project.hasProperty("tls")) {
+    profiles += ",tls"
+}
+
+springBoot {
+    buildInfo {
+        properties {
+            time = null
+        }
+    }
 }
 
 bootRun {
     args = []
 }
 
-task webpackBuildDev(type: YarnTask, dependsOn: 'yarn_install') {
+task webapp(type: NpmTask) {
+    inputs.property('appVersion', project.version)
+    inputs.files("package-lock.json")
+        .withPropertyName('package-lock')
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.files("build.gradle")
+        .withPropertyName('build.gradle')
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.files("angular.json")
+        .withPropertyName('angular.json')
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.files("tsconfig.json", "tsconfig.app.json")
+        .withPropertyName("tsconfig")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir("webpack/")
+        .withPropertyName("webpack/")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.dir("src/main/webapp/")
-    inputs.files(fileTree('src/main/webapp/'))
-    outputs.dir("build/www/")
-    outputs.file("build/www/app/main.bundle.js")
-    args = ["run", "webpack:build"]
-}
+        .withPropertyName("webapp-source-dir")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    outputs.dir("build/resources/main/static/")
+        .withPropertyName("webapp-build-dir")
 
-war {
-    webAppDirName = 'build/www/'
-}
+    dependsOn npmInstall
 
-task copyIntoStatic (type: Copy) {
-    from 'build/www/'
-    into 'build/resources/main/static'
+    args = ["run", "webapp:build"]
+    environment = [APP_VERSION: project.version]
 }
 
 processResources {
-    filesMatching('**/application.yml') {
+    inputs.property('version', version)
+    inputs.property('springProfiles', profiles)
+    filesMatching("**/application.yml") {
         filter {
-            it.replace('#project.version#', version)
+            it.replace("#project.version#", version)
         }
         filter {
-            it.replace('#spring.profiles.active#', profiles)
+            it.replace("#spring.profiles.active#", profiles)
         }
     }
 }
 
-processResources.dependsOn webpackBuildDev
-copyIntoStatic.dependsOn processResources
-bootJar.dependsOn copyIntoStatic
-
-yarn_install.onlyIf { shouldWebpackRun() == true }
-
-def shouldWebpackRun() {
-    project.hasProperty('webpack')
-}
+processResources.dependsOn webapp
+bootJar.dependsOn processResources

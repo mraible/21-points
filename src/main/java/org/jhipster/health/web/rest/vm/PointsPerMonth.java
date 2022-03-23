@@ -1,11 +1,11 @@
 package org.jhipster.health.web.rest.vm;
 
-import org.jhipster.health.domain.Points;
-
 import java.time.YearMonth;
 import java.util.List;
+import org.jhipster.health.domain.Points;
 
 public class PointsPerMonth {
+
     private YearMonth month;
     private List<Points> points;
 
@@ -32,9 +32,6 @@ public class PointsPerMonth {
 
     @Override
     public String toString() {
-        return "PointsPerMonth{" +
-            "month=" + month +
-            ", points=" + points +
-            '}';
+        return "PointsPerMonth{" + "month=" + month + ", points=" + points + '}';
     }
 }

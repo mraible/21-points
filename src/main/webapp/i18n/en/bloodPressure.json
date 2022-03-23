@@ -1,26 +1,27 @@
-
 {
-    "twentyOnePointsApp": {
-        "bloodPressure" : {
-            "home": {
-                "title": "Blood Pressure",
-                "createLabel": "Add Blood Pressure",
-                "createOrEditLabel": "Edit Blood Pressure",
-                "search": "Search for Blood Pressure"
-            },
-            "created": "Blood pressure added successfully.",
-            "updated": "Blood pressure updated successfully.",
-            "deleted": "Blood pressure deleted.",
-            "delete": {
-                "question": "Are you sure you want to delete this?"
-            },
-            "detail": {
-                "title": "View Blood Pressure"
-            },
-            "timestamp": "Date/Time",
-            "systolic": "Systolic",
-            "diastolic": "Diastolic",
-            "user": "User"
-        }
+  "twentyOnePointsApp": {
+    "bloodPressure": {
+      "home": {
+        "title": "Blood Pressure",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Add Blood Pressure",
+        "createOrEditLabel": "Edit Blood Pressure",
+        "search": "Search for Blood Pressure",
+        "notFound": "No Blood Pressure readings found"
+      },
+      "created": "Blood pressure added successfully.",
+      "updated": "Blood pressure updated successfully.",
+      "deleted": "Blood pressure deleted.",
+      "delete": {
+        "question": "Are you sure you want to delete this?"
+      },
+      "detail": {
+        "title": "View Blood Pressure"
+      },
+      "timestamp": "Date/Time",
+      "systolic": "Systolic",
+      "diastolic": "Diastolic",
+      "user": "User"
     }
+  }
 }

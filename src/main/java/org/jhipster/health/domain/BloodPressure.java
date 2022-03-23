@@ -1,23 +1,20 @@
 package org.jhipster.health.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.data.elasticsearch.annotations.Document;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.Objects;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A BloodPressure.
  */
 @Entity
 @Table(name = "blood_pressure")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "bloodpressure")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "bloodpressure")
 public class BloodPressure implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,10 +22,11 @@ public class BloodPressure implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Long id;
 
     @NotNull
-    @Column(name = "jhi_timestamp", nullable = false)
+    @Column(name = "timestamp", nullable = false)
     private ZonedDateTime timestamp;
 
     @NotNull
@@ -43,6 +41,8 @@ public class BloodPressure implements Serializable {
     @JsonIgnoreProperties("")
     private User user;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public BloodPressure() {}
 
     public BloodPressure(ZonedDateTime dateTime, Integer systolic, Integer diastolic, User user) {
@@ -52,10 +52,13 @@ public class BloodPressure implements Serializable {
         this.user = user;
     }
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public BloodPressure id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -63,11 +66,11 @@ public class BloodPressure implements Serializable {
     }
 
     public ZonedDateTime getTimestamp() {
-        return timestamp;
+        return this.timestamp;
     }
 
     public BloodPressure timestamp(ZonedDateTime timestamp) {
-        this.timestamp = timestamp;
+        this.setTimestamp(timestamp);
         return this;
     }
 
@@ -76,11 +79,11 @@ public class BloodPressure implements Serializable {
     }
 
     public Integer getSystolic() {
-        return systolic;
+        return this.systolic;
     }
 
     public BloodPressure systolic(Integer systolic) {
-        this.systolic = systolic;
+        this.setSystolic(systolic);
         return this;
     }
 
@@ -89,11 +92,11 @@ public class BloodPressure implements Serializable {
     }
 
     public Integer getDiastolic() {
-        return diastolic;
+        return this.diastolic;
     }
 
     public BloodPressure diastolic(Integer diastolic) {
-        this.diastolic = diastolic;
+        this.setDiastolic(diastolic);
         return this;
     }
 
@@ -102,39 +105,38 @@ public class BloodPressure implements Serializable {
     }
 
     public User getUser() {
-        return user;
-    }
-
-    public BloodPressure user(User user) {
-        this.user = user;
-        return this;
+        return this.user;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    public BloodPressure user(User user) {
+        this.setUser(user);
+        return this;
+    }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof BloodPressure)) {
             return false;
         }
-        BloodPressure bloodPressure = (BloodPressure) o;
-        if (bloodPressure.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), bloodPressure.getId());
+        return id != null && id.equals(((BloodPressure) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "BloodPressure{" +

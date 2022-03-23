@@ -1,24 +1,20 @@
 package org.jhipster.health.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
-import org.springframework.data.elasticsearch.annotations.Document;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Points.
  */
 @Entity
 @Table(name = "points")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "points")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "points")
 public class Points implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,10 +22,11 @@ public class Points implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Long id;
 
     @NotNull
-    @Column(name = "jhi_date", nullable = false)
+    @Column(name = "date", nullable = false)
     private LocalDate date;
 
     @Column(name = "exercise")
@@ -49,6 +46,8 @@ public class Points implements Serializable {
     @JsonIgnoreProperties("")
     private User user;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Points() {}
 
     public Points(LocalDate date, Integer exercise, Integer meals, Integer alcohol, User user) {
@@ -59,10 +58,13 @@ public class Points implements Serializable {
         this.user = user;
     }
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Points id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -70,11 +72,11 @@ public class Points implements Serializable {
     }
 
     public LocalDate getDate() {
-        return date;
+        return this.date;
     }
 
     public Points date(LocalDate date) {
-        this.date = date;
+        this.setDate(date);
         return this;
     }
 
@@ -83,11 +85,11 @@ public class Points implements Serializable {
     }
 
     public Integer getExercise() {
-        return exercise;
+        return this.exercise;
     }
 
     public Points exercise(Integer exercise) {
-        this.exercise = exercise;
+        this.setExercise(exercise);
         return this;
     }
 
@@ -96,11 +98,11 @@ public class Points implements Serializable {
     }
 
     public Integer getMeals() {
-        return meals;
+        return this.meals;
     }
 
     public Points meals(Integer meals) {
-        this.meals = meals;
+        this.setMeals(meals);
         return this;
     }
 
@@ -109,11 +111,11 @@ public class Points implements Serializable {
     }
 
     public Integer getAlcohol() {
-        return alcohol;
+        return this.alcohol;
     }
 
     public Points alcohol(Integer alcohol) {
-        this.alcohol = alcohol;
+        this.setAlcohol(alcohol);
         return this;
     }
 
@@ -122,11 +124,11 @@ public class Points implements Serializable {
     }
 
     public String getNotes() {
-        return notes;
+        return this.notes;
     }
 
     public Points notes(String notes) {
-        this.notes = notes;
+        this.setNotes(notes);
         return this;
     }
 
@@ -135,39 +137,38 @@ public class Points implements Serializable {
     }
 
     public User getUser() {
-        return user;
-    }
-
-    public Points user(User user) {
-        this.user = user;
-        return this;
+        return this.user;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    public Points user(User user) {
+        this.setUser(user);
+        return this;
+    }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Points)) {
             return false;
         }
-        Points points = (Points) o;
-        if (points.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), points.getId());
+        return id != null && id.equals(((Points) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "Points{" +

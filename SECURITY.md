@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-This project will fix security vulnerabilities found in its current release. 
+This project will fix security vulnerabilities found in its current release.
 
 | Version | Supported          |
 | ------- | ------------------ |
