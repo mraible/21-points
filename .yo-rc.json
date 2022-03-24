@@ -7,7 +7,7 @@
     "buildTool": "gradle",
     "cacheProvider": "ehcache",
     "clientFramework": "angularX",
-    "clientPackageManager": "yarn",
+    "clientPackageManager": "npm",
     "clientTheme": "none",
     "clientThemeVariant": "",
     "clusteredHttpSession": false,
@@ -47,7 +47,7 @@
     "skipCheckLengthOfIdentifier": false,
     "skipFakeData": false,
     "skipUserManagement": false,
-    "testFrameworks": ["gatling", "protractor"],
+    "testFrameworks": ["gatling", "cypress"],
     "useSass": true,
     "websocket": false,
     "withAdminUi": true

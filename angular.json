@@ -113,6 +113,6 @@
       "path": "./build/angular/",
       "environment": "all"
     },
-    "packageManager": "yarn"
+    "packageManager": "npm"
   }
 }
