@@ -24,6 +24,7 @@ import org.jhipster.health.repository.search.WeightSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+import org.jhipster.health.web.rest.vm.PointsPerWeek;
 import org.jhipster.health.web.rest.vm.WeightByPeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,10 +213,11 @@ public class WeightResource {
     }
 
     /**
-     * GET  /weight-by-days : get all the weigh-ins for last x days.
+     * {@code GET  /weight-by-days} : get all the weigh-ins for last x days.
+     * @param days the number of days to retrieve
+     * @return a {@link ResponseEntity} with status {@code 200 (OK)} and {@link WeightByPeriod} in body.
      */
     @GetMapping("/weight-by-days/{days}")
-    @Timed
     public ResponseEntity<WeightByPeriod> getByDays(@PathVariable int days) {
         ZonedDateTime rightNow = ZonedDateTime.now(ZoneOffset.UTC);
         ZonedDateTime daysAgo = rightNow.minusDays(days);
@@ -226,7 +228,9 @@ public class WeightResource {
     }
 
     /**
-     * GET  /bp-by-days -> get all the blood pressure readings for a particular month.
+     * {@code GET  /bp-by-days} : get all the blood pressure readings for a particular month.
+     * @param date the month to retrieve in format yyyy-MM
+     * @return a {@link ResponseEntity} with status {@code 200 (OK)} and {@link WeightByPeriod} in body.
      */
     @GetMapping("/weight-by-month/{date}")
     public ResponseEntity<WeightByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {

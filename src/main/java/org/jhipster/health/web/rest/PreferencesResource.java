@@ -22,6 +22,7 @@ import org.jhipster.health.repository.search.PreferencesSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+import org.jhipster.health.web.rest.vm.PointsPerMonth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -204,7 +205,8 @@ public class PreferencesResource {
     }
 
     /**
-     * GET  /my-preferences -> get the current user's preferences.
+     * {@code GET  /my-preferences} : get the current user's preferences.
+     * @return a {@link ResponseEntity} with status {@code 200 (OK)} and {@link Preferences} in body.
      */
     @GetMapping("/my-preferences")
     public ResponseEntity<Preferences> getUserPreferences() {

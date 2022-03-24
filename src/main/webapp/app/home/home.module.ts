@@ -6,7 +6,7 @@ import { HOME_ROUTE } from './home.route';
 import { HomeComponent } from './home.component';
 import { AboutComponent } from '../about/about.component';
 import { HistoryComponent } from '../history/history.component';
-/*import { NvD3Module } from 'ng2-nvd3';
+/* import { NvD3Module } from 'ng2-nvd3';
 import 'd3';
 import 'nvd3';*/
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -16,7 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 @NgModule({
   imports: [
     SharedModule,
-    //NvD3Module,
+    // NvD3Module,
     BrowserAnimationsModule,
     CalendarModule.forRoot({
       provide: DateAdapter,

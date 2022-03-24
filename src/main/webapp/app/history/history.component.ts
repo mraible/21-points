@@ -86,7 +86,7 @@ export class HistoryComponent implements OnInit {
     // this.registerForChanges();
   }
 
-  /*ngOnDestroy() {
+  /* ngOnDestroy() {
     this.eventManager.destroy(this.eventSubscriber);
   }*/
 
@@ -235,7 +235,7 @@ export class HistoryComponent implements OnInit {
     action = action === 'Clicked' ? 'edit' : action;
     this.modalData = { event, action };
     const url = '';
-    /*let url = this.router.createUrlTree(['/', {outlets: {popup: event.meta.entity + '/' + event.meta.id + '/' + action}}]);
+    /* let url = this.router.createUrlTree(['/', {outlets: {popup: event.meta.entity + '/' + event.meta.id + '/' + action}}]);
     if (action === 'edit') {
       url = this.router.createUrlTree(['/' + event.meta.entity, event.meta.id, 'edit']);
     }*/

@@ -3,6 +3,7 @@ declare const d3, nv: any;
 /**
  * ChartService to define the chart config for D3
  */
+/*
 export class D3ChartService {
   static getChartConfig(): any {
     const today = new Date();
@@ -44,4 +45,4 @@ export class D3ChartService {
       },
     };
   }
-}
+}*/

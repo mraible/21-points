@@ -1,8 +1,8 @@
 package org.jhipster.health.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
-import io.micrometer.core.annotation.Timed;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.DayOfWeek;
@@ -12,8 +12,6 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -25,6 +23,7 @@ import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+import org.jhipster.health.web.rest.vm.BloodPressureByPeriod;
 import org.jhipster.health.web.rest.vm.PointsPerMonth;
 import org.jhipster.health.web.rest.vm.PointsPerWeek;
 import org.slf4j.Logger;
@@ -74,7 +73,9 @@ public class PointsResource {
      * {@code POST  /points} : Create a new points.
      *
      * @param points the points to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new points, or with status {@code 400 (Bad Request)} if the points has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new points,
+     * status {@code 403 (Forbidden)} if the points aren't assigned to the current user,
+     * or with status {@code 400 (Bad Request)} if the points has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/points")
@@ -101,10 +102,11 @@ public class PointsResource {
     /**
      * {@code PUT  /points/:id} : Updates an existing points.
      *
-     * @param id the id of the points to save.
+     * @param id     the id of the points to save.
      * @param points the points to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated points,
      * or with status {@code 400 (Bad Request)} if the points is not valid,
+     * or with status {@code 403 (Forbidden)} if the points are not the current user's,
      * or with status {@code 500 (Internal Server Error)} if the points couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
@@ -136,7 +138,7 @@ public class PointsResource {
     /**
      * {@code PATCH  /points/:id} : Partial updates given fields of an existing points, field will ignore if it is null
      *
-     * @param id the id of the points to save.
+     * @param id     the id of the points to save.
      * @param points the points to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated points,
      * or with status {@code 400 (Bad Request)} if the points is not valid,
@@ -198,7 +200,7 @@ public class PointsResource {
     /**
      * {@code GET  /points} : get all the points.
      *
-     * @param pageable the pagination information.
+     * @param pageable  the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of points in body.
      */
@@ -219,10 +221,11 @@ public class PointsResource {
     }
 
     /**
-     * GET  /points : get all the points for the current week.
+     * {@code GET  /points} : get all the points for the current week.
+     * @param timezone the user's timezone.
+     * @return a {@link ResponseEntity} with status {@code 200 (OK)} and {@link PointsPerWeek} in body.
      */
     @GetMapping("/points-this-week")
-    @Timed
     public ResponseEntity<PointsPerWeek> getPointsThisWeek(@RequestParam(value = "tz", required = false) String timezone) {
         // Get current date (with timezone if passed in)
         LocalDate now = LocalDate.now();
@@ -245,10 +248,11 @@ public class PointsResource {
     }
 
     /**
-     * GET  /points-by-week/yyyy-MM-dd : get all the points for a particular week.
+     * {@code GET  /points-by-week/yyyy-MM-dd} : get all the points for a particular week.
+     * @param date a date within the week.
+     * @return a {@link ResponseEntity} with status {@code 200 (OK)} and {@link PointsPerWeek} in body.
      */
     @GetMapping("/points-by-week/{date}")
-    @Timed
     public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         // Get first and last days of week
         LocalDate startOfWeek = date.with(DayOfWeek.MONDAY);
@@ -269,7 +273,9 @@ public class PointsResource {
     }
 
     /**
-     * GET  /points-by-month : get all the points for a particular current month.
+     * {@code GET  /points-by-month} : get all the points for a particular current month.
+     * @param yearWithMonth the year and month in yyyy-MM format
+     * @return a {@link ResponseEntity} with status {@code 200 (OK)} and {@link PointsPerMonth} in body.
      */
     @GetMapping("/points-by-month/{yearWithMonth}")
     public ResponseEntity<PointsPerMonth> getPointsByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearWithMonth) {
@@ -333,7 +339,7 @@ public class PointsResource {
      * {@code SEARCH  /_search/points?query=:query} : search for the points corresponding
      * to the query.
      *
-     * @param query the query of the points search.
+     * @param query    the query of the points search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */

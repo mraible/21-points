@@ -218,10 +218,11 @@ public class BloodPressureResource {
     }
 
     /**
-     * GET  /bp-by-days : get all the blood pressure readings by last x days.
+     * {@code GET  /bp-by-days} : get all the blood pressure readings by last x days.
+     * @param days the number of days to retrieve
+     * @return a {@link ResponseEntity} with status {@code 200 (OK)} and a {@link BloodPressureByPeriod} in body.
      */
     @GetMapping("/bp-by-days/{days}")
-    @Timed
     public ResponseEntity<BloodPressureByPeriod> getByDays(@PathVariable int days) {
         ZonedDateTime rightNow = ZonedDateTime.now(ZoneOffset.UTC);
         ZonedDateTime daysAgo = rightNow.minusDays(days);
@@ -236,7 +237,9 @@ public class BloodPressureResource {
     }
 
     /**
-     * GET  /bp-by-month : get all the blood pressure readings for a particular month.
+     * {@code GET  /bp-by-month} : get all the blood pressure readings for a particular month.
+     * @param date the date in a month with format yyyy-MM
+     * @return a {@link ResponseEntity} with status {@code 200 (OK)} and a {@link BloodPressureByPeriod} in body.
      */
     @GetMapping("/bp-by-month/{date}")
     public ResponseEntity<BloodPressureByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
