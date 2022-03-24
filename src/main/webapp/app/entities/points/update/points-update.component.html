@@ -36,18 +36,31 @@
         </div>
 
         <div class="row mb-3">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.exercise" for="field_exercise">Exercise</label>
-          <input type="number" class="form-control" name="exercise" id="field_exercise" data-cy="exercise" formControlName="exercise" />
+          <label class="form-check-label" for="field_exercise">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              name="exercise"
+              id="field_exercise"
+              data-cy="exercise"
+              formControlName="exercise"
+            />
+            <span jhiTranslate="twentyOnePointsApp.points.exercise" for="field_exercise">Exercise</span>
+          </label>
         </div>
 
         <div class="row mb-3">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.meals" for="field_meals">Meals</label>
-          <input type="number" class="form-control" name="meals" id="field_meals" data-cy="meals" formControlName="meals" />
+          <label class="form-check-label" for="field_meals">
+            <input type="checkbox" class="form-check-input" name="meals" id="field_meals" data-cy="meals" formControlName="meals" />
+            <span jhiTranslate="twentyOnePointsApp.points.meals" for="field_meals">Meals</span>
+          </label>
         </div>
 
         <div class="row mb-3">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.alcohol" for="field_alcohol">Alcohol</label>
-          <input type="number" class="form-control" name="alcohol" id="field_alcohol" data-cy="alcohol" formControlName="alcohol" />
+          <label class="form-check-label" for="field_alcohol">
+            <input type="checkbox" class="form-check-input" name="alcohol" id="field_alcohol" data-cy="alcohol" formControlName="alcohol" />
+            <span jhiTranslate="twentyOnePointsApp.points.alcohol">Alcohol</span>
+          </label>
         </div>
 
         <div class="row mb-3">

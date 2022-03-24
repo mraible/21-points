@@ -56,7 +56,6 @@
     <table class="table table-striped" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col" jhiSortBy="date">
             <span jhiTranslate="twentyOnePointsApp.points.date">Date</span> <fa-icon icon="sort"></fa-icon>
           </th>
@@ -80,14 +79,33 @@
       </thead>
       <tbody>
         <tr *ngFor="let points of points; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/points', points.id, 'view']">{{ points.id }}</a>
+          <td class="text-nowrap">
+            <a routerLink="['/points', points.id, 'view' ]">{{ points.date?.toDate() | date: 'mediumDate' }}</a>
           </td>
-          <td>{{ points.date | formatMediumDate }}</td>
-          <td>{{ points.exercise }}</td>
-          <td>{{ points.meals }}</td>
-          <td>{{ points.alcohol }}</td>
-          <td>{{ points.notes }}</td>
+          <td class="text-center">
+            <fa-icon
+              [icon]="points.exercise ? 'check' : 'times'"
+              aria-hidden="true"
+              class="{{ points.exercise ? 'text-success' : 'text-danger' }}"
+            ></fa-icon>
+          </td>
+          <td class="text-center">
+            <fa-icon
+              [icon]="points.meals ? 'check' : 'times'"
+              aria-hidden="true"
+              class="{{ points.meals ? 'text-success' : 'text-danger' }}"
+            ></fa-icon>
+          </td>
+          <td class="text-center">
+            <fa-icon
+              [icon]="points.alcohol ? 'check' : 'times'"
+              aria-hidden="true"
+              class="{{ points.alcohol ? 'text-success' : 'text-danger' }}"
+            ></fa-icon>
+          </td>
+          <td>
+            <div class="truncate" [ngbPopover]="points.notes">{{ points.notes }}</div>
+          </td>
           <td>
             {{ points.user?.login }}
           </td>

@@ -152,13 +152,9 @@ describe('Points e2e test', () => {
 
     it('should create an instance of Points', () => {
       cy.get(`[data-cy="date"]`).type('2017-07-24').should('have.value', '2017-07-24');
-
-      cy.get(`[data-cy="exercise"]`).type('52358').should('have.value', '52358');
-
-      cy.get(`[data-cy="meals"]`).type('70382').should('have.value', '70382');
-
-      cy.get(`[data-cy="alcohol"]`).type('36843').should('have.value', '36843');
-
+      cy.get(`[data-cy="exercise"]`).check();
+      cy.get(`[data-cy="meals"]`).check();
+      cy.get(`[data-cy="alcohol"]`).check();
       cy.get(`[data-cy="notes"]`).type('Guinea connecting users').should('have.value', 'Guinea connecting users');
 
       cy.get(entityCreateSaveButtonSelector).click();
