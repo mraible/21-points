@@ -15,7 +15,6 @@ import { UserService } from 'app/entities/user/user.service';
   templateUrl: './points-update.component.html',
 })
 export class PointsUpdateComponent implements OnInit {
-  points!: IPoints;
   isSaving = false;
 
   usersSharedCollection: IUser[] = [];
