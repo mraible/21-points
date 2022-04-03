@@ -1,72 +1,105 @@
 package org.jhipster.health.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.github.vanroy.springdata.jest.JestElasticsearchTemplate;
-import com.github.vanroy.springdata.jest.mapper.DefaultJestResultsMapper;
-import io.searchbox.client.JestClient;
-import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.EntityMapper;
-import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
-import org.springframework.data.elasticsearch.core.mapping.SimpleElasticsearchMappingContext;
-
-import java.io.IOException;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.convert.ReadingConverter;
+import org.springframework.data.convert.WritingConverter;
+import org.springframework.data.elasticsearch.config.ElasticsearchConfigurationSupport;
+import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
 
 @Configuration
-@EnableConfigurationProperties(ElasticsearchProperties.class)
-public class ElasticsearchConfiguration {
-
-    private ObjectMapper mapper;
-
-    public ElasticsearchConfiguration(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+public class ElasticsearchConfiguration extends ElasticsearchConfigurationSupport {
 
     @Bean
-    public EntityMapper getEntityMapper() {
-        return new CustomEntityMapper(mapper);
+    @Override
+    public ElasticsearchCustomConversions elasticsearchCustomConversions() {
+        return new ElasticsearchCustomConversions(
+            Arrays.asList(
+                new ZonedDateTimeWritingConverter(),
+                new ZonedDateTimeReadingConverter(),
+                new InstantWritingConverter(),
+                new InstantReadingConverter(),
+                new LocalDateWritingConverter(),
+                new LocalDateReadingConverter()
+            )
+        );
     }
 
-    @Bean
-    @Primary
-    public ElasticsearchOperations elasticsearchTemplate(final JestClient jestClient,
-                                                         final ElasticsearchConverter elasticsearchConverter,
-                                                         final SimpleElasticsearchMappingContext simpleElasticsearchMappingContext,
-                                                         EntityMapper mapper) {
-        return new JestElasticsearchTemplate(
-            jestClient,
-            elasticsearchConverter,
-            new DefaultJestResultsMapper(simpleElasticsearchMappingContext, mapper));
-    }
-
-    public class CustomEntityMapper implements EntityMapper {
-
-        private ObjectMapper objectMapper;
-
-        public CustomEntityMapper(ObjectMapper objectMapper) {
-            this.objectMapper = objectMapper;
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-            objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
-            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
-            objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
-        }
+    @WritingConverter
+    static class ZonedDateTimeWritingConverter implements Converter<ZonedDateTime, String> {
 
         @Override
-        public String mapToString(Object object) throws IOException {
-            return objectMapper.writeValueAsString(object);
-        }
-
-        @Override
-        public <T> T mapToObject(String source, Class<T> clazz) throws IOException {
-            return objectMapper.readValue(source, clazz);
+        public String convert(ZonedDateTime source) {
+            if (source == null) {
+                return null;
+            }
+            return source.toInstant().toString();
         }
     }
 
+    @ReadingConverter
+    static class ZonedDateTimeReadingConverter implements Converter<String, ZonedDateTime> {
+
+        @Override
+        public ZonedDateTime convert(String source) {
+            if (source == null) {
+                return null;
+            }
+            return Instant.parse(source).atZone(ZoneId.systemDefault());
+        }
+    }
+
+    @WritingConverter
+    static class InstantWritingConverter implements Converter<Instant, String> {
+
+        @Override
+        public String convert(Instant source) {
+            if (source == null) {
+                return null;
+            }
+            return source.toString();
+        }
+    }
+
+    @ReadingConverter
+    static class InstantReadingConverter implements Converter<String, Instant> {
+
+        @Override
+        public Instant convert(String source) {
+            if (source == null) {
+                return null;
+            }
+            return Instant.parse(source);
+        }
+    }
+
+    @WritingConverter
+    static class LocalDateWritingConverter implements Converter<LocalDate, String> {
+
+        @Override
+        public String convert(LocalDate source) {
+            if (source == null) {
+                return null;
+            }
+            return source.toString();
+        }
+    }
+
+    @ReadingConverter
+    static class LocalDateReadingConverter implements Converter<String, LocalDate> {
+
+        @Override
+        public LocalDate convert(String source) {
+            if (source == null) {
+                return null;
+            }
+            return LocalDate.parse(source);
+        }
+    }
 }

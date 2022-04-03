@@ -4,56 +4,50 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
 
-import { SERVER_API_URL } from 'app/app.constants';
+import { ApplicationConfigService } from '../config/application-config.service';
+import { Login } from 'app/login/login.model';
+
+type JwtToken = {
+  id_token: string;
+};
 
 @Injectable({ providedIn: 'root' })
 export class AuthServerProvider {
-    constructor(private http: HttpClient, private $localStorage: LocalStorageService, private $sessionStorage: SessionStorageService) {}
+  constructor(
+    private http: HttpClient,
+    private localStorageService: LocalStorageService,
+    private sessionStorageService: SessionStorageService,
+    private applicationConfigService: ApplicationConfigService
+  ) {}
 
-    getToken() {
-        return this.$localStorage.retrieve('authenticationToken') || this.$sessionStorage.retrieve('authenticationToken');
+  getToken(): string {
+    const tokenInLocalStorage: string | null = this.localStorageService.retrieve('authenticationToken');
+    const tokenInSessionStorage: string | null = this.sessionStorageService.retrieve('authenticationToken');
+    return tokenInLocalStorage ?? tokenInSessionStorage ?? '';
+  }
+
+  login(credentials: Login): Observable<void> {
+    return this.http
+      .post<JwtToken>(this.applicationConfigService.getEndpointFor('api/authenticate'), credentials)
+      .pipe(map(response => this.authenticateSuccess(response, credentials.rememberMe)));
+  }
+
+  logout(): Observable<void> {
+    return new Observable(observer => {
+      this.localStorageService.clear('authenticationToken');
+      this.sessionStorageService.clear('authenticationToken');
+      observer.complete();
+    });
+  }
+
+  private authenticateSuccess(response: JwtToken, rememberMe: boolean): void {
+    const jwt = response.id_token;
+    if (rememberMe) {
+      this.localStorageService.store('authenticationToken', jwt);
+      this.sessionStorageService.clear('authenticationToken');
+    } else {
+      this.sessionStorageService.store('authenticationToken', jwt);
+      this.localStorageService.clear('authenticationToken');
     }
-
-    login(credentials): Observable<any> {
-        const data = {
-            username: credentials.username,
-            password: credentials.password,
-            rememberMe: credentials.rememberMe
-        };
-        return this.http.post(SERVER_API_URL + 'api/authenticate', data, { observe: 'response' }).pipe(map(authenticateSuccess.bind(this)));
-
-        function authenticateSuccess(resp) {
-            const bearerToken = resp.headers.get('Authorization');
-            if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
-                const jwt = bearerToken.slice(7, bearerToken.length);
-                this.storeAuthenticationToken(jwt, credentials.rememberMe);
-                return jwt;
-            }
-        }
-    }
-
-    loginWithToken(jwt, rememberMe) {
-        if (jwt) {
-            this.storeAuthenticationToken(jwt, rememberMe);
-            return Promise.resolve(jwt);
-        } else {
-            return Promise.reject('auth-jwt-service Promise reject'); // Put appropriate error message here
-        }
-    }
-
-    storeAuthenticationToken(jwt, rememberMe) {
-        if (rememberMe) {
-            this.$localStorage.store('authenticationToken', jwt);
-        } else {
-            this.$sessionStorage.store('authenticationToken', jwt);
-        }
-    }
-
-    logout(): Observable<any> {
-        return new Observable(observer => {
-            this.$localStorage.clear('authenticationToken');
-            this.$sessionStorage.clear('authenticationToken');
-            observer.complete();
-        });
-    }
+  }
 }
