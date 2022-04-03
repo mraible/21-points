@@ -1,0 +1,41 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+version: '3.8'
+services:
+  twentyonepoints-app:
+    image: twentyonepoints
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://twentyonepoints-postgresql:5432/TwentyOnePoints
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://twentyonepoints-postgresql:5432/TwentyOnePoints
+      - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
+      - SPRING_ELASTICSEARCH_URIS=http://twentyonepoints-elasticsearch:9200
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - 127.0.0.1:8080:8080
+  twentyonepoints-postgresql:
+    image: postgres:14.2
+    # volumes:
+    #   - ~/volumes/jhipster/TwentyOnePoints/postgresql/:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=TwentyOnePoints
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - 127.0.0.1:5432:5432
+  twentyonepoints-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
+    # volumes:
+    #   - ~/volumes/jhipster/TwentyOnePoints/elasticsearch/:/usr/share/elasticsearch/data/
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - 127.0.0.1:9200:9200
+      - 127.0.0.1:9300:9300
+    environment:
+      - 'ES_JAVA_OPTS=-Xms1024m -Xmx1024m'
+      - 'discovery.type=single-node'
