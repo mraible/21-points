@@ -13,7 +13,7 @@
       "updated": "Le Preferences avec l'identifiant {{ param }} a été mis à jour",
       "deleted": "Le Preferences avec l'identifiant {{ param }} a été supprimé",
       "delete": {
-        "question": "Etes-vous certain de vouloir supprimer le Preferences {{ id }} ?"
+        "question": "Êtes-vous certain de vouloir supprimer le Preferences {{ id }} ?"
       },
       "detail": {
         "title": "Preferences"

@@ -13,7 +13,7 @@
       "updated": "Le Weight avec l'identifiant {{ param }} a été mis à jour",
       "deleted": "Le Weight avec l'identifiant {{ param }} a été supprimé",
       "delete": {
-        "question": "Etes-vous certain de vouloir supprimer le Weight {{ id }} ?"
+        "question": "Êtes-vous certain de vouloir supprimer le Weight {{ id }} ?"
       },
       "detail": {
         "title": "Weight"
