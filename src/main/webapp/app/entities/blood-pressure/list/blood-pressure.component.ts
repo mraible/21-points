@@ -105,7 +105,7 @@ export class BloodPressureComponent implements OnInit {
     this.loadAll();
   }
 
-  trackId(index: number, item: IBloodPressure): number {
+  trackId(_index: number, item: IBloodPressure): number {
     return item.id!;
   }
 

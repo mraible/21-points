@@ -13,7 +13,7 @@
       "updated": "Poids mis à jour avec succès.",
       "deleted": "Poids supprimé.",
       "delete": {
-        "question": "Etes-vous certain de vouloir supprimer cela ?"
+        "question": "Êtes-vous certain de vouloir supprimer cela ?"
       },
       "detail": {
         "title": "Voir Poids"

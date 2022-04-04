@@ -63,7 +63,7 @@ export class PreferencesComponent implements OnInit {
     this.loadAll();
   }
 
-  trackId(index: number, item: IPreferences): number {
+  trackId(_index: number, item: IPreferences): number {
     return item.id!;
   }
 

@@ -31,7 +31,7 @@ description = "21-Points Health is an app you can use to monitor your health."
 
 sourceCompatibility=11
 targetCompatibility=11
-assert System.properties["java.specification.version"] == "11" || "12" || "13" || "14" || "15" || "16" || "17"
+assert System.properties["java.specification.version"] == "11" || "12" || "13" || "14" || "15" || "16" || "17" || "18"
 
 apply from: "gradle/docker.gradle"
 apply from: "gradle/sonar.gradle"
@@ -247,6 +247,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
     implementation "org.zalando:problem-spring-web"
     implementation "org.springframework.security:spring-security-config"
+    implementation "org.springframework.security:spring-security-data"
     implementation "org.springframework.security:spring-security-web"
     implementation "io.jsonwebtoken:jjwt-api"
     if (!project.hasProperty("gae")) {
@@ -292,7 +293,7 @@ task cleanResources(type: Delete) {
 }
 
 wrapper {
-    gradleVersion = "7.3.1"
+    gradleVersion = "7.4.2"
 }
 
 task webapp_test(type: NpmTask, dependsOn: "npm_install") {
@@ -306,7 +307,7 @@ if (project.hasProperty("nodeInstall")) {
     Boolean downloadNode = !os.isMacOsX() || arch.isAmd64()
     node {
         version = "16.14.0"
-        npmVersion = "8.4.1"
+        npmVersion = "8.6.0"
         download = downloadNode
     }
 
