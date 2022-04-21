@@ -1,0 +1,45 @@
+dependencies {
+    testImplementation "com.h2database:h2"
+}
+
+def profiles = "prod"
+if (project.hasProperty("no-liquibase")) {
+    profiles += ",no-liquibase"
+}
+
+if (project.hasProperty("api-docs")) {
+    profiles += ",api-docs"
+}
+
+if (project.hasProperty("e2e")) {
+    profiles += ",e2e"
+}
+
+springBoot {
+    buildInfo()
+}
+
+bootRun {
+    args = []
+}
+
+task webapp(type: NpmTask, dependsOn: "npm_install") {
+    args = ["run", "webapp:prod"]
+    environment = [APP_VERSION: project.version]
+}
+
+processResources {
+    inputs.property('version', version)
+    inputs.property('springProfiles', profiles)
+    filesMatching("**/application.yml") {
+        filter {
+            it.replace("#project.version#", version)
+        }
+        filter {
+            it.replace("#spring.profiles.active#", profiles)
+        }
+    }
+}
+
+processResources.dependsOn webapp
+bootJar.dependsOn processResources

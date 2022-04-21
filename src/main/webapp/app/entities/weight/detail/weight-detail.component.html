@@ -1,0 +1,40 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="weight">
+      <h2 data-cy="weightDetailsHeading"><span jhiTranslate="twentyOnePointsApp.weight.detail.title">Weight</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ weight.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="twentyOnePointsApp.weight.timestamp">Timestamp</span></dt>
+        <dd>
+          <span>{{ weight.timestamp | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="twentyOnePointsApp.weight.weight">Weight</span></dt>
+        <dd>
+          <span>{{ weight.weight }}</span>
+        </dd>
+        <dt><span jhiTranslate="twentyOnePointsApp.weight.user">User</span></dt>
+        <dd>
+          <span>{{ weight.user?.login }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/weight', weight.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>
