@@ -4,7 +4,7 @@
 
 > To track your health and improve your life. 😊
 
-This application was generated using [JHipster 7.7.0](https://www.jhipster.tech/2022/02/27/jhipster-release-7.7.0.html), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
+This application was generated using [JHipster 7.8.1](https://www.jhipster.tech/2022/04/07/jhipster-release-7.8.1.html), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
 
 ## Project Structure
 
@@ -239,7 +239,7 @@ For more information refer to [Using Docker and Docker-Compose][], this page als
 To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
 
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 7.7.0 archive]: https://www.jhipster.tech
+[jhipster 7.8.1 archive]: https://www.jhipster.tech
 [using jhipster in development]: https://www.jhipster.tech/development/
 [using docker and docker-compose]: https://www.jhipster.tech/docker-compose
 [using jhipster in production]: https://www.jhipster.tech/production/
@@ -256,9 +256,3 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [definitelytyped]: https://definitelytyped.org/
 [angular cli]: https://cli.angular.io/
 [gatling]: https://gatling.io/
-[travis-image]: https://travis-ci.org/mraible/21-points.svg?branch=master
-[travis-url]: https://travis-ci.org/mraible/21-points
-[daviddm-image]: https://david-dm.org/mraible/21-points/dev-status.svg
-[daviddm-url]: https://david-dm.org/mraible/21-points?type=dev
-[sonar-url]: https://sonarcloud.io/dashboard?id=mraible_21-points
-[sonar-quality-gate]: https://sonarcloud.io/api/project_badges/measure?project=mraible_21-points&metric=alert_status

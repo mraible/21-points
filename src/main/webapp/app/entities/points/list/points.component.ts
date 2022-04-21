@@ -90,7 +90,7 @@ export class PointsComponent implements OnInit {
     this.handleNavigation();
   }
 
-  trackId(index: number, item: IPoints): number {
+  trackId(_index: number, item: IPoints): number {
     return item.id!;
   }
 

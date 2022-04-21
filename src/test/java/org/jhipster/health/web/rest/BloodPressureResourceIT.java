@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -61,6 +62,9 @@ class BloodPressureResourceIT {
 
     @Autowired
     private BloodPressureRepository bloodPressureRepository;
+
+    @Mock
+    private BloodPressureRepository bloodPressureRepositoryMock;
 
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
@@ -219,6 +223,24 @@ class BloodPressureResourceIT {
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
             .andExpect(jsonPath("$.[*].systolic").value(hasItem(DEFAULT_SYSTOLIC)))
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllBloodPressuresWithEagerRelationshipsIsEnabled() throws Exception {
+        when(bloodPressureRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restBloodPressureMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(bloodPressureRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllBloodPressuresWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(bloodPressureRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restBloodPressureMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(bloodPressureRepositoryMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test

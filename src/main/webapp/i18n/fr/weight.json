@@ -2,24 +2,24 @@
   "twentyOnePointsApp": {
     "weight": {
       "home": {
-        "title": "Poids",
+        "title": "Weights",
         "refreshListLabel": "Actualiser la liste",
-        "createLabel": "Ajouter Poids",
-        "createOrEditLabel": "Modifier Poids",
+        "createLabel": "Créer un nouveau Weight",
+        "createOrEditLabel": "Créer ou éditer un Weight",
         "search": "Recherche pour Weight",
         "notFound": "Aucun Weight trouvé"
       },
-      "created": "Poids ajouté avec succès.",
-      "updated": "Poids mis à jour avec succès.",
-      "deleted": "Poids supprimé.",
+      "created": "Un nouveau Weight a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Weight avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Weight avec l'identifiant {{ param }} a été supprimé",
       "delete": {
-        "question": "Etes-vous certain de vouloir supprimer cela ?"
+        "question": "Etes-vous certain de vouloir supprimer le Weight {{ id }} ?"
       },
       "detail": {
-        "title": "Voir Poids"
+        "title": "Weight"
       },
       "id": "ID",
-      "timestamp": "Date/Heure",
+      "timestamp": "Timestamp",
       "weight": "Weight",
       "user": "User"
     }

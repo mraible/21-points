@@ -101,11 +101,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .and()
             .httpBasic()
         .and()
-            .apply(securityConfigurerAdapter())
-        .and()
-            .requiresChannel()
-            .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
-            .requiresSecure();
+            .apply(securityConfigurerAdapter());
         // @formatter:on
     }
 
