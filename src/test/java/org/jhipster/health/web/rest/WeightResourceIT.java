@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -58,6 +59,9 @@ class WeightResourceIT {
 
     @Autowired
     private WeightRepository weightRepository;
+
+    @Mock
+    private WeightRepository weightRepositoryMock;
 
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
@@ -191,6 +195,24 @@ class WeightResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(weight.getId().intValue())))
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
             .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.doubleValue())));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllWeightsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(weightRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restWeightMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(weightRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllWeightsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(weightRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restWeightMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(weightRepositoryMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test

@@ -13,7 +13,7 @@
       "updated": "Le Blood Pressure avec l'identifiant {{ param }} a été mis à jour",
       "deleted": "Le Blood Pressure avec l'identifiant {{ param }} a été supprimé",
       "delete": {
-        "question": "Etes-vous certain de vouloir supprimer le Blood Pressure {{ id }} ?"
+        "question": "Êtes-vous certain de vouloir supprimer le Blood Pressure {{ id }} ?"
       },
       "detail": {
         "title": "Blood Pressure"

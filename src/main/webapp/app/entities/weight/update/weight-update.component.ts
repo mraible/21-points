@@ -63,7 +63,7 @@ export class WeightUpdateComponent implements OnInit {
     }
   }
 
-  trackUserById(index: number, item: IUser): number {
+  trackUserById(_index: number, item: IUser): number {
     return item.id!;
   }
 

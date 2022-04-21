@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -64,6 +65,9 @@ class PointsResourceIT {
 
     @Autowired
     private PointsRepository pointsRepository;
+
+    @Mock
+    private PointsRepository pointsRepositoryMock;
 
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
@@ -196,6 +200,24 @@ class PointsResourceIT {
             .andExpect(jsonPath("$.[*].meals").value(hasItem(DEFAULT_MEALS)))
             .andExpect(jsonPath("$.[*].alcohol").value(hasItem(DEFAULT_ALCOHOL)))
             .andExpect(jsonPath("$.[*].notes").value(hasItem(DEFAULT_NOTES)));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllPointsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(pointsRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restPointsMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(pointsRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllPointsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(pointsRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restPointsMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(pointsRepositoryMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test
