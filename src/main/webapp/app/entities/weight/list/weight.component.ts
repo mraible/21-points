@@ -105,7 +105,7 @@ export class WeightComponent implements OnInit {
     this.loadAll();
   }
 
-  trackId(index: number, item: IWeight): number {
+  trackId(_index: number, item: IWeight): number {
     return item.id!;
   }
 

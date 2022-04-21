@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +25,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -53,6 +56,9 @@ class PreferencesResourceIT {
 
     @Autowired
     private PreferencesRepository preferencesRepository;
+
+    @Mock
+    private PreferencesRepository preferencesRepositoryMock;
 
     /**
      * This repository is mocked in the org.jhipster.health.repository.search test package.
@@ -186,6 +192,24 @@ class PreferencesResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().intValue())))
             .andExpect(jsonPath("$.[*].weeklyGoal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
             .andExpect(jsonPath("$.[*].weightUnits").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllPreferencesWithEagerRelationshipsIsEnabled() throws Exception {
+        when(preferencesRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restPreferencesMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(preferencesRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllPreferencesWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(preferencesRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restPreferencesMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(preferencesRepositoryMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test
