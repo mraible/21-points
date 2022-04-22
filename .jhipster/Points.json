@@ -1,0 +1,43 @@
+{
+  "changelogDate": "20170725030037",
+  "dto": "no",
+  "entityTableName": "points",
+  "fields": [
+    {
+      "fieldName": "date",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "exercise",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "meals",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "alcohol",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "140"
+    }
+  ],
+  "fluentMethods": true,
+  "name": "Points",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "login",
+      "otherEntityName": "user",
+      "ownerSide": true,
+      "relationshipName": "user",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "no"
+}

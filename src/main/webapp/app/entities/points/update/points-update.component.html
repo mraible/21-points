@@ -1,0 +1,99 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-points-heading" data-cy="PointsCreateUpdateHeading" jhiTranslate="twentyOnePointsApp.points.home.createOrEditLabel">
+        Create or edit a Points
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.date" for="field_date">Date</label>
+          <div class="input-group">
+            <input
+              id="field_date"
+              data-cy="date"
+              type="text"
+              class="form-control"
+              name="date"
+              ngbDatepicker
+              #dateDp="ngbDatepicker"
+              formControlName="date"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+          </div>
+          <div *ngIf="editForm.get('date')!.invalid && (editForm.get('date')!.dirty || editForm.get('date')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('date')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.exercise" for="field_exercise">Exercise</label>
+          <input type="number" class="form-control" name="exercise" id="field_exercise" data-cy="exercise" formControlName="exercise" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.meals" for="field_meals">Meals</label>
+          <input type="number" class="form-control" name="meals" id="field_meals" data-cy="meals" formControlName="meals" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.alcohol" for="field_alcohol">Alcohol</label>
+          <input type="number" class="form-control" name="alcohol" id="field_alcohol" data-cy="alcohol" formControlName="alcohol" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.notes" for="field_notes">Notes</label>
+          <input type="text" class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes" />
+          <div *ngIf="editForm.get('notes')!.invalid && (editForm.get('notes')!.dirty || editForm.get('notes')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('notes')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 140 }"
+            >
+              This field cannot be longer than 140 characters.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.user" for="field_user">User</label>
+          <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="userOption.id === editForm.get('user')!.value?.id ? editForm.get('user')!.value : userOption"
+              *ngFor="let userOption of usersSharedCollection; trackBy: trackUserById"
+            >
+              {{ userOption.login }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
