@@ -26,7 +26,7 @@
     "herokuDeployType": "git",
     "hibernateCache": "ehcache",
     "jhiPrefix": "jhi",
-    "jhipsterVersion": "7.8.0",
+    "jhipsterVersion": "7.8.1",
     "jwtSecretKey": "MDAwMjVjNjQ4OWMyNzNhNmUyOGM3NjJjNWVkMzgzNzQ5OGM3ZGVjMjM3NzdjYTA0OTNhNTI5MjhiZjI2MmZmMDBlMGNjODQzNTRiNTI1MzQyMTg3MzIwYjE0OGJlZjlmYzhmNDQ3MjA5Mzg2N2VmYWFmOTgwNGM4ODMxMTMzOTQ",
     "languages": ["en", "fr"],
     "messageBroker": false,
