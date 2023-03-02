@@ -2,8 +2,9 @@
 # Project Specific
 ######################
 /src/main/webapp/content/css/main.css
-/build/www/**
+/build/resources/main/static/**
 /src/test/javascript/coverage/
+/src/main/generated/
 
 ######################
 # Node
@@ -51,8 +52,11 @@ local.properties
 # PDT-specific
 .buildpath
 
+# STS-specific
+/.sts4-cache/*
+
 ######################
-# Intellij
+# IntelliJ
 ######################
 .idea/
 *.iml
@@ -66,7 +70,12 @@ out/
 ######################
 # Visual Studio Code
 ######################
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
 
 ######################
 # Maven
@@ -84,6 +93,7 @@ out/
 # Package Files
 ######################
 *.jar
+!newrelic-agent.jar
 *.war
 *.ear
 *.db
@@ -143,3 +153,9 @@ Desktop.ini
 # ESLint
 ######################
 .eslintcache
+
+######################
+# Code coverage
+######################
+/coverage/
+/.nyc_output/

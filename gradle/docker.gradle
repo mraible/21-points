@@ -1,28 +1,29 @@
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:0.9.11"
-    }
-}
-
-apply plugin: com.google.cloud.tools.jib.gradle.JibPlugin
-
 jib {
     from {
-        image = 'openjdk:8-jre-alpine'
+        image = "eclipse-temurin:11-jre-focal"
+        platforms {
+            platform {
+                architecture = "${findProperty('jibArchitecture') ?: 'amd64'}"
+                os = "linux"
+            }
+        }
     }
     to {
-        image = 'twentyonepoints:latest'
+        image = "twentyonepoints:latest"
     }
     container {
-        entrypoint = ['sh', '-c', 'chmod +x /entrypoint.sh && sync && /entrypoint.sh']
-        ports = ['8080']
+        entrypoint = ["bash", "-c", "/entrypoint.sh"]
+        ports = ["8080"]
         environment = [
-            SPRING_OUTPUT_ANSI_ENABLED: 'ALWAYS',
-            JHIPSTER_SLEEP: '0'
+            SPRING_OUTPUT_ANSI_ENABLED: "ALWAYS",
+            JHIPSTER_SLEEP: "0"
         ]
-        useCurrentTimestamp = true
+        creationTime = "USE_CURRENT_TIMESTAMP"
+        user = 1000
+    }
+    extraDirectories {
+      paths = file("src/main/docker/jib")
+      permissions = ["/entrypoint.sh": "755"]
     }
 }
+

@@ -11,22 +11,20 @@
 # ===================================================================
 
 eureka:
-    instance:
-        hostname: health-by-points.herokuapp.com
-        non-secure-port: 80
-        prefer-ip-address: false
-    client:
-        service-url:
-            defaultZone: ${JHIPSTER_REGISTRY_URL}/eureka/
+  instance:
+    hostname: health-by-pints.herokuapp.com
+    non-secure-port: 80
+    prefer-ip-address: false
 
 spring:
-    datasource:
-        type: com.zaxxer.hikari.HikariDataSource
-        url: ${JDBC_DATABASE_URL}
-        username: ${JDBC_DATABASE_USERNAME}
-        password: ${JDBC_DATABASE_PASSWORD}
-        hikari:
-            maximumPoolSize: 8
-    data:
-        jest:
-            uri: ${BONSAI_URL}
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    hikari:
+      maximumPoolSize: 8
+  elasticsearch:
+    uris: ${ELASTIC_URL}
+server:
+  port: ${PORT:8080}

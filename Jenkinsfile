@@ -14,13 +14,17 @@ node {
         sh "./gradlew clean --no-daemon"
     }
 
-    stage('install tools') {
-        sh "./gradlew yarn_install -PnodeInstall --no-daemon"
+    stage('nohttp') {
+        sh "./gradlew checkstyleNohttp --no-daemon"
+    }
+
+    stage('npm install') {
+        sh "./gradlew npm_install -PnodeInstall --no-daemon"
     }
 
     stage('backend tests') {
         try {
-            sh "./gradlew test -PnodeInstall --no-daemon"
+            sh "./gradlew test integrationTest -PnodeInstall --no-daemon"
         } catch(err) {
             throw err
         } finally {
@@ -30,30 +34,29 @@ node {
 
     stage('frontend tests') {
         try {
-            sh "./gradlew yarn_test -PnodeInstall --no-daemon"
+            sh "./gradlew npm_run_test -PnodeInstall --no-daemon"
         } catch(err) {
             throw err
         } finally {
-            junit '**/build/test-results/karma/TESTS-*.xml'
+            junit '**/build/test-results/TESTS-*.xml'
         }
     }
 
-    stage('protractor tests') {
+    stage('e2e tests') {
         sh '''./gradlew &
         bootPid=$!
-        sleep 60s
-        yarn e2e
+        sleep 30
+        npm run e2e
         kill $bootPid
         '''
     }
 
     stage('packaging') {
-        sh "./gradlew bootRepackage -x test -Pprod -PnodeInstall --no-daemon"
-        archiveArtifacts artifacts: '**/build/libs/*.war', fingerprint: true
+        sh "./gradlew bootJar -x test -Pprod -PnodeInstall --no-daemon"
+        archiveArtifacts artifacts: '**/build/libs/*.jar', fingerprint: true
     }
 
     stage('deployment') {
         sh "./gradlew deployHeroku --no-daemon"
     }
-
 }

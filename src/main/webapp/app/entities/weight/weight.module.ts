@@ -1,24 +1,13 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { TwentyOnePointsSharedModule } from 'app/shared';
-import { TwentyOnePointsAdminModule } from 'app/admin/admin.module';
-import {
-    WeightComponent,
-    WeightDetailComponent,
-    WeightUpdateComponent,
-    WeightDeletePopupComponent,
-    WeightDeleteDialogComponent,
-    weightRoute,
-    weightPopupRoute
-} from './';
-
-const ENTITY_STATES = [...weightRoute, ...weightPopupRoute];
+import { NgModule } from '@angular/core';
+import { SharedModule } from 'app/shared/shared.module';
+import { WeightComponent } from './list/weight.component';
+import { WeightDetailComponent } from './detail/weight-detail.component';
+import { WeightUpdateComponent } from './update/weight-update.component';
+import { WeightDeleteDialogComponent } from './delete/weight-delete-dialog.component';
+import { WeightRoutingModule } from './route/weight-routing.module';
 
 @NgModule({
-    imports: [TwentyOnePointsSharedModule, TwentyOnePointsAdminModule, RouterModule.forChild(ENTITY_STATES)],
-    declarations: [WeightComponent, WeightDetailComponent, WeightUpdateComponent, WeightDeleteDialogComponent, WeightDeletePopupComponent],
-    entryComponents: [WeightComponent, WeightUpdateComponent, WeightDeleteDialogComponent, WeightDeletePopupComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [SharedModule, WeightRoutingModule],
+  declarations: [WeightComponent, WeightDetailComponent, WeightUpdateComponent, WeightDeleteDialogComponent],
 })
-export class TwentyOnePointsWeightModule {}
+export class WeightModule {}

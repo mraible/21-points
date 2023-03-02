@@ -3,6 +3,7 @@ package org.jhipster.health.web.rest.vm;
 import java.time.LocalDate;
 
 public class PointsPerWeek {
+
     private LocalDate week;
     private Integer points;
 
@@ -29,9 +30,6 @@ public class PointsPerWeek {
 
     @Override
     public String toString() {
-        return "PointsThisWeek{" +
-            "points=" + points +
-            ", week=" + week +
-            '}';
+        return "PointsThisWeek{" + "points=" + points + ", week=" + week + '}';
     }
 }
