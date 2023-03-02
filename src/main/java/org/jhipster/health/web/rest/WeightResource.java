@@ -1,5 +1,8 @@
 package org.jhipster.health.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import io.micrometer.core.annotation.Timed;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,6 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.Weight;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.WeightRepository;
@@ -103,10 +108,8 @@ public class WeightResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/weights/{id}")
-    public ResponseEntity<Weight> updateWeight(
-        @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Weight weight
-    ) throws URISyntaxException {
+    public ResponseEntity<?> updateWeight(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Weight weight)
+        throws URISyntaxException {
         log.debug("REST request to update Weight : {}, {}", id, weight);
         if (weight.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -114,9 +117,15 @@ public class WeightResource {
         if (!Objects.equals(id, weight.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!weightRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            weight.getUser() != null &&
+            !weight.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
         Weight result = weightRepository.save(weight);
@@ -139,7 +148,7 @@ public class WeightResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/weights/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Weight> partialUpdateWeight(
+    public ResponseEntity<?> partialUpdateWeight(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Weight weight
     ) throws URISyntaxException {
@@ -150,9 +159,15 @@ public class WeightResource {
         if (!Objects.equals(id, weight.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!weightRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            weight.getUser() != null &&
+            !weight.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
         Optional<Weight> result = weightRepository
@@ -210,9 +225,17 @@ public class WeightResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the weight, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/weights/{id}")
-    public ResponseEntity<Weight> getWeight(@PathVariable Long id) {
+    public ResponseEntity<?> getWeight(@PathVariable Long id) {
         log.debug("REST request to get Weight : {}", id);
         Optional<Weight> weight = weightRepository.findOneWithEagerRelationships(id);
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            weight.isPresent() &&
+            weight.get().getUser() != null &&
+            !weight.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         return ResponseUtil.wrapOrNotFound(weight);
     }
 
@@ -223,8 +246,17 @@ public class WeightResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/weights/{id}")
-    public ResponseEntity<Void> deleteWeight(@PathVariable Long id) {
+    public ResponseEntity<?> deleteWeight(@PathVariable Long id) {
         log.debug("REST request to delete Weight : {}", id);
+        Optional<Weight> weight = weightRepository.findById(id);
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            weight.isPresent() &&
+            weight.get().getUser() != null &&
+            !weight.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         weightRepository.deleteById(id);
         weightSearchRepository.deleteById(id);
         return ResponseEntity
@@ -247,7 +279,11 @@ public class WeightResource {
         @org.springdoc.api.annotations.ParameterObject Pageable pageable
     ) {
         log.debug("REST request to search for a page of Weights for query {}", query);
-        Page<Weight> page = weightSearchRepository.search(query, pageable);
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
+        if (SecurityUtils.isAuthenticated() && !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
+            queryBuilder = queryBuilder.filter(matchQuery("user.login", SecurityUtils.getCurrentUserLogin().orElse("")));
+        }
+        Page<Weight> page = weightSearchRepository.search(queryBuilder, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

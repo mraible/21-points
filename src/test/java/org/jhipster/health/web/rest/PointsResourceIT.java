@@ -541,6 +541,7 @@ class PointsResourceIT {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
     void searchPoints() throws Exception {
         // Initialize the database
         points = pointsRepository.saveAndFlush(points);
