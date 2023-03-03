@@ -1,7 +1,5 @@
 package org.jhipster.health.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
-
 import java.util.*;
 import java.util.Collections;
 import java.util.stream.Collectors;

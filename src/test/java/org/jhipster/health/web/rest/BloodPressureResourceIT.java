@@ -560,6 +560,7 @@ class BloodPressureResourceIT {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
     void searchBloodPressure() throws Exception {
         // Initialize the database
         bloodPressure = bloodPressureRepository.saveAndFlush(bloodPressure);

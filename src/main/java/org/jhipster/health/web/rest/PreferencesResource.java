@@ -1,5 +1,8 @@
 package org.jhipster.health.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import io.micrometer.core.annotation.Timed;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,8 +14,9 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.Preferences;
-import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.search.PreferencesSearchRepository;
@@ -97,7 +101,7 @@ public class PreferencesResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/preferences/{id}")
-    public ResponseEntity<Preferences> updatePreferences(
+    public ResponseEntity<?> updatePreferences(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody Preferences preferences
     ) throws URISyntaxException {
@@ -108,9 +112,15 @@ public class PreferencesResource {
         if (!Objects.equals(id, preferences.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!preferencesRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            preferences.getUser() != null &&
+            !preferences.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
         Preferences result = preferencesRepository.save(preferences);
@@ -133,7 +143,7 @@ public class PreferencesResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/preferences/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Preferences> partialUpdatePreferences(
+    public ResponseEntity<?> partialUpdatePreferences(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Preferences preferences
     ) throws URISyntaxException {
@@ -144,9 +154,15 @@ public class PreferencesResource {
         if (!Objects.equals(id, preferences.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!preferencesRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            preferences.getUser() != null &&
+            !preferences.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
         Optional<Preferences> result = preferencesRepository
@@ -203,9 +219,17 @@ public class PreferencesResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the preferences, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/preferences/{id}")
-    public ResponseEntity<Preferences> getPreferences(@PathVariable Long id) {
+    public ResponseEntity<?> getPreferences(@PathVariable Long id) {
         log.debug("REST request to get Preferences : {}", id);
         Optional<Preferences> preferences = preferencesRepository.findOneWithEagerRelationships(id);
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            preferences.isPresent() &&
+            preferences.get().getUser() != null &&
+            !preferences.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         return ResponseUtil.wrapOrNotFound(preferences);
     }
 
@@ -216,8 +240,17 @@ public class PreferencesResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/preferences/{id}")
-    public ResponseEntity<Void> deletePreferences(@PathVariable Long id) {
+    public ResponseEntity<?> deletePreferences(@PathVariable Long id) {
         log.debug("REST request to delete Preferences : {}", id);
+        Optional<Preferences> preferences = preferencesRepository.findById(id);
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            preferences.isPresent() &&
+            preferences.get().getUser() != null &&
+            !preferences.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         preferencesRepository.deleteById(id);
         preferencesSearchRepository.deleteById(id);
         return ResponseEntity
@@ -236,7 +269,11 @@ public class PreferencesResource {
     @GetMapping("/_search/preferences")
     public List<Preferences> searchPreferences(@RequestParam String query) {
         log.debug("REST request to search Preferences for query {}", query);
-        return StreamSupport.stream(preferencesSearchRepository.search(query).spliterator(), false).collect(Collectors.toList());
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
+        if (SecurityUtils.isAuthenticated() && !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
+            queryBuilder = queryBuilder.filter(matchQuery("user.login", SecurityUtils.getCurrentUserLogin().orElse("")));
+        }
+        return StreamSupport.stream(preferencesSearchRepository.search(queryBuilder).spliterator(), false).collect(Collectors.toList());
     }
 
     /**

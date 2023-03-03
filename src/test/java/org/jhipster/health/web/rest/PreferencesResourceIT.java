@@ -513,6 +513,7 @@ class PreferencesResourceIT {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
     void searchPreferences() throws Exception {
         // Initialize the database
         preferences = preferencesRepository.saveAndFlush(preferences);

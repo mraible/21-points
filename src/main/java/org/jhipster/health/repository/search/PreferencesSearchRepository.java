@@ -3,17 +3,15 @@ package org.jhipster.health.repository.search;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.util.stream.Stream;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.jhipster.health.domain.Preferences;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Spring Data Elasticsearch repository for the {@link Preferences} entity.
@@ -24,6 +22,8 @@ interface PreferencesSearchRepositoryInternal {
     Stream<Preferences> search(String query);
 
     Stream<Preferences> search(Query query);
+
+    Stream<Preferences> search(QueryBuilder query);
 
     void index(Preferences entity);
 }
@@ -42,6 +42,12 @@ class PreferencesSearchRepositoryInternalImpl implements PreferencesSearchReposi
     public Stream<Preferences> search(String query) {
         NativeSearchQuery nativeSearchQuery = new NativeSearchQuery(queryStringQuery(query));
         return search(nativeSearchQuery);
+    }
+
+    @Override
+    public Stream<Preferences> search(QueryBuilder query) {
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(query).build();
+        return search(searchQuery);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package org.jhipster.health.web.rest;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
 import io.micrometer.core.annotation.Timed;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,6 +14,8 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.Points;
 import org.jhipster.health.repository.PointsRepository;
 import org.jhipster.health.repository.UserRepository;
@@ -97,10 +102,8 @@ public class PointsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/points/{id}")
-    public ResponseEntity<Points> updatePoints(
-        @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Points points
-    ) throws URISyntaxException {
+    public ResponseEntity<?> updatePoints(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Points points)
+        throws URISyntaxException {
         log.debug("REST request to update Points : {}, {}", id, points);
         if (points.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -108,9 +111,15 @@ public class PointsResource {
         if (!Objects.equals(id, points.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!pointsRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            points.getUser() != null &&
+            !points.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
         Points result = pointsRepository.save(points);
@@ -133,7 +142,7 @@ public class PointsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/points/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Points> partialUpdatePoints(
+    public ResponseEntity<?> partialUpdatePoints(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Points points
     ) throws URISyntaxException {
@@ -144,9 +153,15 @@ public class PointsResource {
         if (!Objects.equals(id, points.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!pointsRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            points.getUser() != null &&
+            !points.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
         Optional<Points> result = pointsRepository
@@ -213,9 +228,17 @@ public class PointsResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the points, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/points/{id}")
-    public ResponseEntity<Points> getPoints(@PathVariable Long id) {
+    public ResponseEntity<?> getPoints(@PathVariable Long id) {
         log.debug("REST request to get Points : {}", id);
         Optional<Points> points = pointsRepository.findOneWithEagerRelationships(id);
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            points.isPresent() &&
+            points.get().getUser() != null &&
+            !points.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         return ResponseUtil.wrapOrNotFound(points);
     }
 
@@ -226,8 +249,17 @@ public class PointsResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/points/{id}")
-    public ResponseEntity<Void> deletePoints(@PathVariable Long id) {
+    public ResponseEntity<?> deletePoints(@PathVariable Long id) {
         log.debug("REST request to delete Points : {}", id);
+        Optional<Points> points = pointsRepository.findById(id);
+        if (
+            !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN) &&
+            points.isPresent() &&
+            points.get().getUser() != null &&
+            !points.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))
+        ) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         pointsRepository.deleteById(id);
         pointsSearchRepository.deleteById(id);
         return ResponseEntity
@@ -250,7 +282,11 @@ public class PointsResource {
         @org.springdoc.api.annotations.ParameterObject Pageable pageable
     ) {
         log.debug("REST request to search for a page of Points for query {}", query);
-        Page<Points> page = pointsSearchRepository.search(query, pageable);
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
+        if (SecurityUtils.isAuthenticated() && !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
+            queryBuilder = queryBuilder.filter(matchQuery("user.login", SecurityUtils.getCurrentUserLogin().orElse("")));
+        }
+        Page<Points> page = pointsSearchRepository.search(queryBuilder, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
