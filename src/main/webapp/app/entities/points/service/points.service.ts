@@ -9,7 +9,7 @@ import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { SearchWithPagination } from 'app/core/request/request.model';
-import { IPoints, IPointsPerWeek, NewPoints } from '../points.model';
+import { IPoints, IPointsPerMonth, IPointsPerWeek, NewPoints } from '../points.model';
 
 export type PartialUpdatePoints = Partial<IPoints> & Pick<IPoints, 'id'>;
 
@@ -85,6 +85,18 @@ export class PointsService {
       .pipe(map(res => this.convertWeekResponseFromServer(res)));
   }
 
+  byWeek(date: string): Observable<HttpResponse<IPointsPerWeek>> {
+    return this.http
+      .get<IPointsPerWeek>(`api/points-by-week/${date}`, { observe: 'response' })
+      .pipe(map(res => this.convertWeekResponseFromServer(res)));
+  }
+
+  byMonth(month: string): Observable<HttpResponse<IPointsPerMonth>> {
+    return this.http
+      .get<IPointsPerMonth>(`api/points-by-month/${month}`, { observe: 'response' })
+      .pipe(map(res => this.convertMonthResponseFromServer(res)));
+  }
+
   getPointsIdentifier(points: Pick<IPoints, 'id'>): number {
     return points.id;
   }
@@ -149,6 +161,19 @@ export class PointsService {
     return {
       ...pointsPerWeek,
       week: pointsPerWeek.week,
+    };
+  }
+
+  protected convertMonthResponseFromServer(res: HttpResponse<IPointsPerMonth>): HttpResponse<IPointsPerMonth> {
+    return res.clone({
+      body: res.body ? this.convertMonthDateFromServer(res.body) : null,
+    });
+  }
+
+  protected convertMonthDateFromServer(pointsPerMonth: IPointsPerMonth): IPointsPerMonth {
+    return {
+      ...pointsPerMonth,
+      month: pointsPerMonth.month,
     };
   }
 }

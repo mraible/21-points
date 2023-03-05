@@ -6,11 +6,14 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -39,6 +42,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -94,7 +98,7 @@ class PointsResourceIT {
 
     /**
      * Create an entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -110,7 +114,7 @@ class PointsResourceIT {
 
     /**
      * Create an updated entity for this test.
-     *
+     * <p>
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
@@ -598,5 +602,86 @@ class PointsResourceIT {
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.week").value(thisMonday.toString()))
             .andExpect(jsonPath("$.points").value(5));
+    }
+
+    @Test
+    @Transactional
+    public void getPointsByWeek() throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate aMonday = today.minusMonths(2).with(ChronoField.DAY_OF_WEEK, 1);
+        LocalDate aPreviousMonday = aMonday.minusWeeks(2);
+        createPointsByWeek(aMonday, aPreviousMonday);
+
+        // Get the points for last week
+        restPointsMockMvc
+            .perform(get("/api/points-by-week/{startDate}", aPreviousMonday.toString()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.week").value(aPreviousMonday.toString()))
+            .andExpect(jsonPath("$.points").value(3));
+    }
+
+    @Test
+    @Transactional
+    public void getPointsOnSunday() throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate sunday = today.with(DayOfWeek.SUNDAY);
+        User user = userRepository.findOneByLogin("user").get();
+        points = new Points(sunday, 1, 1, 0, user);
+        pointsRepository.saveAndFlush(points);
+
+        // Get all the points
+        restPointsMockMvc
+            .perform(get("/api/points"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$", hasSize(1)));
+
+        // Get the points for this week only
+        restPointsMockMvc
+            .perform(get("/api/points-this-week"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.week").value(sunday.with(DayOfWeek.MONDAY).toString()))
+            .andExpect(jsonPath("$.points").value(2));
+    }
+
+    @Test
+    @Transactional
+    public void getPointsByMonth() throws Exception {
+        LocalDate today = LocalDate.now();
+        LocalDate thisMonday = today.with(DayOfWeek.MONDAY);
+        LocalDate lastMonday = thisMonday.minusDays(7);
+        createPointsByWeek(thisMonday, lastMonday);
+
+        // Get the points for last month
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
+        String startDate = fmt.format(today.withDayOfMonth(1));
+        LocalDate firstDate = thisMonday.plusDays(2);
+        LocalDate secondDate = thisMonday.plusDays(3);
+
+        // see if adding days takes you into next month
+        if (today.getMonthValue() < firstDate.getMonthValue() || today.getMonthValue() < secondDate.getMonthValue()) {
+            // if so, look for second set of dates
+            firstDate = lastMonday.plusDays(3);
+            secondDate = lastMonday.plusDays(4);
+        }
+
+        // see if this Monday is in different month from today
+        // if so, use last month as the start date
+        if (thisMonday.getMonthValue() < today.getMonthValue()) {
+            startDate = fmt.format(thisMonday.withDayOfMonth(1));
+            firstDate = lastMonday.plusDays(3);
+            secondDate = lastMonday.plusDays(4);
+        }
+
+        restPointsMockMvc
+            .perform(get("/api/points-by-month/{yearWithMonth}", startDate))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.month").value(startDate))
+            .andExpect(jsonPath("$.points.[*].date").value(hasItem(firstDate.toString())))
+            .andExpect(jsonPath("$.points.[*].date").value(hasItem(secondDate.toString())));
     }
 }

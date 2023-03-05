@@ -18,3 +18,8 @@ export interface IPointsPerWeek {
   points: number;
   progress?: string;
 }
+
+export interface IPointsPerMonth {
+  month?: Date;
+  IPoints: IPoints[];
+}

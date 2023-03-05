@@ -1,0 +1,14 @@
+.cal-cell-bottom {
+  font-size: 0.8em;
+  padding: 0 5px 5px 5px;
+}
+
+.cal-day-notes {
+  font-size: 0.8em;
+  padding: 5px;
+}
+
+.cal-emoji {
+  font-size: 20px;
+  opacity: 0.3;
+}

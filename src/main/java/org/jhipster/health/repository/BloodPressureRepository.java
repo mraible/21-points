@@ -49,4 +49,10 @@ public interface BloodPressureRepository extends JpaRepository<BloodPressure, Lo
     );
 
     Page<BloodPressure> findAllByOrderByTimestampDesc(Pageable pageable);
+
+    List<BloodPressure> findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(
+        ZonedDateTime atStartOfDay,
+        ZonedDateTime atStartOfDay1,
+        String orElse
+    );
 }

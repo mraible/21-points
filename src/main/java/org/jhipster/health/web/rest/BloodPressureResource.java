@@ -3,10 +3,13 @@ package org.jhipster.health.web.rest;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
-import io.micrometer.core.annotation.Timed;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,7 +100,7 @@ public class BloodPressureResource {
     /**
      * {@code PUT  /blood-pressures/:id} : Updates an existing bloodPressure.
      *
-     * @param id the id of the bloodPressure to save.
+     * @param id            the id of the bloodPressure to save.
      * @param bloodPressure the bloodPressure to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated bloodPressure,
      * or with status {@code 400 (Bad Request)} if the bloodPressure is not valid,
@@ -137,7 +141,7 @@ public class BloodPressureResource {
     /**
      * {@code PATCH  /blood-pressures/:id} : Partial updates given fields of an existing bloodPressure, field will ignore if it is null
      *
-     * @param id the id of the bloodPressure to save.
+     * @param id            the id of the bloodPressure to save.
      * @param bloodPressure the bloodPressure to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated bloodPressure,
      * or with status {@code 400 (Bad Request)} if the bloodPressure is not valid,
@@ -199,7 +203,7 @@ public class BloodPressureResource {
     /**
      * {@code GET  /blood-pressures} : get all the bloodPressures.
      *
-     * @param pageable the pagination information.
+     * @param pageable  the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of bloodPressures in body.
      */
@@ -270,7 +274,7 @@ public class BloodPressureResource {
      * {@code SEARCH  /_search/blood-pressures?query=:query} : search for the bloodPressure corresponding
      * to the query.
      *
-     * @param query the query of the bloodPressure search.
+     * @param query    the query of the bloodPressure search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */
@@ -296,7 +300,6 @@ public class BloodPressureResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the {@link BloodPressureByPeriod}.
      */
     @RequestMapping(value = "/bp-by-days/{days}")
-    @Timed
     public ResponseEntity<BloodPressureByPeriod> getByDays(@PathVariable int days) {
         ZonedDateTime rightNow = ZonedDateTime.now();
         ZonedDateTime daysAgo = rightNow.minusDays(days);
@@ -307,6 +310,29 @@ public class BloodPressureResource {
             SecurityUtils.getCurrentUserLogin().orElse("")
         );
         BloodPressureByPeriod response = new BloodPressureByPeriod("Last " + days + " Days", readings);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /bp-by-month : get all the blood pressure readings for a particular month.
+     */
+    @GetMapping("/bp-by-month/{date}")
+    public ResponseEntity<BloodPressureByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
+        LocalDate firstDay = date.atDay(1);
+        LocalDate lastDay = date.atEndOfMonth();
+
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+
+        List<BloodPressure> readings = bloodPressureRepository.findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(
+            firstDay.atStartOfDay(zonedDateTime.getZone()),
+            lastDay.plusDays(1).atStartOfDay(zonedDateTime.getZone()),
+            SecurityUtils.getCurrentUserLogin().orElse(null)
+        );
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM");
+        String yearAndMonth = fmt.format(firstDay);
+
+        BloodPressureByPeriod response = new BloodPressureByPeriod(yearAndMonth, readings);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -99,6 +99,7 @@
     "@ngx-translate/core": "14.0.0",
     "@ngx-translate/http-loader": "7.0.0",
     "@popperjs/core": "2.11.6",
+    "angular-calendar": "0.27.9",
     "bootstrap": "5.2.0",
     "dayjs": "1.11.5",
     "ng2-charts": "4.0.0",
