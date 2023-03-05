@@ -314,7 +314,10 @@ public class BloodPressureResource {
     }
 
     /**
-     * GET  /bp-by-month : get all the blood pressure readings for a particular month.
+     * {@code GET  /bp-by-month/:date} : get all the blood pressure readings by last x days.
+     *
+     * @param date the year and month in yyyy-MM format.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the {@link BloodPressureByPeriod}.
      */
     @GetMapping("/bp-by-month/{date}")
     public ResponseEntity<BloodPressureByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
