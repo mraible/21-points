@@ -76,10 +76,11 @@
   </div>
 </ng-template>
 
+<jhi-alert-error></jhi-alert-error>
 <jhi-alert></jhi-alert>
 <div [ngSwitch]="view">
   <mwl-calendar-month-view
-    *ngSwitchCase="'month'"
+    *ngSwitchCase="CalendarView.Month"
     [viewDate]="viewDate"
     [events]="events"
     [refresh]="refresh"
@@ -93,7 +94,7 @@
   >
   </mwl-calendar-month-view>
   <mwl-calendar-week-view
-    *ngSwitchCase="'week'"
+    *ngSwitchCase="CalendarView.Week"
     [viewDate]="viewDate"
     [events]="events"
     [refresh]="refresh"
@@ -102,7 +103,7 @@
   >
   </mwl-calendar-week-view>
   <mwl-calendar-day-view
-    *ngSwitchCase="'day'"
+    *ngSwitchCase="CalendarView.Day"
     [viewDate]="viewDate"
     [events]="events"
     [refresh]="refresh"

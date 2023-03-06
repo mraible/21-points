@@ -173,9 +173,9 @@ export class HistoryComponent implements OnInit {
         this.refresh.next();
       });
 
-      const weeklyGoal = preferences.body.weeklyGoal;
+      const weeklyGoal: number = preferences.body.weeklyGoal;
       const monthStart = startOfMonth(this.viewDate);
-      const daysInMonth = getDaysInMonth(this.viewDate);
+      const daysInMonth: number = getDaysInMonth(this.viewDate);
 
       const sundays = [];
       for (let i = 0; i <= daysInMonth; i++) {
