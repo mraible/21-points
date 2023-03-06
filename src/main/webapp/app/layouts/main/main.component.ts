@@ -51,14 +51,16 @@ export class MainComponent implements OnInit {
   private updateTitle(): void {
     const pageTitle = this.getPageTitle(this.router.routerState.snapshot.root);
 
-    this.translateService.get(pageTitle).subscribe((title: string) => {
-      this.translateService.get('global.title').subscribe((appname: string) => {
-        if (title !== appname) {
-          this.titleService.setTitle(`${title} | ${appname}`);
-        } else {
-          this.titleService.setTitle(appname);
-        }
+    if (pageTitle) {
+      this.translateService.get(pageTitle).subscribe((title: string) => {
+        this.translateService.get('global.title').subscribe((appname: string) => {
+          if (title !== appname) {
+            this.titleService.setTitle(`${title} | ${appname}`);
+          } else {
+            this.titleService.setTitle(appname);
+          }
+        });
       });
-    });
+    }
   }
 }

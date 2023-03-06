@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { endOfDay, endOfMonth, format, getDaysInMonth, isSameDay, isSameMonth, startOfDay, startOfMonth } from 'date-fns';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay, CalendarView } from 'angular-calendar';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { filter, Subject } from 'rxjs';
 import { PointsService } from '../entities/points/service/points.service';
 import { BloodPressureService } from '../entities/blood-pressure/service/blood-pressure.service';
 import { WeightService } from '../entities/weight/service/weight.service';
@@ -11,6 +11,12 @@ import { IPoints } from '../entities/points/points.model';
 import { IBloodPressure } from '../entities/blood-pressure/blood-pressure.model';
 import { IWeight } from '../entities/weight/weight.model';
 import { EventColor } from 'calendar-utils';
+import dayjs from 'dayjs/esm';
+import { PointsDeleteDialogComponent } from '../entities/points/delete/points-delete-dialog.component';
+import { ITEM_DELETED_EVENT } from '../config/navigation.constants';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BloodPressureDeleteDialogComponent } from '../entities/blood-pressure/delete/blood-pressure-delete-dialog.component';
+import { WeightDeleteDialogComponent } from '../entities/weight/delete/weight-delete-dialog.component';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -81,7 +87,8 @@ export class HistoryComponent implements OnInit {
     private bloodPressureService: BloodPressureService,
     private weightService: WeightService,
     private preferencesService: PreferencesService,
-    private router: Router
+    private router: Router,
+    protected modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -107,10 +114,10 @@ export class HistoryComponent implements OnInit {
         const meals = item.meals ? item.meals : 0;
         const alcohol = item.alcohol ? item.alcohol : 0;
         const value = exercise + meals + alcohol;
-        const date = item.date ? item.date : new Date();
+        const date = item.date ? dayjs(item.date) : null;
         this.events.push({
-          start: startOfDay(date.toISOString()),
-          end: endOfDay(date.toISOString()),
+          start: date ? startOfDay(date.toISOString()) : new Date(),
+          end: date ? endOfDay(date.toISOString()) : new Date(),
           title: `${value} Points`,
           color: colors.green,
           draggable: false,
@@ -130,7 +137,7 @@ export class HistoryComponent implements OnInit {
       response.body.readings.forEach((item: IBloodPressure) => {
         if (item.timestamp && item.systolic && item.diastolic) {
           this.events.push({
-            start: new Date(item.timestamp.date()),
+            start: dayjs(item.timestamp).toDate(),
             title: `${item.systolic}/${item.diastolic}`,
             color: colors.blue,
             actions: this.actions,
@@ -151,7 +158,7 @@ export class HistoryComponent implements OnInit {
         weightResponse.body.weighIns.forEach((item: IWeight) => {
           if (item.timestamp && item.weight) {
             this.events.push({
-              start: new Date(item.timestamp.date()),
+              start: dayjs(item.timestamp).toDate(),
               title: `${item.weight} ${weightUnits}`,
               color: colors.yellow,
               actions: this.actions,
@@ -202,9 +209,9 @@ export class HistoryComponent implements OnInit {
   }
 
   beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
-    body.forEach((cell: CalendarMonthViewDay) => {
-      //cell['dayPoints'] = cell.events.filter(e => e.meta['entity'] === 'points');
-      //cell['weekPoints'] = cell.events.filter(e => e.meta['entity'] === 'totalPoints');
+    body.forEach((cell: any) => {
+      cell['dayPoints'] = cell.events.filter((e: CalendarEvent) => e.meta['entity'] === 'points');
+      cell['weekPoints'] = cell.events.filter((e: CalendarEvent) => e.meta['entity'] === 'totalPoints');
     });
   }
 
@@ -214,7 +221,7 @@ export class HistoryComponent implements OnInit {
         this.activeDayIsOpen = false;
         // if no events, clicking on day brings up add points
         if (events.length === 0) {
-          this.router.navigateByUrl('/points/new?date=' + format(date, 'yyyy-MM-dd'));
+          this.router.navigateByUrl('/points/new?date=' + format(date, 'YYYY-MM-DD'));
         }
       } else {
         this.activeDayIsOpen = true;
@@ -233,10 +240,41 @@ export class HistoryComponent implements OnInit {
   handleEvent(action: string, event: CalendarEvent): void {
     action = action === 'Clicked' ? 'edit' : action;
     this.modalData = { event, action };
-    let url = this.router.createUrlTree(['/', { outlets: { popup: `${event.meta.entity}/${event.meta.id}/${action}` } }]);
     if (action === 'edit') {
-      url = this.router.createUrlTree([`/${event.meta.entity}`, event.meta.id, 'edit']);
+      const url = this.router.createUrlTree([`/${event.meta.entity}`, event.meta.id, action]);
+      this.router.navigateByUrl(url);
     }
-    this.router.navigateByUrl(url.toString());
+    if (action === 'delete') {
+      this.delete(event);
+    }
+  }
+
+  delete(event: CalendarEvent): void {
+    let dialog: any = undefined;
+    switch (event.meta.entity) {
+      case 'points':
+        dialog = PointsDeleteDialogComponent;
+        break;
+      case 'blood-pressure':
+        dialog = BloodPressureDeleteDialogComponent;
+        break;
+      case 'weight':
+        dialog = WeightDeleteDialogComponent;
+        break;
+      default:
+        console.error(`No dialog for entity: ${event.meta.entity}`);
+        break;
+    }
+
+    const entityField = event.meta.entity.replace(/-([a-z])/g, (match: string, group: string) => group.toUpperCase());
+    const modalRef = this.modalService.open(dialog, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance[entityField] = event.meta;
+    // unsubscribe not needed because closed completes on modal close
+    modalRef.closed.pipe(filter((reason: string) => reason === ITEM_DELETED_EVENT)).subscribe({
+      next: () => {
+        this.events = this.events.filter(item => item !== event);
+        this.refresh.next();
+      },
+    });
   }
 }

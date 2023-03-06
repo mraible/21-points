@@ -13,7 +13,7 @@
       "updated": "Weight updated successfully.",
       "deleted": "Weight deleted.",
       "delete": {
-        "question": "Are you sure you want to delete this?"
+        "question": "Are you sure you want to delete this weigh-in?"
       },
       "detail": {
         "title": "View Weight"
