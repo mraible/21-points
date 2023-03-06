@@ -27,7 +27,7 @@
             </span>
           </a>
         </li>
-        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <li *ngSwitchCase="true" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <a class="nav-link" routerLink="history">
             <fa-icon icon="calendar-alt"></fa-icon>
             <span jhiTranslate="global.menu.history">Calendar</span>
