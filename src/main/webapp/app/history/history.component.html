@@ -14,9 +14,9 @@
   </div>
   <div class="col-md-4">
     <div class="btn-group">
-      <div class="btn btn-primary" (click)="view = 'month'" [class.active]="view === 'month'">Month</div>
-      <div class="btn btn-primary" (click)="view = 'week'" [class.active]="view === 'week'">Week</div>
-      <div class="btn btn-primary" (click)="view = 'day'" [class.active]="view === 'day'">Day</div>
+      <div class="btn btn-primary" (click)="setView(CalendarView.Month)" [class.active]="view === CalendarView.Month">Month</div>
+      <div class="btn btn-primary" (click)="setView(CalendarView.Week)" [class.active]="view === CalendarView.Week">Week</div>
+      <div class="btn btn-primary" (click)="setView(CalendarView.Day)" [class.active]="view === CalendarView.Day">Day</div>
     </div>
   </div>
 </div>
@@ -35,13 +35,13 @@
   let-tooltipAppendToBody="tooltipAppendToBody"
 >
   <div class="cal-cell-top">
-    <span class="cal-day-badge bg-{{ day.dayPoints[0].meta.value >= 2 ? 'success' : 'warning' }}" *ngIf="day.dayPoints.length">
+    <span class="cal-day-badge bg-{{ day.dayPoints[0].meta.value >= 2 ? 'success' : 'warning' }}" *ngIf="day.dayPoints?.length">
       {{ day.dayPoints[0].meta.value }}
     </span>
     <span class="cal-day-number">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
     <div
       class="cal-day-notes"
-      *ngIf="day.dayPoints.length"
+      *ngIf="day.dayPoints?.length"
       [ngbPopover]="day.dayPoints[0].meta.notes"
       id="day-notes"
       [ngbCollapse]="isCollapsed"
@@ -69,7 +69,7 @@
       [max]="21"
       [value]="day.weekPoints[0].meta.value"
       [striped]="true"
-      *ngIf="day.weekPoints.length && day.weekPoints[0].meta.value"
+      *ngIf="day.weekPoints?.length && day.weekPoints[0].meta.value"
       [type]="day.weekPoints[0].meta.value >= day.weekPoints[0].meta.goal ? 'success' : 'danger'"
     >
       <span ngbTooltip="{{ day.weekPoints[0].title }}"> {{ day.weekPoints[0].meta.value }} / {{ day.weekPoints[0].meta.goal }} </span>

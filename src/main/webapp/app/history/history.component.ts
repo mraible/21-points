@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { endOfDay, endOfMonth, format, getDaysInMonth, isSameDay, isSameMonth, parseISO, startOfDay, startOfMonth } from 'date-fns';
-import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay } from 'angular-calendar';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { endOfDay, endOfMonth, format, getDaysInMonth, isSameDay, isSameMonth, startOfDay, startOfMonth } from 'date-fns';
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay, CalendarView } from 'angular-calendar';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { PointsService } from '../entities/points/service/points.service';
@@ -10,8 +10,9 @@ import { PreferencesService } from '../entities/preferences/service/preferences.
 import { IPoints } from '../entities/points/points.model';
 import { IBloodPressure } from '../entities/blood-pressure/blood-pressure.model';
 import { IWeight } from '../entities/weight/weight.model';
+import { EventColor } from 'calendar-utils';
 
-const colors: any = {
+const colors: Record<string, EventColor> = {
   red: {
     primary: '#ad2121',
     secondary: '#FAE3E3',
@@ -33,13 +34,15 @@ const colors: any = {
 @Component({
   selector: 'jhi-history',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: 'history.component.html',
-  styleUrls: ['history.component.css'],
+  templateUrl: './history.component.html',
+  styleUrls: ['./history.component.css'],
 })
 export class HistoryComponent implements OnInit {
   isCollapsed = true;
 
-  view = 'month';
+  view: CalendarView = CalendarView.Month;
+
+  CalendarView = CalendarView;
 
   viewDate: Date = new Date();
 
@@ -63,7 +66,11 @@ export class HistoryComponent implements OnInit {
     },
   ];
 
-  refresh: Subject<any> = new Subject();
+  setView(view: CalendarView): void {
+    this.view = view;
+  }
+
+  refresh = new Subject<void>();
 
   events: CalendarEvent[] = [];
 
@@ -92,7 +99,7 @@ export class HistoryComponent implements OnInit {
 
   populateCalendar(): void {
     const monthEnd = endOfMonth(this.viewDate);
-    const month = format(monthEnd, 'yyyy-MM');
+    const month = format(monthEnd, 'YYYY-MM');
 
     this.pointsService.byMonth(month).subscribe((response: any) => {
       response.body.points.forEach((item: IPoints) => {
@@ -102,10 +109,8 @@ export class HistoryComponent implements OnInit {
         const value = exercise + meals + alcohol;
         const date = item.date ? item.date : new Date();
         this.events.push({
-          // @ts-ignore
-          start: startOfDay(parseISO(date)),
-          // @ts-ignore
-          end: endOfDay(parseISO(date)),
+          start: startOfDay(date.toISOString()),
+          end: endOfDay(date.toISOString()),
           title: `${value} Points`,
           color: colors.green,
           draggable: false,
@@ -118,43 +123,47 @@ export class HistoryComponent implements OnInit {
           },
         });
       });
-      //this.refresh.next();
+      this.refresh.next();
     });
 
     this.bloodPressureService.byMonth(month).subscribe((response: any) => {
       response.body.readings.forEach((item: IBloodPressure) => {
-        this.events.push({
-          start: new Date(item?.timestamp),
-          title: `${item.systolic}/${item.diastolic}`,
-          color: colors.blue,
-          actions: this.actions,
-          draggable: false,
-          meta: {
-            id: item.id,
-            entity: 'blood-pressure',
-          },
-        });
-      });
-      //this.refresh.next();
-    });
-
-    this.preferencesService.user().subscribe((preferences: any) => {
-      const weightUnits = preferences.body.weightUnits === null ? 'lbs' : preferences.body.weightUnits;
-      this.weightService.byMonth(month).subscribe((weightResponse: any) => {
-        weightResponse.body.weighIns.forEach((item: IWeight) => {
+        if (item.timestamp && item.systolic && item.diastolic) {
           this.events.push({
-            start: new Date(item?.timestamp),
-            title: `${item?.weight} ${weightUnits}`,
-            color: colors.yellow,
+            start: new Date(item.timestamp.date()),
+            title: `${item.systolic}/${item.diastolic}`,
+            color: colors.blue,
             actions: this.actions,
             draggable: false,
             meta: {
               id: item.id,
-              entity: 'weight',
+              entity: 'blood-pressure',
             },
           });
+        }
+      });
+      this.refresh.next();
+    });
+
+    this.preferencesService.user().subscribe((preferences: any) => {
+      const weightUnits: string = preferences.body.weightUnits === null ? 'lbs' : preferences.body.weightUnits;
+      this.weightService.byMonth(month).subscribe((weightResponse: any) => {
+        weightResponse.body.weighIns.forEach((item: IWeight) => {
+          if (item.timestamp && item.weight) {
+            this.events.push({
+              start: new Date(item.timestamp.date()),
+              title: `${item.weight} ${weightUnits}`,
+              color: colors.yellow,
+              actions: this.actions,
+              draggable: false,
+              meta: {
+                id: item.id,
+                entity: 'weight',
+              },
+            });
+          }
         });
-        // this.refresh.next();
+        this.refresh.next();
       });
 
       const weeklyGoal = preferences.body.weeklyGoal;
@@ -171,7 +180,7 @@ export class HistoryComponent implements OnInit {
       }
 
       sundays.forEach(sunday => {
-        this.pointsService.byWeek(format(sunday, 'yyyy-MM-dd')).subscribe(data => {
+        this.pointsService.byWeek(format(sunday, 'YYYY-MM-DD')).subscribe(data => {
           const pointsByWeek: any = data.body;
           this.events.push({
             start: startOfDay(sunday),
@@ -186,7 +195,7 @@ export class HistoryComponent implements OnInit {
               goal: weeklyGoal || 10,
             },
           });
-          //this.refresh.next();
+          this.refresh.next();
         });
       });
     });
@@ -194,8 +203,8 @@ export class HistoryComponent implements OnInit {
 
   beforeMonthViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
     body.forEach((cell: CalendarMonthViewDay) => {
-      cell['dayPoints'] = cell.events.filter(e => e.meta['entity'] === 'points');
-      cell['weekPoints'] = cell.events.filter(e => e.meta['entity'] === 'totalPoints');
+      //cell['dayPoints'] = cell.events.filter(e => e.meta['entity'] === 'points');
+      //cell['weekPoints'] = cell.events.filter(e => e.meta['entity'] === 'totalPoints');
     });
   }
 
@@ -218,7 +227,7 @@ export class HistoryComponent implements OnInit {
     event.start = newStart;
     event.end = newEnd;
     this.handleEvent('Dropped or resized', event);
-    //this.refresh.next();
+    this.refresh.next();
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
