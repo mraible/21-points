@@ -1,69 +1,60 @@
-import './vendor.ts';
+import { NgModule, LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import locale from '@angular/common/locales/en';
+import { BrowserModule, Title } from '@angular/platform-browser';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { NgxWebstorageModule } from 'ngx-webstorage';
+import dayjs from 'dayjs/esm';
+import { NgbDateAdapter, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { NgModule, Injector } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Ng2Webstorage, LocalStorageService, SessionStorageService } from 'ngx-webstorage';
-import { JhiEventManager } from 'ng-jhipster';
-
-import { AuthInterceptor } from './blocks/interceptor/auth.interceptor';
-import { AuthExpiredInterceptor } from './blocks/interceptor/auth-expired.interceptor';
-import { ErrorHandlerInterceptor } from './blocks/interceptor/errorhandler.interceptor';
-import { NotificationInterceptor } from './blocks/interceptor/notification.interceptor';
-import { TwentyOnePointsSharedModule } from 'app/shared';
-import { TwentyOnePointsCoreModule } from 'app/core';
-import { TwentyOnePointsAppRoutingModule } from './app-routing.module';
-import { TwentyOnePointsHomeModule } from './home/home.module';
-import { TwentyOnePointsAccountModule } from './account/account.module';
-import { TwentyOnePointsEntityModule } from './entities/entity.module';
-import * as moment from 'moment';
+import { ApplicationConfigService } from 'app/core/config/application-config.service';
+import './config/dayjs';
+import { SharedModule } from 'app/shared/shared.module';
+import { TranslationModule } from 'app/shared/language/translation.module';
+import { AppRoutingModule } from './app-routing.module';
+import { HomeModule } from './home/home.module';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
-import { JhiMainComponent, NavbarComponent, FooterComponent, PageRibbonComponent, ActiveMenuDirective, ErrorComponent } from './layouts';
+import { NgbDateDayjsAdapter } from './config/datepicker-adapter';
+import { fontAwesomeIcons } from './config/font-awesome-icons';
+import { httpInterceptorProviders } from './core/interceptor';
+import { MainComponent } from './layouts/main/main.component';
+import { NavbarComponent } from './layouts/navbar/navbar.component';
+import { FooterComponent } from './layouts/footer/footer.component';
+import { PageRibbonComponent } from './layouts/profiles/page-ribbon.component';
+import { ActiveMenuDirective } from './layouts/navbar/active-menu.directive';
+import { ErrorComponent } from './layouts/error/error.component';
 
 @NgModule({
-    imports: [
-        BrowserModule,
-        TwentyOnePointsAppRoutingModule,
-        Ng2Webstorage.forRoot({ prefix: 'jhi', separator: '-' }),
-        TwentyOnePointsSharedModule,
-        TwentyOnePointsCoreModule,
-        TwentyOnePointsHomeModule,
-        TwentyOnePointsAccountModule,
-        TwentyOnePointsEntityModule
-        // jhipster-needle-angular-add-module JHipster will add new module here
-    ],
-    declarations: [JhiMainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, ActiveMenuDirective, FooterComponent],
-    providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: AuthInterceptor,
-            multi: true,
-            deps: [LocalStorageService, SessionStorageService]
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: AuthExpiredInterceptor,
-            multi: true,
-            deps: [Injector]
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: ErrorHandlerInterceptor,
-            multi: true,
-            deps: [JhiEventManager]
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: NotificationInterceptor,
-            multi: true,
-            deps: [Injector]
-        }
-    ],
-    bootstrap: [JhiMainComponent]
+  imports: [
+    BrowserModule,
+    SharedModule,
+    HomeModule,
+    // jhipster-needle-angular-add-module JHipster will add new module here
+    AppRoutingModule,
+    // Set this to true to enable service worker (PWA)
+    // todo: figure out how to enable this when deploying to Heroku
+    // it fails when enabled in GitHub Actions: https://github.com/mraible/21-points-v7/actions/runs/3594691276/jobs/6053269902
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
+    HttpClientModule,
+    NgxWebstorageModule.forRoot({ prefix: 'jhi', separator: '-', caseSensitive: true }),
+    TranslationModule,
+  ],
+  providers: [
+    Title,
+    { provide: LOCALE_ID, useValue: 'en' },
+    { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
+    httpInterceptorProviders,
+  ],
+  declarations: [MainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, ActiveMenuDirective, FooterComponent],
+  bootstrap: [MainComponent],
 })
-export class TwentyOnePointsAppModule {
-    constructor(private dpConfig: NgbDatepickerConfig) {
-        this.dpConfig.minDate = { year: moment().year() - 100, month: 1, day: 1 };
-    }
+export class AppModule {
+  constructor(applicationConfigService: ApplicationConfigService, iconLibrary: FaIconLibrary, dpConfig: NgbDatepickerConfig) {
+    applicationConfigService.setEndpointPrefix(SERVER_API_URL);
+    registerLocaleData(locale);
+    iconLibrary.addIcons(...fontAwesomeIcons);
+    dpConfig.minDate = { year: dayjs().subtract(100, 'year').year(), month: 1, day: 1 };
+  }
 }

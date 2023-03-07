@@ -1,14 +1,21 @@
-apply plugin: 'com.heroku.sdk.heroku-gradle'
+apply plugin: "com.heroku.sdk.heroku-gradle"
 
 heroku {
-  appName = "health-by-points"
+    appName = "health-by-pints"
+    buildpacks = ["heroku/jvm"]
+}
+
+// Task stage is used by Heroku, see also
+// https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
+// and GRADLE_TASK configuration variable.
+task stage(dependsOn: "bootJar") {
 }
 
 gradle.taskGraph.whenReady {taskGraph ->
     taskGraph.afterTask() {task ->
-        if (task.getName().equals('stage') && System.getenv("DYNO") != null) {
+        if (task.getName().equals("stage") && System.getenv("DYNO") != null) {
             delete "node_modules"
-            delete fileTree(dir: "build/libs", exclude: "*.war")
+            delete fileTree(dir: "build/libs", exclude: "*.jar")
         }
     }
 }

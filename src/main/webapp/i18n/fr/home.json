@@ -1,30 +1,30 @@
 {
-    "home": {
-        "title": "21-Points Health",
-        "welcome": "Bienvenue !",
-        "welcomeWithName": "Bienvenue, {{name}} !",
-        "subtitle": "21-Point Health est ici pour suivre votre santé et améliorer votre vie.",
-        "logged": {
-            "message": "Vous êtes connecté en tant que <em>{{username}}</em>."
-        },
-        "question": "Si vous avez des questions concernant le Mini-Livre JHipster ou 21-Points Health :",
-        "link": {
-            "homepage": "Mini-Livre JHipster",
-            "stackoverflow": "JHipster sur Stack Overflow",
-            "contact": "Suivez @java_book sur Twitter",
-            "issues": "Signaler un problème",
-            "history": "Voir l'historique",
-            "preferences": "Modifier les préférences"
-        },
-        "like": "Si vous aimez JHipster, donnez nous une étoile sur",
-        "github": "GitHub ",
-        "points": {
-            "thisWeek": "Points pour la semaine de {{date}} :",
-            "thisWeekMobile": "Points :",
-            "getMoving": "Pas encore de points cette semaine, mieux venez de vous déplacer !"
-        },
-        "bloodPressure": "Tension artérielle :",
-        "bloodPressureMobile": "TA:",
-        "weight": "Poids :"
-    }
+  "home": {
+    "title": "21-Points Health",
+    "welcome": "Bienvenue !",
+    "welcomeWithName": "Bienvenue, {{name}} !",
+    "subtitle": "21-Point Health est ici pour suivre votre santé et améliorer votre vie.",
+    "logged": {
+      "message": "Vous êtes connecté en tant que <em>{{username}}</em>."
+    },
+    "question": "Si vous avez des questions concernant le Mini-Livre JHipster ou 21-Points Health :",
+    "link": {
+      "homepage": "Mini-Livre JHipster",
+      "stackoverflow": "JHipster sur Stack Overflow",
+      "contact": "Suivez @java_book sur Twitter",
+      "issues": "Signaler un problème",
+      "history": "Voir l'historique",
+      "preferences": "Modifier les préférences"
+    },
+    "like": "Si vous aimez JHipster, donnez nous une étoile sur",
+    "github": "GitHub ",
+    "points": {
+      "thisWeek": "Points pour la semaine de {{date}} :",
+      "thisWeekMobile": "Points :",
+      "getMoving": "Pas encore de points cette semaine, mieux venez de vous déplacer !"
+    },
+    "bloodPressure": "Tension artérielle :",
+    "bloodPressureMobile": "TA:",
+    "weight": "Poids :"
+  }
 }

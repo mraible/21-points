@@ -1,64 +1,64 @@
 import { Component, OnInit } from '@angular/core';
-import { JhiLanguageService } from 'ng-jhipster';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
-import { Principal, AccountService, JhiLanguageHelper } from 'app/core';
+import { AccountService } from 'app/core/auth/account.service';
+import { Account } from 'app/core/auth/account.model';
+import { LANGUAGES } from 'app/config/language.constants';
+
+const initialAccount: Account = {} as Account;
 
 @Component({
-    selector: 'jhi-settings',
-    templateUrl: './settings.component.html'
+  selector: 'jhi-settings',
+  templateUrl: './settings.component.html',
 })
 export class SettingsComponent implements OnInit {
-    error: string;
-    success: string;
-    settingsAccount: any;
-    languages: any[];
+  success = false;
+  languages = LANGUAGES;
 
-    constructor(
-        private account: AccountService,
-        private principal: Principal,
-        private languageService: JhiLanguageService,
-        private languageHelper: JhiLanguageHelper
-    ) {}
+  settingsForm = new FormGroup({
+    firstName: new FormControl(initialAccount.firstName, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(1), Validators.maxLength(50)],
+    }),
+    lastName: new FormControl(initialAccount.lastName, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(1), Validators.maxLength(50)],
+    }),
+    email: new FormControl(initialAccount.email, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(5), Validators.maxLength(254), Validators.email],
+    }),
+    langKey: new FormControl(initialAccount.langKey, { nonNullable: true }),
 
-    ngOnInit() {
-        this.principal.identity().then(account => {
-            this.settingsAccount = this.copyAccount(account);
-        });
-        this.languageHelper.getAll().then(languages => {
-            this.languages = languages;
-        });
-    }
+    activated: new FormControl(initialAccount.activated, { nonNullable: true }),
+    authorities: new FormControl(initialAccount.authorities, { nonNullable: true }),
+    imageUrl: new FormControl(initialAccount.imageUrl, { nonNullable: true }),
+    login: new FormControl(initialAccount.login, { nonNullable: true }),
+  });
 
-    save() {
-        this.account.save(this.settingsAccount).subscribe(
-            () => {
-                this.error = null;
-                this.success = 'OK';
-                this.principal.identity(true).then(account => {
-                    this.settingsAccount = this.copyAccount(account);
-                });
-                this.languageService.getCurrent().then(current => {
-                    if (this.settingsAccount.langKey !== current) {
-                        this.languageService.changeLanguage(this.settingsAccount.langKey);
-                    }
-                });
-            },
-            () => {
-                this.success = null;
-                this.error = 'ERROR';
-            }
-        );
-    }
+  constructor(private accountService: AccountService, private translateService: TranslateService) {}
 
-    copyAccount(account) {
-        return {
-            activated: account.activated,
-            email: account.email,
-            firstName: account.firstName,
-            langKey: account.langKey,
-            lastName: account.lastName,
-            login: account.login,
-            imageUrl: account.imageUrl
-        };
-    }
+  ngOnInit(): void {
+    this.accountService.identity().subscribe(account => {
+      if (account) {
+        this.settingsForm.patchValue(account);
+      }
+    });
+  }
+
+  save(): void {
+    this.success = false;
+
+    const account = this.settingsForm.getRawValue();
+    this.accountService.save(account).subscribe(() => {
+      this.success = true;
+
+      this.accountService.authenticate(account);
+
+      if (account.langKey !== this.translateService.currentLang) {
+        this.translateService.use(account.langKey);
+      }
+    });
+  }
 }

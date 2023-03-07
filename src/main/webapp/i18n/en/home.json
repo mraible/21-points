@@ -1,36 +1,36 @@
 {
-    "home": {
-        "title": "21-Points Health",
-        "welcome": "Welcome!",
-        "welcomeWithName": "Welcome, {{name}}!",
-        "subtitle": "21-Points Health is here to track your health and improve your life. &#128522;",
-        "logged": {
-            "message": "You are logged in as user <em>{{username}}</em>."
-        },
-        "question": "If you have any questions about the JHipster Mini-Book or 21-Points Health:",
-        "link": {
-            "homepage": "JHipster Mini-Book Blog",
-            "stackoverflow": "JHipster on Stack Overflow",
-            "contact": "Contact @jhipster_book on Twitter",
-            "issues": "Report an issue",
-            "history": "View History",
-            "preferences": "Edit Preferences"
-        },
-        "like": "If you like JHipster, don't forget to give it a star on",
-        "github": "GitHub",
-        "points": {
-            "thisWeek": "Points for the week of {{date}}:",
-            "thisWeekMobile": "Points for {{date}}:",
-            "getMoving": "No points yet this week, better get moving!"
-        },
-        "bloodPressure": {
-            "title": "Blood Pressure:",
-            "titleMobile": "BP:",
-            "noReadings": "No blood pressure readings found."
-        },
-        "weight": {
-            "title": "Weight:",
-            "noWeighIns": "No weigh-ins found."
-        }
+  "home": {
+    "title": "21-Points Health",
+    "welcome": "Welcome!",
+    "welcomeWithName": "Welcome, {{name}}!",
+    "subtitle": "21-Points Health is here to track your health and improve your life. &#128522;",
+    "logged": {
+      "message": "You are logged in as user <em>{{username}}</em>."
+    },
+    "question": "If you have any questions about the JHipster Mini-Book or 21-Points Health:",
+    "link": {
+      "homepage": "JHipster Mini-Book Blog",
+      "stackoverflow": "JHipster on Stack Overflow",
+      "contact": "Contact @jhipster_book on Twitter",
+      "issues": "Report an issue",
+      "history": "View History",
+      "preferences": "Edit Preferences"
+    },
+    "like": "If you like JHipster, don't forget to give it a star on",
+    "github": "GitHub",
+    "points": {
+      "thisWeek": "Points for the week of {{date}}:",
+      "thisWeekMobile": "Points for {{date}}:",
+      "getMoving": "No points yet this week, better get moving!"
+    },
+    "bloodPressure": {
+      "title": "Blood Pressure:",
+      "titleMobile": "BP:",
+      "noReadings": "No blood pressure readings found."
+    },
+    "weight": {
+      "title": "Weight:",
+      "noWeighIns": "No weigh-ins found."
     }
+  }
 }

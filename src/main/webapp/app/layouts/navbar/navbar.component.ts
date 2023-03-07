@@ -1,76 +1,75 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiLanguageService } from 'ng-jhipster';
+import { TranslateService } from '@ngx-translate/core';
+import { SessionStorageService } from 'ngx-webstorage';
 
 import { VERSION } from 'app/app.constants';
-import { JhiLanguageHelper, Principal, LoginModalService, LoginService } from 'app/core';
-import { ProfileService } from '../profiles/profile.service';
+import { LANGUAGES } from 'app/config/language.constants';
+import { Account } from 'app/core/auth/account.model';
+import { AccountService } from 'app/core/auth/account.service';
+import { LoginService } from 'app/login/login.service';
+import { ProfileService } from 'app/layouts/profiles/profile.service';
+import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
 
 @Component({
-    selector: 'jhi-navbar',
-    templateUrl: './navbar.component.html',
-    styleUrls: ['navbar.scss']
+  selector: 'jhi-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-    inProduction: boolean;
-    isNavbarCollapsed: boolean;
-    languages: any[];
-    swaggerEnabled: boolean;
-    modalRef: NgbModalRef;
-    version: string;
+  inProduction?: boolean;
+  isNavbarCollapsed = true;
+  languages = LANGUAGES;
+  openAPIEnabled?: boolean;
+  version = '';
+  account: Account | null = null;
+  entitiesNavbarItems: any[] = [];
 
-    constructor(
-        private loginService: LoginService,
-        private languageService: JhiLanguageService,
-        private languageHelper: JhiLanguageHelper,
-        private principal: Principal,
-        private loginModalService: LoginModalService,
-        private profileService: ProfileService,
-        private router: Router
-    ) {
-        this.version = VERSION ? 'v' + VERSION : '';
-        this.isNavbarCollapsed = true;
+  constructor(
+    private loginService: LoginService,
+    private translateService: TranslateService,
+    private sessionStorageService: SessionStorageService,
+    private accountService: AccountService,
+    private profileService: ProfileService,
+    private router: Router
+  ) {
+    if (VERSION) {
+      this.version = VERSION.toLowerCase().startsWith('v') ? VERSION : `v${VERSION}`;
     }
+  }
 
-    ngOnInit() {
-        this.languageHelper.getAll().then(languages => {
-            this.languages = languages;
-        });
+  ngOnInit(): void {
+    this.entitiesNavbarItems = EntityNavbarItems;
+    this.profileService.getProfileInfo().subscribe(profileInfo => {
+      this.inProduction = profileInfo.inProduction;
+      this.openAPIEnabled = profileInfo.openAPIEnabled;
+    });
 
-        this.profileService.getProfileInfo().then(profileInfo => {
-            this.inProduction = profileInfo.inProduction;
-            this.swaggerEnabled = profileInfo.swaggerEnabled;
-        });
-    }
+    this.accountService.getAuthenticationState().subscribe(account => {
+      this.account = account;
+    });
+  }
 
-    changeLanguage(languageKey: string) {
-        this.languageService.changeLanguage(languageKey);
-    }
+  changeLanguage(languageKey: string): void {
+    this.sessionStorageService.store('locale', languageKey);
+    this.translateService.use(languageKey);
+  }
 
-    collapseNavbar() {
-        this.isNavbarCollapsed = true;
-    }
+  collapseNavbar(): void {
+    this.isNavbarCollapsed = true;
+  }
 
-    isAuthenticated() {
-        return this.principal.isAuthenticated();
-    }
+  login(): void {
+    this.router.navigate(['/login']);
+  }
 
-    login() {
-        this.modalRef = this.loginModalService.open();
-    }
+  logout(): void {
+    this.collapseNavbar();
+    this.loginService.logout();
+    this.router.navigate(['']);
+  }
 
-    logout() {
-        this.collapseNavbar();
-        this.loginService.logout();
-        this.router.navigate(['']);
-    }
-
-    toggleNavbar() {
-        this.isNavbarCollapsed = !this.isNavbarCollapsed;
-    }
-
-    getImageUrl() {
-        return this.isAuthenticated() ? this.principal.getImageUrl() : null;
-    }
+  toggleNavbar(): void {
+    this.isNavbarCollapsed = !this.isNavbarCollapsed;
+  }
 }

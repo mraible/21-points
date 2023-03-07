@@ -1,143 +1,171 @@
-<div>
-    <div class="row">
-        <div class="col-md-4 d-none d-md-inline">
-            <span class="heart img-fluid rounded"></span>
-        </div>
-        <div class="col-md-8">
-            <div class="col-md-11 p-0"><jhi-alert></jhi-alert></div>
-            <h1 jhiTranslate="home.welcome" *ngIf="!isAuthenticated()">Welcome, Java Hipster!</h1>
-            <h1 id="home-logged-message" jhiTranslate="home.welcomeWithName" *ngIf="isAuthenticated() && account"
-                translateValues="{name: '{{account.firstName}}'}">Welcome, Java Hipster!</h1>
+<div class="row">
+  <div class="col-md-4 d-none d-md-inline">
+    <span class="heart img-fluid rounded"></span>
+  </div>
 
-            <p class="lead" jhiTranslate="home.subtitle">This is your homepage</p>
-            <div [ngSwitch]="isAuthenticated()">
-                <div *ngSwitchCase="true">
-                    <div class="row">
-                        <div class="col-7">
-                            <h4 jhiTranslate="home.points.thisWeek" class="mt-1 d-none d-md-inline"
-                                translateValues="{date: '{{pointsThisWeek.week | date: 'longDate'}}'}">
-                                Points for the week of {{pointsThisWeek.week | date: 'longDate'}}:
-                            </h4>
-                            <h4 jhiTranslate="home.points.thisWeekMobile" class="mt-1 d-sm-none"
-                                translateValues="{date: '{{pointsThisWeek.week | date: 'MMM d'}}'}">
-                                Points for {{pointsThisWeek.week | date: 'mediumDate'}}:
-                            </h4>
-                        </div>
-                        <div class="col-5 col-md-4 text-right">
-                            <a [routerLink]="['/points/new']" class="btn btn-primary m-0 mb-1 text-white">Add Points</a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-11 col-xs-12">
-                            <ngb-progressbar max="21" [value]="pointsThisWeek.points" [striped]="true"
-                                             [type]="pointsThisWeek.progress" [hidden]="!pointsThisWeek.points">
-                                <span *ngIf="pointsThisWeek.points">
-                                    {{pointsThisWeek.points}} / Goal: {{preferences.weeklyGoal}}
-                                </span>
-                            </ngb-progressbar>
-                            <ngb-alert [dismissible]="false" [hidden]="pointsThisWeek.points">
-                                <span jhiTranslate="home.points.getMoving">
-                                    No points yet this week, better get moving!</span>
-                            </ngb-alert>
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-6 text-nowrap">
-                            <h4 class="mt-1 d-none d-md-inline" jhiTranslate="home.bloodPressure.title">Blood Pressure:</h4>
-                            <h4 class="mt-1 d-sm-none" jhiTranslate="home.bloodPressure.titleMobile">BP:</h4>
-                        </div>
-                        <div class="col col-md-5 col-xs-5 text-right">
-                            <a [routerLink]="['/blood-pressure/new']" class="btn btn-outline-secondary btn-sm">
-                                <span jhiTranslate="twentyOnePointsApp.bloodPressure.home.createLabel">Add Blood Pressure</span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-md-11 col-xs-12">
-                            <span *ngIf="bpReadings.readings && bpReadings.readings.length">
-                                <nvd3 [options]="bpOptions" [data]="bpData" class="with-3d-shadow with-transitions"></nvd3>
-                            </span>
-                            <ngb-alert [dismissible]="false" [hidden]="bpReadings.readings && bpReadings.readings.length">
-                                <span jhiTranslate="home.bloodPressure.noReadings">
-                                    No blood pressure readings found.
-                                </span>
-                            </ngb-alert>
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-6">
-                            <h4 jhiTranslate="home.weight.title">Weight:</h4>
-                        </div>
-                        <div class="col col-md-5 col-xs-5 text-right">
-                            <a [routerLink]="['/weight/new']" class="btn btn-outline-secondary btn-sm">
-                                <span jhiTranslate="twentyOnePointsApp.weight.home.createLabel">Add Weight</span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-11 col-xs-12">
-                            <span *ngIf="weights.weighIns && weights.weighIns.length">
-                                <nvd3 [options]="weightOptions" [data]="weightData" class="with-3d-shadow with-transitions"></nvd3>
-                            </span>
-                            <ngb-alert [dismissible]="false" [hidden]="weights.weighIns && weights.weighIns.length">
-                                <span jhiTranslate="home.weight.noWeighIns">
-                                    No weigh-ins found.
-                                </span>
-                            </ngb-alert>
-                        </div>
-                    </div>
-
-                    <div class="row" *ngIf="preferences?.id">
-                        <p class="mt-2 col-11">
-                            <a [routerLink]="['/preferences', preferences.id, 'edit']"
-                               class="float-right" jhiTranslate="home.link.preferences">Edit Preferences</a>
-                            <a routerLink="history" jhiTranslate="home.link.history">View History</a>
-                        </p>
-                    </div>
-
-                    <p *ngIf="account" class="logged-in-message" jhiTranslate="home.logged.message"
-                       translateValues="{username: '{{account.login}}'}">
-                        You are logged in as user "{{account.login}}".
-                    </p>
-                </div>
-
-                <div *ngSwitchCase="false">
-                    <p class="font-weight-bold">
-                        <span jhiTranslate="global.messages.info.authenticated.prefix">To get started, please </span>
-                        <a href="" (click)="login(); false">
-                            <fa-icon [icon]="'sign-in-alt'"></fa-icon>
-                            <strong jhiTranslate="global.messages.info.authenticated.link">Sign In</strong></a>
-                    </p>
-
-                    <p>
-                        <a routerLink="about" class="btn btn-info d-none d-sm-inline text-white">
-                            <span jhiTranslate="global.messages.info.learnMore">Learn more</span>
-                            <span jhiTranslate="global.messages.info.about21Points">about 21-Points Health</span></a>
-                        <a routerLink="about" class="btn btn-info d-sm-none text-white">
-                            <span jhiTranslate="global.messages.info.learnMore">Learn more</span></a>
-                    </p>
-
-                    <p jhiTranslate="home.question">
-                        If you have any question on JHipster:
-                    </p>
-
-                    <ul id="resources">
-                        <li><a href="http://www.jhipster-book.com" target="_blank"
-                               data-translate="home.link.homepage">JHipster Mini-Book Blog</a></li>
-                        <li><a href="http://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener"
-                               data-translate="home.link.stackoverflow">JHipster on Stack Overflow</a></li>
-                        <li><a href="https://twitter.com/jhipster_book" target="_blank" rel="noopener"
-                               data-translate="home.link.contact">Contact @java_hipster on Twitter</a></li>
-                        <li><a href="https://github.com/mraible/21-points/issues" target="_blank" rel="noopener"
-                               data-translate="home.link.issues">Report an issue</a></li>
-                    </ul>
-
-                    <p *ngSwitchCase="false">
-                        <span jhiTranslate="global.messages.info.register.noaccount">You don't have an account yet?</span>
-                        <a routerLink="register" jhiTranslate="global.messages.info.register.link">Register a new account</a>.
-                    </p>
-                </div>
-            </div>
-        </div>
+  <div class="col-md-8">
+    <div class="col-md-11 p-0">
+      <jhi-alert></jhi-alert>
     </div>
+    <h1 jhiTranslate="home.welcome" *ngIf="!account">Welcome, Java Hipster!</h1>
+    <h1 id="home-logged-message" jhiTranslate="home.welcomeWithName" *ngIf="account" [translateValues]="{ name: account.firstName }">
+      Welcome, Java Hipster!
+    </h1>
+
+    <p class="lead" jhiTranslate="home.subtitle">This is your homepage</p>
+
+    <div [ngSwitch]="account !== null">
+      <div *ngSwitchCase="true">
+        <div class="row">
+          <div class="col-8">
+            <h4
+              jhiTranslate="home.points.thisWeek"
+              class="d-none d-md-inline"
+              [translateValues]="{ date: pointsThisWeek.week | date: 'MMMM d' }"
+            >
+              Points for the week of {{ pointsThisWeek.week | date: 'MMMM d' }}:
+            </h4>
+            <h4
+              jhiTranslate="home.points.thisWeekMobile"
+              class="d-md-none"
+              [translateValues]="{ date: pointsThisWeek.week | date: 'MMM d' }"
+            >
+              Points for {{ pointsThisWeek.week | date: 'mediumDate' }}:
+            </h4>
+          </div>
+          <div class="col-4 col-md-3 text-end">
+            <a [routerLink]="['/points/new']" class="btn btn-primary text-white">Add Points</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-11 col-xs-12 mt-1">
+            <ngb-progressbar [max]="21" [value]="pointsThisWeek.points" [hidden]="!pointsThisWeek.points" [striped]="true">
+              <span *ngIf="pointsThisWeek.points" class="fw-bolder">
+                {{ pointsThisWeek.points }} / Goal: {{ preferences.weeklyGoal }}
+              </span>
+            </ngb-progressbar>
+            <ngb-alert [dismissible]="false" [hidden]="pointsThisWeek.points">
+              <span jhiTranslate="home.points.getMoving"> No points yet this week, better get moving!</span>
+            </ngb-alert>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-6 text-nowrap">
+            <h4 class="mt-1 d-none d-md-inline" jhiTranslate="home.bloodPressure.title">Blood Pressure:</h4>
+            <h4 class="mt-1 d-sm-none" jhiTranslate="home.bloodPressure.titleMobile">BP:</h4>
+          </div>
+          <div class="col col-md-5 col-xs-5 text-end">
+            <a [routerLink]="['/blood-pressure/new']" class="btn btn-outline-secondary btn-sm">
+              <span jhiTranslate="twentyOnePointsApp.bloodPressure.home.createLabel">Add Blood Pressure</span>
+            </a>
+          </div>
+        </div>
+        <div class="row mt-1">
+          <div class="col-md-11 col-xs-12">
+            <canvas
+              baseChart
+              *ngIf="bpReadings && bpReadings.readings.length"
+              height="125"
+              [type]="'line'"
+              [data]="bpData"
+              [options]="bpOptions"
+            >
+            </canvas>
+            <ngb-alert [dismissible]="false" [hidden]="bpReadings && bpReadings.readings.length">
+              <span jhiTranslate="home.bloodPressure.noReadings"> No blood pressure readings found. </span>
+            </ngb-alert>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-6">
+            <h4 jhiTranslate="home.weight.title">Weight:</h4>
+          </div>
+          <div class="col col-md-5 col-xs-5 text-end">
+            <a [routerLink]="['/weight/new']" class="btn btn-outline-secondary btn-sm">
+              <span jhiTranslate="twentyOnePointsApp.weight.home.createLabel">Add Weight</span>
+            </a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-11 col-xs-12">
+            <canvas
+              baseChart
+              *ngIf="weights && weights.weighIns.length"
+              height="125"
+              [type]="'line'"
+              [data]="weightData"
+              [options]="weightOptions"
+            >
+            </canvas>
+            <ngb-alert [dismissible]="false" [hidden]="weights && weights.weighIns.length">
+              <span jhiTranslate="home.weight.noWeighIns"> No weigh-ins found. </span>
+            </ngb-alert>
+          </div>
+        </div>
+
+        <div class="row">
+          <p class="mt-3 col-11">
+            <a
+              [routerLink]="['/preferences' + (preferences && preferences.id ? '/' + preferences.id + '/edit' : '/new')]"
+              class="float-end"
+              jhiTranslate="home.link.preferences"
+              >Edit Preferences</a
+            >
+            <a routerLink="history" jhiTranslate="home.link.history">View History</a>
+          </p>
+        </div>
+
+        <p *ngIf="account" class="logged-in-message" jhiTranslate="home.logged.message" [translateValues]="{ username: account.login }">
+          You are logged in as user "{{ account.login }}".
+        </p>
+      </div>
+
+      <div *ngSwitchCase="false">
+        <p class="fw-bold">
+          <span jhiTranslate="global.messages.info.authenticated.prefix">To get started, please </span>
+          <a class="alert-link" (click)="login()">
+            <fa-icon [icon]="'sign-in-alt'"></fa-icon>
+            <strong jhiTranslate="global.messages.info.authenticated.link">Sign In</strong></a
+          >
+        </p>
+
+        <p>
+          <a routerLink="about" class="btn btn-info d-none d-sm-inline text-white">
+            <span jhiTranslate="global.messages.info.learnMore">Learn more</span>
+            <span jhiTranslate="global.messages.info.about21Points">about 21-Points Health</span></a
+          >
+          <a routerLink="about" class="btn btn-info d-sm-none text-white">
+            <span jhiTranslate="global.messages.info.learnMore">Learn more</span></a
+          >
+        </p>
+
+        <p jhiTranslate="home.question">If you have any question on JHipster:</p>
+
+        <ul id="resources">
+          <li><a href="http://www.jhipster-book.com" target="_blank" data-translate="home.link.homepage">JHipster Mini-Book Blog</a></li>
+          <li>
+            <a href="http://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener" data-translate="home.link.stackoverflow"
+              >JHipster on Stack Overflow</a
+            >
+          </li>
+          <li>
+            <a href="https://twitter.com/jhipster_book" target="_blank" rel="noopener" data-translate="home.link.contact"
+              >Follow @jhipster_book on Twitter</a
+            >
+          </li>
+          <li>
+            <a href="https://github.com/mraible/21-points/issues" target="_blank" rel="noopener" data-translate="home.link.issues"
+              >Report an issue</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <p *ngSwitchCase="false">
+        <span jhiTranslate="global.messages.info.register.noaccount">You don't have an account yet?</span>
+        <a routerLink="register" jhiTranslate="global.messages.info.register.link">Register a new account</a>.
+      </p>
+    </div>
+  </div>
 </div>

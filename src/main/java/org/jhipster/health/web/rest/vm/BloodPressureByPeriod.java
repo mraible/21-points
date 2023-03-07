@@ -1,10 +1,10 @@
 package org.jhipster.health.web.rest.vm;
 
+import java.util.List;
 import org.jhipster.health.domain.BloodPressure;
 
-import java.util.List;
-
 public class BloodPressureByPeriod {
+
     private String period;
     private List<BloodPressure> readings;
 
@@ -31,10 +31,6 @@ public class BloodPressureByPeriod {
 
     @Override
     public String toString() {
-        return "BloodPressureByPeriod{" +
-            "period='" + period + '\'' +
-            ", readings=" + readings +
-            '}';
+        return "BloodPressureByPeriod{" + "period='" + period + '\'' + ", readings=" + readings + '}';
     }
 }
-

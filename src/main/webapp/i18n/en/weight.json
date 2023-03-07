@@ -1,25 +1,27 @@
-
 {
-    "twentyOnePointsApp": {
-        "weight" : {
-            "home": {
-                "title": "Weigh-Ins",
-                "createLabel": "Add Weight",
-                "createOrEditLabel": "Edit Weight",
-                "search": "Search for Weight"
-            },
-            "created": "Weight added successfully.",
-            "updated": "Weight updated successfully.",
-            "deleted": "Weight deleted.",
-            "delete": {
-                "question": "Are you sure you want to delete this?"
-            },
-            "detail": {
-                "title": "View Weight"
-            },
-            "timestamp": "Date/Time",
-            "weight": "Weight",
-            "user": "User"
-        }
+  "twentyOnePointsApp": {
+    "weight": {
+      "home": {
+        "title": "Weigh-Ins",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Add Weight",
+        "createOrEditLabel": "Edit Weight",
+        "search": "Search for Weight",
+        "notFound": "No Weights found"
+      },
+      "created": "Weight added successfully.",
+      "updated": "Weight updated successfully.",
+      "deleted": "Weight deleted.",
+      "delete": {
+        "question": "Are you sure you want to delete this weigh-in?"
+      },
+      "detail": {
+        "title": "View Weight"
+      },
+      "id": "ID",
+      "timestamp": "Date/Time",
+      "weight": "Weight",
+      "user": "User"
     }
+  }
 }

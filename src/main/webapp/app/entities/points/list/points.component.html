@@ -1,0 +1,172 @@
+<div class="row">
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="col-md-8 col-sm-4">
+    <h2 id="page-heading" data-cy="PointsHeading">
+      <span jhiTranslate="twentyOnePointsApp.points.home.title">Points</span>
+    </h2>
+  </div>
+  <div class="col-md-4 col-sm-8 text-right d-flex flex-row-reverse">
+    <button class="btn btn-info ms-2" (click)="load()" [disabled]="isLoading" [ngbTooltip]="refreshTooltip" placement="bottom">
+      <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+      <ng-template #refreshTooltip>
+        <span jhiTranslate="twentyOnePointsApp.points.home.refreshListLabel">Refresh list</span>
+      </ng-template>
+    </button>
+
+    <button
+      id="jh-create-entity"
+      data-cy="entityCreateButton"
+      class="btn btn-primary jh-create-entity create-points ms-2"
+      [routerLink]="['/points/new']"
+      [ngbTooltip]="addTooltip"
+      placement="bottom"
+    >
+      <fa-icon icon="plus"></fa-icon>
+      <ng-template #addTooltip>
+        <span class="hidden-sm-down" jhiTranslate="twentyOnePointsApp.points.home.createLabel">Add Points</span>
+      </ng-template>
+    </button>
+    <form name="searchForm" class="w-100">
+      <div class="input-group h-100">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="twentyOnePointsApp.points.home.search">Search for Points</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'twentyOnePointsApp.points.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        <button class="btn btn-danger" (click)="search('')" *ngIf="currentSearch">
+          <fa-icon icon="trash-alt"></fa-icon>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="row">
+  <div class="alert alert-warning mt-3" id="no-result" *ngIf="points?.length === 0">
+    <span jhiTranslate="twentyOnePointsApp.points.home.notFound">No Points found</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="points && points.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="date">
+            <div class="d-flex">
+              <span jhiTranslate="twentyOnePointsApp.points.date">Date</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="exercise">
+            <div class="d-flex">
+              <span jhiTranslate="twentyOnePointsApp.points.exercise">Exercise</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="meals">
+            <div class="d-flex">
+              <span jhiTranslate="twentyOnePointsApp.points.meals">Meals</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="alcohol">
+            <div class="d-flex">
+              <span jhiTranslate="twentyOnePointsApp.points.alcohol">Alcohol</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="notes">
+            <div class="d-flex">
+              <span jhiTranslate="twentyOnePointsApp.points.notes">Notes</span>
+              <fa-icon class="p-1" *ngIf="!currentSearch" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="user.login">
+            <div class="d-flex">
+              <span jhiTranslate="twentyOnePointsApp.points.user">User</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let points of points; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/points', points.id, 'view']">{{ points.date | formatMediumDate }}</a>
+          </td>
+          <td class="text-center">
+            <fa-icon
+              [icon]="points.exercise ? 'check' : 'times'"
+              aria-hidden="true"
+              class="{{ points.exercise ? 'text-success' : 'text-danger' }}"
+            ></fa-icon>
+          </td>
+          <td class="text-center">
+            <fa-icon
+              [icon]="points.meals ? 'check' : 'times'"
+              aria-hidden="true"
+              class="{{ points.meals ? 'text-success' : 'text-danger' }}"
+            ></fa-icon>
+          </td>
+          <td class="text-center">
+            <fa-icon
+              [icon]="points.alcohol ? 'check' : 'times'"
+              aria-hidden="true"
+              class="{{ points.alcohol ? 'text-success' : 'text-danger' }}"
+            ></fa-icon>
+          </td>
+          <td>{{ points.notes }}</td>
+          <td>
+            {{ points.user?.login }}
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button type="submit" [routerLink]="['/points', points.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button type="submit" [routerLink]="['/points', points.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(points)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="points && points.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

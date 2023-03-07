@@ -1,15 +1,10 @@
 package org.jhipster.health.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
+import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
-import org.springframework.data.elasticsearch.annotations.Document;
-import java.io.Serializable;
-import java.util.Objects;
-
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jhipster.health.domain.enumeration.Units;
 
 /**
@@ -17,8 +12,9 @@ import org.jhipster.health.domain.enumeration.Units;
  */
 @Entity
 @Table(name = "preferences")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Document(indexName = "preferences")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "preferences")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Preferences implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,6 +22,7 @@ public class Preferences implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -39,12 +36,19 @@ public class Preferences implements Serializable {
     @Column(name = "weight_units", nullable = false)
     private Units weightUnits;
 
-    @OneToOne    @JoinColumn(unique = true)
+    @OneToOne
+    @JoinColumn(unique = true)
     private User user;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Preferences id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -52,11 +56,11 @@ public class Preferences implements Serializable {
     }
 
     public Integer getWeeklyGoal() {
-        return weeklyGoal;
+        return this.weeklyGoal;
     }
 
     public Preferences weeklyGoal(Integer weeklyGoal) {
-        this.weeklyGoal = weeklyGoal;
+        this.setWeeklyGoal(weeklyGoal);
         return this;
     }
 
@@ -65,11 +69,11 @@ public class Preferences implements Serializable {
     }
 
     public Units getWeightUnits() {
-        return weightUnits;
+        return this.weightUnits;
     }
 
     public Preferences weightUnits(Units weightUnits) {
-        this.weightUnits = weightUnits;
+        this.setWeightUnits(weightUnits);
         return this;
     }
 
@@ -78,39 +82,38 @@ public class Preferences implements Serializable {
     }
 
     public User getUser() {
-        return user;
-    }
-
-    public Preferences user(User user) {
-        this.user = user;
-        return this;
+        return this.user;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    public Preferences user(User user) {
+        this.setUser(user);
+        return this;
+    }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Preferences)) {
             return false;
         }
-        Preferences preferences = (Preferences) o;
-        if (preferences.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), preferences.getId());
+        return id != null && id.equals(((Preferences) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "Preferences{" +

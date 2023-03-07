@@ -1,12 +1,12 @@
 package org.jhipster.health.web.rest.errors;
 
-import org.zalando.problem.AbstractThrowableProblem;
-import org.zalando.problem.Status;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import org.zalando.problem.AbstractThrowableProblem;
+import org.zalando.problem.Status;
 
+@SuppressWarnings("java:S110") // Inheritance tree of classes should not be too deep
 public class BadRequestAlertException extends AbstractThrowableProblem {
 
     private static final long serialVersionUID = 1L;

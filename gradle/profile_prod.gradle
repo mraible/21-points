@@ -1,63 +1,66 @@
-apply plugin: 'org.springframework.boot'
-apply plugin: 'com.gorylenko.gradle-git-properties'
-apply plugin: 'com.moowork.node'
-
 dependencies {
-    testCompile "com.h2database:h2"
+    implementation "org.postgresql:postgresql"
+    liquibaseRuntime "org.postgresql:postgresql"
+    testImplementation "org.testcontainers:postgresql"
 }
 
-def profiles = 'prod'
-if (project.hasProperty('no-liquibase')) {
-    profiles += ',no-liquibase'
+def profiles = "prod"
+if (project.hasProperty("no-liquibase")) {
+    profiles += ",no-liquibase"
 }
 
-if (project.hasProperty('swagger')) {
-    profiles += ',swagger'
+if (project.hasProperty("api-docs")) {
+    profiles += ",api-docs"
+}
+
+if (project.hasProperty("e2e")) {
+    profiles += ",e2e"
+}
+
+springBoot {
+    buildInfo()
 }
 
 bootRun {
-    args = []
+    args = ["--spring.profiles.active=${profiles}"]
 }
 
-task webpack_test(type: YarnTask, dependsOn: 'yarn_install') {
-    args = ["run", "webpack:test"]
-}
-
-task webpack(type: YarnTask, dependsOn: 'yarn_install') {
-    args = ["run", "webpack:prod"]
-}
-
-war {
-    webAppDirName = 'build/www/'
-}
-
-task copyIntoStatic (type: Copy) {
-    from 'build/www/'
-    into 'build/resources/main/static'
+task webapp(type: NpmTask, dependsOn: "npm_install") {
+    args = ["run", "webapp:prod"]
+    environment = [APP_VERSION: project.version]
 }
 
 processResources {
-    filesMatching('**/application.yml') {
+    inputs.property('version', version)
+    inputs.property('springProfiles', profiles)
+    filesMatching("**/application.yml") {
         filter {
-            it.replace('#project.version#', version)
+            it.replace("#project.version#", version)
         }
         filter {
-            it.replace('#spring.profiles.active#', profiles)
+            it.replace("#spring.profiles.active#", profiles)
         }
     }
 }
 
-generateGitProperties {
-    onlyIf {
-        !source.isEmpty()
+task integrationTest(type: Test) {
+    maxHeapSize = "1G"
+    useJUnitPlatform()
+    description = "Execute integration tests."
+    group = "verification"
+    include "**/*IT*", "**/*IntTest*"
+    testLogging {
+        events 'FAILED', 'SKIPPED'
     }
+    systemProperty('spring.profiles.active', 'testprod')
+    systemProperty('java.security.egd', 'file:/dev/./urandom')
+    // uncomment if the tests reports are not generated
+    // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
+    // ignoreFailures true
+    reports.html.enabled = false
 }
+integrationTest.dependsOn test
 
-gitProperties {
-    keys = ['git.branch', 'git.commit.id.abbrev', 'git.commit.id.describe']
-}
 
-test.dependsOn webpack_test
-processResources.dependsOn webpack
-copyIntoStatic.dependsOn processResources
-bootJar.dependsOn copyIntoStatic
+processResources.dependsOn webapp
+bootJar.dependsOn processResources

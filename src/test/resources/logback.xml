@@ -5,14 +5,19 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
     <logger name="org.jhipster.health" level="INFO"/>
+    <logger name="org.jhipster.health.config.ElasticsearchTestContainer" level="WARN"/>
+    <logger name="tech.jhipster" level="WARN"/>
 
-    <logger name="io.github.jhipster" level="WARN"/>
+    <!-- https://www.testcontainers.org/supported_docker_environment/logging_config/ -->
+    <logger name="org.testcontainers" level="INFO"/>
+    <logger name="com.github.dockerjava" level="WARN"/>
 
     <logger name="javax.activation" level="WARN"/>
     <logger name="javax.mail" level="WARN"/>
     <logger name="javax.xml.bind" level="WARN"/>
+    <logger name="jdk.event.security" level="WARN"/>
     <logger name="ch.qos.logback" level="WARN"/>
-    <logger name="com.codahale.metrics" level="WARN"/>
+    <logger name="com.jayway.jsonpath" level="WARN"/>
     <logger name="com.ryantenney" level="WARN"/>
     <logger name="com.sun" level="WARN"/>
     <logger name="com.zaxxer" level="WARN"/>
@@ -34,13 +39,15 @@
     <logger name="org.springframework.cache" level="WARN"/>
     <logger name="org.thymeleaf" level="WARN"/>
     <logger name="org.xnio" level="WARN"/>
-    <logger name="springfox" level="WARN"/>
+    <logger name="io.swagger.v3" level="INFO"/>
     <logger name="sun.rmi" level="WARN"/>
     <logger name="liquibase" level="WARN"/>
     <logger name="LiquibaseSchemaResolver" level="INFO"/>
     <logger name="sun.rmi.transport" level="WARN"/>
+    <logger name="com.tngtech.archunit.core.importer" level="ERROR"/>
 
-    <root level="WARN">
+    <root>
+        <level>WARN</level>
         <appender-ref ref="CONSOLE"/>
     </root>
 

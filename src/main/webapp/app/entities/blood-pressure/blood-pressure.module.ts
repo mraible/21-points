@@ -1,35 +1,13 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
-import { TwentyOnePointsSharedModule } from 'app/shared';
-import { TwentyOnePointsAdminModule } from 'app/admin/admin.module';
-import {
-    BloodPressureComponent,
-    BloodPressureDetailComponent,
-    BloodPressureUpdateComponent,
-    BloodPressureDeletePopupComponent,
-    BloodPressureDeleteDialogComponent,
-    bloodPressureRoute,
-    bloodPressurePopupRoute
-} from './';
-
-const ENTITY_STATES = [...bloodPressureRoute, ...bloodPressurePopupRoute];
+import { NgModule } from '@angular/core';
+import { SharedModule } from 'app/shared/shared.module';
+import { BloodPressureComponent } from './list/blood-pressure.component';
+import { BloodPressureDetailComponent } from './detail/blood-pressure-detail.component';
+import { BloodPressureUpdateComponent } from './update/blood-pressure-update.component';
+import { BloodPressureDeleteDialogComponent } from './delete/blood-pressure-delete-dialog.component';
+import { BloodPressureRoutingModule } from './route/blood-pressure-routing.module';
 
 @NgModule({
-    imports: [TwentyOnePointsSharedModule, TwentyOnePointsAdminModule, RouterModule.forChild(ENTITY_STATES)],
-    declarations: [
-        BloodPressureComponent,
-        BloodPressureDetailComponent,
-        BloodPressureUpdateComponent,
-        BloodPressureDeleteDialogComponent,
-        BloodPressureDeletePopupComponent
-    ],
-    entryComponents: [
-        BloodPressureComponent,
-        BloodPressureUpdateComponent,
-        BloodPressureDeleteDialogComponent,
-        BloodPressureDeletePopupComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [SharedModule, BloodPressureRoutingModule],
+  declarations: [BloodPressureComponent, BloodPressureDetailComponent, BloodPressureUpdateComponent, BloodPressureDeleteDialogComponent],
 })
-export class TwentyOnePointsBloodPressureModule {}
+export class BloodPressureModule {}

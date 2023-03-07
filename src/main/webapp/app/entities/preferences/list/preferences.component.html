@@ -1,0 +1,136 @@
+<div class="row">
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="col-md-8 col-sm-4">
+    <h2 id="page-heading" data-cy="PreferencesHeading">
+      <span jhiTranslate="twentyOnePointsApp.preferences.home.title">Preferences</span>
+    </h2>
+  </div>
+  <div class="col-md-4 col-sm-8 text-right d-flex flex-row-reverse">
+    <button class="btn btn-info ms-2" (click)="load()" [disabled]="isLoading" [ngbTooltip]="refreshTooltip" placement="bottom">
+      <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+      <ng-template #refreshTooltip>
+        <span jhiTranslate="twentyOnePointsApp.preferences.home.refreshListLabel">Refresh list</span>
+      </ng-template>
+    </button>
+
+    <button
+      id="jh-create-entity"
+      data-cy="entityCreateButton"
+      class="btn btn-primary jh-create-entity create-preferences ms-2"
+      [hidden]="preferences?.length && !isAdmin"
+      [routerLink]="['/preferences/new']"
+      [ngbTooltip]="addTooltip"
+      placement="bottom"
+    >
+      <fa-icon icon="plus"></fa-icon>
+      <ng-template #addTooltip>
+        <span class="hidden-sm-down" jhiTranslate="twentyOnePointsApp.preferences.home.createLabel">Add Preference</span>
+      </ng-template>
+    </button>
+
+    <form name="searchForm" class="w-100">
+      <div class="input-group h-100">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="twentyOnePointsApp.preferences.home.search"
+          >Search for Preferences</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'twentyOnePointsApp.preferences.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        <button class="btn btn-danger" (click)="search('')" *ngIf="currentSearch">
+          <fa-icon icon="trash-alt"></fa-icon>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="row">
+  <div class="alert alert-warning mt-3" id="no-result" *ngIf="preferences?.length === 0">
+    <span jhiTranslate="twentyOnePointsApp.preferences.home.notFound">No Preferences found</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="preferences && preferences.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="weeklyGoal">
+            <div class="d-flex">
+              <span jhiTranslate="twentyOnePointsApp.preferences.weeklyGoal">Weekly Goal</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="weightUnits">
+            <div class="d-flex">
+              <span jhiTranslate="twentyOnePointsApp.preferences.weightUnits">Weight Units</span>
+              <fa-icon class="p-1" *ngIf="!currentSearch" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th *jhiHasAnyAuthority="'ROLE_ADMIN'" scope="col" jhiSortBy="user.login">
+            <div class="d-flex">
+              <span jhiTranslate="twentyOnePointsApp.preferences.user">User</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let preferences of preferences; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/preferences', preferences.id, 'view']">{{ preferences.id }}</a>
+          </td>
+          <td>{{ preferences.weeklyGoal }}</td>
+          <td jhiTranslate="{{ 'twentyOnePointsApp.Units.' + preferences.weightUnits }}">{{ preferences.weightUnits }}</td>
+          <td *jhiHasAnyAuthority="'ROLE_ADMIN'">
+            {{ preferences.user?.login }}
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/preferences', preferences.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/preferences', preferences.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(preferences)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
