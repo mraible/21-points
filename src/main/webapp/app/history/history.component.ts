@@ -7,7 +7,7 @@ import { PointsService } from '../entities/points/service/points.service';
 import { BloodPressureService } from '../entities/blood-pressure/service/blood-pressure.service';
 import { WeightService } from '../entities/weight/service/weight.service';
 import { PreferencesService } from '../entities/preferences/service/preferences.service';
-import { IPoints, IPointsPerWeek } from '../entities/points/points.model';
+import { IPoints } from '../entities/points/points.model';
 import { IBloodPressure } from '../entities/blood-pressure/blood-pressure.model';
 import { IWeight } from '../entities/weight/weight.model';
 import { EventColor } from 'calendar-utils';
@@ -188,17 +188,18 @@ export class HistoryComponent implements OnInit {
 
       sundays.forEach(sunday => {
         this.pointsService.byWeek(format(sunday, 'YYYY-MM-DD')).subscribe(data => {
-          const { points }: IPointsPerWeek = data.body;
+          const pointsByWeek: any = data.body;
           this.events.push({
             start: startOfDay(sunday),
             end: endOfDay(sunday),
-            title: `${points}/${weeklyGoal} Points`,
-            color: points >= 10 ? colors.green : colors.red,
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            title: `${pointsByWeek.points}/${weeklyGoal} Points`,
+            color: pointsByWeek.points >= 10 ? colors.green : colors.red,
             cssClass: 'd-none', // hide as an event dot
             draggable: false,
             meta: {
               entity: 'totalPoints',
-              value: points,
+              value: pointsByWeek.points,
               goal: weeklyGoal || 10,
             },
           });
