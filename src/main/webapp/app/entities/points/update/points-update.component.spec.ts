@@ -62,6 +62,7 @@ describe('Points Management Update Component', () => {
       jest.spyOn(userService, 'addUserToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ points });
+      activatedRoute.queryParams = of({});
       comp.ngOnInit();
 
       expect(userService.query).toHaveBeenCalled();
@@ -78,6 +79,7 @@ describe('Points Management Update Component', () => {
       points.user = user;
 
       activatedRoute.data = of({ points });
+      activatedRoute.queryParams = of({});
       comp.ngOnInit();
 
       expect(comp.usersSharedCollection).toContain(user);
@@ -94,6 +96,7 @@ describe('Points Management Update Component', () => {
       jest.spyOn(pointsService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ points });
+      activatedRoute.queryParams = of({});
       comp.ngOnInit();
 
       // WHEN
@@ -117,6 +120,7 @@ describe('Points Management Update Component', () => {
       jest.spyOn(pointsService, 'create').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ points: null });
+      activatedRoute.queryParams = of({});
       comp.ngOnInit();
 
       // WHEN
@@ -139,6 +143,7 @@ describe('Points Management Update Component', () => {
       jest.spyOn(pointsService, 'update').mockReturnValue(saveSubject);
       jest.spyOn(comp, 'previousState');
       activatedRoute.data = of({ points });
+      activatedRoute.queryParams = of({});
       comp.ngOnInit();
 
       // WHEN

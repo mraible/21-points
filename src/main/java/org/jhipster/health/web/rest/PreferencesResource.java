@@ -3,7 +3,6 @@ package org.jhipster.health.web.rest;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
-import io.micrometer.core.annotation.Timed;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -282,7 +281,6 @@ public class PreferencesResource {
      * @return the preferences or default (weeklyGoal: 10) if none exist.
      */
     @GetMapping("/my-preferences")
-    @Timed
     public ResponseEntity<Preferences> getUserPreferences() {
         String username = SecurityUtils.getCurrentUserLogin().orElse("");
         log.debug("REST request to get Preferences : {}", username);

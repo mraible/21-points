@@ -3,7 +3,6 @@ package org.jhipster.health.web.rest;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
-import io.micrometer.core.annotation.Timed;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -295,7 +294,6 @@ public class WeightResource {
      * @return the result of the search.
      */
     @GetMapping("/weight-by-days/{days}")
-    @Timed
     public ResponseEntity<WeightByPeriod> getByDays(@PathVariable int days) {
         ZonedDateTime rightNow = ZonedDateTime.now(ZoneOffset.UTC);
         ZonedDateTime daysAgo = rightNow.minusDays(days);
@@ -312,7 +310,6 @@ public class WeightResource {
      * @return the result of the search.
      */
     @GetMapping("/weight-by-month/{date}")
-    @Timed
     public ResponseEntity<WeightByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
         LocalDate firstDay = date.atDay(1);
         LocalDate lastDay = date.atEndOfMonth();

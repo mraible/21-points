@@ -13,7 +13,7 @@
       "updated": "Blood pressure updated successfully.",
       "deleted": "Blood pressure deleted.",
       "delete": {
-        "question": "Are you sure you want to delete this?"
+        "question": "Are you sure you want to delete this blood pressure reading?"
       },
       "detail": {
         "title": "View Blood Pressure"

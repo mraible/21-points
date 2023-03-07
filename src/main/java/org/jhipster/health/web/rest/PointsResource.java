@@ -3,11 +3,11 @@ package org.jhipster.health.web.rest;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
-import io.micrometer.core.annotation.Timed;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
@@ -23,12 +23,14 @@ import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+import org.jhipster.health.web.rest.vm.PointsPerMonth;
 import org.jhipster.health.web.rest.vm.PointsPerWeek;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -292,13 +294,48 @@ public class PointsResource {
     }
 
     /**
+     * {@code GET  /points-by-week/yyyy-MM-dd} : get all the points for a particular week.
+     *
+     * @param date a date in a week to find points for.
+     */
+    @GetMapping("/points-by-week/{date}")
+    public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        // Get first and last days of week
+        LocalDate startOfWeek = date.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = date.with(DayOfWeek.SUNDAY);
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(
+            startOfWeek,
+            endOfWeek,
+            SecurityUtils.getCurrentUserLogin().orElse(null)
+        );
+        return calculatePoints(startOfWeek, points);
+    }
+
+    /**
+     * {@code GET  /points-by-month} : get all the points for a particular current month.
+     *
+     * @param yearWithMonth the year and month to find points for.
+     */
+    @GetMapping("/points-by-month/{yearWithMonth}")
+    public ResponseEntity<PointsPerMonth> getPointsByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearWithMonth) {
+        // Get last day of the month
+        LocalDate endOfMonth = yearWithMonth.atEndOfMonth();
+        List<Points> points = pointsRepository.findAllByDateBetweenAndUserLogin(
+            yearWithMonth.atDay(1),
+            endOfMonth,
+            SecurityUtils.getCurrentUserLogin().orElse(null)
+        );
+        PointsPerMonth pointsPerMonth = new PointsPerMonth(yearWithMonth, points);
+        return new ResponseEntity<>(pointsPerMonth, HttpStatus.OK);
+    }
+
+    /**
      * {@code GET  /points-this-week} : get all the points for the current week
      *
      * @param timezone the user's timezone
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a count of points in body.
      */
     @GetMapping("/points-this-week")
-    @Timed
     public ResponseEntity<PointsPerWeek> getPointsThisWeek(@RequestParam(value = "tz", required = false) String timezone) {
         // Get current date (with timezone if passed in)
         LocalDate now = LocalDate.now();

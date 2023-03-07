@@ -27,6 +27,12 @@
             </span>
           </a>
         </li>
+        <li *ngSwitchCase="true" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a class="nav-link" routerLink="history">
+            <fa-icon icon="calendar-alt"></fa-icon>
+            <span jhiTranslate="global.menu.history">Calendar</span>
+          </a>
+        </li>
         <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
         <li
           *ngSwitchCase="true"
@@ -239,6 +245,12 @@
               </a>
             </li>
           </ul>
+        </li>
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a class="nav-link" routerLink="about">
+            <fa-icon icon="star"></fa-icon>
+            <span jhiTranslate="global.menu.about">About</span>
+          </a>
         </li>
       </ul>
     </div>

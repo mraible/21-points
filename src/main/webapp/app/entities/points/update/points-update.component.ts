@@ -9,6 +9,7 @@ import { IPoints } from '../points.model';
 import { PointsService } from '../service/points.service';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
+import dayjs from 'dayjs/esm';
 
 @Component({
   selector: 'jhi-points-update',
@@ -39,6 +40,12 @@ export class PointsUpdateComponent implements OnInit {
       }
 
       this.loadRelationshipsOptions();
+    });
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.date) {
+        this.editForm.patchValue({ date: dayjs(params.date) });
+      }
     });
   }
 
