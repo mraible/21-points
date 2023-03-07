@@ -7,7 +7,7 @@ import { PointsService } from '../entities/points/service/points.service';
 import { BloodPressureService } from '../entities/blood-pressure/service/blood-pressure.service';
 import { WeightService } from '../entities/weight/service/weight.service';
 import { PreferencesService } from '../entities/preferences/service/preferences.service';
-import { IPoints } from '../entities/points/points.model';
+import { IPoints, IPointsPerWeek } from '../entities/points/points.model';
 import { IBloodPressure } from '../entities/blood-pressure/blood-pressure.model';
 import { IWeight } from '../entities/weight/weight.model';
 import { EventColor } from 'calendar-utils';
@@ -52,6 +52,12 @@ export class HistoryComponent implements OnInit {
 
   viewDate: Date = new Date();
 
+  refresh = new Subject<void>();
+
+  events: CalendarEvent[] = [];
+
+  activeDayIsOpen = true;
+
   modalData!: {
     action: string;
     event: CalendarEvent;
@@ -72,16 +78,6 @@ export class HistoryComponent implements OnInit {
     },
   ];
 
-  setView(view: CalendarView): void {
-    this.view = view;
-  }
-
-  refresh = new Subject<void>();
-
-  events: CalendarEvent[] = [];
-
-  activeDayIsOpen = true;
-
   constructor(
     private pointsService: PointsService,
     private bloodPressureService: BloodPressureService,
@@ -90,6 +86,10 @@ export class HistoryComponent implements OnInit {
     private router: Router,
     protected modalService: NgbModal
   ) {}
+
+  setView(view: CalendarView): void {
+    this.view = view;
+  }
 
   ngOnInit(): void {
     this.populateCalendar();
@@ -188,17 +188,17 @@ export class HistoryComponent implements OnInit {
 
       sundays.forEach(sunday => {
         this.pointsService.byWeek(format(sunday, 'YYYY-MM-DD')).subscribe(data => {
-          const pointsByWeek: any = data.body;
+          const { points }: IPointsPerWeek = data.body;
           this.events.push({
             start: startOfDay(sunday),
             end: endOfDay(sunday),
-            title: `${pointsByWeek.points}/${weeklyGoal} Points`,
-            color: pointsByWeek.points >= 10 ? colors.green : colors.red,
+            title: `${points}/${weeklyGoal} Points`,
+            color: points >= 10 ? colors.green : colors.red,
             cssClass: 'd-none', // hide as an event dot
             draggable: false,
             meta: {
               entity: 'totalPoints',
-              value: pointsByWeek.points,
+              value: points,
               goal: weeklyGoal || 10,
             },
           });
@@ -241,6 +241,7 @@ export class HistoryComponent implements OnInit {
     action = action === 'Clicked' ? 'edit' : action;
     this.modalData = { event, action };
     if (action === 'edit') {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const url = this.router.createUrlTree([`/${event.meta.entity}`, event.meta.id, action]);
       this.router.navigateByUrl(url);
     }
@@ -262,6 +263,7 @@ export class HistoryComponent implements OnInit {
         dialog = WeightDeleteDialogComponent;
         break;
       default:
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         console.error(`No dialog for entity: ${event.meta.entity}`);
         break;
     }
