@@ -4,13 +4,17 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <!--
-        Added the constraints for entity BloodPressure.
+        Added the constraints for entity Preferences.
     -->
-    <changeSet id="20221108001642-2" author="jhipster">
-
+    <changeSet id="20170725033721-2" author="jhipster">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists schemaName="public" foreignKeyName="fk_preferences_user_id"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="blood_pressure"
-                                 constraintName="fk_blood_pressure__user_id"
+                                 baseTableName="preferences"
+                                 constraintName="fk_preferences_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
     </changeSet>

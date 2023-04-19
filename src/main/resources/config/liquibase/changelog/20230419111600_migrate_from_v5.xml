@@ -1,0 +1,87 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="mraible (generated)" id="1681924471153-5">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                        minValue="1" sequenceName="sequence_generator" startValue="1050"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-6">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyName="fk_evt_pers_audit_evt_data"/>
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="jhi_persistent_audit_evt_data"
+                                  constraintName="fk_evt_pers_audit_evt_data"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-7">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="jhi_persistent_audit_event"/>
+        </preConditions>
+        <dropTable tableName="jhi_persistent_audit_event"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-8">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="jhi_persistent_audit_evt_data"/>
+        </preConditions>
+        <dropTable tableName="jhi_persistent_audit_evt_data"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-9">
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="hibernate_sequence"/>
+        </preConditions>
+        <dropSequence sequenceName="hibernate_sequence"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-10">
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="jhi_persistent_audit_event_event_id_seq"/>
+        </preConditions>
+        <dropSequence sequenceName="jhi_persistent_audit_event_event_id_seq"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-11">
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="jhi_user_id_seq"/>
+        </preConditions>
+        <dropSequence sequenceName="jhi_user_id_seq"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-12">
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="points_id_seq"/>
+        </preConditions>
+        <dropSequence sequenceName="points_id_seq"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-13">
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="preferences_id_seq"/>
+        </preConditions>
+        <dropSequence sequenceName="preferences_id_seq"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-14">
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="weight_id_seq"/>
+        </preConditions>
+        <dropSequence sequenceName="weight_id_seq"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-1">
+        <modifyDataType columnName="email" newDataType="varchar(254)" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-2">
+        <modifyDataType columnName="id" newDataType="bigint" tableName="blood_pressure"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-3">
+        <modifyDataType columnName="lang_key" newDataType="varchar(6)" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="mraible (generated)" id="1681924471153-4">
+        <addNotNullConstraint columnDataType="varchar(60)" columnName="password_hash" tableName="jhi_user"
+                              validate="true"/>
+    </changeSet>
+    <changeSet author="mraible" id="1681924471153-5">
+        <update tableName="preferences">
+            <column name="weight_units" value="KG"/>
+            <where>weight_units='kg'</where>
+        </update>
+        <update tableName="preferences">
+            <column name="weight_units" value="LB"/>
+            <where>weight_units='lb'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>
