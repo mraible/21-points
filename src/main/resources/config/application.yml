@@ -190,14 +190,14 @@ jhipster:
   api-docs:
     default-include-pattern: ${server.servlet.context-path:}/api/**
     management-include-pattern: ${server.servlet.context-path:}/management/**
-    title: Twenty One Points API
-    description: Twenty One Points API documentation
-    version: 0.0.1
+    title: 21-Points Health API
+    description: 21-Points Health API documentation
+    version: 7.0.0
     terms-of-service-url:
-    contact-name:
-    contact-url:
-    contact-email:
-    license: unlicensed
+    contact-name: Matt Raible
+    contact-url: https://raibledesigns.com
+    contact-email: matt@raibledesigns.com
+    license: Apache 2.0
     license-url:
   security:
     content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.staticflickr.com; font-src 'self' data: https://fonts.gstatic.com"
