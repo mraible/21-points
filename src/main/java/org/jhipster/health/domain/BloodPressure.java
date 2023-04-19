@@ -26,7 +26,7 @@ public class BloodPressure implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "timestamp", nullable = false)
+    @Column(name = "jhi_timestamp", nullable = false)
     private ZonedDateTime timestamp;
 
     @NotNull

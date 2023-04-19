@@ -1,0 +1,61 @@
+= Upgrade Guide
+:toc: macro
+
+This document describes steps necessary to upgrade 21-points.com on Heroku. It's contains the lessons learned in link:https://www.jhipster-book.com/#!/news/entry/upgrading-21-points-health-from-v1-to-v4[upgrading from v1 to v4] and link:https://www.jhipster-book.com/#!/news/entry/21-points-v5-has-been-released[v4 to v5].
+
+toc::[]
+
+== Copy production database locally
+
+. To export the production database to a local database, use the `pg:pull` command:
++
+[source,shell]
+----
+heroku pg:pull HEROKU_POSTGRESQL_SILVER_URL health --app health-by-points
+reassign owned by mraible to twentyonepoints;
+update databasechangelog set md5sum=null;
+delete from databasechangeloglock;
+----
++
+This command will create a local database called `health` and populate it with the data from the production database.
++
+TIP: See https://devcenter.heroku.com/articles/heroku-postgres-import-export[Heroku's import/export docs for PostgreSQL] if you need additional information.
+
+. https://www.liquibase.com/download[Download Liquibase] and installed it in `/opt/tools`. I ran the following command to copy the PostgreSQL JDBC driver from my local Maven repo to Liquibase's classpath.
++
+[source,shell]
+----
+cp ~/.m2/repository/org/postgresql/postgresql/42.2.19/postgresql-42.2.19.jar lib/.
+----
+
+. Run Liquibase to generate an XML changelog for the differences between the two databases.
++
+[source,shell]
+----
+./liquibase \
+  --driver=org.postgresql.Driver --url=jdbc:postgresql://localhost:5432/health \
+  --username=postgres diffChangeLog \
+  --referenceUrl=jdbc:postgresql://localhost:5432/twentyonepoints \
+  --referenceUsername=twentyonepoints --referencePassword=21points \
+  --changelog-file=migrate_from_v5.xml
+----
+
+. Copy the results to `src/main/resources/config/liquibase/changelog` and add a reference to it in `src/main/resources/config/liquibase/master.xml`.
+
+. Update `application-prod.xml` to point to the `health` database you downloaded from Heroku.
+
+. Run `./gradlew bootRun -Pprod`, log in, and browse the app. Update Liquibase migration script as necessary.
+
+== Migrate from Bansai to Elastic Cloud
+
+// todo: add instructions
+
+== Deploy to Heroku
+
+. Use Heroku's Dashboard to turn on maintenance mode.
+
+. Change the version number in `package.json` and `version.txt` and commit the changes.
+
+. Push the changes to GitHub and release.
+
+. Run the `heroku-deploy.sh` script, and start everything back up.

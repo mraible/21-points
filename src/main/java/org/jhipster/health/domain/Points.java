@@ -26,7 +26,7 @@ public class Points implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "date", nullable = false)
+    @Column(name = "jhi_date", nullable = false)
     private LocalDate date;
 
     @Column(name = "exercise")

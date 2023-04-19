@@ -1,6 +1,10 @@
 # 21-Points Health
 
-This application was generated using JHipster 7.9.3, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v7.9.3](https://www.jhipster.tech/documentation-archive/v7.9.3).
+[![Build Status][travis-image]][travis-url] [![devDependencies Status][daviddm-image]][daviddm-url] [![sonar-quality-gate][sonar-quality-gate]][sonar-url]
+
+> To track your health and improve your life. 😊
+
+This application was generated using [JHipster 7.9.3](https://www.jhipster.tech/documentation-archive/v7.9.3), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
 
 ## Project Structure
 
@@ -253,3 +257,9 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [leaflet]: https://leafletjs.com/
 [definitelytyped]: https://definitelytyped.org/
 [angular cli]: https://cli.angular.io/
+[travis-image]: https://travis-ci.org/mraible/21-points.svg?branch=master
+[travis-url]: https://travis-ci.org/mraible/21-points
+[daviddm-image]: https://david-dm.org/mraible/21-points/dev-status.svg
+[daviddm-url]: https://david-dm.org/mraible/21-points?type=dev
+[sonar-url]: https://sonarcloud.io/dashboard?id=mraible_21-points
+[sonar-quality-gate]: https://sonarcloud.io/api/project_badges/measure?project=mraible_21-points&metric=alert_status
