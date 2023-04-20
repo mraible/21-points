@@ -12,6 +12,13 @@ toc::[]
 [source,shell]
 ----
 heroku pg:pull HEROKU_POSTGRESQL_SILVER_URL health --app health-by-points
+----
+
+Then, log in to the database and run the following commands to fix the data:
+
+----
+psql health
+\dt;
 reassign owned by mraible to twentyonepoints;
 update databasechangelog set md5sum=null;
 delete from databasechangeloglock;
