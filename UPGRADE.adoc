@@ -13,9 +13,14 @@ toc::[]
 ----
 heroku pg:pull HEROKU_POSTGRESQL_SILVER_URL health --app health-by-points
 ----
++
+This command will create a local database called `health` and populate it with the data from the production database.
++
+TIP: See https://devcenter.heroku.com/articles/heroku-postgres-import-export[Heroku's import/export docs for PostgreSQL] if you need additional information.
 
-Then, log in to the database and run the following commands to fix the data:
-
+. Then, log in to the database and run the following commands to fix the data:
++
+[source,shell]
 ----
 psql health
 \dt;
@@ -23,10 +28,6 @@ reassign owned by mraible to twentyonepoints;
 update databasechangelog set md5sum=null;
 delete from databasechangeloglock;
 ----
-+
-This command will create a local database called `health` and populate it with the data from the production database.
-+
-TIP: See https://devcenter.heroku.com/articles/heroku-postgres-import-export[Heroku's import/export docs for PostgreSQL] if you need additional information.
 
 . https://www.liquibase.com/download[Download Liquibase] and installed it in `/opt/tools`. I ran the following command to copy the PostgreSQL JDBC driver from my local Maven repo to Liquibase's classpath.
 +
