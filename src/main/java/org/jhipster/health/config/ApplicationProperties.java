@@ -3,7 +3,7 @@ package org.jhipster.health.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Properties specific to Android Software Portal.
+ * Properties specific to Twenty One Points.
  * <p>
  * Properties are configured in the {@code application.yml} file.
  * See {@link tech.jhipster.config.JHipsterProperties} for a good example.
@@ -29,4 +29,7 @@ public class ApplicationProperties {
             this.reindexOnStartup = reindexOnStartup;
         }
     }
+    // jhipster-needle-application-properties-property
+    // jhipster-needle-application-properties-property-getter
+    // jhipster-needle-application-properties-property-class
 }
