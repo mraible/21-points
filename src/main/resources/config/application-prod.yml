@@ -33,7 +33,7 @@ spring:
       enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/twentyonepoints
+    url: jdbc:postgresql://localhost:5432/health
     username: twentyonepoints
     password: 21points
     hikari:

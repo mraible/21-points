@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Es Entity Reindexer generator",
+    "npmPackageName": "generator-jhipster-es-entity-reindexer",
+    "description": "Generates code to reindex selected entities with Elasticsearch.",
+    "hookFor": "entity",
+    "hookType": "post",
+    "generatorCallback": "jhipster-es-entity-reindexer:app"
+  }
+]

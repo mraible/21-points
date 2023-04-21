@@ -1,0 +1,18 @@
+<form name="reindexForm" (ngSubmit)="reindex()">
+  <div class="modal-header">
+    <h4 class="modal-title" jhiTranslate="elasticsearch.reindex.dialog.title">Confirm reindex operation</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="activeModal.dismiss('closed')">&times;</button>
+  </div>
+  <div class="modal-body">
+    <jhi-alert-error></jhi-alert-error>
+    <p jhiTranslate="elasticsearch.reindex.dialog.question">Are you sure you want to reindex Elasticsearch? This could take a while!</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="activeModal.dismiss('closed')">
+      <span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="elasticsearch.reindex.dialog.cancel">Cancel</span>
+    </button>
+    <button type="submit" class="btn btn-danger">
+      <span class="fa fa-exclamation"></span>&nbsp;<span jhiTranslate="elasticsearch.reindex.dialog.confirm">Reindex</span>
+    </button>
+  </div>
+</form>
