@@ -3,7 +3,7 @@ package org.jhipster.health.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Properties specific to Twenty One Points.
+ * Properties specific to 21-Points Health.
  * <p>
  * Properties are configured in the {@code application.yml} file.
  * See {@link tech.jhipster.config.JHipsterProperties} for a good example.
