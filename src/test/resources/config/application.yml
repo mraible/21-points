@@ -85,8 +85,11 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
 management:
   health:
     mail:
       enabled: false
+
+application:
+  elasticsearch:
+    reindex-on-startup: false
