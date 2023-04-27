@@ -1,7 +1,7 @@
 = Upgrade Guide
 :toc: macro
 
-This document describes steps necessary to upgrade 21-points.com on Heroku. It's contains the lessons learned in link:https://www.jhipster-book.com/#!/news/entry/upgrading-21-points-health-from-v1-to-v4[upgrading from v1 to v4] and link:https://www.jhipster-book.com/#!/news/entry/21-points-v5-has-been-released[v4 to v5].
+This document describes steps necessary to upgrade 21-points.com on Heroku. It's contains the lessons learned in link:https://www.jhipster-book.com/#!/news/entry/upgrading-21-points-health-from-v1-to-v4[upgrading from version 1 to 4], link:https://www.jhipster-book.com/#!/news/entry/21-points-v5-has-been-released[version 4 to 5], and version 5 to 7.
 
 toc::[]
 
@@ -56,7 +56,22 @@ cp ~/.m2/repository/org/postgresql/postgresql/42.2.19/postgresql-42.2.19.jar lib
 
 == Migrate from Bansai to Elastic Cloud
 
-// todo: add instructions
+On Heroku, the https://elements.heroku.com/addons/bonsai[Bonsai Elasticsearch] is configured as an add-on. JHipster is automatically configured to talk to it.
+
+Unfortunately, as of JHipster 7.9.3, Elasticsearch https://github.com/jhipster/generator-jhipster/issues/20315[doesn't work out of the box with Heroku]. To solve this, you can create a Docker image with Elasticsearch and deploy it to somewhere that can run it, or you can use Elastic Cloud.
+
+I chose to https://www.jhipster.tech/using-elasticsearch/#using-elastic-cloud[use Elastic Cloud].
+
+Then, I installed the https://github.com/Ebsan/generator-jhipster-es-entity-reindexer[JHipster Elasticsearch Reindexer module] and https://github.com/Ebsan/generator-jhipster-es-entity-reindexer/pull/8/files[fixed some imports for JHipster 7.9.3].
+
+I enabled it in `application.yml`:
+
+[source,yml]
+----
+application:
+  elasticsearch:
+    reindex-on-startup: true
+----
 
 == Deploy to Heroku
 
@@ -67,3 +82,7 @@ cp ~/.m2/repository/org/postgresql/postgresql/42.2.19/postgresql-42.2.19.jar lib
 . Push the changes to GitHub and release.
 
 . Run the `heroku-deploy.sh` script, and start everything back up.
+
+. Turn off the reindexer after the first deploy.
+
+  heroku config:set APPLICATION_ELASTIC_SEARCH_REINDEX-ON-STARTUP=false
