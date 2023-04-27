@@ -23,7 +23,7 @@
     "enableTranslation": true,
     "entities": ["Points", "Weight", "BloodPressure", "Preferences"],
     "entitySuffix": "",
-    "herokuAppName": "health-by-pints",
+    "herokuAppName": "health-by-points",
     "herokuDeployType": "git",
     "herokuJavaVersion": "11",
     "jhiPrefix": "jhi",
