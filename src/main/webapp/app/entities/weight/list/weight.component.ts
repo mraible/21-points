@@ -116,15 +116,18 @@ export class WeightComponent implements OnInit {
   }
 
   protected fillComponentAttributesFromResponseBody(data: IWeight[] | null): IWeight[] {
-    const weightsNew = this.weights ?? [];
-    if (data) {
-      for (const d of data) {
-        if (weightsNew.map(op => op.id).indexOf(d.id) === -1) {
-          weightsNew.push(d);
+    if ('prev' in this.links) {
+      const weightsNew = this.weights ?? [];
+      if (data) {
+        for (const d of data) {
+          if (weightsNew.map(op => op.id).indexOf(d.id) === -1) {
+            weightsNew.push(d);
+          }
         }
       }
+      return weightsNew;
     }
-    return weightsNew;
+    return data ?? [];
   }
 
   protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {

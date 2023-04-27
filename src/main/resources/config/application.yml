@@ -211,3 +211,12 @@ jhipster:
 # ===================================================================
 
 # application:
+
+# ===================================================================
+# Uncomment or add these properties to your current application properties to
+# enable this if you'd like to reindex entities with Elasticsearch
+# ===================================================================
+
+application:
+  elasticsearch:
+    reindex-on-startup: true
