@@ -26,9 +26,9 @@ plugins {
 }
 
 group = "org.jhipster.health"
-version = "0.0.1-SNAPSHOT"
+version = "7.0.0"
 
-description = ""
+description = "21-Points Health | An application developed for a better life."
 
 sourceCompatibility=11
 targetCompatibility=11

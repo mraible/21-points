@@ -77,7 +77,7 @@ application:
 
 . Use Heroku's Dashboard to turn on maintenance mode.
 
-. Change the version number in `package.json` and `version.txt` and commit the changes.
+. Change the version number in `package.json` and `build.gradle` and commit the changes.
 
 . Push the changes to GitHub and release.
 
