@@ -1,6 +1,5 @@
 # 21-Points Health
-
-[![Build Status][travis-image]][travis-url] [![devDependencies Status][daviddm-image]][daviddm-url]
+[![Build Status][github-actions-image]][github-actions-url] <!--[![Dependency Status][daviddm-image]][daviddm-url]--> <object id="badge" data="https://snyk-widget.herokuapp.com/badge/npm/%mraible%21-points/7.0.0/badge.svg" type="image/svg+xml"></object> [![Known Vulnerabilities][snyk-image]][snyk-url]
 
 > To track your health and improve your life. 😊
 
@@ -257,7 +256,9 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [leaflet]: https://leafletjs.com/
 [definitelytyped]: https://definitelytyped.org/
 [angular cli]: https://cli.angular.io/
-[travis-image]: https://travis-ci.org/mraible/21-points.svg?branch=master
-[travis-url]: https://travis-ci.org/mraible/21-points
+[github-actions-image]: https://github.com/mraible/21-points/workflows/Application%20CI/badge.svg
+[github-actions-url]: https://github.com/mraible/21-points/actions
+[snyk-url]: https://snyk.io/test/github/mraible/21-points
+[snyk-image]: https://snyk.io/test/github/mraible/21-points/badge.svg
 [daviddm-image]: https://david-dm.org/mraible/21-points/dev-status.svg
 [daviddm-url]: https://david-dm.org/mraible/21-points?type=dev
