@@ -116,15 +116,18 @@ export class BloodPressureComponent implements OnInit {
   }
 
   protected fillComponentAttributesFromResponseBody(data: IBloodPressure[] | null): IBloodPressure[] {
-    const bloodPressuresNew = this.bloodPressures ?? [];
-    if (data) {
-      for (const d of data) {
-        if (bloodPressuresNew.map(op => op.id).indexOf(d.id) === -1) {
-          bloodPressuresNew.push(d);
+    if ('prev' in this.links) {
+      const bloodPressuresNew = this.bloodPressures ?? [];
+      if (data) {
+        for (const d of data) {
+          if (bloodPressuresNew.map(op => op.id).indexOf(d.id) === -1) {
+            bloodPressuresNew.push(d);
+          }
         }
       }
+      return bloodPressuresNew;
     }
-    return bloodPressuresNew;
+    return data ?? [];
   }
 
   protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {

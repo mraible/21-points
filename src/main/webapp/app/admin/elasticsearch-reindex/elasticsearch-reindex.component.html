@@ -1,0 +1,31 @@
+<div>
+  <h2>
+    <span jhiTranslate="elasticsearch.reindex.title">Reindex Elasticsearch</span>
+  </h2>
+  <jhi-alert></jhi-alert>
+  <p jhiTranslate="elasticsearch.reindex.instructions1">
+    This will send a request to reindex all data from your primary datasource into Elasticsearch. This will fix missing data and mapping
+    issues, however you will lose any ES data and mapping that was defined outside of your application. This request will return immediately
+    and the reindexing will run in the background. You will see "Elasticsearch: Successfully performed reindexing" in your logs when this is
+    complete.
+  </p>
+  <p jhiTranslate="elasticsearch.reindex.instructions2">
+    This can take a long time and is susceptible to concurrency issues so it should be performed when the number of users is low.
+  </p>
+  <select class="form-control selectpicker" [(ngModel)]="reindexType">
+    <option value="all">All</option>
+    <option value="selected">Selected</option>
+  </select>
+  <ng-container *ngIf="reindexType != 'all'">
+    <div *ngFor="let entityName of entities">
+      <label class="checkbox-inline">
+        <input name="{{ entityName }}" [(ngModel)]="checks[entityName]" type="checkbox" />
+        {{ entityName }}
+      </label>
+    </div>
+  </ng-container>
+  <br />
+  <button class="btn btn-primary float-right" (click)="doReindex()">
+    <span class="fa fa-exclamation"></span> <span jhiTranslate="elasticsearch.reindex.go">Reindex</span>
+  </button>
+</div>
