@@ -258,7 +258,6 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [angular cli]: https://cli.angular.io/
 [github-actions-image]: https://github.com/mraible/21-points/workflows/Application%20CI/badge.svg
 [github-actions-url]: https://github.com/mraible/21-points/actions
-[community-url]: https://community.auth0.com/
 [snyk-url]: https://snyk.io/test/github/mraible/21-points
 [snyk-image]: https://snyk.io/test/github/mraible/21-points/badge.svg
 [daviddm-image]: https://david-dm.org/mraible/21-points/dev-status.svg
