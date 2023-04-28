@@ -99,9 +99,15 @@ application:
   update preferences set weight_units='KG' where weight_units='kg';
   update preferences set weight_units='LB' where weight_units='lb';
 
-- After upgrading, there's an error when creating new records. I was able to work around this by removing the `<not>` from the precondition in the `migrate_from_v5.xml` migration.
+- After upgrading, there's an error when creating new records.
 
   relation "sequence_generator" does not exist
++
+Running the following commands fixed it:
++
+  heroku pg:psql --app health-by-points
+  # pause and take a deep breath
+  create sequence sequence_generator minvalue 1 maxvalue 9223372036854775807;
 
 - The CSP for `connect-src` needed to be added:
 
