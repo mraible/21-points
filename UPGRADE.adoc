@@ -79,10 +79,14 @@ application:
 
 . Change the version number in `package.json` and `build.gradle` and commit the changes.
 
-. Push the changes to GitHub and release.
+. Enable the service worker in `app.module.ts` for PWA support in production.
+
+. Push the changes to GitHub and do a release.
 
 . Run the `heroku-deploy.sh` script, and start everything back up.
 
 . Turn off the reindexer after the first deploy.
 
   heroku config:set APPLICATION_ELASTIC_SEARCH_REINDEX-ON-STARTUP=false
+
+. Disable the service worker in `app.module.ts`, update the versions in `package.json` and `build.gradle`, then commit and push.
