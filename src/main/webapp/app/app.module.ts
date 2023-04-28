@@ -36,7 +36,7 @@ import { ErrorComponent } from './layouts/error/error.component';
     // Set this to true to enable service worker (PWA)
     // todo: figure out how to enable this when deploying to Heroku
     // Cypress tests fail when it's enabled
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }),
     HttpClientModule,
     NgxWebstorageModule.forRoot({ prefix: 'jhi', separator: '-', caseSensitive: true }),
     TranslationModule,

@@ -1,6 +1,6 @@
 # 21-Points Health
 
-[![Build Status][travis-image]][travis-url] [![devDependencies Status][daviddm-image]][daviddm-url] [![sonar-quality-gate][sonar-quality-gate]][sonar-url]
+[![Build Status][travis-image]][travis-url] [![devDependencies Status][daviddm-image]][daviddm-url]
 
 > To track your health and improve your life. 😊
 
@@ -261,5 +261,3 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [travis-url]: https://travis-ci.org/mraible/21-points
 [daviddm-image]: https://david-dm.org/mraible/21-points/dev-status.svg
 [daviddm-url]: https://david-dm.org/mraible/21-points?type=dev
-[sonar-url]: https://sonarcloud.io/dashboard?id=mraible_21-points
-[sonar-quality-gate]: https://sonarcloud.io/api/project_badges/measure?project=mraible_21-points&metric=alert_status
