@@ -85,6 +85,6 @@ application:
 
 . Turn off the reindexer after the first deploy.
 
-  heroku config:set APPLICATION_ELASTIC_SEARCH_REINDEX_ON_STARTUP=false
+  heroku config:set APPLICATION_ELASTICSEARCH_REINDEXONSTARTUP=false
 
 . Disable the service worker in `app.module.ts`, update the versions in `package.json` and `build.gradle`, then commit and push.
