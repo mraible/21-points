@@ -88,3 +88,13 @@ application:
   heroku config:set APPLICATION_ELASTICSEARCH_REINDEXONSTARTUP=false
 
 . Disable the service worker in `app.module.ts`, update the versions in `package.json` and `build.gradle`, then commit and push.
+
+== Post Upgrade Notes
+
+- Elastic Cloud was using v8 instead of v7, so I had to turn reindexing off to get things to start.
+
+- The database updates for `lg` to `LB` did not happen, so I had to manually update them.
+
+  heroku pg:psql --app health-by-points
+  update preferences set weight_units='KG' where weight_units='kg';
+  update preferences set weight_units='LB' where weight_units='lb';
