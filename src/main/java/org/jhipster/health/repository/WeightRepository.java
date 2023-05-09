@@ -44,5 +44,5 @@ public interface WeightRepository extends JpaRepository<Weight, Long> {
 
     Page<Weight> findAllByOrderByTimestampDesc(Pageable pageable);
 
-    List<Weight> findAllByTimestampBetweenOrderByTimestampDesc(ZonedDateTime firstDate, ZonedDateTime secondDate);
+    List<Weight> findAllByTimestampBetweenOrderByTimestampAsc(ZonedDateTime firstDate, ZonedDateTime secondDate);
 }
