@@ -298,7 +298,7 @@ public class WeightResource {
         ZonedDateTime rightNow = ZonedDateTime.now(ZoneOffset.UTC);
         ZonedDateTime daysAgo = rightNow.minusDays(days);
 
-        List<Weight> weighIns = weightRepository.findAllByTimestampBetweenOrderByTimestampDesc(daysAgo, rightNow);
+        List<Weight> weighIns = weightRepository.findAllByTimestampBetweenOrderByTimestampAsc(daysAgo, rightNow);
         WeightByPeriod response = new WeightByPeriod("Last " + days + " Days", filterByUser(weighIns));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -316,7 +316,7 @@ public class WeightResource {
 
         ZoneId timezone = ZoneId.of("Z");
 
-        List<Weight> weighIns = weightRepository.findAllByTimestampBetweenOrderByTimestampDesc(
+        List<Weight> weighIns = weightRepository.findAllByTimestampBetweenOrderByTimestampAsc(
             firstDay.atStartOfDay(timezone),
             lastDay.plusDays(1).atStartOfDay(timezone)
         );
