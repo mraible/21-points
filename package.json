@@ -115,7 +115,7 @@
     "@angular-builders/custom-webpack": "14.1.0",
     "@angular-builders/jest": "14.1.0",
     "@angular-devkit/build-angular": "14.2.1",
-    "@angular-eslint/eslint-plugin": "14.0.3",
+    "@angular-eslint/eslint-plugin": "16.0.3",
     "@angular/cli": "14.2.1",
     "@angular/compiler-cli": "14.2.0",
     "@angular/service-worker": "14.2.0",
