@@ -1,7 +1,7 @@
 = Upgrade Guide
 :toc: macro
 
-This document describes steps necessary to upgrade https://www.21-points.com[21-points.com] on Heroku. It contains the lessons learned in link:https://www.jhipster-book.com/#!/news/entry/upgrading-21-points-health-from-v1-to-v4[upgrading from version 1 to 4], link:https://www.jhipster-book.com/#!/news/entry/21-points-v5-has-been-released[version 4 to 5], and version 5 to 7.
+This document describes steps necessary to upgrade https://www.21-points.com[21-points.com] on Heroku. It contains the lessons learned in link:https://www.jhipster-book.com/#!/news/entry/upgrading-21-points-health-from-v1-to-v4[upgrading from version 1 to 4], link:https://www.jhipster-book.com/#!/news/entry/21-points-v5-has-been-released[version 4 to 5], and https://www.jhipster-book.com/#!/news/entry/upgrading-21-points-health-from-v5-to-v7[version 5 to 7].
 
 toc::[]
 
