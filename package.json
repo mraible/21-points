@@ -121,7 +121,7 @@
     "@angular/service-worker": "14.2.0",
     "@types/jest": "28.1.8",
     "@types/node": "16.11.56",
-    "@typescript-eslint/eslint-plugin": "5.59.7",
+    "@typescript-eslint/eslint-plugin": "6.3.0",
     "@typescript-eslint/parser": "5.59.1",
     "browser-sync": "2.28.3",
     "browser-sync-webpack-plugin": "2.3.0",
