@@ -5,7 +5,7 @@ jobs:
     name: 'Gradle Wrapper Validation'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: gradle/wrapper-validation-action@v1
   pipeline:
     name: 21-Points pipeline
@@ -18,7 +18,7 @@ jobs:
       SPRING_JPA_SHOW_SQL: false
       JHI_DISABLE_WEBPACK_LOGS: true
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: 16.17.0
