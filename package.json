@@ -128,7 +128,7 @@
     "concurrently": "8.2.0",
     "copy-webpack-plugin": "11.0.0",
     "cypress": "12.16.0",
-    "eslint": "8.42.0",
+    "eslint": "8.51.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-cypress": "2.12.1",
     "eslint-webpack-plugin": "3.2.0",
