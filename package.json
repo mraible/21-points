@@ -142,7 +142,7 @@
     "jest-junit": "14.0.1",
     "jest-preset-angular": "12.2.2",
     "jest-sonar": "0.2.12",
-    "lint-staged": "13.2.2",
+    "lint-staged": "15.0.2",
     "merge-jsons-webpack-plugin": "2.0.1",
     "prettier": "2.8.8",
     "prettier-plugin-java": "2.1.0",
