@@ -7,11 +7,12 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entités",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "adminAuthority": "Authority",
         "points": "Points",
         "weight": "Weight",
         "bloodPressure": "Blood Pressure",
-        "preferences": "Preferences",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "preferences": "Preferences"
       },
       "account": {
         "main": "Compte",
@@ -32,7 +33,6 @@
         "logs": "Logs",
         "apidocs": "API",
         "database": "Base de données",
-        "elasticsearch-reindex": "Reindex Elasticsearch",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
       "language": "Langue"

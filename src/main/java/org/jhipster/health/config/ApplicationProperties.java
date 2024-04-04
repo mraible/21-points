@@ -3,7 +3,7 @@ package org.jhipster.health.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Properties specific to Android Software Portal.
+ * Properties specific to Twenty One Points.
  * <p>
  * Properties are configured in the {@code application.yml} file.
  * See {@link tech.jhipster.config.JHipsterProperties} for a good example.
@@ -11,22 +11,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
-    private final Elasticsearch elasticsearch = new Elasticsearch();
+    private final Liquibase liquibase = new Liquibase();
 
-    public Elasticsearch getElasticsearch() {
-        return elasticsearch;
+    // jhipster-needle-application-properties-property
+
+    public Liquibase getLiquibase() {
+        return liquibase;
     }
 
-    public static class Elasticsearch {
+    // jhipster-needle-application-properties-property-getter
 
-        private boolean reindexOnStartup;
+    public static class Liquibase {
 
-        public boolean getReindexOnStartup() {
-            return reindexOnStartup;
+        private Boolean asyncStart;
+
+        public Boolean getAsyncStart() {
+            return asyncStart;
         }
 
-        public void setReindexOnStartup(boolean reindexOnStartup) {
-            this.reindexOnStartup = reindexOnStartup;
+        public void setAsyncStart(Boolean asyncStart) {
+            this.asyncStart = asyncStart;
         }
     }
+    // jhipster-needle-application-properties-property-class
 }

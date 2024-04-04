@@ -1,38 +1,42 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { SessionStorageService } from 'ngx-webstorage';
 
+import { StateStorageService } from 'app/core/auth/state-storage.service';
+import SharedModule from 'app/shared/shared.module';
+import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 import { VERSION } from 'app/app.constants';
 import { LANGUAGES } from 'app/config/language.constants';
-import { Account } from 'app/core/auth/account.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { LoginService } from 'app/login/login.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
+import ActiveMenuDirective from './active-menu.directive';
+import NavbarItem from './navbar-item.model';
 
 @Component({
+  standalone: true,
   selector: 'jhi-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss'],
+  styleUrl: './navbar.component.scss',
+  imports: [RouterModule, SharedModule, HasAnyAuthorityDirective, ActiveMenuDirective],
 })
-export class NavbarComponent implements OnInit {
+export default class NavbarComponent implements OnInit {
   inProduction?: boolean;
-  isNavbarCollapsed = true;
+  isNavbarCollapsed = signal(true);
   languages = LANGUAGES;
   openAPIEnabled?: boolean;
   version = '';
-  account: Account | null = null;
-  entitiesNavbarItems: any[] = [];
+  account = inject(AccountService).trackCurrentAccount();
+  entitiesNavbarItems: NavbarItem[] = [];
 
-  constructor(
-    private loginService: LoginService,
-    private translateService: TranslateService,
-    private sessionStorageService: SessionStorageService,
-    private accountService: AccountService,
-    private profileService: ProfileService,
-    private router: Router
-  ) {
+  private loginService = inject(LoginService);
+  private translateService = inject(TranslateService);
+  private stateStorageService = inject(StateStorageService);
+  private profileService = inject(ProfileService);
+  private router = inject(Router);
+
+  constructor() {
     if (VERSION) {
       this.version = VERSION.toLowerCase().startsWith('v') ? VERSION : `v${VERSION}`;
     }
@@ -44,19 +48,15 @@ export class NavbarComponent implements OnInit {
       this.inProduction = profileInfo.inProduction;
       this.openAPIEnabled = profileInfo.openAPIEnabled;
     });
-
-    this.accountService.getAuthenticationState().subscribe(account => {
-      this.account = account;
-    });
   }
 
   changeLanguage(languageKey: string): void {
-    this.sessionStorageService.store('locale', languageKey);
+    this.stateStorageService.storeLocale(languageKey);
     this.translateService.use(languageKey);
   }
 
   collapseNavbar(): void {
-    this.isNavbarCollapsed = true;
+    this.isNavbarCollapsed.set(true);
   }
 
   login(): void {
@@ -70,6 +70,6 @@ export class NavbarComponent implements OnInit {
   }
 
   toggleNavbar(): void {
-    this.isNavbarCollapsed = !this.isNavbarCollapsed;
+    this.isNavbarCollapsed.update(isNavbarCollapsed => !isNavbarCollapsed);
   }
 }

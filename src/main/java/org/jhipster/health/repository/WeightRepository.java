@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface WeightRepository extends JpaRepository<Weight, Long> {
-    @Query("select weight from Weight weight where weight.user.login = ?#{principal.username}")
+    @Query("select weight from Weight weight where weight.user.login = ?#{authentication.name}")
     List<Weight> findByUserIsCurrentUser();
 
     default Optional<Weight> findOneWithEagerRelationships(Long id) {
@@ -29,13 +29,10 @@ public interface WeightRepository extends JpaRepository<Weight, Long> {
         return this.findAllWithToOneRelationships(pageable);
     }
 
-    @Query(
-        value = "select distinct weight from Weight weight left join fetch weight.user",
-        countQuery = "select count(distinct weight) from Weight weight"
-    )
+    @Query(value = "select weight from Weight weight left join fetch weight.user", countQuery = "select count(weight) from Weight weight")
     Page<Weight> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select distinct weight from Weight weight left join fetch weight.user")
+    @Query("select weight from Weight weight left join fetch weight.user")
     List<Weight> findAllWithToOneRelationships();
 
     @Query("select weight from Weight weight left join fetch weight.user where weight.id =:id")

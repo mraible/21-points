@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, Observable, asapScheduler, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
+
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
@@ -27,10 +29,11 @@ export type EntityArrayResponseType = HttpResponse<IBloodPressure[]>;
 
 @Injectable({ providedIn: 'root' })
 export class BloodPressureService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/blood-pressures');
-  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/blood-pressures');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/blood-pressures');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/blood-pressures/_search');
 
   create(bloodPressure: NewBloodPressure): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(bloodPressure);
@@ -72,9 +75,11 @@ export class BloodPressureService {
 
   search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
-    return this.http
-      .get<RestBloodPressure[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-      .pipe(map(res => this.convertResponseArrayFromServer(res)));
+    return this.http.get<RestBloodPressure[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<IBloodPressure[]>()], asapScheduler)),
+    );
   }
 
   getBloodPressureIdentifier(bloodPressure: Pick<IBloodPressure, 'id'>): number {
@@ -91,8 +96,8 @@ export class BloodPressureService {
   ): Type[] {
     const bloodPressures: Type[] = bloodPressuresToCheck.filter(isPresent);
     if (bloodPressures.length > 0) {
-      const bloodPressureCollectionIdentifiers = bloodPressureCollection.map(
-        bloodPressureItem => this.getBloodPressureIdentifier(bloodPressureItem)!
+      const bloodPressureCollectionIdentifiers = bloodPressureCollection.map(bloodPressureItem =>
+        this.getBloodPressureIdentifier(bloodPressureItem),
       );
       const bloodPressuresToAdd = bloodPressures.filter(bloodPressureItem => {
         const bloodPressureIdentifier = this.getBloodPressureIdentifier(bloodPressureItem);

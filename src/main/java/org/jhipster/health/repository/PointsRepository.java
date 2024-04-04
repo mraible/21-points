@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PointsRepository extends JpaRepository<Points, Long> {
-    @Query("select points from Points points where points.user.login = ?#{principal.username}")
+    @Query("select points from Points points where points.user.login = ?#{authentication.name}")
     List<Points> findByUserIsCurrentUser();
 
     default Optional<Points> findOneWithEagerRelationships(Long id) {
@@ -29,13 +29,10 @@ public interface PointsRepository extends JpaRepository<Points, Long> {
         return this.findAllWithToOneRelationships(pageable);
     }
 
-    @Query(
-        value = "select distinct points from Points points left join fetch points.user",
-        countQuery = "select count(distinct points) from Points points"
-    )
+    @Query(value = "select points from Points points left join fetch points.user", countQuery = "select count(points) from Points points")
     Page<Points> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select distinct points from Points points left join fetch points.user")
+    @Query("select points from Points points left join fetch points.user")
     List<Points> findAllWithToOneRelationships();
 
     @Query("select points from Points points left join fetch points.user where points.id =:id")

@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { PasswordService } from './password.service';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
+import { PasswordService } from './password.service';
 
 describe('Password Service', () => {
   let service: PasswordService;

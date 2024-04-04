@@ -1,11 +1,10 @@
 package org.jhipster.health.web.rest;
 
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.jhipster.health.IntegrationTest;
 import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.UserRepository;
@@ -22,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Integration tests for the {@link UserResource} REST controller.
+ * Integration tests for the {@link PublicUserResource} REST controller.
  */
 @AutoConfigureMockMvc
 @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
@@ -79,17 +78,6 @@ class PublicUserResourceIT {
             .andExpect(jsonPath("$.[*].email").doesNotExist())
             .andExpect(jsonPath("$.[*].imageUrl").doesNotExist())
             .andExpect(jsonPath("$.[*].langKey").doesNotExist());
-    }
-
-    @Test
-    @Transactional
-    void getAllAuthorities() throws Exception {
-        restUserMockMvc
-            .perform(get("/api/authorities").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$").value(hasItems(AuthoritiesConstants.USER, AuthoritiesConstants.ADMIN)));
     }
 
     @Test

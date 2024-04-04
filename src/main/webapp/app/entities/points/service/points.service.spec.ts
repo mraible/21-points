@@ -39,7 +39,6 @@ describe('Points Service', () => {
     });
 
     it('should create a Points', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const points = { ...sampleWithNewData };
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
@@ -96,6 +95,20 @@ describe('Points Service', () => {
       const req = httpMock.expectOne({ method: 'DELETE' });
       req.flush({ status: 200 });
       expect(expectedResult).toBe(expected);
+    });
+
+    it('should handle exceptions for searching a Points', () => {
+      const queryObject: any = {
+        page: 0,
+        size: 20,
+        query: '',
+        sort: [],
+      };
+      service.search(queryObject).subscribe(() => expectedResult);
+
+      const req = httpMock.expectOne({ method: 'GET' });
+      req.flush(null, { status: 500, statusText: 'Internal Server Error' });
+      expect(expectedResult).toBe(null);
     });
 
     describe('addPointsToCollectionIfMissing', () => {

@@ -9,7 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
-import { SettingsComponent } from './settings.component';
+import SettingsComponent from './settings.component';
 
 describe('SettingsComponent', () => {
   let comp: SettingsComponent;
@@ -28,8 +28,7 @@ describe('SettingsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), HttpClientTestingModule],
-      declarations: [SettingsComponent],
+      imports: [TranslateModule.forRoot(), HttpClientTestingModule, SettingsComponent],
       providers: [FormBuilder, AccountService],
     })
       .overrideTemplate(SettingsComponent, '')
@@ -74,7 +73,7 @@ describe('SettingsComponent', () => {
     comp.save();
 
     // THEN
-    expect(comp.success).toBe(true);
+    expect(comp.success()).toBe(true);
   });
 
   it('should notify of error upon failed save', () => {
@@ -86,6 +85,6 @@ describe('SettingsComponent', () => {
     comp.save();
 
     // THEN
-    expect(comp.success).toBe(false);
+    expect(comp.success()).toBe(false);
   });
 });

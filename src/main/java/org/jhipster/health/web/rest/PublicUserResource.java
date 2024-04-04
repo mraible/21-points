@@ -1,10 +1,7 @@
 package org.jhipster.health.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
-
 import java.util.*;
 import java.util.Collections;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.jhipster.health.repository.search.UserSearchRepository;
 import org.jhipster.health.service.UserService;
@@ -40,13 +37,13 @@ public class PublicUserResource {
     }
 
     /**
-     * {@code GET /users} : get all users with only the public informations - calling this are allowed for anyone.
+     * {@code GET /users} : get all users with only public information - calling this method is allowed for anyone.
      *
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all users.
      */
     @GetMapping("/users")
-    public ResponseEntity<List<UserDTO>> getAllPublicUsers(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<UserDTO>> getAllPublicUsers(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get all public User names");
         if (!onlyContainsAllowedProperties(pageable)) {
             return ResponseEntity.badRequest().build();
@@ -62,22 +59,13 @@ public class PublicUserResource {
     }
 
     /**
-     * Gets a list of all roles.
-     * @return a string list of all roles.
-     */
-    @GetMapping("/authorities")
-    public List<String> getAuthorities() {
-        return userService.getAuthorities();
-    }
-
-    /**
-     * {@code SEARCH /_search/users/:query} : search for the User corresponding to the query.
+     * {@code SEARCH /users/_search/:query} : search for the User corresponding to the query.
      *
      * @param query the query to search.
      * @return the result of the search.
      */
-    @GetMapping("/_search/users/{query}")
-    public List<UserDTO> search(@PathVariable String query) {
-        return StreamSupport.stream(userSearchRepository.search(query).spliterator(), false).map(UserDTO::new).collect(Collectors.toList());
+    @GetMapping("/users/_search/{query}")
+    public List<UserDTO> search(@PathVariable("query") String query) {
+        return StreamSupport.stream(userSearchRepository.search(query).spliterator(), false).map(UserDTO::new).toList();
     }
 }

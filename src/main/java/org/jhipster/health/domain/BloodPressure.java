@@ -1,9 +1,9 @@
 package org.jhipster.health.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -31,13 +31,15 @@ public class BloodPressure implements Serializable {
 
     @NotNull
     @Column(name = "systolic", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
     private Integer systolic;
 
     @NotNull
     @Column(name = "diastolic", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
     private Integer diastolic;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -117,7 +119,7 @@ public class BloodPressure implements Serializable {
         if (!(o instanceof BloodPressure)) {
             return false;
         }
-        return id != null && id.equals(((BloodPressure) o).id);
+        return getId() != null && getId().equals(((BloodPressure) o).getId());
     }
 
     @Override

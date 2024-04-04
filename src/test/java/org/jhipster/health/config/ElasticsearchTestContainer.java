@@ -29,14 +29,15 @@ public class ElasticsearchTestContainer implements InitializingBean, DisposableB
     @Override
     public void afterPropertiesSet() {
         if (null == elasticsearchContainer) {
-            elasticsearchContainer =
-                new ElasticsearchContainer(DockerImageName.parse("docker.elastic.co/elasticsearch/elasticsearch").withTag("7.17.4"))
-                    .withStartupTimeout(Duration.of(CONTAINER_STARTUP_TIMEOUT_MINUTES, ChronoUnit.MINUTES))
-                    .withSharedMemorySize(256000000L)
-                    .withEnv("ES_JAVA_OPTS", "-Xms256m -Xmx256m")
-                    .withEnv("xpack.security.enabled", "false")
-                    .withLogConsumer(new Slf4jLogConsumer(log))
-                    .withReuse(true);
+            elasticsearchContainer = new ElasticsearchContainer(
+                DockerImageName.parse("docker.elastic.co/elasticsearch/elasticsearch").withTag("8.10.4")
+            )
+                .withStartupTimeout(Duration.of(CONTAINER_STARTUP_TIMEOUT_MINUTES, ChronoUnit.MINUTES))
+                .withSharedMemorySize(256000000L)
+                .withEnv("ES_JAVA_OPTS", "-Xms256m -Xmx256m")
+                .withEnv("xpack.security.enabled", "false")
+                .withLogConsumer(new Slf4jLogConsumer(log))
+                .withReuse(true);
         }
         if (!elasticsearchContainer.isRunning()) {
             elasticsearchContainer.start();

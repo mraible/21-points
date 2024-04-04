@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import SharedModule from 'app/shared/shared.module';
+import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 import { IBloodPressure } from '../blood-pressure.model';
 import { BloodPressureService } from '../service/blood-pressure.service';
-import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 
 @Component({
+  standalone: true,
   templateUrl: './blood-pressure-delete-dialog.component.html',
+  imports: [SharedModule, FormsModule],
 })
 export class BloodPressureDeleteDialogComponent {
   bloodPressure?: IBloodPressure;
 
-  constructor(protected bloodPressureService: BloodPressureService, protected activeModal: NgbActiveModal) {}
+  protected bloodPressureService = inject(BloodPressureService);
+  protected activeModal = inject(NgbActiveModal);
 
   cancel(): void {
     this.activeModal.dismiss();

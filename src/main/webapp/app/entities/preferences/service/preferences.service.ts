@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, asapScheduler, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
@@ -15,10 +17,11 @@ export type EntityArrayResponseType = HttpResponse<IPreferences[]>;
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/preferences');
-  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/preferences');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/preferences');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/preferences/_search');
 
   create(preferences: NewPreferences): Observable<EntityResponseType> {
     return this.http.post<IPreferences>(this.resourceUrl, preferences, { observe: 'response' });
@@ -51,7 +54,9 @@ export class PreferencesService {
 
   search(req: Search): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
-    return this.http.get<IPreferences[]>(this.resourceSearchUrl, { params: options, observe: 'response' });
+    return this.http
+      .get<IPreferences[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+      .pipe(catchError(() => scheduled([new HttpResponse<IPreferences[]>()], asapScheduler)));
   }
 
   getPreferencesIdentifier(preferences: Pick<IPreferences, 'id'>): number {
@@ -68,9 +73,7 @@ export class PreferencesService {
   ): Type[] {
     const preferences: Type[] = preferencesToCheck.filter(isPresent);
     if (preferences.length > 0) {
-      const preferencesCollectionIdentifiers = preferencesCollection.map(
-        preferencesItem => this.getPreferencesIdentifier(preferencesItem)!
-      );
+      const preferencesCollectionIdentifiers = preferencesCollection.map(preferencesItem => this.getPreferencesIdentifier(preferencesItem));
       const preferencesToAdd = preferences.filter(preferencesItem => {
         const preferencesIdentifier = this.getPreferencesIdentifier(preferencesItem);
         if (preferencesCollectionIdentifiers.includes(preferencesIdentifier)) {
