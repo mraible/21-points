@@ -1,0 +1,18 @@
+{
+  "elasticsearch": {
+    "reindex": {
+      "accepted": "Request accepted, performing full Elasticsearch reindexing.",
+      "acceptedSelected": "Request accepted, performing partial Elasticsearch reindexing.",
+      "dialog": {
+        "title": "Confirm Elasticsearch Reindex",
+        "question": "Are you sure you want to reindex Elasticsearch? This could take a while!",
+        "cancel": "Cancel",
+        "confirm": "Reindex"
+      },
+      "title": "Reindex Elasticsearch",
+      "instructions1": "This will send a request to reindex all data from your primary datasource into Elasticsearch. This will fix missing data and mapping issues, however you will lose any ES data and mapping that was defined outside of your application. This request will return immediately and the reindexing will run in the background. You will see \"Elasticsearch: Successfully performed reindexing\" in your logs when this is complete.",
+      "instructions2": "This can take a long time and is susceptible to concurrency issues so it should be performed when the number of users is low.",
+      "go": "Go"
+    }
+  }
+}
