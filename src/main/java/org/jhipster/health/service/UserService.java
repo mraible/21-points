@@ -182,7 +182,7 @@ public class UserService {
             user.setAuthorities(authorities);
         }
         userRepository.save(user);
-        userSearchRepository.save(user);
+        userSearchRepository.index(user);
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
         return user;
@@ -195,8 +195,7 @@ public class UserService {
      * @return updated user.
      */
     public Optional<AdminUserDTO> updateUser(AdminUserDTO userDTO) {
-        return Optional
-            .of(userRepository.findById(userDTO.getId()))
+        return Optional.of(userRepository.findById(userDTO.getId()))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .map(user -> {
@@ -219,7 +218,8 @@ public class UserService {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
-                userSearchRepository.save(user);
+                userRepository.save(user);
+                userSearchRepository.index(user);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
                 return user;
@@ -232,7 +232,7 @@ public class UserService {
             .findOneByLogin(login)
             .ifPresent(user -> {
                 userRepository.delete(user);
-                userSearchRepository.delete(user);
+                userSearchRepository.deleteFromIndex(user);
                 this.clearUserCaches(user);
                 log.debug("Deleted User: {}", user);
             });
@@ -248,8 +248,7 @@ public class UserService {
      * @param imageUrl  image URL of user.
      */
     public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
-        SecurityUtils
-            .getCurrentUserLogin()
+        SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .ifPresent(user -> {
                 user.setFirstName(firstName);
@@ -259,7 +258,8 @@ public class UserService {
                 }
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
-                userSearchRepository.save(user);
+                userRepository.save(user);
+                userSearchRepository.index(user);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
             });
@@ -267,8 +267,7 @@ public class UserService {
 
     @Transactional
     public void changePassword(String currentClearTextPassword, String newPassword) {
-        SecurityUtils
-            .getCurrentUserLogin()
+        SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .ifPresent(user -> {
                 String currentEncryptedPassword = user.getPassword();
@@ -314,7 +313,7 @@ public class UserService {
             .forEach(user -> {
                 log.debug("Deleting not activated user {}", user.getLogin());
                 userRepository.delete(user);
-                userSearchRepository.delete(user);
+                userSearchRepository.deleteFromIndex(user);
                 this.clearUserCaches(user);
             });
     }
@@ -325,7 +324,7 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public List<String> getAuthorities() {
-        return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
+        return authorityRepository.findAll().stream().map(Authority::getName).toList();
     }
 
     private void clearUserCaches(User user) {

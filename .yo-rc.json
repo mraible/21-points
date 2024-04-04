@@ -3,10 +3,15 @@
     "applicationType": "monolith",
     "authenticationType": "jwt",
     "baseName": "TwentyOnePoints",
-    "blueprints": [],
+    "blueprints": [
+      {
+        "name": "generator-jhipster-migrate",
+        "version": "0.1.0"
+      }
+    ],
     "buildTool": "gradle",
     "cacheProvider": "ehcache",
-    "clientFramework": "angularX",
+    "clientFramework": "angular",
     "clientPackageManager": "npm",
     "clientTheme": "none",
     "clientThemeVariant": "",
@@ -27,7 +32,7 @@
     "herokuDeployType": "git",
     "herokuJavaVersion": "11",
     "jhiPrefix": "jhi",
-    "jhipsterVersion": "7.9.4",
+    "jhipsterVersion": "8.2.1",
     "jwtSecretKey": "YjAwZDU2ODI3NzNjZjk0NjVhY2UzNGViZmY0YjY1ZGY2MDI5MTc5Y2FlZWYxNzE5Yjg5ZjMxOGZhZTgwZjA5NTFkN2VmNDM3ZGMyZDNjZTViNDAwYTg4NmNlMmM2ZDkxZTMwMDk5YmUxNWNkZmE0YTNiNDlhMGNhZmM4OTk1NmQ=",
     "languages": ["en", "fr"],
     "lastLiquibaseTimestamp": 1667866821000,

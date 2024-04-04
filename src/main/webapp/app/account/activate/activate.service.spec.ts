@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { ActivateService } from './activate.service';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
+import { ActivateService } from './activate.service';
 
 describe('ActivateService Service', () => {
   let service: ActivateService;

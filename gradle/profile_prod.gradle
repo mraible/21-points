@@ -1,20 +1,22 @@
+
+configurations {
+  all {
+    resolutionStrategy {
+    }
+  }
+}
+
 dependencies {
     implementation "org.postgresql:postgresql"
-    liquibaseRuntime "org.postgresql:postgresql"
     testImplementation "org.testcontainers:postgresql"
 }
 
-def profiles = "prod"
-if (project.hasProperty("no-liquibase")) {
-    profiles += ",no-liquibase"
-}
+ext {
+    springProfiles = "prod" + springProfiles
 
-if (project.hasProperty("api-docs")) {
-    profiles += ",api-docs"
-}
-
-if (project.hasProperty("e2e")) {
-    profiles += ",e2e"
+    if (project.hasProperty("api-docs")) {
+        springProfiles += ",api-docs"
+    }
 }
 
 springBoot {
@@ -22,23 +24,24 @@ springBoot {
 }
 
 bootRun {
-    args = ["--spring.profiles.active=${profiles}"]
+    args = ["--spring.profiles.active=${springProfiles}"]
 }
 
-task webapp(type: NpmTask, dependsOn: "npm_install") {
+task webapp(type: NpmTask) {
+    dependsOn npmInstall
     args = ["run", "webapp:prod"]
     environment = [APP_VERSION: project.version]
 }
 
 processResources {
     inputs.property('version', version)
-    inputs.property('springProfiles', profiles)
+    inputs.property('springProfiles', springProfiles)
     filesMatching("**/application.yml") {
         filter {
             it.replace("#project.version#", version)
         }
         filter {
-            it.replace("#spring.profiles.active#", profiles)
+            it.replace("#spring.profiles.active#", springProfiles)
         }
     }
 }
@@ -57,7 +60,7 @@ task integrationTest(type: Test) {
     // uncomment if the tests reports are not generated
     // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
     // ignoreFailures true
-    reports.html.enabled = false
+    reports.html.required = false
 }
 integrationTest.dependsOn test
 

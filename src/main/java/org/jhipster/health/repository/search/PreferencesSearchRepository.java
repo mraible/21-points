@@ -1,17 +1,15 @@
 package org.jhipster.health.repository.search;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
 import java.util.stream.Stream;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.jhipster.health.domain.Preferences;
 import org.jhipster.health.repository.PreferencesRepository;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * Spring Data Elasticsearch repository for the {@link Preferences} entity.
@@ -23,31 +21,27 @@ interface PreferencesSearchRepositoryInternal {
 
     Stream<Preferences> search(Query query);
 
-    Stream<Preferences> search(QueryBuilder query);
-
+    @Async
     void index(Preferences entity);
+
+    @Async
+    void deleteFromIndexById(Long id);
 }
 
 class PreferencesSearchRepositoryInternalImpl implements PreferencesSearchRepositoryInternal {
 
-    private final ElasticsearchRestTemplate elasticsearchTemplate;
+    private final ElasticsearchTemplate elasticsearchTemplate;
     private final PreferencesRepository repository;
 
-    PreferencesSearchRepositoryInternalImpl(ElasticsearchRestTemplate elasticsearchTemplate, PreferencesRepository repository) {
+    PreferencesSearchRepositoryInternalImpl(ElasticsearchTemplate elasticsearchTemplate, PreferencesRepository repository) {
         this.elasticsearchTemplate = elasticsearchTemplate;
         this.repository = repository;
     }
 
     @Override
     public Stream<Preferences> search(String query) {
-        NativeSearchQuery nativeSearchQuery = new NativeSearchQuery(queryStringQuery(query));
-        return search(nativeSearchQuery);
-    }
-
-    @Override
-    public Stream<Preferences> search(QueryBuilder query) {
-        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(query).build();
-        return search(searchQuery);
+        NativeQuery nativeQuery = new NativeQuery(QueryStringQuery.of(qs -> qs.query(query))._toQuery());
+        return search(nativeQuery);
     }
 
     @Override
@@ -58,5 +52,10 @@ class PreferencesSearchRepositoryInternalImpl implements PreferencesSearchReposi
     @Override
     public void index(Preferences entity) {
         repository.findOneWithEagerRelationships(entity.getId()).ifPresent(elasticsearchTemplate::save);
+    }
+
+    @Override
+    public void deleteFromIndexById(Long id) {
+        elasticsearchTemplate.delete(String.valueOf(id), Preferences.class);
     }
 }

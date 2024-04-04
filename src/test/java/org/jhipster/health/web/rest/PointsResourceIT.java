@@ -4,11 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
+import static org.jhipster.health.domain.PointsAsserts.*;
+import static org.jhipster.health.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -19,7 +23,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
 import org.apache.commons.collections4.IterableUtils;
 import org.assertj.core.util.IterableUtil;
 import org.jhipster.health.IntegrationTest;
@@ -70,10 +73,13 @@ class PointsResourceIT {
 
     private static final String ENTITY_API_URL = "/api/points";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/_search/points";
+    private static final String ENTITY_SEARCH_API_URL = "/api/points/_search";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private PointsRepository pointsRepository;
@@ -141,28 +147,29 @@ class PointsResourceIT {
     @Test
     @Transactional
     void createPoints() throws Exception {
-        int databaseSizeBeforeCreate = pointsRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         // Create the Points
-        restPointsMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(points)))
-            .andExpect(status().isCreated());
+        var returnedPoints = om.readValue(
+            restPointsMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(points)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Points.class
+        );
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeCreate + 1);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertPointsUpdatableFieldsEquals(returnedPoints, getPersistedPoints(returnedPoints));
+
         await()
             .atMost(5, TimeUnit.SECONDS)
             .untilAsserted(() -> {
                 int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
                 assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
             });
-        Points testPoints = pointsList.get(pointsList.size() - 1);
-        assertThat(testPoints.getDate()).isEqualTo(DEFAULT_DATE);
-        assertThat(testPoints.getExercise()).isEqualTo(DEFAULT_EXERCISE);
-        assertThat(testPoints.getMeals()).isEqualTo(DEFAULT_MEALS);
-        assertThat(testPoints.getAlcohol()).isEqualTo(DEFAULT_ALCOHOL);
-        assertThat(testPoints.getNotes()).isEqualTo(DEFAULT_NOTES);
     }
 
     @Test
@@ -171,17 +178,16 @@ class PointsResourceIT {
         // Create the Points with an existing ID
         points.setId(1L);
 
-        int databaseSizeBeforeCreate = pointsRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPointsMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(points)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(points)))
             .andExpect(status().isBadRequest());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -189,7 +195,7 @@ class PointsResourceIT {
     @Test
     @Transactional
     void checkDateIsRequired() throws Exception {
-        int databaseSizeBeforeTest = pointsRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         // set the field null
         points.setDate(null);
@@ -197,11 +203,11 @@ class PointsResourceIT {
         // Create the Points, which fails.
 
         restPointsMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(points)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(points)))
             .andExpect(status().isBadRequest());
 
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -275,12 +281,12 @@ class PointsResourceIT {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
 
-        int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         pointsSearchRepository.save(points);
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
 
         // Update the points
-        Points updatedPoints = pointsRepository.findById(points.getId()).get();
+        Points updatedPoints = pointsRepository.findById(points.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedPoints are not directly saved in db
         em.detach(updatedPoints);
         updatedPoints.date(UPDATED_DATE).exercise(UPDATED_EXERCISE).meals(UPDATED_MEALS).alcohol(UPDATED_ALCOHOL).notes(UPDATED_NOTES);
@@ -289,19 +295,14 @@ class PointsResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, updatedPoints.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedPoints))
+                    .content(om.writeValueAsBytes(updatedPoints))
             )
             .andExpect(status().isOk());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
-        Points testPoints = pointsList.get(pointsList.size() - 1);
-        assertThat(testPoints.getDate()).isEqualTo(UPDATED_DATE);
-        assertThat(testPoints.getExercise()).isEqualTo(UPDATED_EXERCISE);
-        assertThat(testPoints.getMeals()).isEqualTo(UPDATED_MEALS);
-        assertThat(testPoints.getAlcohol()).isEqualTo(UPDATED_ALCOHOL);
-        assertThat(testPoints.getNotes()).isEqualTo(UPDATED_NOTES);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedPointsToMatchAllProperties(updatedPoints);
+
         await()
             .atMost(5, TimeUnit.SECONDS)
             .untilAsserted(() -> {
@@ -309,33 +310,25 @@ class PointsResourceIT {
                 assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
                 List<Points> pointsSearchList = IterableUtils.toList(pointsSearchRepository.findAll());
                 Points testPointsSearch = pointsSearchList.get(searchDatabaseSizeAfter - 1);
-                assertThat(testPointsSearch.getDate()).isEqualTo(UPDATED_DATE);
-                assertThat(testPointsSearch.getExercise()).isEqualTo(UPDATED_EXERCISE);
-                assertThat(testPointsSearch.getMeals()).isEqualTo(UPDATED_MEALS);
-                assertThat(testPointsSearch.getAlcohol()).isEqualTo(UPDATED_ALCOHOL);
-                assertThat(testPointsSearch.getNotes()).isEqualTo(UPDATED_NOTES);
+
+                assertPointsAllPropertiesEquals(testPointsSearch, updatedPoints);
             });
     }
 
     @Test
     @Transactional
     void putNonExistingPoints() throws Exception {
-        int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
-        points.setId(count.incrementAndGet());
+        points.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPointsMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, points.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(points))
-            )
+            .perform(put(ENTITY_API_URL_ID, points.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(points)))
             .andExpect(status().isBadRequest());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -343,22 +336,21 @@ class PointsResourceIT {
     @Test
     @Transactional
     void putWithIdMismatchPoints() throws Exception {
-        int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
-        points.setId(count.incrementAndGet());
+        points.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPointsMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(points))
+                    .content(om.writeValueAsBytes(points))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -366,18 +358,17 @@ class PointsResourceIT {
     @Test
     @Transactional
     void putWithMissingIdPathParamPoints() throws Exception {
-        int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
-        points.setId(count.incrementAndGet());
+        points.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPointsMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(points)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(points)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -388,31 +379,26 @@ class PointsResourceIT {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
 
-        int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the points using partial update
         Points partialUpdatedPoints = new Points();
         partialUpdatedPoints.setId(points.getId());
 
-        partialUpdatedPoints.date(UPDATED_DATE).meals(UPDATED_MEALS).notes(UPDATED_NOTES);
+        partialUpdatedPoints.date(UPDATED_DATE).meals(UPDATED_MEALS).alcohol(UPDATED_ALCOHOL);
 
         restPointsMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedPoints.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedPoints))
+                    .content(om.writeValueAsBytes(partialUpdatedPoints))
             )
             .andExpect(status().isOk());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
-        Points testPoints = pointsList.get(pointsList.size() - 1);
-        assertThat(testPoints.getDate()).isEqualTo(UPDATED_DATE);
-        assertThat(testPoints.getExercise()).isEqualTo(DEFAULT_EXERCISE);
-        assertThat(testPoints.getMeals()).isEqualTo(UPDATED_MEALS);
-        assertThat(testPoints.getAlcohol()).isEqualTo(DEFAULT_ALCOHOL);
-        assertThat(testPoints.getNotes()).isEqualTo(UPDATED_NOTES);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPointsUpdatableFieldsEquals(createUpdateProxyForBean(partialUpdatedPoints, points), getPersistedPoints(points));
     }
 
     @Test
@@ -421,7 +407,7 @@ class PointsResourceIT {
         // Initialize the database
         pointsRepository.saveAndFlush(points);
 
-        int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the points using partial update
         Points partialUpdatedPoints = new Points();
@@ -438,40 +424,32 @@ class PointsResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedPoints.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedPoints))
+                    .content(om.writeValueAsBytes(partialUpdatedPoints))
             )
             .andExpect(status().isOk());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
-        Points testPoints = pointsList.get(pointsList.size() - 1);
-        assertThat(testPoints.getDate()).isEqualTo(UPDATED_DATE);
-        assertThat(testPoints.getExercise()).isEqualTo(UPDATED_EXERCISE);
-        assertThat(testPoints.getMeals()).isEqualTo(UPDATED_MEALS);
-        assertThat(testPoints.getAlcohol()).isEqualTo(UPDATED_ALCOHOL);
-        assertThat(testPoints.getNotes()).isEqualTo(UPDATED_NOTES);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPointsUpdatableFieldsEquals(partialUpdatedPoints, getPersistedPoints(partialUpdatedPoints));
     }
 
     @Test
     @Transactional
     void patchNonExistingPoints() throws Exception {
-        int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
-        points.setId(count.incrementAndGet());
+        points.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPointsMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, points.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(points))
+                patch(ENTITY_API_URL_ID, points.getId()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(points))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -479,22 +457,21 @@ class PointsResourceIT {
     @Test
     @Transactional
     void patchWithIdMismatchPoints() throws Exception {
-        int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
-        points.setId(count.incrementAndGet());
+        points.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPointsMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(points))
+                    .content(om.writeValueAsBytes(points))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -502,18 +479,17 @@ class PointsResourceIT {
     @Test
     @Transactional
     void patchWithMissingIdPathParamPoints() throws Exception {
-        int databaseSizeBeforeUpdate = pointsRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
-        points.setId(count.incrementAndGet());
+        points.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPointsMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(points)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(points)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Points in the database
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -526,7 +502,7 @@ class PointsResourceIT {
         pointsRepository.save(points);
         pointsSearchRepository.save(points);
 
-        int databaseSizeBeforeDelete = pointsRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
@@ -536,8 +512,7 @@ class PointsResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Points> pointsList = pointsRepository.findAll();
-        assertThat(pointsList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(pointsSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
     }
@@ -682,5 +657,33 @@ class PointsResourceIT {
             .andExpect(jsonPath("$.month").value(startDate))
             .andExpect(jsonPath("$.points.[*].date").value(hasItem(firstDate.toString())))
             .andExpect(jsonPath("$.points.[*].date").value(hasItem(secondDate.toString())));
+    }
+
+    protected long getRepositoryCount() {
+        return pointsRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Points getPersistedPoints(Points points) {
+        return pointsRepository.findById(points.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedPointsToMatchAllProperties(Points expectedPoints) {
+        assertPointsAllPropertiesEquals(expectedPoints, getPersistedPoints(expectedPoints));
+    }
+
+    protected void assertPersistedPointsToMatchUpdatableProperties(Points expectedPoints) {
+        assertPointsAllUpdatablePropertiesEquals(expectedPoints, getPersistedPoints(expectedPoints));
     }
 }

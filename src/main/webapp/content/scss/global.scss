@@ -1,7 +1,7 @@
 @import 'bootstrap-variables';
-@import '~bootstrap/scss/functions';
-@import '~bootstrap/scss/variables';
-@import '~angular-calendar/scss/angular-calendar';
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'angular-calendar/scss/angular-calendar';
 /* ==============================================================
 Bootstrap tweaks
 ===============================================================*/
@@ -16,13 +16,12 @@ h4 {
 
 /* Increase contrast of links to get 100% on Lighthouse Accessibility Audit. Override this color if you want to change the link color, or use a Bootswatch theme */
 a {
+  color: #533f03;
   font-weight: bold;
-  text-decoration: none;
 }
 
 a:hover {
-  color: darken($link-color, 25%);
-  text-decoration: underline;
+  color: #533f03;
 }
 
 /* override hover color for dropdown-item forced by bootstrap to all a:not([href]):not([tabindex]) elements in _reboot.scss */

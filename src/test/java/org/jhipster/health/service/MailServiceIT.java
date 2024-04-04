@@ -4,6 +4,11 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import jakarta.mail.Multipart;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,11 +19,6 @@ import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import org.jhipster.health.IntegrationTest;
 import org.jhipster.health.config.Constants;
 import org.jhipster.health.domain.User;
@@ -206,7 +206,7 @@ class MailServiceIT {
             verify(javaMailSender, atLeastOnce()).send(messageCaptor.capture());
             MimeMessage message = messageCaptor.getValue();
 
-            String propertyFilePath = "i18n/messages_" + getJavaLocale(langKey) + ".properties";
+            String propertyFilePath = "i18n/messages_" + getMessageSourceSuffixForLanguage(langKey) + ".properties";
             URL resource = this.getClass().getClassLoader().getResource(propertyFilePath);
             File file = new File(new URI(resource.getFile()).getPath());
             Properties properties = new Properties();
@@ -214,15 +214,16 @@ class MailServiceIT {
 
             String emailTitle = (String) properties.get("email.test.title");
             assertThat(message.getSubject()).isEqualTo(emailTitle);
-            assertThat(message.getContent().toString())
-                .isEqualToNormalizingNewlines("<html>" + emailTitle + ", http://127.0.0.1:8080, john</html>\n");
+            assertThat(message.getContent().toString()).isEqualToNormalizingNewlines(
+                "<html>" + emailTitle + ", http://127.0.0.1:8080, john</html>\n"
+            );
         }
     }
 
     /**
      * Convert a lang key to the Java locale.
      */
-    private String getJavaLocale(String langKey) {
+    private String getMessageSourceSuffixForLanguage(String langKey) {
         String javaLangKey = langKey;
         Matcher matcher2 = PATTERN_LOCALE_2.matcher(langKey);
         if (matcher2.matches()) {

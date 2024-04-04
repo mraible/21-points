@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import SharedModule from 'app/shared/shared.module';
 import { User } from '../user-management.model';
 import { UserManagementService } from '../service/user-management.service';
 
 @Component({
+  standalone: true,
   selector: 'jhi-user-mgmt-delete-dialog',
   templateUrl: './user-management-delete-dialog.component.html',
+  imports: [SharedModule, FormsModule],
 })
-export class UserManagementDeleteDialogComponent {
+export default class UserManagementDeleteDialogComponent {
   user?: User;
 
-  constructor(private userService: UserManagementService, private activeModal: NgbActiveModal) {}
+  private userService = inject(UserManagementService);
+  private activeModal = inject(NgbActiveModal);
 
   cancel(): void {
     this.activeModal.dismiss();

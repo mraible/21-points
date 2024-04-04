@@ -1,34 +1,36 @@
 sourceSets {
     test {
         java {
-            exclude 'org/jhipster/health/config/PostgreSqlTestContainer.java'
+            exclude 'org/jhipster/health//config/PostgreSqlTestContainer.java'
         }
     }
 }
+
+configurations {
+  all {
+    resolutionStrategy {
+    }
+  }
+}
+
 dependencies {
-    developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
+    compileOnly "org.springframework.boot:spring-boot-devtools"
     implementation "com.h2database:h2"
     testImplementation "org.testcontainers:postgresql"
 }
 
-def profiles = "dev"
-if (project.hasProperty("no-liquibase")) {
-    profiles += ",no-liquibase"
-}
-if (project.hasProperty("tls")) {
-    profiles += ",tls"
+ext {
+    springProfiles = "dev" + springProfiles
 }
 
 springBoot {
     buildInfo {
-        properties {
-            time = null
-        }
+        excludes = ['time']
     }
 }
 
 bootRun {
-    args = ["--spring.profiles.active=${profiles}"]
+    args = ["--spring.profiles.active=${springProfiles}"]
 }
 
 task webapp(type: NpmTask) {
@@ -62,13 +64,13 @@ task webapp(type: NpmTask) {
 
 processResources {
     inputs.property('version', version)
-    inputs.property('springProfiles', profiles)
+    inputs.property('springProfiles', springProfiles)
     filesMatching("**/application.yml") {
         filter {
             it.replace("#project.version#", version)
         }
         filter {
-            it.replace("#spring.profiles.active#", profiles)
+            it.replace("#spring.profiles.active#", springProfiles)
         }
     }
 }
@@ -87,7 +89,7 @@ task integrationTest(type: Test) {
     // uncomment if the tests reports are not generated
     // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
     // ignoreFailures true
-    reports.html.enabled = false
+    reports.html.required = false
 }
 integrationTest.dependsOn test
 

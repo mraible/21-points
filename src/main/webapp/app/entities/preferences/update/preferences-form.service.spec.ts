@@ -23,7 +23,7 @@ describe('Preferences Form Service', () => {
             weeklyGoal: expect.any(Object),
             weightUnits: expect.any(Object),
             user: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -36,14 +36,13 @@ describe('Preferences Form Service', () => {
             weeklyGoal: expect.any(Object),
             weightUnits: expect.any(Object),
             user: expect.any(Object),
-          })
+          }),
         );
       });
     });
 
     describe('getPreferences', () => {
       it('should return NewPreferences for default Preferences initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createPreferencesFormGroup(sampleWithNewData);
 
         const preferences = service.getPreferences(formGroup) as any;

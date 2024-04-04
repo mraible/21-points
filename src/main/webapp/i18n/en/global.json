@@ -9,11 +9,12 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entities",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "adminAuthority": "Authority",
         "points": "Points",
         "weight": "Weight",
         "bloodPressure": "Blood Pressure",
-        "preferences": "Preferences",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "preferences": "Preferences"
       },
       "account": {
         "main": "Account",
@@ -34,7 +35,6 @@
         "logs": "Logs",
         "apidocs": "API",
         "database": "Database",
-        "elasticsearch-reindex": "Reindex Elasticsearch",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
       "language": "Language"
@@ -151,6 +151,7 @@
     "idnull": "Invalid ID",
     "idinvalid": "Invalid ID",
     "idnotfound": "ID cannot be found",
+    "querySyntaxError": "Invalid search query",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

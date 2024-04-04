@@ -1,4 +1,7 @@
 {
+  "annotations": {
+    "changelogDate": "20221108001642"
+  },
   "changelogDate": "20221108001642",
   "fields": [
     {
@@ -27,6 +30,7 @@
       "otherEntityRelationshipName": "bloodPressure",
       "ownerSide": true,
       "relationshipName": "user",
+      "relationshipSide": "left",
       "relationshipType": "many-to-one"
     }
   ],

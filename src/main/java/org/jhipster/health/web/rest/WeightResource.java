@@ -1,25 +1,17 @@
 package org.jhipster.health.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.Weight;
 import org.jhipster.health.repository.UserRepository;
 import org.jhipster.health.repository.WeightRepository;
@@ -27,6 +19,7 @@ import org.jhipster.health.repository.search.WeightSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+import org.jhipster.health.web.rest.errors.ElasticsearchExceptionMapper;
 import org.jhipster.health.web.rest.vm.WeightByPeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +41,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link org.jhipster.health.domain.Weight}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/weights")
 @Transactional
 public class WeightResource {
 
@@ -78,7 +71,7 @@ public class WeightResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new weight, or with status {@code 400 (Bad Request)} if the weight has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/weights")
+    @PostMapping("")
     public ResponseEntity<Weight> createWeight(@Valid @RequestBody Weight weight) throws URISyntaxException {
         log.debug("REST request to save Weight : {}", weight);
         if (weight.getId() != null) {
@@ -88,12 +81,11 @@ public class WeightResource {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().orElse(""));
             weight.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse("")).orElse(null));
         }
-        Weight result = weightRepository.save(weight);
-        weightSearchRepository.index(result);
-        return ResponseEntity
-            .created(new URI("/api/weights/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        weight = weightRepository.save(weight);
+        weightSearchRepository.index(weight);
+        return ResponseEntity.created(new URI("/api/weights/" + weight.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, weight.getId().toString()))
+            .body(weight);
     }
 
     /**
@@ -106,7 +98,7 @@ public class WeightResource {
      * or with status {@code 500 (Internal Server Error)} if the weight couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/weights/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateWeight(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Weight weight)
         throws URISyntaxException {
         log.debug("REST request to update Weight : {}, {}", id, weight);
@@ -127,12 +119,11 @@ public class WeightResource {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
-        Weight result = weightRepository.save(weight);
-        weightSearchRepository.index(result);
-        return ResponseEntity
-            .ok()
+        weight = weightRepository.save(weight);
+        weightSearchRepository.index(weight);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, weight.getId().toString()))
-            .body(result);
+            .body(weight);
     }
 
     /**
@@ -146,7 +137,7 @@ public class WeightResource {
      * or with status {@code 500 (Internal Server Error)} if the weight couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/weights/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<?> partialUpdateWeight(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Weight weight
@@ -183,8 +174,7 @@ public class WeightResource {
             })
             .map(weightRepository::save)
             .map(savedWeight -> {
-                weightSearchRepository.save(savedWeight);
-
+                weightSearchRepository.index(savedWeight);
                 return savedWeight;
             });
 
@@ -201,10 +191,10 @@ public class WeightResource {
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of weights in body.
      */
-    @GetMapping("/weights")
+    @GetMapping("")
     public ResponseEntity<List<Weight>> getAllWeights(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
     ) {
         log.debug("REST request to get a page of Weights");
         Page<Weight> page;
@@ -223,8 +213,8 @@ public class WeightResource {
      * @param id the id of the weight to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the weight, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/weights/{id}")
-    public ResponseEntity<?> getWeight(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getWeight(@PathVariable("id") Long id) {
         log.debug("REST request to get Weight : {}", id);
         Optional<Weight> weight = weightRepository.findOneWithEagerRelationships(id);
         if (
@@ -244,8 +234,8 @@ public class WeightResource {
      * @param id the id of the weight to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/weights/{id}")
-    public ResponseEntity<?> deleteWeight(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteWeight(@PathVariable("id") Long id) {
         log.debug("REST request to delete Weight : {}", id);
         Optional<Weight> weight = weightRepository.findById(id);
         if (
@@ -257,34 +247,42 @@ public class WeightResource {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         weightRepository.deleteById(id);
-        weightSearchRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        weightSearchRepository.deleteFromIndexById(id);
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
 
     /**
-     * {@code SEARCH  /_search/weights?query=:query} : search for the weight corresponding
+     * {@code SEARCH  /weights/_search?query=:query} : search for the weight corresponding
      * to the query.
      *
      * @param query the query of the weight search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */
-    @GetMapping("/_search/weights")
+    @GetMapping("/_search")
     public ResponseEntity<List<Weight>> searchWeights(
-        @RequestParam String query,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         log.debug("REST request to search for a page of Weights for query {}", query);
-        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
         if (SecurityUtils.isAuthenticated() && !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            queryBuilder = queryBuilder.filter(matchQuery("user.login", SecurityUtils.getCurrentUserLogin().orElse("")));
+            QueryVariant filterByUser = new MatchQuery.Builder()
+                .field("user.login")
+                .query(SecurityUtils.getCurrentUserLogin().orElse(""))
+                .build();
+            BoolQuery.Builder boolQueryBuilder = QueryBuilders.bool();
+            boolQueryBuilder.should(new Query(filterByUser));
+            query = new Query(boolQueryBuilder.build()).toString();
         }
-        Page<Weight> page = weightSearchRepository.search(queryBuilder, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        try {
+            Page<Weight> page = weightSearchRepository.search(query, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 
     /**

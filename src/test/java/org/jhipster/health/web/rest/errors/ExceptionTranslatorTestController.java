@@ -1,7 +1,7 @@
 package org.jhipster.health.web.rest.errors;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,10 +21,10 @@ public class ExceptionTranslatorTestController {
     public void methodArgument(@Valid @RequestBody TestDTO testDTO) {}
 
     @GetMapping("/missing-servlet-request-part")
-    public void missingServletRequestPartException(@RequestPart String part) {}
+    public void missingServletRequestPartException(@RequestPart("part") String part) {}
 
     @GetMapping("/missing-servlet-request-parameter")
-    public void missingServletRequestParameterException(@RequestParam String param) {}
+    public void missingServletRequestParameterException(@RequestParam("param") String param) {}
 
     @GetMapping("/access-denied")
     public void accessdenied() {

@@ -1,0 +1,16 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${libs.versions.sonarqube.plugin.get()}"
+    implementation "com.diffplug.spotless:spotless-plugin-gradle:${libs.versions.spotless.plugin.get()}"
+    implementation "com.github.andygoossens:gradle-modernizer-plugin:${libs.versions.modernizer.plugin.get()}"
+    implementation "io.spring.nohttp:nohttp-gradle:${libs.versions.nohttp.plugin.get()}"
+    implementation "com.google.cloud.tools:jib-gradle-plugin:${libs.versions.jib.plugin.get()}"
+    // jhipster-needle-gradle-build-src-dependency - JHipster will add additional dependencies for convention plugins here
+}

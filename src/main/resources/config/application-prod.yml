@@ -20,9 +20,9 @@ logging:
     org.jhipster.health: INFO
 
 management:
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: false
 
 spring:
@@ -39,8 +39,6 @@ spring:
     hikari:
       poolName: Hikari
       auto-commit: false
-  jpa:
-    database-platform: tech.jhipster.domain.util.FixedPostgreSQL10Dialect
   elasticsearch:
     uris: http://localhost:9200
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
@@ -104,7 +102,7 @@ jhipster:
       jwt:
         # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
         # As this is the PRODUCTION configuration, you MUST change the default key, and store it securely:
-        # - In the JHipster Registry (which includes a Spring Cloud Config server)
+        # - In the Consul configserver
         # - In a separate `application-prod.yml` file, in the same folder as your executable JAR file
         # - In the `JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET` environment variable
         base64-secret: YjAwZDU2ODI3NzNjZjk0NjVhY2UzNGViZmY0YjY1ZGY2MDI5MTc5Y2FlZWYxNzE5Yjg5ZjMxOGZhZTgwZjA5NTFkN2VmNDM3ZGMyZDNjZTViNDAwYTg4NmNlMmM2ZDkxZTMwMDk5YmUxNWNkZmE0YTNiNDlhMGNhZmM4OTk1NmQ=
@@ -120,7 +118,7 @@ jhipster:
       enabled: false
       host: localhost
       port: 5000
-      queue-size: 512
+      ring-buffer-size: 512
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

@@ -1,10 +1,10 @@
 package org.jhipster.health.service.dto;
 
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.validation.constraints.*;
 import org.jhipster.health.config.Constants;
 import org.jhipster.health.domain.Authority;
 import org.jhipster.health.domain.User;

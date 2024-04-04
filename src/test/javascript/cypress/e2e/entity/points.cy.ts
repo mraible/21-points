@@ -24,7 +24,7 @@ describe('Points e2e test', () => {
   });
 
   beforeEach(() => {
-    cy.intercept('GET', '/api/points?size=*').as('entitiesRequest');
+    cy.intercept('GET', '/api/points+(?*|)').as('entitiesRequest');
     cy.intercept('POST', '/api/points').as('postEntityRequest');
     cy.intercept('DELETE', '/api/points/*').as('deleteEntityRequest');
   });
@@ -95,7 +95,7 @@ describe('Points e2e test', () => {
                 link: '<http://localhost/api/points?page=0&size=20>; rel="last",<http://localhost/api/points?page=0&size=20>; rel="first"',
               },
               body: [points],
-            }
+            },
           ).as('entitiesRequestInternal');
         });
 
@@ -118,7 +118,7 @@ describe('Points e2e test', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('Points');
         cy.get(entityCreateSaveButtonSelector).should('exist');
-        cy.get(entityCreateCancelButtonSelector).click({ force: true });
+        cy.get(entityCreateCancelButtonSelector).click();
         cy.wait('@entitiesRequest').then(({ response }) => {
           expect(response.statusCode).to.equal(200);
         });
@@ -128,7 +128,7 @@ describe('Points e2e test', () => {
       it('edit button click should load edit Points page and save', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('Points');
-        cy.get(entityCreateSaveButtonSelector).click({ force: true });
+        cy.get(entityCreateSaveButtonSelector).click();
         cy.wait('@entitiesRequest').then(({ response }) => {
           expect(response.statusCode).to.equal(200);
         });
@@ -161,13 +161,16 @@ describe('Points e2e test', () => {
 
     it('should create an instance of Points', () => {
       cy.get(`[data-cy="date"]`).clear();
-      cy.get(`[data-cy="date"]`).type('2022-11-07').blur().should('have.value', '2022-11-07');
+      cy.get(`[data-cy="date"]`).type('2022-11-07');
+      cy.get(`[data-cy="date"]`).blur();
+      cy.get(`[data-cy="date"]`).should('have.value', '2022-11-07');
 
       cy.get(`[data-cy="exercise"]`).should('be.checked');
       cy.get(`[data-cy="meals"]`).should('be.checked');
       cy.get(`[data-cy="alcohol"]`).should('be.checked');
 
-      cy.get(`[data-cy="notes"]`).type('Response').should('have.value', 'Response');
+      cy.get(`[data-cy="notes"]`).type('emotional for');
+      cy.get(`[data-cy="notes"]`).should('have.value', 'emotional for');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

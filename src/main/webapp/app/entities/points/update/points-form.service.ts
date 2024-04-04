@@ -48,7 +48,7 @@ export class PointsFormService {
         {
           nonNullable: true,
           validators: [Validators.required],
-        }
+        },
       ),
       date: new FormControl(pointsRawValue.date, {
         validators: [Validators.required],
@@ -73,7 +73,7 @@ export class PointsFormService {
       {
         ...pointsRawValue,
         id: { value: pointsRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */
+      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
     );
   }
 

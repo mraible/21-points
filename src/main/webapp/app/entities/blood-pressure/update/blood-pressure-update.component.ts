@@ -1,18 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import { BloodPressureFormService, BloodPressureFormGroup } from './blood-pressure-form.service';
+import SharedModule from 'app/shared/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/service/user.service';
 import { IBloodPressure } from '../blood-pressure.model';
 import { BloodPressureService } from '../service/blood-pressure.service';
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { BloodPressureFormService, BloodPressureFormGroup } from './blood-pressure-form.service';
 
 @Component({
+  standalone: true,
   selector: 'jhi-blood-pressure-update',
   templateUrl: './blood-pressure-update.component.html',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule],
 })
 export class BloodPressureUpdateComponent implements OnInit {
   isSaving = false;
@@ -20,14 +25,13 @@ export class BloodPressureUpdateComponent implements OnInit {
 
   usersSharedCollection: IUser[] = [];
 
-  editForm: BloodPressureFormGroup = this.bloodPressureFormService.createBloodPressureFormGroup();
+  protected bloodPressureService = inject(BloodPressureService);
+  protected bloodPressureFormService = inject(BloodPressureFormService);
+  protected userService = inject(UserService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected bloodPressureService: BloodPressureService,
-    protected bloodPressureFormService: BloodPressureFormService,
-    protected userService: UserService,
-    protected activatedRoute: ActivatedRoute
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: BloodPressureFormGroup = this.bloodPressureFormService.createBloodPressureFormGroup();
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
 
