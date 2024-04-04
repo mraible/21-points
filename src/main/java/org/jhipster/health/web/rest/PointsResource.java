@@ -296,11 +296,11 @@ public class PointsResource {
     }
 
     /**
-     * {@code GET  /points-by-week/yyyy-MM-dd} : get all the points for a particular week.
+     * {@code GET  /points/by-week/yyyy-MM-dd} : get all the points for a particular week.
      *
      * @param date a date in a week to find points for.
      */
-    @GetMapping("/points-by-week/{date}")
+    @GetMapping("/by-week/{date}")
     public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         // Get first and last days of week
         LocalDate startOfWeek = date.with(DayOfWeek.MONDAY);
@@ -314,11 +314,11 @@ public class PointsResource {
     }
 
     /**
-     * {@code GET  /points-by-month} : get all the points for a particular current month.
+     * {@code GET  /points/by-month} : get all the points for a particular current month.
      *
      * @param yearWithMonth the year and month to find points for.
      */
-    @GetMapping("/points-by-month/{yearWithMonth}")
+    @GetMapping("/by-month/{yearWithMonth}")
     public ResponseEntity<PointsPerMonth> getPointsByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearWithMonth) {
         // Get last day of the month
         LocalDate endOfMonth = yearWithMonth.atEndOfMonth();
@@ -332,12 +332,12 @@ public class PointsResource {
     }
 
     /**
-     * {@code GET  /points-this-week} : get all the points for the current week
+     * {@code GET  /points/this-week} : get all the points for the current week
      *
      * @param timezone the user's timezone
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a count of points in body.
      */
-    @GetMapping("/points-this-week")
+    @GetMapping("/this-week")
     public ResponseEntity<PointsPerWeek> getPointsThisWeek(@RequestParam(value = "tz", required = false) String timezone) {
         // Get current date (with timezone if passed in)
         LocalDate now = LocalDate.now();

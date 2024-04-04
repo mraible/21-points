@@ -539,6 +539,14 @@ class WeightResourceIT {
             .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.doubleValue())));
     }
 
+    private User createUser() {
+        User newuser = new User();
+        newuser.setLogin("user"); // username used by @WithMockUser
+        newuser.setPassword(RandomStringUtils.randomAlphanumeric(60));
+        userRepository.saveAndFlush(newuser);
+        return newuser;
+    }
+
     private void createByMonth(ZonedDateTime firstDate, ZonedDateTime firstDayOfLastMonth) {
         log.debug("firstDate: {}, firstOfLastMonth: {}", firstDate.toString(), firstDayOfLastMonth.toString());
         User user = userRepository.findOneByLogin(TEST_USERNAME).get();
@@ -570,7 +578,7 @@ class WeightResourceIT {
 
         // Get the weighIns for the last 30 days
         restWeightMockMvc
-            .perform(get("/api/weight-by-days/{days}", 30))
+            .perform(get("/api/weights/by-days/{days}", 30))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.period").value("Last 30 Days"))
@@ -589,7 +597,7 @@ class WeightResourceIT {
 
         // Get the points for last week
         restWeightMockMvc
-            .perform(get("/api/weight-by-month/{yearAndMonth}", fmt.format(firstDayOfLastMonth)))
+            .perform(get("/api/weights/by-month/{yearAndMonth}", fmt.format(firstDayOfLastMonth)))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.period").value(fmt.format(firstDayOfLastMonth)))

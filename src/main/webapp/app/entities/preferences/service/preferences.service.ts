@@ -60,7 +60,7 @@ export class PreferencesService {
   }
 
   user(): Observable<EntityResponseType> {
-    return this.http.get<IPreferences>('api/my-preferences', { observe: 'response' });
+    return this.http.get<IPreferences>('api/preferences/user', { observe: 'response' });
   }
 
   getPreferencesIdentifier(preferences: Pick<IPreferences, 'id'>): number {

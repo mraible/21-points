@@ -83,11 +83,11 @@ export class BloodPressureService {
   }
 
   last30Days(): Observable<HttpResponse<IBloodPressureByPeriod>> {
-    return this.http.get<IBloodPressureByPeriod>('api/bp-by-days/30', { observe: 'response' });
+    return this.http.get<IBloodPressureByPeriod>('api/blood-pressures/by-days/30', { observe: 'response' });
   }
 
   byMonth(month: string): Observable<HttpResponse<IBloodPressureByPeriod>> {
-    return this.http.get<IBloodPressureByPeriod>(`api/bp-by-month/${month}`, { observe: 'response' });
+    return this.http.get<IBloodPressureByPeriod>(`api/blood-pressures/by-month/${month}`, { observe: 'response' });
   }
 
   getBloodPressureIdentifier(bloodPressure: Pick<IBloodPressure, 'id'>): number {

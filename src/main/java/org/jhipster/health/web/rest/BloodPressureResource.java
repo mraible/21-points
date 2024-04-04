@@ -103,7 +103,7 @@ public class BloodPressureResource {
      * or with status {@code 500 (Internal Server Error)} if the bloodPressure couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/blood-pressures/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateBloodPressure(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody BloodPressure bloodPressure
@@ -296,12 +296,12 @@ public class BloodPressureResource {
     }
 
     /**
-     * {@code GET  /bp-by-days/:days} : get all the blood pressure readings by last x days.
+     * {@code GET  blood-pressures/by-days/:days} : get all the blood pressure readings by last x days.
      *
      * @param days the number of days.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the {@link BloodPressureByPeriod}.
      */
-    @RequestMapping(value = "/bp-by-days/{days}")
+    @RequestMapping(value = "/by-days/{days}")
     public ResponseEntity<BloodPressureByPeriod> getByDays(@PathVariable int days) {
         ZonedDateTime rightNow = ZonedDateTime.now();
         ZonedDateTime daysAgo = rightNow.minusDays(days);
@@ -316,12 +316,12 @@ public class BloodPressureResource {
     }
 
     /**
-     * {@code GET  /bp-by-month/:date} : get all the blood pressure readings by last x days.
+     * {@code GET  /blood-pressures/by-month/:date} : get all the blood pressure readings by last x days.
      *
      * @param date the year and month in yyyy-MM format.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the {@link BloodPressureByPeriod}.
      */
-    @GetMapping("/bp-by-month/{date}")
+    @GetMapping("/by-month/{date}")
     public ResponseEntity<BloodPressureByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
         LocalDate firstDay = date.atDay(1);
         LocalDate lastDay = date.atEndOfMonth();

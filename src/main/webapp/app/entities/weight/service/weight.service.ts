@@ -83,11 +83,11 @@ export class WeightService {
   }
 
   last30Days(): Observable<HttpResponse<IWeightByPeriod>> {
-    return this.http.get<IWeightByPeriod>('api/weight-by-days/30', { observe: 'response' });
+    return this.http.get<IWeightByPeriod>('api/weights/by-days/30', { observe: 'response' });
   }
 
   byMonth(month: string): Observable<HttpResponse<IWeightByPeriod>> {
-    return this.http.get<IWeightByPeriod>(`api/weight-by-month/${month}`, { observe: 'response' });
+    return this.http.get<IWeightByPeriod>(`api/weights/by-month/${month}`, { observe: 'response' });
   }
 
   getWeightIdentifier(weight: Pick<IWeight, 'id'>): number {

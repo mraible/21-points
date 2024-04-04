@@ -281,11 +281,11 @@ public class PreferencesResource {
     }
 
     /**
-     * {@code GET  /my-preferences} : get the current user's preferences
+     * {@code GET  /user} : get the current user's preferences
      *
      * @return the preferences or default (weeklyGoal: 10) if none exist.
      */
-    @GetMapping("/my-preferences")
+    @GetMapping("/user")
     public ResponseEntity<Preferences> getUserPreferences() {
         String username = SecurityUtils.getCurrentUserLogin().orElse("");
         log.debug("REST request to get Preferences : {}", username);

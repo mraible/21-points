@@ -20,10 +20,12 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.util.IterableUtil;
 import org.jhipster.health.IntegrationTest;
 import org.jhipster.health.domain.BloodPressure;
@@ -564,8 +566,16 @@ class BloodPressureResourceIT {
             .andExpect(jsonPath("$.[*].diastolic").value(hasItem(DEFAULT_DIASTOLIC)));
     }
 
+    private User createUser() {
+        User newuser = new User();
+        newuser.setLogin("user"); // username used by @WithMockUser
+        newuser.setPassword(RandomStringUtils.randomAlphanumeric(60));
+        userRepository.saveAndFlush(newuser);
+        return newuser;
+    }
+
     private void createBloodPressureByMonth(ZonedDateTime firstDate, ZonedDateTime firstDayOfLastMonth) {
-        User user = userRepository.findOneByLogin("user").get();
+        User user = userRepository.findOneByLogin("user").orElse(createUser());
 
         bloodPressure = new BloodPressure(firstDate, 120, 80, user);
         bloodPressureRepository.saveAndFlush(bloodPressure);
@@ -600,7 +610,7 @@ class BloodPressureResourceIT {
 
         // Get the blood pressure readings for the last 30 days
         restBloodPressureMockMvc
-            .perform(get("/api/bp-by-days/{days}", 30))
+            .perform(get("/api/blood-pressures/by-days/{days}", 30))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

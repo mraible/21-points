@@ -286,12 +286,12 @@ public class WeightResource {
     }
 
     /**
-     * {@code GET  /weight-by-days} : get all the weigh-ins for last x days.
+     * {@code GET  /weights/by-days} : get all the weigh-ins for last x days.
      *
      * @param days the days to fetch the results for.
      * @return the result of the search.
      */
-    @GetMapping("/weight-by-days/{days}")
+    @GetMapping("/by-days/{days}")
     public ResponseEntity<WeightByPeriod> getByDays(@PathVariable int days) {
         ZonedDateTime rightNow = ZonedDateTime.now(ZoneOffset.UTC);
         ZonedDateTime daysAgo = rightNow.minusDays(days);
@@ -302,12 +302,12 @@ public class WeightResource {
     }
 
     /**
-     * {@code GET  /weight-by-month/:date} : get all the blood pressure readings for a particular month.
+     * {@code GET  /weights/by-month/:date} : get all the blood pressure readings for a particular month.
      *
      * @param date the month to fetch results for.
      * @return the result of the search.
      */
-    @GetMapping("/weight-by-month/{date}")
+    @GetMapping("/by-month/{date}")
     public ResponseEntity<WeightByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
         LocalDate firstDay = date.atDay(1);
         LocalDate lastDay = date.atEndOfMonth();

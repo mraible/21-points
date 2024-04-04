@@ -86,19 +86,19 @@ export class PointsService {
   thisWeek(): Observable<HttpResponse<IPointsPerWeek>> {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     return this.http
-      .get<IPointsPerWeek>(`api/points-this-week?tz=${tz}`, { observe: 'response' })
+      .get<IPointsPerWeek>(`api/points/this-week?tz=${tz}`, { observe: 'response' })
       .pipe(map(res => this.convertWeekResponseFromServer(res)));
   }
 
   byWeek(date: string): Observable<HttpResponse<IPointsPerWeek>> {
     return this.http
-      .get<IPointsPerWeek>(`api/points-by-week/${date}`, { observe: 'response' })
+      .get<IPointsPerWeek>(`api/points/by-week/${date}`, { observe: 'response' })
       .pipe(map(res => this.convertWeekResponseFromServer(res)));
   }
 
   byMonth(month: string): Observable<HttpResponse<IPointsPerMonth>> {
     return this.http
-      .get<IPointsPerMonth>(`api/points-by-month/${month}`, { observe: 'response' })
+      .get<IPointsPerMonth>(`api/points/by-month/${month}`, { observe: 'response' })
       .pipe(map(res => this.convertMonthResponseFromServer(res)));
   }
 
