@@ -9,6 +9,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
 import HomeComponent from './home.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('Home Component', () => {
   let comp: HomeComponent;
@@ -28,7 +29,7 @@ describe('Home Component', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [HomeComponent, RouterTestingModule.withRoutes([])],
+      imports: [HomeComponent, RouterTestingModule.withRoutes([]), HttpClientTestingModule],
       providers: [AccountService],
     })
       .overrideTemplate(HomeComponent, '')
