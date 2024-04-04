@@ -3,9 +3,6 @@ import { endOfDay, endOfMonth, format, getDaysInMonth, isSameDay, isSameMonth, s
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay, CalendarView } from 'angular-calendar';
 import { Router } from '@angular/router';
 import { filter, Subject } from 'rxjs';
-import { EventColor } from 'calendar-utils';
-import dayjs from 'dayjs/esm';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PointsService } from '../entities/points/service/points.service';
 import { BloodPressureService } from '../entities/blood-pressure/service/blood-pressure.service';
 import { WeightService } from '../entities/weight/service/weight.service';
@@ -13,8 +10,11 @@ import { PreferencesService } from '../entities/preferences/service/preferences.
 import { IPoints } from '../entities/points/points.model';
 import { IBloodPressure } from '../entities/blood-pressure/blood-pressure.model';
 import { IWeight } from '../entities/weight/weight.model';
+import { EventColor } from 'calendar-utils';
+import dayjs from 'dayjs/esm';
 import { PointsDeleteDialogComponent } from '../entities/points/delete/points-delete-dialog.component';
 import { ITEM_DELETED_EVENT } from '../config/navigation.constants';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BloodPressureDeleteDialogComponent } from '../entities/blood-pressure/delete/blood-pressure-delete-dialog.component';
 import { WeightDeleteDialogComponent } from '../entities/weight/delete/weight-delete-dialog.component';
 
@@ -84,7 +84,7 @@ export class HistoryComponent implements OnInit {
     private weightService: WeightService,
     private preferencesService: PreferencesService,
     private router: Router,
-    protected modalService: NgbModal,
+    protected modalService: NgbModal
   ) {}
 
   setView(view: CalendarView): void {

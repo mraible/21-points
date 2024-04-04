@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import dayjs from 'dayjs/esm';
 import { IPoints, NewPoints } from '../points.model';
+import dayjs from 'dayjs/esm';
 
 /**
  * A partial Type with required key is used as form input.

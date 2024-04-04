@@ -1,8 +1,8 @@
 import { Route } from '@angular/router';
 
+import { HomeComponent } from './home.component';
 import { AboutComponent } from '../about/about.component';
 import { HistoryComponent } from '../history/history.component';
-import { HomeComponent } from './home.component';
 
 export const HOME_ROUTE: Route = {
   path: '',

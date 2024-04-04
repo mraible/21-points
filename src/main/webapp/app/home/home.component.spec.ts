@@ -7,9 +7,8 @@ import { of, Subject } from 'rxjs';
 
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
-
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HomeComponent } from './home.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('Home Component', () => {
   let comp: HomeComponent;
