@@ -18,7 +18,7 @@ export class MainComponent implements OnInit {
     private titleService: Title,
     private router: Router,
     private translateService: TranslateService,
-    rootRenderer: RendererFactory2,
+    rootRenderer: RendererFactory2
   ) {
     this.renderer = rootRenderer.createRenderer(document.querySelector('html'), null);
   }

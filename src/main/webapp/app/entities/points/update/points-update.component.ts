@@ -27,7 +27,7 @@ export class PointsUpdateComponent implements OnInit {
     protected pointsService: PointsService,
     protected pointsFormService: PointsFormService,
     protected userService: UserService,
-    protected activatedRoute: ActivatedRoute,
+    protected activatedRoute: ActivatedRoute
   ) {}
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);

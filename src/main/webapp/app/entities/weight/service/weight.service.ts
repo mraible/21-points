@@ -30,10 +30,7 @@ export class WeightService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/weights');
   protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/weights');
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
   create(weight: NewWeight): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(weight);

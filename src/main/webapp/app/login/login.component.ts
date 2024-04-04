@@ -21,11 +21,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     rememberMe: new FormControl(false, { nonNullable: true, validators: [Validators.required] }),
   });
 
-  constructor(
-    private accountService: AccountService,
-    private loginService: LoginService,
-    private router: Router,
-  ) {}
+  constructor(private accountService: AccountService, private loginService: LoginService, private router: Router) {}
 
   ngOnInit(): void {
     // if already authenticated then navigate to home page

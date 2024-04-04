@@ -44,7 +44,7 @@ describe('Weight Management Delete Component', () => {
         // THEN
         expect(service.delete).toHaveBeenCalledWith(123);
         expect(mockActiveModal.close).toHaveBeenCalledWith('deleted');
-      }),
+      })
     ));
 
     it('Should not call delete service on clear', () => {

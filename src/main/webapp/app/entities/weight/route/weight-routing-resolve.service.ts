@@ -9,10 +9,7 @@ import { WeightService } from '../service/weight.service';
 
 @Injectable({ providedIn: 'root' })
 export class WeightRoutingResolveService implements Resolve<IWeight | null> {
-  constructor(
-    protected service: WeightService,
-    protected router: Router,
-  ) {}
+  constructor(protected service: WeightService, protected router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IWeight | null | never> {
     const id = route.params['id'];
@@ -25,7 +22,7 @@ export class WeightRoutingResolveService implements Resolve<IWeight | null> {
             this.router.navigate(['404']);
             return EMPTY;
           }
-        }),
+        })
       );
     }
     return of(null);

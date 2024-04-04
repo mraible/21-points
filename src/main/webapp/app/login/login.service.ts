@@ -9,10 +9,7 @@ import { Login } from './login.model';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
-  constructor(
-    private accountService: AccountService,
-    private authServerProvider: AuthServerProvider,
-  ) {}
+  constructor(private accountService: AccountService, private authServerProvider: AuthServerProvider) {}
 
   login(credentials: Login): Observable<Account | null> {
     return this.authServerProvider.login(credentials).pipe(mergeMap(() => this.accountService.identity(true)));

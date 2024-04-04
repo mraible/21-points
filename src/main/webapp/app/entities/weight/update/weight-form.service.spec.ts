@@ -23,7 +23,7 @@ describe('Weight Form Service', () => {
             timestamp: expect.any(Object),
             weight: expect.any(Object),
             user: expect.any(Object),
-          }),
+          })
         );
       });
 
@@ -36,7 +36,7 @@ describe('Weight Form Service', () => {
             timestamp: expect.any(Object),
             weight: expect.any(Object),
             user: expect.any(Object),
-          }),
+          })
         );
       });
     });

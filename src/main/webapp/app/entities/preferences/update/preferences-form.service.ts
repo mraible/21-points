@@ -38,7 +38,7 @@ export class PreferencesFormService {
         {
           nonNullable: true,
           validators: [Validators.required],
-        },
+        }
       ),
       weeklyGoal: new FormControl(preferencesRawValue.weeklyGoal, {
         validators: [Validators.required, Validators.min(10), Validators.max(21)],
@@ -60,7 +60,7 @@ export class PreferencesFormService {
       {
         ...preferencesRawValue,
         id: { value: preferencesRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
+      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */
     );
   }
 

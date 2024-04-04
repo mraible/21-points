@@ -90,7 +90,8 @@ public class WeightResource {
         }
         Weight result = weightRepository.save(weight);
         weightSearchRepository.index(result);
-        return ResponseEntity.created(new URI("/api/weights/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/weights/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
@@ -98,7 +99,7 @@ public class WeightResource {
     /**
      * {@code PUT  /weights/:id} : Updates an existing weight.
      *
-     * @param id     the id of the weight to save.
+     * @param id the id of the weight to save.
      * @param weight the weight to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated weight,
      * or with status {@code 400 (Bad Request)} if the weight is not valid,
@@ -128,7 +129,8 @@ public class WeightResource {
 
         Weight result = weightRepository.save(weight);
         weightSearchRepository.index(result);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, weight.getId().toString()))
             .body(result);
     }
@@ -136,7 +138,7 @@ public class WeightResource {
     /**
      * {@code PATCH  /weights/:id} : Partial updates given fields of an existing weight, field will ignore if it is null
      *
-     * @param id     the id of the weight to save.
+     * @param id the id of the weight to save.
      * @param weight the weight to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated weight,
      * or with status {@code 400 (Bad Request)} if the weight is not valid,
@@ -195,7 +197,7 @@ public class WeightResource {
     /**
      * {@code GET  /weights} : get all the weights.
      *
-     * @param pageable  the pagination information.
+     * @param pageable the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of weights in body.
      */
@@ -256,7 +258,8 @@ public class WeightResource {
         }
         weightRepository.deleteById(id);
         weightSearchRepository.deleteById(id);
-        return ResponseEntity.noContent()
+        return ResponseEntity
+            .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
@@ -265,7 +268,7 @@ public class WeightResource {
      * {@code SEARCH  /_search/weights?query=:query} : search for the weight corresponding
      * to the query.
      *
-     * @param query    the query of the weight search.
+     * @param query the query of the weight search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */

@@ -6,12 +6,12 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { PreferencesFormService } from './preferences-form.service';
 import { PreferencesService } from '../service/preferences.service';
 import { IPreferences } from '../preferences.model';
 
-import { PreferencesFormService } from './preferences-form.service';
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/user.service';
 
 import { PreferencesUpdateComponent } from './preferences-update.component';
 
@@ -67,7 +67,7 @@ describe('Preferences Management Update Component', () => {
       expect(userService.query).toHaveBeenCalled();
       expect(userService.addUserToCollectionIfMissing).toHaveBeenCalledWith(
         userCollection,
-        ...additionalUsers.map(expect.objectContaining),
+        ...additionalUsers.map(expect.objectContaining)
       );
       expect(comp.usersSharedCollection).toEqual(expectedCollection);
     });

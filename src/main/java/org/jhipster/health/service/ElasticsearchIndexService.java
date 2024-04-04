@@ -152,7 +152,8 @@ public class ElasticsearchIndexService implements ApplicationListener<ContextRef
         }
         if (jpaRepository.count() > 0) {
             // if a JHipster entity field is the owner side of a many-to-many relationship, it should be loaded manually
-            List<Method> relationshipGetters = Arrays.stream(entityClass.getDeclaredFields())
+            List<Method> relationshipGetters = Arrays
+                .stream(entityClass.getDeclaredFields())
                 .filter(field -> field.getType().equals(Set.class))
                 .filter(field -> field.getAnnotation(ManyToMany.class) != null)
                 .filter(field -> field.getAnnotation(ManyToMany.class).mappedBy().isEmpty())

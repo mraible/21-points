@@ -17,6 +17,7 @@ import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.service.UserService;
 import org.jhipster.health.service.dto.AdminUserDTO;
 import org.jhipster.health.service.dto.PasswordChangeDTO;
+import org.jhipster.health.service.dto.UserDTO;
 import org.jhipster.health.web.rest.vm.KeyAndPasswordVM;
 import org.jhipster.health.web.rest.vm.ManagedUserVM;
 import org.junit.jupiter.api.Test;

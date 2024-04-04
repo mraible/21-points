@@ -9,10 +9,7 @@ import { PointsService } from '../service/points.service';
 
 @Injectable({ providedIn: 'root' })
 export class PointsRoutingResolveService implements Resolve<IPoints | null> {
-  constructor(
-    protected service: PointsService,
-    protected router: Router,
-  ) {}
+  constructor(protected service: PointsService, protected router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IPoints | null | never> {
     const id = route.params['id'];
@@ -25,7 +22,7 @@ export class PointsRoutingResolveService implements Resolve<IPoints | null> {
             this.router.navigate(['404']);
             return EMPTY;
           }
-        }),
+        })
       );
     }
     return of(null);

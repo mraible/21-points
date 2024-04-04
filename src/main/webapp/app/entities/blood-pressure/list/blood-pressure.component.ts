@@ -4,13 +4,13 @@ import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
-import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
-import { ParseLinks } from 'app/core/util/parse-links.service';
 import { IBloodPressure } from '../blood-pressure.model';
 
+import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
+import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { EntityArrayResponseType, BloodPressureService } from '../service/blood-pressure.service';
 import { BloodPressureDeleteDialogComponent } from '../delete/blood-pressure-delete-dialog.component';
+import { ParseLinks } from 'app/core/util/parse-links.service';
 
 @Component({
   selector: 'jhi-blood-pressure',
@@ -35,7 +35,7 @@ export class BloodPressureComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     public router: Router,
     protected parseLinks: ParseLinks,
-    protected modalService: NgbModal,
+    protected modalService: NgbModal
   ) {}
 
   reset(): void {
@@ -68,7 +68,7 @@ export class BloodPressureComponent implements OnInit {
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
-        switchMap(() => this.loadFromBackendWithRouteInformations()),
+        switchMap(() => this.loadFromBackendWithRouteInformations())
       )
       .subscribe({
         next: (res: EntityArrayResponseType) => {
@@ -96,7 +96,7 @@ export class BloodPressureComponent implements OnInit {
   protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
     return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
       tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending, this.currentSearch)),
+      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending, this.currentSearch))
     );
   }
 
@@ -145,7 +145,7 @@ export class BloodPressureComponent implements OnInit {
     page?: number,
     predicate?: string,
     ascending?: boolean,
-    currentSearch?: string,
+    currentSearch?: string
   ): Observable<EntityArrayResponseType> {
     this.isLoading = true;
     const pageToLoad: number = page ?? 1;

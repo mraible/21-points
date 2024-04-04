@@ -18,10 +18,7 @@ export interface IFilterOption {
 }
 
 export class FilterOption implements IFilterOption {
-  constructor(
-    public name: string,
-    public values: string[] = [],
-  ) {
+  constructor(public name: string, public values: string[] = []) {
     this.values = [...new Set(values)];
   }
 

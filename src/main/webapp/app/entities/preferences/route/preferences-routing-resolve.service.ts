@@ -9,10 +9,7 @@ import { PreferencesService } from '../service/preferences.service';
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesRoutingResolveService implements Resolve<IPreferences | null> {
-  constructor(
-    protected service: PreferencesService,
-    protected router: Router,
-  ) {}
+  constructor(protected service: PreferencesService, protected router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IPreferences | null | never> {
     const id = route.params['id'];
@@ -25,7 +22,7 @@ export class PreferencesRoutingResolveService implements Resolve<IPreferences | 
             this.router.navigate(['404']);
             return EMPTY;
           }
-        }),
+        })
       );
     }
     return of(null);
