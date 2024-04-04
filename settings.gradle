@@ -12,4 +12,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "twenty-one-points"
+rootProject.name = "21-points"
