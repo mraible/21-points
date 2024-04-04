@@ -12,7 +12,7 @@
     "backend:info": "./gradlew -v",
     "backend:nohttp:test": "./gradlew checkstyleNohttp -x webapp -x webapp_test",
     "backend:start": "./gradlew -x webapp -x webapp_test",
-    "backend:unit:test": "./gradlew test integrationTest -x webapp -x webapp_test -Dlogging.level.ROOT=OFF -Dlogging.level.tech.jhipster=OFF -Dlogging.level.org.jhipster.health=OFF -Dlogging.level.org.springframework=OFF -Dlogging.level.org.springframework.web=OFF -Dlogging.level.org.springframework.security=OFF",
+    "backend:unit:test": "./gradlew test integrationTest -x webapp -x webapp_test",
     "build": "npm run webapp:prod --",
     "build-watch": "concurrently 'npm run webapp:build:dev -- --watch' npm:backend:start",
     "ci:backend:test": "npm run backend:info && npm run backend:doc:test && npm run backend:nohttp:test && npm run backend:unit:test -- -P$npm_package_config_default_environment",
