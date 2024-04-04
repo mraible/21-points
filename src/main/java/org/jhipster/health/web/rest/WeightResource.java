@@ -90,8 +90,7 @@ public class WeightResource {
         }
         Weight result = weightRepository.save(weight);
         weightSearchRepository.index(result);
-        return ResponseEntity
-            .created(new URI("/api/weights/" + result.getId()))
+        return ResponseEntity.created(new URI("/api/weights/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
@@ -129,8 +128,7 @@ public class WeightResource {
 
         Weight result = weightRepository.save(weight);
         weightSearchRepository.index(result);
-        return ResponseEntity
-            .ok()
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, weight.getId().toString()))
             .body(result);
     }
@@ -258,8 +256,7 @@ public class WeightResource {
         }
         weightRepository.deleteById(id);
         weightSearchRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

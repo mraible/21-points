@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.jhipster.health.TwentyOnePointsApp;
 import org.jhipster.health.config.AsyncSyncConfiguration;
 import org.jhipster.health.config.EmbeddedElasticsearch;
 import org.jhipster.health.config.EmbeddedSQL;

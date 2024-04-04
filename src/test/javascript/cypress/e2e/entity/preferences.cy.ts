@@ -92,7 +92,7 @@ describe('Preferences e2e test', () => {
             {
               statusCode: 200,
               body: [preferences],
-            }
+            },
           ).as('entitiesRequestInternal');
         });
 

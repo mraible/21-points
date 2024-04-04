@@ -8,7 +8,10 @@ import { Bean, Beans, ConfigProps, Env, PropertySource } from './configuration.m
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService {
-  constructor(private http: HttpClient, private applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    private http: HttpClient,
+    private applicationConfigService: ApplicationConfigService,
+  ) {}
 
   getBeans(): Observable<Bean[]> {
     return this.http.get<ConfigProps>(this.applicationConfigService.getEndpointFor('management/configprops')).pipe(
@@ -16,9 +19,9 @@ export class ConfigurationService {
         Object.values(
           Object.values(configProps.contexts)
             .map(context => context.beans)
-            .reduce((allBeans: Beans, contextBeans: Beans) => ({ ...allBeans, ...contextBeans }))
-        )
-      )
+            .reduce((allBeans: Beans, contextBeans: Beans) => ({ ...allBeans, ...contextBeans })),
+        ),
+      ),
     );
   }
 

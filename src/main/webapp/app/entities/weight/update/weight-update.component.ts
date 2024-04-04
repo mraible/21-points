@@ -4,11 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import { WeightFormService, WeightFormGroup } from './weight-form.service';
-import { IWeight } from '../weight.model';
-import { WeightService } from '../service/weight.service';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
+import { IWeight } from '../weight.model';
+import { WeightService } from '../service/weight.service';
+import { WeightFormService, WeightFormGroup } from './weight-form.service';
 
 @Component({
   selector: 'jhi-weight-update',
@@ -26,7 +26,7 @@ export class WeightUpdateComponent implements OnInit {
     protected weightService: WeightService,
     protected weightFormService: WeightFormService,
     protected userService: UserService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
   ) {}
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);

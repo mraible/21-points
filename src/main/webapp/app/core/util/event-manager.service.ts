@@ -3,7 +3,10 @@ import { Observable, Observer, Subscription } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 
 export class EventWithContent<T> {
-  constructor(public name: string, public content: T) {}
+  constructor(
+    public name: string,
+    public content: T,
+  ) {}
 }
 
 /**
@@ -49,7 +52,7 @@ export class EventManager {
             }
           }
           return false;
-        })
+        }),
       )
       .subscribe(callback);
   }

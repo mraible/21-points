@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { ASC } from 'app/config/navigation.constants';
 import { PointsComponent } from '../list/points.component';
 import { PointsDetailComponent } from '../detail/points-detail.component';
 import { PointsUpdateComponent } from '../update/points-update.component';
 import { PointsRoutingResolveService } from './points-routing-resolve.service';
-import { ASC } from 'app/config/navigation.constants';
 
 const pointsRoute: Routes = [
   {

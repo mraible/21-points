@@ -62,7 +62,7 @@ describe('RegisterComponent', () => {
       expect(comp.errorUserExists).toBe(false);
       expect(comp.errorEmailExists).toBe(false);
       expect(comp.error).toBe(false);
-    })
+    }),
   ));
 
   it('should notify of user existence upon 400/login already in use', inject(
@@ -72,7 +72,7 @@ describe('RegisterComponent', () => {
         throwError({
           status: 400,
           error: { type: LOGIN_ALREADY_USED_TYPE },
-        })
+        }),
       );
       comp.registerForm.patchValue({
         password: 'password',
@@ -85,7 +85,7 @@ describe('RegisterComponent', () => {
       expect(comp.errorUserExists).toBe(true);
       expect(comp.errorEmailExists).toBe(false);
       expect(comp.error).toBe(false);
-    })
+    }),
   ));
 
   it('should notify of email existence upon 400/email address already in use', inject(
@@ -95,7 +95,7 @@ describe('RegisterComponent', () => {
         throwError({
           status: 400,
           error: { type: EMAIL_ALREADY_USED_TYPE },
-        })
+        }),
       );
       comp.registerForm.patchValue({
         password: 'password',
@@ -108,7 +108,7 @@ describe('RegisterComponent', () => {
       expect(comp.errorEmailExists).toBe(true);
       expect(comp.errorUserExists).toBe(false);
       expect(comp.error).toBe(false);
-    })
+    }),
   ));
 
   it('should notify of generic error', inject(
@@ -117,7 +117,7 @@ describe('RegisterComponent', () => {
       jest.spyOn(service, 'save').mockReturnValue(
         throwError({
           status: 503,
-        })
+        }),
       );
       comp.registerForm.patchValue({
         password: 'password',
@@ -130,6 +130,6 @@ describe('RegisterComponent', () => {
       expect(comp.errorUserExists).toBe(false);
       expect(comp.errorEmailExists).toBe(false);
       expect(comp.error).toBe(true);
-    })
+    }),
   ));
 });

@@ -24,7 +24,7 @@ describe('BloodPressure Form Service', () => {
             systolic: expect.any(Object),
             diastolic: expect.any(Object),
             user: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -38,7 +38,7 @@ describe('BloodPressure Form Service', () => {
             systolic: expect.any(Object),
             diastolic: expect.any(Object),
             user: expect.any(Object),
-          })
+          }),
         );
       });
     });

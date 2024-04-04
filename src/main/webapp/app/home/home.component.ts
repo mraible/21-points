@@ -5,6 +5,8 @@ import { takeUntil } from 'rxjs/operators';
 
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
+import { ChartConfiguration, ChartOptions } from 'chart.js';
+import dayjs from 'dayjs/esm';
 import { PointsService } from '../entities/points/service/points.service';
 import { IPointsPerWeek } from '../entities/points/points.model';
 import { PreferencesService } from '../entities/preferences/service/preferences.service';
@@ -14,8 +16,6 @@ import { IBloodPressure, IBloodPressureByPeriod } from '../entities/blood-pressu
 import { WeightService } from '../entities/weight/service/weight.service';
 import { IWeight, IWeightByPeriod } from '../entities/weight/weight.model';
 
-import { ChartConfiguration, ChartOptions } from 'chart.js';
-import dayjs from 'dayjs/esm';
 
 @Component({
   selector: 'jhi-home',
@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private pointsService: PointsService,
     private preferencesService: PreferencesService,
     private bloodPressureService: BloodPressureService,
-    private weightService: WeightService
+    private weightService: WeightService,
   ) {}
 
   ngOnInit(): void {
