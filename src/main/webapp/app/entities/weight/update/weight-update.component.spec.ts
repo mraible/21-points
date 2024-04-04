@@ -6,12 +6,12 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { WeightFormService } from './weight-form.service';
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/user.service';
 import { WeightService } from '../service/weight.service';
 import { IWeight } from '../weight.model';
 
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { WeightFormService } from './weight-form.service';
 
 import { WeightUpdateComponent } from './weight-update.component';
 
@@ -67,7 +67,7 @@ describe('Weight Management Update Component', () => {
       expect(userService.query).toHaveBeenCalled();
       expect(userService.addUserToCollectionIfMissing).toHaveBeenCalledWith(
         userCollection,
-        ...additionalUsers.map(expect.objectContaining)
+        ...additionalUsers.map(expect.objectContaining),
       );
       expect(comp.usersSharedCollection).toEqual(expectedCollection);
     });

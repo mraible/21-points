@@ -7,7 +7,10 @@ import { Health } from './health.model';
 
 @Injectable({ providedIn: 'root' })
 export class HealthService {
-  constructor(private http: HttpClient, private applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    private http: HttpClient,
+    private applicationConfigService: ApplicationConfigService,
+  ) {}
 
   checkHealth(): Observable<Health> {
     return this.http.get<Health>(this.applicationConfigService.getEndpointFor('management/health'));

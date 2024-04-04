@@ -7,7 +7,10 @@ import { Registration } from './register.model';
 
 @Injectable({ providedIn: 'root' })
 export class RegisterService {
-  constructor(private http: HttpClient, private applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    private http: HttpClient,
+    private applicationConfigService: ApplicationConfigService,
+  ) {}
 
   save(registration: Registration): Observable<{}> {
     return this.http.post(this.applicationConfigService.getEndpointFor('api/register'), registration);

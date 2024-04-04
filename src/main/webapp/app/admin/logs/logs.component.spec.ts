@@ -44,7 +44,7 @@ describe('LogsComponent', () => {
               effectiveLevel: 'WARN',
             },
           },
-        } as unknown as LoggersResponse)
+        } as unknown as LoggersResponse),
       );
 
       // WHEN
@@ -68,7 +68,7 @@ describe('LogsComponent', () => {
               effectiveLevel: 'ERROR',
             },
           },
-        } as unknown as LoggersResponse)
+        } as unknown as LoggersResponse),
       );
 
       // WHEN

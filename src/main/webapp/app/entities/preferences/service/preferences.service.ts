@@ -18,7 +18,10 @@ export class PreferencesService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/preferences');
   protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/preferences');
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    protected http: HttpClient,
+    protected applicationConfigService: ApplicationConfigService,
+  ) {}
 
   create(preferences: NewPreferences): Observable<EntityResponseType> {
     return this.http.post<IPreferences>(this.resourceUrl, preferences, { observe: 'response' });
@@ -69,7 +72,7 @@ export class PreferencesService {
     const preferences: Type[] = preferencesToCheck.filter(isPresent);
     if (preferences.length > 0) {
       const preferencesCollectionIdentifiers = preferencesCollection.map(
-        preferencesItem => this.getPreferencesIdentifier(preferencesItem)!
+        preferencesItem => this.getPreferencesIdentifier(preferencesItem)!,
       );
       const preferencesToAdd = preferences.filter(preferencesItem => {
         const preferencesIdentifier = this.getPreferencesIdentifier(preferencesItem);

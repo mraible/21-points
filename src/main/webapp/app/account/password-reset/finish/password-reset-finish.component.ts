@@ -29,7 +29,10 @@ export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
     }),
   });
 
-  constructor(private passwordResetFinishService: PasswordResetFinishService, private route: ActivatedRoute) {}
+  constructor(
+    private passwordResetFinishService: PasswordResetFinishService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
