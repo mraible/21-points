@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface WeightRepository extends JpaRepository<Weight, Long> {
-    @Query("select weight from Weight weight where weight.user.login = ?#{authentication.name}")
+    @Query("select weight from Weight weight where weight.user.login = ?#{authentication.name} order by weight.timestamp desc")
     Page<Weight> findByUserIsCurrentUser(Pageable pageable);
 
     default Optional<Weight> findOneWithEagerRelationships(Long id) {
