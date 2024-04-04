@@ -95,7 +95,7 @@ describe('BloodPressure e2e test', () => {
                 link: '<http://localhost/api/blood-pressures?page=0&size=20>; rel="last",<http://localhost/api/blood-pressures?page=0&size=20>; rel="first"',
               },
               body: [bloodPressure],
-            },
+            }
           ).as('entitiesRequestInternal');
         });
 

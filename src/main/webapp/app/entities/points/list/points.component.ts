@@ -4,10 +4,10 @@ import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { IPoints } from '../points.model';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
-import { IPoints } from '../points.model';
 import { EntityArrayResponseType, PointsService } from '../service/points.service';
 import { PointsDeleteDialogComponent } from '../delete/points-delete-dialog.component';
 
@@ -33,7 +33,7 @@ export class PointsComponent implements OnInit {
     protected pointsService: PointsService,
     protected activatedRoute: ActivatedRoute,
     public router: Router,
-    protected modalService: NgbModal,
+    protected modalService: NgbModal
   ) {}
 
   trackId = (_index: number, item: IPoints): number => this.pointsService.getPointsIdentifier(item);
@@ -59,7 +59,7 @@ export class PointsComponent implements OnInit {
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
-        switchMap(() => this.loadFromBackendWithRouteInformations()),
+        switchMap(() => this.loadFromBackendWithRouteInformations())
       )
       .subscribe({
         next: (res: EntityArrayResponseType) => {
@@ -87,7 +87,7 @@ export class PointsComponent implements OnInit {
   protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
     return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
       tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending, this.currentSearch)),
+      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending, this.currentSearch))
     );
   }
 
@@ -123,7 +123,7 @@ export class PointsComponent implements OnInit {
     page?: number,
     predicate?: string,
     ascending?: boolean,
-    currentSearch?: string,
+    currentSearch?: string
   ): Observable<EntityArrayResponseType> {
     this.isLoading = true;
     const pageToLoad: number = page ?? 1;

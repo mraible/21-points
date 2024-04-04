@@ -14,10 +14,7 @@ export class MetricsComponent implements OnInit {
   threads?: Thread[];
   updatingMetrics = true;
 
-  constructor(
-    private metricsService: MetricsService,
-    private changeDetector: ChangeDetectorRef,
-  ) {}
+  constructor(private metricsService: MetricsService, private changeDetector: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.refresh();

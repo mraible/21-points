@@ -52,7 +52,7 @@ export class BloodPressureFormService {
         {
           nonNullable: true,
           validators: [Validators.required],
-        },
+        }
       ),
       timestamp: new FormControl(bloodPressureRawValue.timestamp, {
         validators: [Validators.required],
@@ -77,7 +77,7 @@ export class BloodPressureFormService {
       {
         ...bloodPressureRawValue,
         id: { value: bloodPressureRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
+      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */
     );
   }
 
@@ -91,7 +91,7 @@ export class BloodPressureFormService {
   }
 
   private convertBloodPressureRawValueToBloodPressure(
-    rawBloodPressure: BloodPressureFormRawValue | NewBloodPressureFormRawValue,
+    rawBloodPressure: BloodPressureFormRawValue | NewBloodPressureFormRawValue
   ): IBloodPressure | NewBloodPressure {
     return {
       ...rawBloodPressure,
@@ -100,7 +100,7 @@ export class BloodPressureFormService {
   }
 
   private convertBloodPressureToBloodPressureRawValue(
-    bloodPressure: IBloodPressure | (Partial<NewBloodPressure> & BloodPressureFormDefaults),
+    bloodPressure: IBloodPressure | (Partial<NewBloodPressure> & BloodPressureFormDefaults)
   ): BloodPressureFormRawValue | PartialWithRequiredKeyOf<NewBloodPressureFormRawValue> {
     return {
       ...bloodPressure,

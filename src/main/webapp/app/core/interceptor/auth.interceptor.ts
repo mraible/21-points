@@ -10,7 +10,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private localStorageService: LocalStorageService,
     private sessionStorageService: SessionStorageService,
-    private applicationConfigService: ApplicationConfigService,
+    private applicationConfigService: ApplicationConfigService
   ) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

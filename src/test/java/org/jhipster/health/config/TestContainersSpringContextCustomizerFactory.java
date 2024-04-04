@@ -5,6 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.test.context.ContextConfigurationAttributes;
@@ -29,9 +31,9 @@ public class TestContainersSpringContextCustomizerFactory implements ContextCust
                 log.debug("detected the EmbeddedSQL annotation on class {}", testClass.getName());
                 log.info("Warming up the sql database");
                 if (
-                    Arrays.asList(context.getEnvironment().getActiveProfiles()).contains(
-                        "test" + JHipsterConstants.SPRING_PROFILE_PRODUCTION
-                    )
+                    Arrays
+                        .asList(context.getEnvironment().getActiveProfiles())
+                        .contains("test" + JHipsterConstants.SPRING_PROFILE_PRODUCTION)
                 ) {
                     if (null == prodTestContainer) {
                         try {
@@ -62,9 +64,10 @@ public class TestContainersSpringContextCustomizerFactory implements ContextCust
                     beanFactory.registerSingleton(ElasticsearchTestContainer.class.getName(), elasticsearchBean);
                     // ((DefaultListableBeanFactory)beanFactory).registerDisposableBean(ElasticsearchTestContainer.class.getName(), elasticsearchBean);
                 }
-                testValues = testValues.and(
-                    "spring.elasticsearch.uris=http://" + elasticsearchBean.getElasticsearchContainer().getHttpHostAddress()
-                );
+                testValues =
+                    testValues.and(
+                        "spring.elasticsearch.uris=http://" + elasticsearchBean.getElasticsearchContainer().getHttpHostAddress()
+                    );
             }
             testValues.applyTo(context);
         };

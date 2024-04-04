@@ -95,7 +95,7 @@ describe('Weight e2e test', () => {
                 link: '<http://localhost/api/weights?page=0&size=20>; rel="last",<http://localhost/api/weights?page=0&size=20>; rel="first"',
               },
               body: [weight],
-            },
+            }
           ).as('entitiesRequestInternal');
         });
 

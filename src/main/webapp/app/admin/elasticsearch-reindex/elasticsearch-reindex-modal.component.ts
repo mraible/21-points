@@ -8,10 +8,7 @@ import { ElasticsearchReindexService } from './elasticsearch-reindex.service';
   templateUrl: './elasticsearch-reindex-modal.component.html',
 })
 export class ElasticsearchReindexModalComponent {
-  constructor(
-    private elasticsearchReindexService: ElasticsearchReindexService,
-    public activeModal: NgbActiveModal,
-  ) {}
+  constructor(private elasticsearchReindexService: ElasticsearchReindexService, public activeModal: NgbActiveModal) {}
 
   reindex(): void {
     this.elasticsearchReindexService.reindex().subscribe(() => this.activeModal.dismiss());

@@ -95,7 +95,7 @@ describe('Points e2e test', () => {
                 link: '<http://localhost/api/points?page=0&size=20>; rel="last",<http://localhost/api/points?page=0&size=20>; rel="first"',
               },
               body: [points],
-            },
+            }
           ).as('entitiesRequestInternal');
         });
 

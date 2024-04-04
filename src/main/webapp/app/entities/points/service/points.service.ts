@@ -31,10 +31,7 @@ export class PointsService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/points');
   protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/points');
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
   create(points: NewPoints): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(points);

@@ -27,7 +27,7 @@
     "herokuDeployType": "git",
     "herokuJavaVersion": "11",
     "jhiPrefix": "jhi",
-    "jhipsterVersion": "7.9.3",
+    "jhipsterVersion": "7.9.4",
     "jwtSecretKey": "YjAwZDU2ODI3NzNjZjk0NjVhY2UzNGViZmY0YjY1ZGY2MDI5MTc5Y2FlZWYxNzE5Yjg5ZjMxOGZhZTgwZjA5NTFkN2VmNDM3ZGMyZDNjZTViNDAwYTg4NmNlMmM2ZDkxZTMwMDk5YmUxNWNkZmE0YTNiNDlhMGNhZmM4OTk1NmQ=",
     "languages": ["en", "fr"],
     "lastLiquibaseTimestamp": 1667866821000,

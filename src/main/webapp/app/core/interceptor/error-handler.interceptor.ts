@@ -17,7 +17,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
             this.eventManager.broadcast(new EventWithContent('twentyOnePointsApp.httpError', err));
           }
         },
-      }),
+      })
     );
   }
 }

@@ -6,12 +6,12 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { BloodPressureFormService } from './blood-pressure-form.service';
 import { BloodPressureService } from '../service/blood-pressure.service';
 import { IBloodPressure } from '../blood-pressure.model';
 
-import { BloodPressureFormService } from './blood-pressure-form.service';
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/user.service';
 
 import { BloodPressureUpdateComponent } from './blood-pressure-update.component';
 
@@ -67,7 +67,7 @@ describe('BloodPressure Management Update Component', () => {
       expect(userService.query).toHaveBeenCalled();
       expect(userService.addUserToCollectionIfMissing).toHaveBeenCalledWith(
         userCollection,
-        ...additionalUsers.map(expect.objectContaining),
+        ...additionalUsers.map(expect.objectContaining)
       );
       expect(comp.usersSharedCollection).toEqual(expectedCollection);
     });

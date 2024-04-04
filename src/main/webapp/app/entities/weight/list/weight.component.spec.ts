@@ -32,7 +32,7 @@ describe('Weight Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-              }),
+              })
             ),
             snapshot: { queryParams: {} },
           },
@@ -53,8 +53,8 @@ describe('Weight Management Component', () => {
         new HttpResponse({
           body: [{ id: 123 }],
           headers,
-        }),
-      ),
+        })
+      )
     );
   });
 
@@ -107,7 +107,7 @@ describe('Weight Management Component', () => {
         queryParams: expect.objectContaining({
           sort: ['name,asc'],
         }),
-      }),
+      })
     );
   });
 

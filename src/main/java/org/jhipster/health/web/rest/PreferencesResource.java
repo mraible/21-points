@@ -63,7 +63,8 @@ public class PreferencesResource {
         }
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.index(result);
-        return ResponseEntity.created(new URI("/api/preferences/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/preferences/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
@@ -97,7 +98,8 @@ public class PreferencesResource {
 
         Preferences result = preferencesRepository.save(preferences);
         preferencesSearchRepository.index(result);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, preferences.getId().toString()))
             .body(result);
     }
@@ -195,7 +197,8 @@ public class PreferencesResource {
         log.debug("REST request to delete Preferences : {}", id);
         preferencesRepository.deleteById(id);
         preferencesSearchRepository.deleteById(id);
-        return ResponseEntity.noContent()
+        return ResponseEntity
+            .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

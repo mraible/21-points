@@ -23,7 +23,7 @@ describe('Preferences Form Service', () => {
             weeklyGoal: expect.any(Object),
             weightUnits: expect.any(Object),
             user: expect.any(Object),
-          }),
+          })
         );
       });
 
@@ -36,7 +36,7 @@ describe('Preferences Form Service', () => {
             weeklyGoal: expect.any(Object),
             weightUnits: expect.any(Object),
             user: expect.any(Object),
-          }),
+          })
         );
       });
     });

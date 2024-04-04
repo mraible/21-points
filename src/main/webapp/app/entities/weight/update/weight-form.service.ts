@@ -51,7 +51,7 @@ export class WeightFormService {
         {
           nonNullable: true,
           validators: [Validators.required],
-        },
+        }
       ),
       timestamp: new FormControl(weightRawValue.timestamp, {
         validators: [Validators.required],
@@ -73,7 +73,7 @@ export class WeightFormService {
       {
         ...weightRawValue,
         id: { value: weightRawValue.id, disabled: true },
-      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */,
+      } as any /* cast to workaround https://github.com/angular/angular/issues/46458 */
     );
   }
 
@@ -94,7 +94,7 @@ export class WeightFormService {
   }
 
   private convertWeightToWeightRawValue(
-    weight: IWeight | (Partial<NewWeight> & WeightFormDefaults),
+    weight: IWeight | (Partial<NewWeight> & WeightFormDefaults)
   ): WeightFormRawValue | PartialWithRequiredKeyOf<NewWeightFormRawValue> {
     return {
       ...weight,

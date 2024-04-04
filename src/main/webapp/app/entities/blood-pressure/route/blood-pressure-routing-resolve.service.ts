@@ -9,10 +9,7 @@ import { BloodPressureService } from '../service/blood-pressure.service';
 
 @Injectable({ providedIn: 'root' })
 export class BloodPressureRoutingResolveService implements Resolve<IBloodPressure | null> {
-  constructor(
-    protected service: BloodPressureService,
-    protected router: Router,
-  ) {}
+  constructor(protected service: BloodPressureService, protected router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IBloodPressure | null | never> {
     const id = route.params['id'];
@@ -25,7 +22,7 @@ export class BloodPressureRoutingResolveService implements Resolve<IBloodPressur
             this.router.navigate(['404']);
             return EMPTY;
           }
-        }),
+        })
       );
     }
     return of(null);

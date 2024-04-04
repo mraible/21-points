@@ -32,7 +32,7 @@ describe('Points Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-              }),
+              })
             ),
             snapshot: { queryParams: {} },
           },
@@ -53,8 +53,8 @@ describe('Points Management Component', () => {
         new HttpResponse({
           body: [{ id: 123 }],
           headers,
-        }),
-      ),
+        })
+      )
     );
   });
 
@@ -107,7 +107,7 @@ describe('Points Management Component', () => {
         queryParams: expect.objectContaining({
           sort: ['name,asc'],
         }),
-      }),
+      })
     );
   });
 });
