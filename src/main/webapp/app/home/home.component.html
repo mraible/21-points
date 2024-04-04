@@ -7,10 +7,13 @@
     <div class="col-md-11 p-0">
       <jhi-alert></jhi-alert>
     </div>
-    <h1 jhiTranslate="home.welcome" *ngIf="!account">Welcome, Java Hipster!</h1>
-    <h1 id="home-logged-message" jhiTranslate="home.welcomeWithName" *ngIf="account" [translateValues]="{ name: account()!.firstName }">
-      Welcome, Java Hipster!
-    </h1>
+    @if (account()) {
+      <h1 id="home-logged-message" jhiTranslate="home.welcomeWithName" [translateValues]="{ name: account()!.firstName }">
+        Welcome, Java Hipster!
+      </h1>
+    } @else {
+      <h1 jhiTranslate="home.welcome">Welcome, Java Hipster!</h1>
+    }
 
     <p class="lead" jhiTranslate="home.subtitle">This is your homepage</p>
 
@@ -40,9 +43,9 @@
         <div class="row">
           <div class="col-md-11 col-xs-12 mt-1">
             <ngb-progressbar [max]="21" [value]="pointsThisWeek.points" [hidden]="!pointsThisWeek.points" [striped]="true">
-              <span *ngIf="pointsThisWeek.points" class="fw-bolder">
-                {{ pointsThisWeek.points }} / Goal: {{ preferences.weeklyGoal }}
-              </span>
+              @if (pointsThisWeek.points) {
+                <span class="fw-bolder"> {{ pointsThisWeek.points }} / Goal: {{ preferences.weeklyGoal }} </span>
+              }
             </ngb-progressbar>
             <ngb-alert [dismissible]="false" [hidden]="pointsThisWeek.points">
               <span jhiTranslate="home.points.getMoving"> No points yet this week, better get moving!</span>
@@ -63,15 +66,9 @@
         </div>
         <div class="row mt-1">
           <div class="col-md-11 col-xs-12">
-            <canvas
-              baseChart
-              *ngIf="bpReadings && bpReadings.readings.length"
-              height="125"
-              [type]="'line'"
-              [data]="bpData"
-              [options]="bpOptions"
-            >
-            </canvas>
+            @if (bpReadings && bpReadings.readings.length) {
+              <canvas baseChart height="125" [type]="'line'" [data]="bpData" [options]="bpOptions"> </canvas>
+            }
             <ngb-alert [dismissible]="false" [hidden]="bpReadings && bpReadings.readings.length">
               <span jhiTranslate="home.bloodPressure.noReadings"> No blood pressure readings found. </span>
             </ngb-alert>
@@ -89,15 +86,9 @@
         </div>
         <div class="row">
           <div class="col-md-11 col-xs-12">
-            <canvas
-              baseChart
-              *ngIf="weights && weights.weighIns.length"
-              height="125"
-              [type]="'line'"
-              [data]="weightData"
-              [options]="weightOptions"
-            >
-            </canvas>
+            @if (weights && weights.weighIns.length) {
+              <canvas baseChart height="125" [type]="'line'" [data]="weightData" [options]="weightOptions"> </canvas>
+            }
             <ngb-alert [dismissible]="false" [hidden]="weights && weights.weighIns.length">
               <span jhiTranslate="home.weight.noWeighIns"> No weigh-ins found. </span>
             </ngb-alert>

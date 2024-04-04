@@ -84,7 +84,7 @@ export class HistoryComponent implements OnInit {
     private weightService: WeightService,
     private preferencesService: PreferencesService,
     private router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
   ) {}
 
   setView(view: CalendarView): void {
