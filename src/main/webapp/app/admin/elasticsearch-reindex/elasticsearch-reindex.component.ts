@@ -1,14 +1,18 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ElasticsearchReindexModalComponent } from './elasticsearch-reindex-modal.component';
-import { ElasticsearchReindexSelectedModalComponent } from './elasticsearch-reindex-selected-modal.component';
+import SharedModule from 'app/shared/shared.module';
+import ElasticsearchReindexModalComponent from './elasticsearch-reindex-modal.component';
+import ElasticsearchReindexSelectedModalComponent from './elasticsearch-reindex-selected-modal.component';
 
 @Component({
+  standalone: true,
   selector: 'jhi-elasticsearch-reindex',
+  imports: [SharedModule, FormsModule],
   templateUrl: './elasticsearch-reindex.component.html',
 })
-export class ElasticsearchReindexComponent {
+export default class ElasticsearchReindexComponent {
   entities: string[];
   reindexType: string;
   checks: { [key: string]: boolean } = {};
@@ -33,9 +37,8 @@ export class ElasticsearchReindexComponent {
   showConfirmSelected(): void {
     const activeModal = this.modalService.open(ElasticsearchReindexSelectedModalComponent);
     const checks = this.checks;
-    const reindexList = this.entities.filter(function (name): any {
+    activeModal.componentInstance.entities = this.entities.filter(function (name): any {
       return checks[name];
     });
-    activeModal.componentInstance.entities = reindexList;
   }
 }

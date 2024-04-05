@@ -18,7 +18,10 @@ export interface IFilterOption {
 }
 
 export class FilterOption implements IFilterOption {
-  constructor(public name: string, public values: string[] = []) {
+  constructor(
+    public name: string,
+    public values: string[] = [],
+  ) {
     this.values = [...new Set(values)];
   }
 
@@ -97,7 +100,7 @@ export class FilterOptions implements IFilterOptions {
     params.keys
       .filter(paramKey => filterRegex.test(paramKey))
       .forEach(matchingParam => {
-        const matches = matchingParam.match(filterRegex);
+        const matches = filterRegex.exec(matchingParam);
         if (matches && matches.length > 1) {
           this.getFilterOptionByName(matches[1], true).addValue(...params.getAll(matchingParam));
         }

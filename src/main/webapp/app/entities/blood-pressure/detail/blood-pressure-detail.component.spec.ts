@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { RouterTestingHarness, RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { BloodPressureDetailComponent } from './blood-pressure-detail.component';
@@ -8,29 +9,46 @@ describe('BloodPressure Management Detail Component', () => {
   let comp: BloodPressureDetailComponent;
   let fixture: ComponentFixture<BloodPressureDetailComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [BloodPressureDetailComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [BloodPressureDetailComponent, RouterTestingModule.withRoutes([], { bindToComponentInputs: true })],
       providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: { data: of({ bloodPressure: { id: 123 } }) },
-        },
+        provideRouter(
+          [
+            {
+              path: '**',
+              component: BloodPressureDetailComponent,
+              resolve: { bloodPressure: () => of({ id: 123 }) },
+            },
+          ],
+          withComponentInputBinding(),
+        ),
       ],
     })
       .overrideTemplate(BloodPressureDetailComponent, '')
       .compileComponents();
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(BloodPressureDetailComponent);
     comp = fixture.componentInstance;
   });
 
   describe('OnInit', () => {
-    it('Should load bloodPressure on init', () => {
-      // WHEN
-      comp.ngOnInit();
+    it('Should load bloodPressure on init', async () => {
+      const harness = await RouterTestingHarness.create();
+      const instance = await harness.navigateByUrl('/', BloodPressureDetailComponent);
 
       // THEN
-      expect(comp.bloodPressure).toEqual(expect.objectContaining({ id: 123 }));
+      expect(instance.bloodPressure).toEqual(expect.objectContaining({ id: 123 }));
+    });
+  });
+
+  describe('PreviousState', () => {
+    it('Should navigate to previous state', () => {
+      jest.spyOn(window.history, 'back');
+      comp.previousState();
+      expect(window.history.back).toHaveBeenCalled();
     });
   });
 });

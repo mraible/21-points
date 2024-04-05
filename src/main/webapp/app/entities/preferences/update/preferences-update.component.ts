@@ -1,19 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import { PreferencesFormService, PreferencesFormGroup } from './preferences-form.service';
-import { IPreferences } from '../preferences.model';
-import { PreferencesService } from '../service/preferences.service';
+import SharedModule from 'app/shared/shared.module';
+import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { UserService } from 'app/entities/user/service/user.service';
 import { Units } from 'app/entities/enumerations/units.model';
+import { PreferencesService } from '../service/preferences.service';
+import { IPreferences } from '../preferences.model';
+import { PreferencesFormService, PreferencesFormGroup } from './preferences-form.service';
 
 @Component({
+  standalone: true,
   selector: 'jhi-preferences-update',
   templateUrl: './preferences-update.component.html',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, HasAnyAuthorityDirective],
 })
 export class PreferencesUpdateComponent implements OnInit {
   isSaving = false;
@@ -22,14 +28,13 @@ export class PreferencesUpdateComponent implements OnInit {
 
   usersSharedCollection: IUser[] = [];
 
-  editForm: PreferencesFormGroup = this.preferencesFormService.createPreferencesFormGroup();
+  protected preferencesService = inject(PreferencesService);
+  protected preferencesFormService = inject(PreferencesFormService);
+  protected userService = inject(UserService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected preferencesService: PreferencesService,
-    protected preferencesFormService: PreferencesFormService,
-    protected userService: UserService,
-    protected activatedRoute: ActivatedRoute
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: PreferencesFormGroup = this.preferencesFormService.createPreferencesFormGroup();
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
 

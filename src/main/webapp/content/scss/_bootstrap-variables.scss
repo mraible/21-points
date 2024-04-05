@@ -5,19 +5,6 @@
  * Make sure not to add !default to values here
  */
 
-// Colors:
-// Grayscale and brand colors for use across Bootstrap.
-
-// Customize colors to match Bootstrap Material Theme from https://mdbootstrap.com/docs/standard/
-// https://github.com/mdbootstrap/mdb-ui-kit/blob/master/src/scss/bootstrap/_variables.scss
-
-$primary: #009688;
-$success: #4caf50;
-$info: #03a9f4;
-$warning: #ff5722;
-$danger: #f44336;
-$blue: #0275d8;
-
 // Options:
 // Quickly modify global styling by enabling or disabling optional features.
 $enable-rounded: true;
@@ -38,20 +25,12 @@ $border-radius-sm: 0.1rem;
 // Body:
 // Settings for the `<body>` element.
 
-$body-bg: #fff;
+$body-bg: #ffffff;
 
 // Typography:
 // Font, line-height, and color for body text, headings, and more.
 
-$font-size-base: 0.9rem;
+$font-size-base: 1rem;
 
-$border-radius: 2px;
-$border-radius-sm: 1px;
-
-$font-family-sans-serif: 'Roboto', 'Helvetica', 'Arial', sans-serif;
-$headings-font-weight: 300;
-
-$link-color: $primary;
-
-$input-focus-border-color: lighten($blue, 25%);
-$input-focus-box-shadow: none;
+$dropdown-link-hover-color: white;
+$dropdown-link-hover-bg: #343a40;

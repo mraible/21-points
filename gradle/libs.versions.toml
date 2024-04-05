@@ -1,0 +1,17 @@
+[versions]
+checkstyle = "10.14.2"
+jacoco = "0.8.11"
+sonarqube-plugin = "4.4.1.3373"
+spotless-plugin = "6.23.3"
+modernizer-plugin = "1.9.0"
+nohttp-plugin = "0.0.11"
+jib-plugin = "3.4.1"
+# jhipster-needle-gradle-dependency-catalog-version - JHipster will add additional versions for convention plugins heref
+
+[libraries]
+jhipster-dependencies = { module = "tech.jhipster:jhipster-dependencies", version = "8.2.0" }
+# jhipster-needle-gradle-dependency-catalog-libraries - JHipster will add additional libraries versions
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version = "3.2.3" }
+# jhipster-needle-gradle-dependency-catalog-plugins - JHipster will add additional plugins versions

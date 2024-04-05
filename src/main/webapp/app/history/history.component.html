@@ -34,83 +34,90 @@
   let-tooltipAppendToBody="tooltipAppendToBody"
 >
   <div class="cal-cell-top">
-    <span class="cal-day-badge bg-{{ day.dayPoints[0].meta.value >= 2 ? 'success' : 'warning' }}" *ngIf="day.dayPoints?.length">
-      {{ day.dayPoints[0].meta.value }}
-    </span>
+    @if (day.dayPoints?.length) {
+      <span class="cal-day-badge bg-{{ day.dayPoints[0].meta.value >= 2 ? 'success' : 'warning' }}">
+        {{ day.dayPoints[0].meta.value }}
+      </span>
+    }
     <span class="cal-day-number">{{ day.date | calendarDate: 'monthViewDayNumber' : locale }}</span>
-    <div
-      class="cal-day-notes"
-      *ngIf="day.dayPoints?.length"
-      [ngbPopover]="day.dayPoints[0].meta.notes"
-      id="day-notes"
-      [ngbCollapse]="isCollapsed"
-    >
-      {{ day.dayPoints[0].meta.notes }}
+    @if (day.dayPoints?.length) {
+      <div class="cal-day-notes" [ngbPopover]="day.dayPoints[0].meta.notes" id="day-notes" [ngbCollapse]="isCollapsed">
+        {{ day.dayPoints[0].meta.notes }}
+      </div>
+    }
+  </div>
+  @if (day.events.length > 0) {
+    <div class="cal-events">
+      @for (event of day.events; track $index) {
+        <div
+          class="cal-event"
+          [style.backgroundColor]="event.color.primary"
+          [ngClass]="event?.cssClass"
+          (mouseenter)="highlightDay.emit({ event: event })"
+          (mouseleave)="unhighlightDay.emit({ event: event })"
+          [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip' : event"
+          [tooltipPlacement]="tooltipPlacement"
+          [tooltipEvent]="event"
+          [tooltipTemplate]="tooltipTemplate"
+          [tooltipAppendToBody]="tooltipAppendToBody"
+        ></div>
+      }
     </div>
-  </div>
-  <div class="cal-events" *ngIf="day.events.length > 0">
-    <div
-      class="cal-event"
-      *ngFor="let event of day.events"
-      [style.backgroundColor]="event.color.primary"
-      [ngClass]="event?.cssClass"
-      (mouseenter)="highlightDay.emit({ event: event })"
-      (mouseleave)="unhighlightDay.emit({ event: event })"
-      [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip' : event"
-      [tooltipPlacement]="tooltipPlacement"
-      [tooltipEvent]="event"
-      [tooltipTemplate]="tooltipTemplate"
-      [tooltipAppendToBody]="tooltipAppendToBody"
-    ></div>
-  </div>
+  }
   <div class="cal-cell-bottom">
-    <ngb-progressbar
-      [max]="21"
-      [value]="day.weekPoints[0].meta.value"
-      [striped]="true"
-      *ngIf="day.weekPoints?.length && day.weekPoints[0].meta.value"
-      [type]="day.weekPoints[0].meta.value >= day.weekPoints[0].meta.goal ? 'success' : 'danger'"
-    >
-      <span ngbTooltip="{{ day.weekPoints[0].title }}"> {{ day.weekPoints[0].meta.value }} / {{ day.weekPoints[0].meta.goal }} </span>
-    </ngb-progressbar>
+    @if (day.weekPoints?.length && day.weekPoints[0].meta.value) {
+      <ngb-progressbar
+        [max]="21"
+        [value]="day.weekPoints[0].meta.value"
+        [striped]="true"
+        [type]="day.weekPoints[0].meta.value >= day.weekPoints[0].meta.goal ? 'success' : 'danger'"
+      >
+        <span ngbTooltip="{{ day.weekPoints[0].title }}"> {{ day.weekPoints[0].meta.value }} / {{ day.weekPoints[0].meta.goal }} </span>
+      </ngb-progressbar>
+    }
   </div>
 </ng-template>
 
 <jhi-alert-error></jhi-alert-error>
 <jhi-alert></jhi-alert>
-<div [ngSwitch]="view">
-  <mwl-calendar-month-view
-    *ngSwitchCase="CalendarView.Month"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    [activeDayIsOpen]="activeDayIsOpen"
-    (dayClicked)="dayClicked($event.day)"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-    (beforeViewRender)="beforeMonthViewRender($event)"
-    [cellTemplate]="customCellTemplate"
-    [weekStartsOn]="1"
-  >
-  </mwl-calendar-month-view>
-  <mwl-calendar-week-view
-    *ngSwitchCase="CalendarView.Week"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
-  </mwl-calendar-week-view>
-  <mwl-calendar-day-view
-    *ngSwitchCase="CalendarView.Day"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
-  </mwl-calendar-day-view>
+<div>
+  @switch (view) {
+    @case (CalendarView.Month) {
+      <mwl-calendar-month-view
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        [activeDayIsOpen]="activeDayIsOpen"
+        (dayClicked)="dayClicked($event.day)"
+        (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)"
+        (beforeViewRender)="beforeMonthViewRender($event)"
+        [cellTemplate]="customCellTemplate"
+        [weekStartsOn]="1"
+      >
+      </mwl-calendar-month-view>
+    }
+    @case (CalendarView.Week) {
+      <mwl-calendar-week-view
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)"
+      >
+      </mwl-calendar-week-view>
+    }
+    @case (CalendarView.Day) {
+      <mwl-calendar-day-view
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)"
+      >
+      </mwl-calendar-day-view>
+    }
+  }
 </div>
 <button
   type="button"
@@ -119,6 +126,6 @@
   [attr.aria-expanded]="!isCollapsed"
   aria-controls="day-notes"
 >
-  {{ (isCollapsed ? 'global.messages.show' : 'global.messages.hide') | translate }}
+  <!--{{ (isCollapsed ? 'global.messages.show' : 'global.messages.hide') | translate }}-->
   <span jhiTranslate="twentyOnePointsApp.points.notes">Notes</span>
 </button>

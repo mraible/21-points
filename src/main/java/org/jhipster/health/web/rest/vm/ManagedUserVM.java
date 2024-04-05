@@ -1,6 +1,6 @@
 package org.jhipster.health.web.rest.vm;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import org.jhipster.health.service.dto.AdminUserDTO;
 
 /**

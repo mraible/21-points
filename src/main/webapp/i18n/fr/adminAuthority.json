@@ -1,0 +1,23 @@
+{
+  "twentyOnePointsApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Authority",
+        "createOrEditLabel": "Créer ou éditer un Authority",
+        "notFound": "Aucun Authority trouvé"
+      },
+      "created": "Un nouveau Authority a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Authority avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Authority avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Authority {{ id }} ?"
+      },
+      "detail": {
+        "title": "Authority"
+      },
+      "name": "Name"
+    }
+  }
+}

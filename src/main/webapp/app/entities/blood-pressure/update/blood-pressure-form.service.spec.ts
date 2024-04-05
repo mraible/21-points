@@ -24,7 +24,7 @@ describe('BloodPressure Form Service', () => {
             systolic: expect.any(Object),
             diastolic: expect.any(Object),
             user: expect.any(Object),
-          })
+          }),
         );
       });
 
@@ -38,14 +38,13 @@ describe('BloodPressure Form Service', () => {
             systolic: expect.any(Object),
             diastolic: expect.any(Object),
             user: expect.any(Object),
-          })
+          }),
         );
       });
     });
 
     describe('getBloodPressure', () => {
       it('should return NewBloodPressure for default BloodPressure initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createBloodPressureFormGroup(sampleWithNewData);
 
         const bloodPressure = service.getBloodPressure(formGroup) as any;

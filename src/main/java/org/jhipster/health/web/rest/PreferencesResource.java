@@ -1,20 +1,18 @@
 package org.jhipster.health.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.springframework.data.elasticsearch.client.elc.Queries.matchQuery;
+import static org.springframework.data.elasticsearch.client.elc.Queries.queryStringQuery;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.Preferences;
 import org.jhipster.health.repository.PreferencesRepository;
 import org.jhipster.health.repository.UserRepository;
@@ -22,6 +20,7 @@ import org.jhipster.health.repository.search.PreferencesSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+import org.jhipster.health.web.rest.errors.ElasticsearchExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +35,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link org.jhipster.health.domain.Preferences}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/preferences")
 @Transactional
 public class PreferencesResource {
 
@@ -70,7 +69,7 @@ public class PreferencesResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new preferences, or with status {@code 400 (Bad Request)} if the preferences has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/preferences")
+    @PostMapping("")
     public ResponseEntity<Preferences> createPreferences(@Valid @RequestBody Preferences preferences) throws URISyntaxException {
         log.debug("REST request to save Preferences : {}", preferences);
         if (preferences.getId() != null) {
@@ -80,13 +79,11 @@ public class PreferencesResource {
             log.debug("No user passed in, setting preferences for current user: {}", SecurityUtils.getCurrentUserLogin().orElse(""));
             preferences.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse("")).orElse(null));
         }
-
-        Preferences result = preferencesRepository.save(preferences);
-        preferencesSearchRepository.index(result);
-        return ResponseEntity
-            .created(new URI("/api/preferences/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        preferences = preferencesRepository.save(preferences);
+        preferencesSearchRepository.index(preferences);
+        return ResponseEntity.created(new URI("/api/preferences/" + preferences.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, preferences.getId().toString()))
+            .body(preferences);
     }
 
     /**
@@ -99,7 +96,7 @@ public class PreferencesResource {
      * or with status {@code 500 (Internal Server Error)} if the preferences couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/preferences/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updatePreferences(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody Preferences preferences
@@ -122,12 +119,11 @@ public class PreferencesResource {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
-        Preferences result = preferencesRepository.save(preferences);
-        preferencesSearchRepository.index(result);
-        return ResponseEntity
-            .ok()
+        preferences = preferencesRepository.save(preferences);
+        preferencesSearchRepository.index(preferences);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, preferences.getId().toString()))
-            .body(result);
+            .body(preferences);
     }
 
     /**
@@ -141,7 +137,7 @@ public class PreferencesResource {
      * or with status {@code 500 (Internal Server Error)} if the preferences couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/preferences/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<?> partialUpdatePreferences(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Preferences preferences
@@ -178,8 +174,7 @@ public class PreferencesResource {
             })
             .map(preferencesRepository::save)
             .map(savedPreferences -> {
-                preferencesSearchRepository.save(savedPreferences);
-
+                preferencesSearchRepository.index(savedPreferences);
                 return savedPreferences;
             });
 
@@ -195,8 +190,10 @@ public class PreferencesResource {
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of preferences in body.
      */
-    @GetMapping("/preferences")
-    public List<Preferences> getAllPreferences(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
+    @GetMapping("")
+    public List<Preferences> getAllPreferences(
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+    ) {
         log.debug("REST request to get all Preferences");
         List<Preferences> preferences = new ArrayList<>();
         if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
@@ -217,8 +214,8 @@ public class PreferencesResource {
      * @param id the id of the preferences to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the preferences, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/preferences/{id}")
-    public ResponseEntity<?> getPreferences(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPreferences(@PathVariable("id") Long id) {
         log.debug("REST request to get Preferences : {}", id);
         Optional<Preferences> preferences = preferencesRepository.findOneWithEagerRelationships(id);
         if (
@@ -238,8 +235,8 @@ public class PreferencesResource {
      * @param id the id of the preferences to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/preferences/{id}")
-    public ResponseEntity<?> deletePreferences(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePreferences(@PathVariable("id") Long id) {
         log.debug("REST request to delete Preferences : {}", id);
         Optional<Preferences> preferences = preferencesRepository.findById(id);
         if (
@@ -251,36 +248,44 @@ public class PreferencesResource {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         preferencesRepository.deleteById(id);
-        preferencesSearchRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        preferencesSearchRepository.deleteFromIndexById(id);
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
 
     /**
-     * {@code SEARCH  /_search/preferences?query=:query} : search for the preferences corresponding
+     * {@code SEARCH  /preferences/_search?query=:query} : search for the preferences corresponding
      * to the query.
      *
      * @param query the query of the preferences search.
      * @return the result of the search.
      */
-    @GetMapping("/_search/preferences")
-    public List<Preferences> searchPreferences(@RequestParam String query) {
+    @GetMapping("/_search")
+    public List<Preferences> searchPreferences(@RequestParam("query") String query) {
         log.debug("REST request to search Preferences for query {}", query);
-        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
         if (SecurityUtils.isAuthenticated() && !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            queryBuilder = queryBuilder.filter(matchQuery("user.login", SecurityUtils.getCurrentUserLogin().orElse("")));
+            QueryVariant filterByUser = new MatchQuery.Builder()
+                .field("user.login")
+                .query(SecurityUtils.getCurrentUserLogin().orElse(""))
+                .build();
+            BoolQuery.Builder boolQueryBuilder = QueryBuilders.bool();
+            boolQueryBuilder.should(new Query(filterByUser));
+            query = new Query(boolQueryBuilder.build()).toString();
         }
-        return StreamSupport.stream(preferencesSearchRepository.search(queryBuilder).spliterator(), false).collect(Collectors.toList());
+        try {
+            return StreamSupport.stream(preferencesSearchRepository.search(query).spliterator(), false).toList();
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 
     /**
-     * {@code GET  /my-preferences} : get the current user's preferences
+     * {@code GET  /user} : get the current user's preferences
      *
      * @return the preferences or default (weeklyGoal: 10) if none exist.
      */
-    @GetMapping("/my-preferences")
+    @GetMapping("/user")
     public ResponseEntity<Preferences> getUserPreferences() {
         String username = SecurityUtils.getCurrentUserLogin().orElse("");
         log.debug("REST request to get Preferences : {}", username);

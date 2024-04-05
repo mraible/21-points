@@ -56,8 +56,7 @@ public class ElasticsearchIndexResource {
     public ResponseEntity<Void> reindexSelected(@RequestBody List<String> selectedEntities) throws URISyntaxException {
         log.info("REST request to reindex Elasticsearch by user : {}, entities: {}", SecurityUtils.getCurrentUserLogin(), selectedEntities);
         elasticsearchIndexService.reindexSelected(selectedEntities, false);
-        return ResponseEntity
-            .accepted()
+        return ResponseEntity.accepted()
             .headers(HeaderUtil.createAlert(applicationName, "elasticsearch.reindex.acceptedSelected", ""))
             .build();
     }
