@@ -548,7 +548,7 @@ class PointsResourceIT {
     }
 
     private void createPointsByWeek(LocalDate thisMonday, LocalDate lastMonday) {
-        User user = userRepository.findOneByLogin("user").orElse(createUser());
+        User user = userRepository.findOneByLogin("user").orElseGet(this::createUser);
         // Create points in two separate weeks
         points = new Points(thisMonday.plusDays(2), 1, 1, 1, user); // <1>
         pointsRepository.saveAndFlush(points);
@@ -609,7 +609,7 @@ class PointsResourceIT {
     public void getPointsOnSunday() throws Exception {
         LocalDate today = LocalDate.now();
         LocalDate sunday = today.with(DayOfWeek.SUNDAY);
-        User user = userRepository.findOneByLogin("user").orElse(createUser());
+        User user = userRepository.findOneByLogin("user").orElseGet(this::createUser);
         points = new Points(sunday, 1, 1, 0, user);
         pointsRepository.saveAndFlush(points);
 
