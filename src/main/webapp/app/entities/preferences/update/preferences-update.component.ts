@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
+import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IUser } from 'app/entities/user/user.model';
@@ -18,7 +19,7 @@ import { PreferencesFormService, PreferencesFormGroup } from './preferences-form
   standalone: true,
   selector: 'jhi-preferences-update',
   templateUrl: './preferences-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, HasAnyAuthorityDirective],
 })
 export class PreferencesUpdateComponent implements OnInit {
   isSaving = false;

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
+import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IUser } from 'app/entities/user/user.model';
@@ -17,7 +18,7 @@ import { BloodPressureFormService, BloodPressureFormGroup } from './blood-pressu
   standalone: true,
   selector: 'jhi-blood-pressure-update',
   templateUrl: './blood-pressure-update.component.html',
-  imports: [SharedModule, FormsModule, ReactiveFormsModule],
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, HasAnyAuthorityDirective],
 })
 export class BloodPressureUpdateComponent implements OnInit {
   isSaving = false;
