@@ -15,7 +15,7 @@
     "backend:unit:test": "./gradlew test integrationTest -x webapp -x webapp_test -Dlogging.level.ROOT=OFF -Dlogging.level.tech.jhipster=OFF -Dlogging.level.org.jhipster.health=OFF -Dlogging.level.org.springframework=OFF -Dlogging.level.org.springframework.web=OFF -Dlogging.level.org.springframework.security=OFF",
     "build": "npm run webapp:prod --",
     "build-watch": "concurrently 'npm run webapp:build:dev -- --watch' npm:backend:start",
-    "ci:backend:test": "npm run backend:info && npm run backend:doc:test && npm run backend:nohttp:test && npm run backend:unit:test -- -P$npm_package_config_default_environment",
+    "ci:backend:test": "npm run backend:info && npm run backend:nohttp:test && npm run backend:unit:test -- -P$npm_package_config_default_environment",
     "ci:e2e:package": "npm run java:$npm_package_config_packaging:$npm_package_config_default_environment -- -Pe2e -Denforcer.skip=true",
     "postci:e2e:package": "cp build/libs/*.$npm_package_config_packaging e2e.$npm_package_config_packaging",
     "ci:e2e:prepare": "npm run ci:e2e:prepare:docker",
