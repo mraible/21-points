@@ -32,6 +32,11 @@ const routes: Routes = [
     loadComponent: () => import('./metrics/metrics.component'),
     title: 'metrics.title',
   },
+  {
+    path: 'elasticsearch-reindex',
+    loadComponent: () => import('./elasticsearch-reindex/elasticsearch-reindex.component'),
+    title: 'elasticsearch.reindex.title',
+  },
   /* jhipster-needle-add-admin-route - JHipster will add admin routes here */
 ];
 
