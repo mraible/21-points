@@ -80,39 +80,44 @@
 
 <jhi-alert-error></jhi-alert-error>
 <jhi-alert></jhi-alert>
-<div [ngSwitch]="view">
-  <mwl-calendar-month-view
-    *ngSwitchCase="CalendarView.Month"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    [activeDayIsOpen]="activeDayIsOpen"
-    (dayClicked)="dayClicked($event.day)"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-    (beforeViewRender)="beforeMonthViewRender($event)"
-    [cellTemplate]="customCellTemplate"
-    [weekStartsOn]="1"
-  >
-  </mwl-calendar-month-view>
-  <mwl-calendar-week-view
-    *ngSwitchCase="CalendarView.Week"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
-  </mwl-calendar-week-view>
-  <mwl-calendar-day-view
-    *ngSwitchCase="CalendarView.Day"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
-  </mwl-calendar-day-view>
+<div>
+  @switch (view) {
+    @case (CalendarView.Month) {
+      <mwl-calendar-month-view
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        [activeDayIsOpen]="activeDayIsOpen"
+        (dayClicked)="dayClicked($event.day)"
+        (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)"
+        (beforeViewRender)="beforeMonthViewRender($event)"
+        [cellTemplate]="customCellTemplate"
+        [weekStartsOn]="1"
+      >
+      </mwl-calendar-month-view>
+    }
+    @case (CalendarView.Week) {
+      <mwl-calendar-week-view
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)"
+      >
+      </mwl-calendar-week-view>
+    }
+    @case (CalendarView.Day) {
+      <mwl-calendar-day-view
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)"
+      >
+      </mwl-calendar-day-view>
+    }
+  }
 </div>
 <button
   type="button"
@@ -121,6 +126,6 @@
   [attr.aria-expanded]="!isCollapsed"
   aria-controls="day-notes"
 >
-  {{ (isCollapsed ? 'global.messages.show' : 'global.messages.hide') | translate }}
+  <!--{{ (isCollapsed ? 'global.messages.show' : 'global.messages.hide') | translate }}-->
   <span jhiTranslate="twentyOnePointsApp.points.notes">Notes</span>
 </button>

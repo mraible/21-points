@@ -1,15 +1,16 @@
-import { ApplicationConfig, LOCALE_ID, importProvidersFrom, inject } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, inject, LOCALE_ID } from '@angular/core';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import {
+  NavigationError,
+  provideRouter,
   Router,
   RouterFeatures,
   TitleStrategy,
-  provideRouter,
   withComponentInputBinding,
   withDebugTracing,
   withNavigationErrorHandler,
-  NavigationError,
 } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -24,6 +25,8 @@ import routes from './app.routes';
 import { NgbDateDayjsAdapter } from './config/datepicker-adapter';
 import { AppPageTitleStrategy } from './app-page-title-strategy';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 const routerFeatures: Array<RouterFeatures> = [
   withComponentInputBinding(),
@@ -58,6 +61,13 @@ export const appConfig: ApplicationConfig = {
     httpInterceptorProviders,
     { provide: TitleStrategy, useClass: AppPageTitleStrategy },
     provideCharts(withDefaultRegisterables()),
+    provideAnimations(),
+    importProvidersFrom(
+      CalendarModule.forRoot({
+        provide: DateAdapter,
+        useFactory: adapterFactory,
+      }),
+    ),
     // jhipster-needle-angular-add-module JHipster will add new module here
   ],
 };
