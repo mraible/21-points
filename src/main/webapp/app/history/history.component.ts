@@ -93,7 +93,7 @@ export default class HistoryComponent implements OnInit {
   private weightService = inject(WeightService);
   private preferencesService = inject(PreferencesService);
   private router = inject(Router);
-  protected modalService = inject(NgbModal);
+  private modalService = inject(NgbModal);
 
   setView(view: CalendarView): void {
     this.view = view;
