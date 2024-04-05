@@ -575,7 +575,7 @@ class BloodPressureResourceIT {
     }
 
     private void createBloodPressureByMonth(ZonedDateTime firstDate, ZonedDateTime firstDayOfLastMonth) {
-        User user = userRepository.findOneByLogin("user").orElse(createUser());
+        User user = userRepository.findOneByLogin("user").orElseGet(this::createUser);
 
         bloodPressure = new BloodPressure(firstDate, 120, 80, user);
         bloodPressureRepository.saveAndFlush(bloodPressure);
