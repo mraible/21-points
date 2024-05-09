@@ -82,6 +82,7 @@
     "packaging": "jar"
   },
   "dependencies": {
+    "@angular/animations": "17.3.6",
     "@angular/common": "17.3.6",
     "@angular/compiler": "17.3.6",
     "@angular/core": "17.3.6",
@@ -97,12 +98,12 @@
     "@ngx-translate/core": "15.0.0",
     "@ngx-translate/http-loader": "8.0.0",
     "@popperjs/core": "2.11.8",
-    "angular-calendar": "0.31.0",
+    "angular-calendar": "0.31.1",
     "bootstrap": "5.3.3",
     "chart.js": "^4.4.2",
     "date-fns": "3.6.0",
     "dayjs": "1.11.11",
-    "ng2-charts": "6.0.0",
+    "ng2-charts": "6.0.1",
     "ngx-infinite-scroll": "17.0.0",
     "rxjs": "7.8.1",
     "tslib": "2.6.2",
