@@ -1,0 +1,66 @@
+dependencies {
+    implementation "org.postgresql:postgresql"
+    liquibaseRuntime "org.postgresql:postgresql"
+    testImplementation "org.testcontainers:postgresql"
+}
+
+def profiles = "prod"
+if (project.hasProperty("no-liquibase")) {
+    profiles += ",no-liquibase"
+}
+
+if (project.hasProperty("api-docs")) {
+    profiles += ",api-docs"
+}
+
+if (project.hasProperty("e2e")) {
+    profiles += ",e2e"
+}
+
+springBoot {
+    buildInfo()
+}
+
+bootRun {
+    args = ["--spring.profiles.active=${profiles}"]
+}
+
+task webapp(type: NpmTask, dependsOn: "npm_install") {
+    args = ["run", "webapp:prod"]
+    environment = [APP_VERSION: project.version]
+}
+
+processResources {
+    inputs.property('version', version)
+    inputs.property('springProfiles', profiles)
+    filesMatching("**/application.yml") {
+        filter {
+            it.replace("#project.version#", version)
+        }
+        filter {
+            it.replace("#spring.profiles.active#", profiles)
+        }
+    }
+}
+
+task integrationTest(type: Test) {
+    maxHeapSize = "1G"
+    useJUnitPlatform()
+    description = "Execute integration tests."
+    group = "verification"
+    include "**/*IT*", "**/*IntTest*"
+    testLogging {
+        events 'FAILED', 'SKIPPED'
+    }
+    systemProperty('spring.profiles.active', 'testprod')
+    systemProperty('java.security.egd', 'file:/dev/./urandom')
+    // uncomment if the tests reports are not generated
+    // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
+    // ignoreFailures true
+    reports.html.enabled = false
+}
+integrationTest.dependsOn test
+
+
+processResources.dependsOn webapp
+bootJar.dependsOn processResources
