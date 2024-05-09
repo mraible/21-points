@@ -4,11 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import { BloodPressureFormService, BloodPressureFormGroup } from './blood-pressure-form.service';
-import { IBloodPressure } from '../blood-pressure.model';
-import { BloodPressureService } from '../service/blood-pressure.service';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
+import { IBloodPressure } from '../blood-pressure.model';
+import { BloodPressureService } from '../service/blood-pressure.service';
+import { BloodPressureFormService, BloodPressureFormGroup } from './blood-pressure-form.service';
 
 @Component({
   selector: 'jhi-blood-pressure-update',
@@ -26,7 +26,7 @@ export class BloodPressureUpdateComponent implements OnInit {
     protected bloodPressureService: BloodPressureService,
     protected bloodPressureFormService: BloodPressureFormService,
     protected userService: UserService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
   ) {}
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);

@@ -12,7 +12,10 @@ export class ActivateComponent implements OnInit {
   error = false;
   success = false;
 
-  constructor(private activateService: ActivateService, private route: ActivatedRoute) {}
+  constructor(
+    private activateService: ActivateService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
     this.route.queryParams.pipe(mergeMap(params => this.activateService.get(params.key))).subscribe({

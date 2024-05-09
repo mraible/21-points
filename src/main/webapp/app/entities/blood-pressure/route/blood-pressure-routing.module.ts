@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { ASC } from 'app/config/navigation.constants';
 import { BloodPressureComponent } from '../list/blood-pressure.component';
 import { BloodPressureDetailComponent } from '../detail/blood-pressure-detail.component';
 import { BloodPressureUpdateComponent } from '../update/blood-pressure-update.component';
 import { BloodPressureRoutingResolveService } from './blood-pressure-routing-resolve.service';
-import { ASC } from 'app/config/navigation.constants';
 
 const bloodPressureRoute: Routes = [
   {

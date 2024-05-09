@@ -30,7 +30,10 @@ export class BloodPressureService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/blood-pressures');
   protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/blood-pressures');
 
-  constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    protected http: HttpClient,
+    protected applicationConfigService: ApplicationConfigService,
+  ) {}
 
   create(bloodPressure: NewBloodPressure): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(bloodPressure);
@@ -92,7 +95,7 @@ export class BloodPressureService {
     const bloodPressures: Type[] = bloodPressuresToCheck.filter(isPresent);
     if (bloodPressures.length > 0) {
       const bloodPressureCollectionIdentifiers = bloodPressureCollection.map(
-        bloodPressureItem => this.getBloodPressureIdentifier(bloodPressureItem)!
+        bloodPressureItem => this.getBloodPressureIdentifier(bloodPressureItem)!,
       );
       const bloodPressuresToAdd = bloodPressures.filter(bloodPressureItem => {
         const bloodPressureIdentifier = this.getBloodPressureIdentifier(bloodPressureItem);

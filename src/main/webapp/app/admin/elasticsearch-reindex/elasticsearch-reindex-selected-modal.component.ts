@@ -9,7 +9,10 @@ import { ElasticsearchReindexService } from './elasticsearch-reindex.service';
 })
 export class ElasticsearchReindexSelectedModalComponent {
   entities: string[];
-  constructor(private elasticsearchReindexService: ElasticsearchReindexService, public activeModal: NgbActiveModal) {
+  constructor(
+    private elasticsearchReindexService: ElasticsearchReindexService,
+    public activeModal: NgbActiveModal,
+  ) {
     this.entities = [];
   }
 

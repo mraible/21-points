@@ -6,7 +6,10 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 
 @Injectable({ providedIn: 'root' })
 export class PasswordResetInitService {
-  constructor(private http: HttpClient, private applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    private http: HttpClient,
+    private applicationConfigService: ApplicationConfigService,
+  ) {}
 
   save(mail: string): Observable<{}> {
     return this.http.post(this.applicationConfigService.getEndpointFor('api/account/reset-password/init'), mail);

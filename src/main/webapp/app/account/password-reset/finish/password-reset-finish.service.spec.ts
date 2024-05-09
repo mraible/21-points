@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { PasswordResetFinishService } from './password-reset-finish.service';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
+import { PasswordResetFinishService } from './password-reset-finish.service';
 
 describe('PasswordResetFinish Service', () => {
   let service: PasswordResetFinishService;
