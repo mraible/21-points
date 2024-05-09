@@ -281,17 +281,13 @@ public class PointsResource {
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         log.debug("REST request to search for a page of Points for query {}", query);
-        if (SecurityUtils.isAuthenticated() && !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            QueryVariant filterByUser = new MatchQuery.Builder()
-                .field("user.login")
-                .query(SecurityUtils.getCurrentUserLogin().orElse(""))
-                .build();
-            BoolQuery.Builder boolQueryBuilder = QueryBuilders.bool();
-            boolQueryBuilder.should(new Query(filterByUser));
-            query = new Query(boolQueryBuilder.build()).toString();
-        }
+        Page<Points> page;
         try {
-            Page<Points> page = pointsSearchRepository.search(query, pageable);
+            if (SecurityUtils.isAuthenticated() && !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
+                page = pointsSearchRepository.findByUserLogin(SecurityUtils.getCurrentUserLogin().orElse(""), pageable);
+            } else {
+                page = pointsSearchRepository.search(query, pageable);
+            }
             HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
             return ResponseEntity.ok().headers(headers).body(page.getContent());
         } catch (RuntimeException e) {
