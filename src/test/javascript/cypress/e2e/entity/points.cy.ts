@@ -160,6 +160,7 @@ describe('Points e2e test', () => {
     });
 
     it('should create an instance of Points', () => {
+      cy.get(`[data-cy="date"]`).clear();
       cy.get(`[data-cy="date"]`).type('2022-11-07');
       cy.get(`[data-cy="date"]`).blur();
       cy.get(`[data-cy="date"]`).should('have.value', '2022-11-07');
