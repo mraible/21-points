@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
@@ -15,7 +16,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Entity
 @Table(name = "points")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "points")
+@Document(indexName = "points")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Points implements Serializable {
 
@@ -36,16 +37,16 @@ public class Points implements Serializable {
     private Integer exercise;
 
     @Column(name = "meals")
-    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Integer)
+    @Field(type = FieldType.Integer)
     private Integer meals;
 
     @Column(name = "alcohol")
-    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Integer)
+    @Field(type = FieldType.Integer)
     private Integer alcohol;
 
     @Size(max = 140)
     @Column(name = "notes", length = 140)
-    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Text)
+    @Field(type = FieldType.Text)
     private String notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
