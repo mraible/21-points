@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="theme-color" content="#000000" />
     <base href="/" />
-    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webapp" />
     <link rel="stylesheet" href="content/css/loading.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
@@ -26,7 +26,7 @@
         your experience.
       </p>
     <![endif]-->
-    <jhi-main>
+    <jhi-app>
       <div class="app-loading">
         <div class="lds-pacman">
           <div>
@@ -104,7 +104,7 @@
           <!-- end of troubleshooting content -->
         </div>
       </div>
-    </jhi-main>
+    </jhi-app>
     <noscript>
       <h1>You must enable JavaScript to view this page.</h1>
     </noscript>
@@ -115,7 +115,7 @@
       };
       function showError() {
         var errorElm = document.getElementById('jhipster-error');
-        if (errorElm && errorElm.style) {
+        if (errorElm?.style) {
           errorElm.style.display = 'block';
         }
       }

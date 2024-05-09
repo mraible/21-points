@@ -1,8 +1,8 @@
 # This configuration is intended for development purpose, it's **your** responsibility to harden it for production
-version: '3.8'
+name: twentyonepoints
 services:
-  twentyonepoints-elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
     # volumes:
     #   - ~/volumes/jhipster/TwentyOnePoints/elasticsearch/:/usr/share/elasticsearch/data/
     # If you want to expose these ports outside your dev PC,
@@ -11,16 +11,11 @@ services:
       - 127.0.0.1:9200:9200
       - 127.0.0.1:9300:9300
     environment:
-      - 'xpack.security.enabled=false'
+      - 'ES_JAVA_OPTS=-Xms256m -Xmx256m'
       - 'discovery.type=single-node'
-      - 'bootstrap.memory_lock=true'
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    cap_add:
-      - IPC_LOCK
+      - 'xpack.security.enabled=false'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9200/_cluster/health?wait_for_status=green&timeout=10s']
+      interval: 5s
+      timeout: 10s
+      retries: 10

@@ -18,8 +18,7 @@ describe('Points Management Delete Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [PointsDeleteDialogComponent],
+      imports: [HttpClientTestingModule, PointsDeleteDialogComponent],
       providers: [NgbActiveModal],
     })
       .overrideTemplate(PointsDeleteDialogComponent, '')

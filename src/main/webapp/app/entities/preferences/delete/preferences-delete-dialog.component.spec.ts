@@ -18,8 +18,7 @@ describe('Preferences Management Delete Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [PreferencesDeleteDialogComponent],
+      imports: [HttpClientTestingModule, PreferencesDeleteDialogComponent],
       providers: [NgbActiveModal],
     })
       .overrideTemplate(PreferencesDeleteDialogComponent, '')

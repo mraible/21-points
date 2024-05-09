@@ -1,20 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import SharedModule from 'app/shared/shared.module';
 import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 import { IPreferences } from '../preferences.model';
 import { PreferencesService } from '../service/preferences.service';
 
 @Component({
+  standalone: true,
   templateUrl: './preferences-delete-dialog.component.html',
+  imports: [SharedModule, FormsModule],
 })
 export class PreferencesDeleteDialogComponent {
   preferences?: IPreferences;
 
-  constructor(
-    protected preferencesService: PreferencesService,
-    protected activeModal: NgbActiveModal,
-  ) {}
+  protected preferencesService = inject(PreferencesService);
+  protected activeModal = inject(NgbActiveModal);
 
   cancel(): void {
     this.activeModal.dismiss();

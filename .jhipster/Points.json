@@ -1,4 +1,7 @@
 {
+  "annotations": {
+    "changelogDate": "20221108000520"
+  },
   "changelogDate": "20221108000520",
   "fields": [
     {
@@ -35,6 +38,7 @@
       "otherEntityRelationshipName": "points",
       "ownerSide": true,
       "relationshipName": "user",
+      "relationshipSide": "left",
       "relationshipType": "many-to-one"
     }
   ],

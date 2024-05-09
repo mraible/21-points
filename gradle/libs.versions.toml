@@ -1,0 +1,13 @@
+[versions]
+jacoco = "0.8.12"
+checkstyle = "10.16.0"
+# jhipster-needle-gradle-dependency-catalog-version - JHipster will add additional versions for convention plugins heref
+
+[libraries]
+jhipster-framework = { module = "tech.jhipster:jhipster-framework", version = "8.4.0" }
+springdoc-openapi-starter-webmvc-api = { module = "org.springdoc:springdoc-openapi-starter-webmvc-api", version = "2.5.0" }
+# jhipster-needle-gradle-dependency-catalog-libraries - JHipster will add additional libraries versions
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version = "3.2.5" }
+# jhipster-needle-gradle-dependency-catalog-plugins - JHipster will add additional plugins versions

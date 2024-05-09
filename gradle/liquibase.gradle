@@ -1,0 +1,53 @@
+configurations {
+    liquibaseRuntime.extendsFrom sourceSets.main.compileClasspath
+}
+
+dependencies {
+  implementation "org.liquibase:liquibase-core"
+  liquibaseRuntime "org.liquibase:liquibase-core"
+  // Dependency required to parse options. Refer to https://github.com/liquibase/liquibase-gradle-plugin/tree/Release_2.2.0#news.
+  liquibaseRuntime "info.picocli:picocli:4.7.5"
+  if (project.hasProperty("prod") || project.hasProperty("gae")) {
+  liquibaseRuntime "org.postgresql:postgresql"
+  }
+  liquibaseRuntime "org.liquibase.ext:liquibase-hibernate6:${dependencyManagement.importedProperties['liquibase.version']}"
+  // jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
+}
+
+project.ext.diffChangelogFile = "src/main/resources/config/liquibase/changelog/" + new Date().format("yyyyMMddHHmmss") + "_changelog.xml"
+if (!project.hasProperty("runList")) {
+ project.ext.runList = "main"
+}
+
+liquibase {
+  activities {
+    main {
+      driver "org.h2.Driver"
+      url "jdbc:h2:file:./build/h2db/db/TwentyOnePoints"
+      username "TwentyOnePoints"
+      changelogFile "src/main/resources/config/liquibase/master.xml"
+      logLevel "debug"
+      classpath "src/main/resources/"
+    }
+    diffLog {
+      driver "org.h2.Driver"
+      url "jdbc:h2:file:./build/h2db/db/TwentyOnePoints"
+      username "TwentyOnePoints"
+      changelogFile project.ext.diffChangelogFile
+      referenceUrl "hibernate:spring:org.jhipster.health.domain?dialect=org.hibernate.dialect.H2Dialect&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy"
+      logLevel "debug"
+      classpath "$buildDir/classes/java/main"
+    }
+  }
+
+  runList = project.ext.runList
+}
+
+liquibaseDiff.dependsOn compileJava
+liquibaseDiffChangelog.dependsOn compileJava
+
+ext {
+  if (project.hasProperty("no-liquibase")) {
+    springProfiles += ",no-liquibase"
+  }
+}

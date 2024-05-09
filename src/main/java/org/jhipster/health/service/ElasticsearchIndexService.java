@@ -2,6 +2,7 @@ package org.jhipster.health.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micrometer.core.annotation.Timed;
+import jakarta.persistence.ManyToMany;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -171,7 +172,7 @@ public class ElasticsearchIndexService implements ApplicationListener<ContextRef
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
 
             int size = 100;
             for (int i = 0; i <= jpaRepository.count() / size; i++) {

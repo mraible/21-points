@@ -9,11 +9,12 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entités",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "adminAuthority": "Authority",
         "bloodPressure": "Tension Artérielle",
         "weight": "Poids",
         "points": "Points",
-        "preferences": "Préférences",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "preferences": "Préférences"
       },
       "account": {
         "main": "Compte",

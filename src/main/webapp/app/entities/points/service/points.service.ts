@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, Observable, asapScheduler, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
+
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
@@ -28,13 +30,11 @@ export type EntityArrayResponseType = HttpResponse<IPoints[]>;
 
 @Injectable({ providedIn: 'root' })
 export class PointsService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/points');
-  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/points');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/points');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/points/_search');
 
   create(points: NewPoints): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(points);
@@ -76,27 +76,29 @@ export class PointsService {
 
   search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
-    return this.http
-      .get<RestPoints[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-      .pipe(map(res => this.convertResponseArrayFromServer(res)));
+    return this.http.get<RestPoints[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<IPoints[]>()], asapScheduler)),
+    );
   }
 
   thisWeek(): Observable<HttpResponse<IPointsPerWeek>> {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     return this.http
-      .get<IPointsPerWeek>(`api/points-this-week?tz=${tz}`, { observe: 'response' })
+      .get<IPointsPerWeek>(`api/points/this-week?tz=${tz}`, { observe: 'response' })
       .pipe(map(res => this.convertWeekResponseFromServer(res)));
   }
 
   byWeek(date: string): Observable<HttpResponse<IPointsPerWeek>> {
     return this.http
-      .get<IPointsPerWeek>(`api/points-by-week/${date}`, { observe: 'response' })
+      .get<IPointsPerWeek>(`api/points/by-week/${date}`, { observe: 'response' })
       .pipe(map(res => this.convertWeekResponseFromServer(res)));
   }
 
   byMonth(month: string): Observable<HttpResponse<IPointsPerMonth>> {
     return this.http
-      .get<IPointsPerMonth>(`api/points-by-month/${month}`, { observe: 'response' })
+      .get<IPointsPerMonth>(`api/points/by-month/${month}`, { observe: 'response' })
       .pipe(map(res => this.convertMonthResponseFromServer(res)));
   }
 
@@ -114,7 +116,7 @@ export class PointsService {
   ): Type[] {
     const points: Type[] = pointsToCheck.filter(isPresent);
     if (points.length > 0) {
-      const pointsCollectionIdentifiers = pointsCollection.map(pointsItem => this.getPointsIdentifier(pointsItem)!);
+      const pointsCollectionIdentifiers = pointsCollection.map(pointsItem => this.getPointsIdentifier(pointsItem));
       const pointsToAdd = points.filter(pointsItem => {
         const pointsIdentifier = this.getPointsIdentifier(pointsItem);
         if (pointsCollectionIdentifiers.includes(pointsIdentifier)) {

@@ -157,9 +157,10 @@ describe('Preferences e2e test', () => {
     });
 
     it('should create an instance of Preferences', () => {
-      cy.get(`[data-cy="weeklyGoal"]`).type('17').should('have.value', '17');
+      cy.get(`[data-cy="weeklyGoal"]`).type('21');
+      cy.get(`[data-cy="weeklyGoal"]`).should('have.value', '21');
 
-      cy.get(`[data-cy="weightUnits"]`).select('LB');
+      cy.get(`[data-cy="weightUnits"]`).select('KG');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

@@ -18,8 +18,7 @@ describe('Weight Management Delete Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [WeightDeleteDialogComponent],
+      imports: [HttpClientTestingModule, WeightDeleteDialogComponent],
       providers: [NgbActiveModal],
     })
       .overrideTemplate(WeightDeleteDialogComponent, '')

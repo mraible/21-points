@@ -1,52 +1,72 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
-import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
+import { Component, NgZone, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
+import { combineLatest, filter, Observable, Subscription, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
-import { SortService } from 'app/shared/sort/sort.service';
+import SharedModule from 'app/shared/shared.module';
+import { sortStateSignal, SortDirective, SortByDirective, type SortState, SortService } from 'app/shared/sort';
+import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormsModule } from '@angular/forms';
+import { SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { IPreferences } from '../preferences.model';
 import { EntityArrayResponseType, PreferencesService } from '../service/preferences.service';
 import { PreferencesDeleteDialogComponent } from '../delete/preferences-delete-dialog.component';
 
 @Component({
+  standalone: true,
   selector: 'jhi-preferences',
   templateUrl: './preferences.component.html',
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+  ],
 })
 export class PreferencesComponent implements OnInit {
   private static readonly NOT_SORTABLE_FIELDS_AFTER_SEARCH = ['weightUnits'];
 
+  subscription: Subscription | null = null;
   preferences?: IPreferences[];
   isLoading = false;
   // todo: wire up logic to set
-  isAdmin: boolean;
-  predicate = 'id';
-  ascending = true;
+  isAdmin: boolean = true;
+  sortState = sortStateSignal({});
   currentSearch = '';
 
-  constructor(
-    protected preferencesService: PreferencesService,
-    protected activatedRoute: ActivatedRoute,
-    public router: Router,
-    protected sortService: SortService,
-    protected modalService: NgbModal,
-  ) {
-    this.isAdmin = true;
-  }
+  public router = inject(Router);
+  protected preferencesService = inject(PreferencesService);
+  protected activatedRoute = inject(ActivatedRoute);
+  protected sortService = inject(SortService);
+  protected modalService = inject(NgbModal);
+  protected ngZone = inject(NgZone);
 
   trackId = (_index: number, item: IPreferences): number => this.preferencesService.getPreferencesIdentifier(item);
 
-  search(query: string): void {
-    if (query && PreferencesComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(this.predicate)) {
-      this.predicate = 'id';
-      this.ascending = true;
-    }
-    this.currentSearch = query;
-    this.navigateToWithComponentValues();
+  ngOnInit(): void {
+    this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
+      .pipe(
+        tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
+        tap(() => this.load()),
+      )
+      .subscribe();
   }
 
-  ngOnInit(): void {
-    this.load();
+  search(query: string): void {
+    const { predicate } = this.sortState();
+    if (query && predicate && PreferencesComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+      this.loadDefaultSortState();
+    }
+    this.currentSearch = query;
+    this.navigateToWithComponentValues(this.sortState());
+  }
+
+  loadDefaultSortState(): void {
+    this.sortState.set(this.sortService.parseSortParam(this.activatedRoute.snapshot.data[DEFAULT_SORT_DATA]));
   }
 
   delete(preferences: IPreferences): void {
@@ -56,42 +76,30 @@ export class PreferencesComponent implements OnInit {
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
-        switchMap(() => this.loadFromBackendWithRouteInformations()),
+        tap(() => this.load()),
       )
-      .subscribe({
-        next: (res: EntityArrayResponseType) => {
-          this.onResponseSuccess(res);
-        },
-      });
+      .subscribe();
   }
 
   load(): void {
-    this.loadFromBackendWithRouteInformations().subscribe({
+    this.queryBackend().subscribe({
       next: (res: EntityArrayResponseType) => {
         this.onResponseSuccess(res);
       },
     });
   }
 
-  navigateToWithComponentValues(): void {
-    this.handleNavigation(this.predicate, this.ascending, this.currentSearch);
-  }
-
-  protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
-    return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
-      tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.predicate, this.ascending, this.currentSearch)),
-    );
+  navigateToWithComponentValues(event: SortState): void {
+    this.handleNavigation(event, this.currentSearch);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
-    const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
-    this.predicate = sort[0];
-    this.ascending = sort[1] === ASC;
+    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
     if (params.has('search') && params.get('search') !== '') {
       this.currentSearch = params.get('search') as string;
-      if (PreferencesComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(this.predicate)) {
-        this.predicate = '';
+      const { predicate } = this.sortState();
+      if (predicate && PreferencesComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+        this.sortState.set({});
       }
     }
   }
@@ -102,19 +110,22 @@ export class PreferencesComponent implements OnInit {
   }
 
   protected refineData(data: IPreferences[]): IPreferences[] {
-    return data.sort(this.sortService.startSort(this.predicate, this.ascending ? 1 : -1));
+    const { predicate, order } = this.sortState();
+    return predicate && order ? data.sort(this.sortService.startSort({ predicate, order })) : data;
   }
 
   protected fillComponentAttributesFromResponseBody(data: IPreferences[] | null): IPreferences[] {
     return data ?? [];
   }
 
-  protected queryBackend(predicate?: string, ascending?: boolean, currentSearch?: string): Observable<EntityArrayResponseType> {
+  protected queryBackend(): Observable<EntityArrayResponseType> {
+    const { currentSearch } = this;
+
     this.isLoading = true;
     const queryObject: any = {
       eagerload: true,
       query: currentSearch,
-      sort: this.getSortQueryParam(predicate, ascending),
+      sort: this.sortService.buildSortParam(this.sortState()),
     };
     if (this.currentSearch && this.currentSearch !== '') {
       return this.preferencesService.search(queryObject).pipe(tap(() => (this.isLoading = false)));
@@ -123,24 +134,17 @@ export class PreferencesComponent implements OnInit {
     }
   }
 
-  protected handleNavigation(predicate?: string, ascending?: boolean, currentSearch?: string): void {
+  protected handleNavigation(sortState: SortState, currentSearch?: string): void {
     const queryParamsObj = {
       search: currentSearch,
-      sort: this.getSortQueryParam(predicate, ascending),
+      sort: this.sortService.buildSortParam(sortState),
     };
 
-    this.router.navigate(['./'], {
-      relativeTo: this.activatedRoute,
-      queryParams: queryParamsObj,
+    this.ngZone.run(() => {
+      this.router.navigate(['./'], {
+        relativeTo: this.activatedRoute,
+        queryParams: queryParamsObj,
+      });
     });
-  }
-
-  protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {
-    const ascendingQueryParam = ascending ? ASC : DESC;
-    if (predicate === '') {
-      return [];
-    } else {
-      return [predicate + ',' + ascendingQueryParam];
-    }
   }
 }

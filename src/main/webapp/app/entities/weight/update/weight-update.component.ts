@@ -1,18 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
+import SharedModule from 'app/shared/shared.module';
+import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { UserService } from 'app/entities/user/service/user.service';
 import { IWeight } from '../weight.model';
 import { WeightService } from '../service/weight.service';
 import { WeightFormService, WeightFormGroup } from './weight-form.service';
 
 @Component({
+  standalone: true,
   selector: 'jhi-weight-update',
   templateUrl: './weight-update.component.html',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, HasAnyAuthorityDirective],
 })
 export class WeightUpdateComponent implements OnInit {
   isSaving = false;
@@ -20,14 +26,13 @@ export class WeightUpdateComponent implements OnInit {
 
   usersSharedCollection: IUser[] = [];
 
-  editForm: WeightFormGroup = this.weightFormService.createWeightFormGroup();
+  protected weightService = inject(WeightService);
+  protected weightFormService = inject(WeightFormService);
+  protected userService = inject(UserService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected weightService: WeightService,
-    protected weightFormService: WeightFormService,
-    protected userService: UserService,
-    protected activatedRoute: ActivatedRoute,
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: WeightFormGroup = this.weightFormService.createWeightFormGroup();
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
 

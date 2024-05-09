@@ -30,7 +30,7 @@ public class ElasticsearchTestContainer implements InitializingBean, DisposableB
     public void afterPropertiesSet() {
         if (null == elasticsearchContainer) {
             elasticsearchContainer = new ElasticsearchContainer(
-                DockerImageName.parse("docker.elastic.co/elasticsearch/elasticsearch").withTag("7.17.4")
+                DockerImageName.parse("docker.elastic.co/elasticsearch/elasticsearch").withTag("8.10.4")
             )
                 .withStartupTimeout(Duration.of(CONTAINER_STARTUP_TIMEOUT_MINUTES, ChronoUnit.MINUTES))
                 .withSharedMemorySize(256000000L)

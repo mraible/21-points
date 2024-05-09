@@ -1,5 +1,5 @@
-@import '~bootstrap/scss/functions';
-@import '~bootstrap/scss/variables';
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
 
 /* ==========================================================================
 Navbar
@@ -21,28 +21,18 @@ Navbar
   a.nav-link {
     font-weight: 400;
   }
-
-  .active > a {
-    color: $white;
-  }
 }
 
 /* ==========================================================================
 Logo styles
 ========================================================================== */
-.navbar-brand {
-  &.logo {
-    padding: 5px 15px;
-
-    .logo-img {
-      height: 45px;
-      width: 70px;
-      display: inline-block;
-      vertical-align: middle;
-      background: url('../../../content/images/logo-21-points.png') no-repeat center center;
-      background-size: contain;
-    }
-  }
+.logo-img {
+  height: 45px;
+  width: 70px;
+  display: inline-block;
+  vertical-align: middle;
+  background: url('/content/images/logo-21-points.png') no-repeat center center;
+  background-size: contain;
 }
 
 // remove left-padding on logo for mobile

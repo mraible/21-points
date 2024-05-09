@@ -1,11 +1,15 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { endOfDay, endOfMonth, format, getDaysInMonth, isSameDay, isSameMonth, startOfDay, startOfMonth } from 'date-fns';
-import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewDay, CalendarView } from 'angular-calendar';
+import {
+  CalendarEvent,
+  CalendarEventAction,
+  CalendarEventTimesChangedEvent,
+  CalendarModule,
+  CalendarMonthViewDay,
+  CalendarView,
+} from 'angular-calendar';
 import { Router } from '@angular/router';
 import { filter, Subject } from 'rxjs';
-import { EventColor } from 'calendar-utils';
-import dayjs from 'dayjs/esm';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PointsService } from '../entities/points/service/points.service';
 import { BloodPressureService } from '../entities/blood-pressure/service/blood-pressure.service';
 import { WeightService } from '../entities/weight/service/weight.service';
@@ -13,10 +17,14 @@ import { PreferencesService } from '../entities/preferences/service/preferences.
 import { IPoints } from '../entities/points/points.model';
 import { IBloodPressure } from '../entities/blood-pressure/blood-pressure.model';
 import { IWeight } from '../entities/weight/weight.model';
+import { EventColor } from 'calendar-utils';
+import dayjs from 'dayjs/esm';
 import { PointsDeleteDialogComponent } from '../entities/points/delete/points-delete-dialog.component';
 import { ITEM_DELETED_EVENT } from '../config/navigation.constants';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BloodPressureDeleteDialogComponent } from '../entities/blood-pressure/delete/blood-pressure-delete-dialog.component';
 import { WeightDeleteDialogComponent } from '../entities/weight/delete/weight-delete-dialog.component';
+import SharedModule from '../shared/shared.module';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -38,12 +46,14 @@ const colors: Record<string, EventColor> = {
 };
 
 @Component({
+  standalone: true,
   selector: 'jhi-history',
+  imports: [SharedModule, CalendarModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.css'],
 })
-export class HistoryComponent implements OnInit {
+export default class HistoryComponent implements OnInit {
   isCollapsed = true;
 
   view: CalendarView = CalendarView.Month;
@@ -78,14 +88,12 @@ export class HistoryComponent implements OnInit {
     },
   ];
 
-  constructor(
-    private pointsService: PointsService,
-    private bloodPressureService: BloodPressureService,
-    private weightService: WeightService,
-    private preferencesService: PreferencesService,
-    private router: Router,
-    protected modalService: NgbModal,
-  ) {}
+  private pointsService = inject(PointsService);
+  private bloodPressureService = inject(BloodPressureService);
+  private weightService = inject(WeightService);
+  private preferencesService = inject(PreferencesService);
+  private router = inject(Router);
+  private modalService = inject(NgbModal);
 
   setView(view: CalendarView): void {
     this.view = view;
@@ -106,7 +114,7 @@ export class HistoryComponent implements OnInit {
 
   populateCalendar(): void {
     const monthEnd = endOfMonth(this.viewDate);
-    const month = format(monthEnd, 'YYYY-MM');
+    const month = format(monthEnd, 'yyyy-MM');
 
     this.pointsService.byMonth(month).subscribe((response: any) => {
       response.body.points.forEach((item: IPoints) => {
@@ -187,7 +195,7 @@ export class HistoryComponent implements OnInit {
       }
 
       sundays.forEach(sunday => {
-        this.pointsService.byWeek(format(sunday, 'YYYY-MM-DD')).subscribe(data => {
+        this.pointsService.byWeek(format(sunday, 'yyyy-MM-dd')).subscribe(data => {
           const pointsByWeek: any = data.body;
           this.events.push({
             start: startOfDay(sunday),
@@ -222,7 +230,7 @@ export class HistoryComponent implements OnInit {
         this.activeDayIsOpen = false;
         // if no events, clicking on day brings up add points
         if (events.length === 0) {
-          this.router.navigateByUrl('/points/new?date=' + format(date, 'YYYY-MM-DD'));
+          this.router.navigateByUrl('/points/new?date=' + format(date, 'yyyy-MM-dd'));
         }
       } else {
         this.activeDayIsOpen = true;

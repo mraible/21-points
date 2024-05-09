@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
       <h2
         id="jhi-blood-pressure-heading"
         data-cy="BloodPressureCreateUpdateHeading"
@@ -12,13 +12,15 @@
       <div>
         <jhi-alert-error></jhi-alert-error>
 
-        <div class="mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="twentyOnePointsApp.bloodPressure.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
 
         <div class="mb-3">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.bloodPressure.timestamp" for="field_timestamp">Timestamp</label>
+          <label class="form-label" for="field_timestamp" jhiTranslate="twentyOnePointsApp.bloodPressure.timestamp">Timestamp</label>
           <div class="d-flex">
             <input
               id="field_timestamp"
@@ -30,71 +32,64 @@
               placeholder="YYYY-MM-DD HH:mm"
             />
           </div>
-          <div *ngIf="editForm.get('timestamp')!.invalid && (editForm.get('timestamp')!.dirty || editForm.get('timestamp')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('timestamp')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              This field is required.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('timestamp')?.errors?.datetimelocal"
-              jhiTranslate="entity.validation.datetimelocal"
-            >
-              This field should be a date and time.
-            </small>
-          </div>
+          @if (editForm.get('timestamp')!.invalid && (editForm.get('timestamp')!.dirty || editForm.get('timestamp')!.touched)) {
+            <div>
+              @if (editForm.get('timestamp')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('timestamp')?.errors?.datetimelocal"
+                jhiTranslate="entity.validation.datetimelocal"
+                >This field should be a date and time.</small
+              >
+            </div>
+          }
         </div>
 
         <div class="mb-3">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.bloodPressure.systolic" for="field_systolic">Systolic</label>
+          <label class="form-label" for="field_systolic" jhiTranslate="twentyOnePointsApp.bloodPressure.systolic">Systolic</label>
           <input type="number" class="form-control" name="systolic" id="field_systolic" data-cy="systolic" formControlName="systolic" />
-          <div *ngIf="editForm.get('systolic')!.invalid && (editForm.get('systolic')!.dirty || editForm.get('systolic')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('systolic')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              This field is required.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('systolic')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              This field should be a number.
-            </small>
-          </div>
+          @if (editForm.get('systolic')!.invalid && (editForm.get('systolic')!.dirty || editForm.get('systolic')!.touched)) {
+            <div>
+              @if (editForm.get('systolic')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('systolic')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
         </div>
 
         <div class="mb-3">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.bloodPressure.diastolic" for="field_diastolic">Diastolic</label>
+          <label class="form-label" for="field_diastolic" jhiTranslate="twentyOnePointsApp.bloodPressure.diastolic">Diastolic</label>
           <input type="number" class="form-control" name="diastolic" id="field_diastolic" data-cy="diastolic" formControlName="diastolic" />
-          <div *ngIf="editForm.get('diastolic')!.invalid && (editForm.get('diastolic')!.dirty || editForm.get('diastolic')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('diastolic')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              This field is required.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('diastolic')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              This field should be a number.
-            </small>
-          </div>
+          @if (editForm.get('diastolic')!.invalid && (editForm.get('diastolic')!.dirty || editForm.get('diastolic')!.touched)) {
+            <div>
+              @if (editForm.get('diastolic')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('diastolic')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
         </div>
 
         <div class="mb-3" *jhiHasAnyAuthority="'ROLE_ADMIN'">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.bloodPressure.user" for="field_user">User</label>
+          <label class="form-label" for="field_user" jhiTranslate="twentyOnePointsApp.bloodPressure.user">User</label>
           <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
             <option [ngValue]="null"></option>
-            <option [ngValue]="userOption" *ngFor="let userOption of usersSharedCollection">{{ userOption.login }}</option>
+            @for (userOption of usersSharedCollection; track $index) {
+              <option [ngValue]="userOption">{{ userOption.login }}</option>
+            }
           </select>
         </div>
       </div>

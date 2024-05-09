@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, Observable, asapScheduler, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
+
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
@@ -27,13 +29,11 @@ export type EntityArrayResponseType = HttpResponse<IWeight[]>;
 
 @Injectable({ providedIn: 'root' })
 export class WeightService {
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/weights');
-  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/_search/weights');
+  protected http = inject(HttpClient);
+  protected applicationConfigService = inject(ApplicationConfigService);
 
-  constructor(
-    protected http: HttpClient,
-    protected applicationConfigService: ApplicationConfigService,
-  ) {}
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/weights');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/weights/_search');
 
   create(weight: NewWeight): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(weight);
@@ -75,17 +75,19 @@ export class WeightService {
 
   search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
-    return this.http
-      .get<RestWeight[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-      .pipe(map(res => this.convertResponseArrayFromServer(res)));
+    return this.http.get<RestWeight[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<IWeight[]>()], asapScheduler)),
+    );
   }
 
   last30Days(): Observable<HttpResponse<IWeightByPeriod>> {
-    return this.http.get<IWeightByPeriod>('api/weight-by-days/30', { observe: 'response' });
+    return this.http.get<IWeightByPeriod>('api/weights/by-days/30', { observe: 'response' });
   }
 
   byMonth(month: string): Observable<HttpResponse<IWeightByPeriod>> {
-    return this.http.get<IWeightByPeriod>(`api/weight-by-month/${month}`, { observe: 'response' });
+    return this.http.get<IWeightByPeriod>(`api/weights/by-month/${month}`, { observe: 'response' });
   }
 
   getWeightIdentifier(weight: Pick<IWeight, 'id'>): number {
@@ -102,7 +104,7 @@ export class WeightService {
   ): Type[] {
     const weights: Type[] = weightsToCheck.filter(isPresent);
     if (weights.length > 0) {
-      const weightCollectionIdentifiers = weightCollection.map(weightItem => this.getWeightIdentifier(weightItem)!);
+      const weightCollectionIdentifiers = weightCollection.map(weightItem => this.getWeightIdentifier(weightItem));
       const weightsToAdd = weights.filter(weightItem => {
         const weightIdentifier = this.getWeightIdentifier(weightItem);
         if (weightCollectionIdentifiers.includes(weightIdentifier)) {

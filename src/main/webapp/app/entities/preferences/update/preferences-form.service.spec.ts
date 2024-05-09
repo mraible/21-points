@@ -43,7 +43,6 @@ describe('Preferences Form Service', () => {
 
     describe('getPreferences', () => {
       it('should return NewPreferences for default Preferences initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createPreferencesFormGroup(sampleWithNewData);
 
         const preferences = service.getPreferences(formGroup) as any;

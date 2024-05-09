@@ -1,8 +1,8 @@
 package org.jhipster.health.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -13,10 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.BloodPressure;
 import org.jhipster.health.repository.BloodPressureRepository;
 import org.jhipster.health.repository.UserRepository;
@@ -24,6 +20,7 @@ import org.jhipster.health.repository.search.BloodPressureSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+import org.jhipster.health.web.rest.errors.ElasticsearchExceptionMapper;
 import org.jhipster.health.web.rest.vm.BloodPressureByPeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +42,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link org.jhipster.health.domain.BloodPressure}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/blood-pressures")
 @Transactional
 public class BloodPressureResource {
 
@@ -79,7 +76,7 @@ public class BloodPressureResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new bloodPressure, or with status {@code 400 (Bad Request)} if the bloodPressure has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/blood-pressures")
+    @PostMapping("")
     public ResponseEntity<BloodPressure> createBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
         log.debug("REST request to save BloodPressure : {}", bloodPressure);
         if (bloodPressure.getId() != null) {
@@ -89,24 +86,24 @@ public class BloodPressureResource {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().orElse(""));
             bloodPressure.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse("")).orElse(null));
         }
-        BloodPressure result = bloodPressureRepository.save(bloodPressure);
-        bloodPressureSearchRepository.index(result);
-        return ResponseEntity.created(new URI("/api/blood-pressures/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        bloodPressure = bloodPressureRepository.save(bloodPressure);
+        bloodPressureSearchRepository.index(bloodPressure);
+        return ResponseEntity.created(new URI("/api/blood-pressures/" + bloodPressure.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, bloodPressure.getId().toString()))
+            .body(bloodPressure);
     }
 
     /**
      * {@code PUT  /blood-pressures/:id} : Updates an existing bloodPressure.
      *
-     * @param id            the id of the bloodPressure to save.
+     * @param id the id of the bloodPressure to save.
      * @param bloodPressure the bloodPressure to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated bloodPressure,
      * or with status {@code 400 (Bad Request)} if the bloodPressure is not valid,
      * or with status {@code 500 (Internal Server Error)} if the bloodPressure couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/blood-pressures/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateBloodPressure(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody BloodPressure bloodPressure
@@ -129,17 +126,17 @@ public class BloodPressureResource {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
-        BloodPressure result = bloodPressureRepository.save(bloodPressure);
-        bloodPressureSearchRepository.index(result);
+        bloodPressure = bloodPressureRepository.save(bloodPressure);
+        bloodPressureSearchRepository.index(bloodPressure);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, bloodPressure.getId().toString()))
-            .body(result);
+            .body(bloodPressure);
     }
 
     /**
      * {@code PATCH  /blood-pressures/:id} : Partial updates given fields of an existing bloodPressure, field will ignore if it is null
      *
-     * @param id            the id of the bloodPressure to save.
+     * @param id the id of the bloodPressure to save.
      * @param bloodPressure the bloodPressure to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated bloodPressure,
      * or with status {@code 400 (Bad Request)} if the bloodPressure is not valid,
@@ -147,7 +144,7 @@ public class BloodPressureResource {
      * or with status {@code 500 (Internal Server Error)} if the bloodPressure couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/blood-pressures/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<?> partialUpdateBloodPressure(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody BloodPressure bloodPressure
@@ -187,8 +184,7 @@ public class BloodPressureResource {
             })
             .map(bloodPressureRepository::save)
             .map(savedBloodPressure -> {
-                bloodPressureSearchRepository.save(savedBloodPressure);
-
+                bloodPressureSearchRepository.index(savedBloodPressure);
                 return savedBloodPressure;
             });
 
@@ -201,14 +197,14 @@ public class BloodPressureResource {
     /**
      * {@code GET  /blood-pressures} : get all the bloodPressures.
      *
-     * @param pageable  the pagination information.
+     * @param pageable the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of bloodPressures in body.
      */
-    @GetMapping("/blood-pressures")
+    @GetMapping("")
     public ResponseEntity<List<BloodPressure>> getAllBloodPressures(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
     ) {
         log.debug("REST request to get a page of BloodPressures");
         Page<BloodPressure> page;
@@ -227,8 +223,8 @@ public class BloodPressureResource {
      * @param id the id of the bloodPressure to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bloodPressure, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/blood-pressures/{id}")
-    public ResponseEntity<?> getBloodPressure(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getBloodPressure(@PathVariable("id") Long id) {
         log.debug("REST request to get BloodPressure : {}", id);
         Optional<BloodPressure> bloodPressure = bloodPressureRepository.findOneWithEagerRelationships(id);
         if (
@@ -248,8 +244,8 @@ public class BloodPressureResource {
      * @param id the id of the bloodPressure to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/blood-pressures/{id}")
-    public ResponseEntity<?> deleteBloodPressure(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBloodPressure(@PathVariable("id") Long id) {
         log.debug("REST request to delete BloodPressure : {}", id);
         Optional<BloodPressure> bloodPressure = bloodPressureRepository.findById(id);
         if (
@@ -261,42 +257,51 @@ public class BloodPressureResource {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         bloodPressureRepository.deleteById(id);
-        bloodPressureSearchRepository.deleteById(id);
+        bloodPressureSearchRepository.deleteFromIndexById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
 
     /**
-     * {@code SEARCH  /_search/blood-pressures?query=:query} : search for the bloodPressure corresponding
+     * {@code SEARCH  /blood-pressures/_search?query=:query} : search for the bloodPressure corresponding
      * to the query.
      *
-     * @param query    the query of the bloodPressure search.
+     * @param query the query of the bloodPressure search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */
-    @GetMapping("/_search/blood-pressures")
+    @GetMapping("/_search")
     public ResponseEntity<List<BloodPressure>> searchBloodPressures(
-        @RequestParam String query,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         log.debug("REST request to search for a page of BloodPressures for query {}", query);
-        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
         if (SecurityUtils.isAuthenticated() && !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            queryBuilder = queryBuilder.filter(matchQuery("user.login", SecurityUtils.getCurrentUserLogin().orElse("")));
+            QueryVariant filterByUser = new MatchQuery.Builder()
+                .field("user.login")
+                .query(SecurityUtils.getCurrentUserLogin().orElse(""))
+                .build();
+            BoolQuery.Builder boolQueryBuilder = QueryBuilders.bool();
+            boolQueryBuilder.should(new Query(filterByUser));
+            query = new Query(boolQueryBuilder.build()).toString();
         }
-        Page<BloodPressure> page = bloodPressureSearchRepository.search(queryBuilder, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        try {
+            Page<BloodPressure> page = bloodPressureSearchRepository.search(query, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 
     /**
-     * {@code GET  /bp-by-days/:days} : get all the blood pressure readings by last x days.
+     * {@code GET  blood-pressures/by-days/:days} : get all the blood pressure readings by last x days.
      *
      * @param days the number of days.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the {@link BloodPressureByPeriod}.
      */
-    @RequestMapping(value = "/bp-by-days/{days}")
+    @RequestMapping(value = "/by-days/{days}")
     public ResponseEntity<BloodPressureByPeriod> getByDays(@PathVariable int days) {
         ZonedDateTime rightNow = ZonedDateTime.now();
         ZonedDateTime daysAgo = rightNow.minusDays(days);
@@ -311,12 +316,12 @@ public class BloodPressureResource {
     }
 
     /**
-     * {@code GET  /bp-by-month/:date} : get all the blood pressure readings by last x days.
+     * {@code GET  /blood-pressures/by-month/:date} : get all the blood pressure readings by last x days.
      *
      * @param date the year and month in yyyy-MM format.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the {@link BloodPressureByPeriod}.
      */
-    @GetMapping("/bp-by-month/{date}")
+    @GetMapping("/by-month/{date}")
     public ResponseEntity<BloodPressureByPeriod> getByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
         LocalDate firstDay = date.atDay(1);
         LocalDate lastDay = date.atEndOfMonth();

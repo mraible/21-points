@@ -7,17 +7,16 @@ import java.lang.annotation.Target;
 import org.jhipster.health.config.AsyncSyncConfiguration;
 import org.jhipster.health.config.EmbeddedElasticsearch;
 import org.jhipster.health.config.EmbeddedSQL;
+import org.jhipster.health.config.JacksonConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * Base composite annotation for integration tests.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootTest(classes = { TwentyOnePointsApp.class, AsyncSyncConfiguration.class })
+@SpringBootTest(classes = { TwentyOnePointsApp.class, JacksonConfiguration.class, AsyncSyncConfiguration.class })
 @EmbeddedElasticsearch
 @EmbeddedSQL
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public @interface IntegrationTest {
 }

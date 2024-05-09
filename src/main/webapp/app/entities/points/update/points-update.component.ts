@@ -1,19 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
+import SharedModule from 'app/shared/shared.module';
+import HasAnyAuthorityDirective from 'app/shared/auth/has-any-authority.directive';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { UserService } from 'app/entities/user/service/user.service';
 import dayjs from 'dayjs/esm';
-import { PointsService } from '../service/points.service';
 import { IPoints } from '../points.model';
+import { PointsService } from '../service/points.service';
 import { PointsFormService, PointsFormGroup } from './points-form.service';
 
 @Component({
+  standalone: true,
   selector: 'jhi-points-update',
   templateUrl: './points-update.component.html',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule, HasAnyAuthorityDirective],
 })
 export class PointsUpdateComponent implements OnInit {
   isSaving = false;
@@ -21,14 +27,13 @@ export class PointsUpdateComponent implements OnInit {
 
   usersSharedCollection: IUser[] = [];
 
-  editForm: PointsFormGroup = this.pointsFormService.createPointsFormGroup();
+  protected pointsService = inject(PointsService);
+  protected pointsFormService = inject(PointsFormService);
+  protected userService = inject(UserService);
+  protected activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-    protected pointsService: PointsService,
-    protected pointsFormService: PointsFormService,
-    protected userService: UserService,
-    protected activatedRoute: ActivatedRoute,
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  editForm: PointsFormGroup = this.pointsFormService.createPointsFormGroup();
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
 

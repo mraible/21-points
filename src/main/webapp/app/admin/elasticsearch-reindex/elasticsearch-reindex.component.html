@@ -12,18 +12,20 @@
   <p jhiTranslate="elasticsearch.reindex.instructions2">
     This can take a long time and is susceptible to concurrency issues so it should be performed when the number of users is low.
   </p>
-  <select class="form-control selectpicker" [(ngModel)]="reindexType">
+  <select class="form-control selectpicker mb-3" [(ngModel)]="reindexType">
     <option value="all">All</option>
     <option value="selected">Selected</option>
   </select>
-  <ng-container *ngIf="reindexType != 'all'">
-    <div *ngFor="let entityName of entities">
-      <label class="checkbox-inline">
-        <input name="{{ entityName }}" [(ngModel)]="checks[entityName]" type="checkbox" />
-        {{ entityName }}
-      </label>
-    </div>
-  </ng-container>
+  @if (reindexType != 'all') {
+    @for (entityName of entities; track $index) {
+      <div>
+        <label class="checkbox-inline">
+          <input name="{{ entityName }}" [(ngModel)]="checks[entityName]" type="checkbox" />
+          {{ entityName }}
+        </label>
+      </div>
+    }
+  }
   <br />
   <button class="btn btn-primary float-right" (click)="doReindex()">
     <span class="fa fa-exclamation"></span> <span jhiTranslate="elasticsearch.reindex.go">Reindex</span>

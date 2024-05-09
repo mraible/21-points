@@ -37,7 +37,7 @@ module.exports = async (config, options, targetOptions) => {
   }
 
   // configuring proxy for back end service
-  const tls = Boolean(config.devServer && config.devServer.https);
+  const tls = config.devServer?.server?.type === 'https';
   if (config.devServer) {
     config.devServer.proxy = proxyConfig({ tls });
   }
@@ -82,8 +82,8 @@ module.exports = async (config, options, targetOptions) => {
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',
         openAnalyzer: false,
-        // Webpack statistics in target folder
-        reportFilename: '../stats.html',
+        // Webpack statistics in temporary folder
+        reportFilename: '../../../stats.html',
       }),
     );
   }
@@ -97,7 +97,7 @@ module.exports = async (config, options, targetOptions) => {
       globOptions: { ignore: ['**/index.html'] },
     },
     {
-      from: require.resolve('axios/dist/axios.min.js'),
+      from: path.join(path.dirname(require.resolve('axios/package.json')), 'dist/axios.min.js'),
       to: 'swagger-ui/',
     },
     { from: './src/main/webapp/swagger-ui/', to: 'swagger-ui/' },
