@@ -3,7 +3,6 @@ package org.jhipster.health.service;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micrometer.core.annotation.Timed;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToMany;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -14,8 +13,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
-import org.elasticsearch.ResourceAlreadyExistsException;
 import org.jhipster.health.config.ApplicationProperties;
 import org.jhipster.health.domain.*;
 import org.jhipster.health.repository.*;
@@ -146,11 +143,8 @@ public class ElasticsearchIndexService implements ApplicationListener<ContextRef
     ) {
         String className = entityClass.getSimpleName();
         elasticsearchOperations.indexOps(entityClass).delete();
-        try {
-            elasticsearchOperations.indexOps(entityClass).createWithMapping();
-        } catch (ResourceAlreadyExistsException e) {
-            // Do nothing. Index was already concurrently recreated by some other service.
-        }
+        elasticsearchOperations.indexOps(entityClass).createWithMapping();
+
         if (jpaRepository.count() > 0) {
             // if a JHipster entity field is the owner side of a many-to-many relationship, it should be loaded manually
             List<Method> relationshipGetters = Arrays.stream(entityClass.getDeclaredFields())
