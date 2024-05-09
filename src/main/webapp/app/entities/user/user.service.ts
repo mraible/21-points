@@ -12,7 +12,10 @@ import { IUser, getUserIdentifier } from './user.model';
 export class UserService {
   private resourceUrl = this.applicationConfigService.getEndpointFor('api/users');
 
-  constructor(private http: HttpClient, private applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    private http: HttpClient,
+    private applicationConfigService: ApplicationConfigService,
+  ) {}
 
   query(req?: Pagination): Observable<HttpResponse<IUser[]>> {
     const options = createRequestOption(req);

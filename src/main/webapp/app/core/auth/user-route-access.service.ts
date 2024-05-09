@@ -8,7 +8,11 @@ import { StateStorageService } from './state-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserRouteAccessService implements CanActivate {
-  constructor(private router: Router, private accountService: AccountService, private stateStorageService: StateStorageService) {}
+  constructor(
+    private router: Router,
+    private accountService: AccountService,
+    private stateStorageService: StateStorageService,
+  ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.accountService.identity().pipe(
@@ -30,7 +34,7 @@ export class UserRouteAccessService implements CanActivate {
         this.stateStorageService.storeUrl(state.url);
         this.router.navigate(['/login']);
         return false;
-      })
+      }),
     );
   }
 }

@@ -4,12 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import { PreferencesFormService, PreferencesFormGroup } from './preferences-form.service';
-import { IPreferences } from '../preferences.model';
-import { PreferencesService } from '../service/preferences.service';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
 import { Units } from 'app/entities/enumerations/units.model';
+import { PreferencesService } from '../service/preferences.service';
+import { IPreferences } from '../preferences.model';
+import { PreferencesFormService, PreferencesFormGroup } from './preferences-form.service';
 
 @Component({
   selector: 'jhi-preferences-update',
@@ -28,7 +28,7 @@ export class PreferencesUpdateComponent implements OnInit {
     protected preferencesService: PreferencesService,
     protected preferencesFormService: PreferencesFormService,
     protected userService: UserService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
   ) {}
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);

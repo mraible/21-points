@@ -37,7 +37,10 @@ export class SettingsComponent implements OnInit {
     login: new FormControl(initialAccount.login, { nonNullable: true }),
   });
 
-  constructor(private accountService: AccountService, private translateService: TranslateService) {}
+  constructor(
+    private accountService: AccountService,
+    private translateService: TranslateService,
+  ) {}
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => {

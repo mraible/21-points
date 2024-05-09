@@ -4,12 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import { PointsFormService, PointsFormGroup } from './points-form.service';
-import { IPoints } from '../points.model';
-import { PointsService } from '../service/points.service';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
 import dayjs from 'dayjs/esm';
+import { PointsService } from '../service/points.service';
+import { IPoints } from '../points.model';
+import { PointsFormService, PointsFormGroup } from './points-form.service';
 
 @Component({
   selector: 'jhi-points-update',
@@ -27,7 +27,7 @@ export class PointsUpdateComponent implements OnInit {
     protected pointsService: PointsService,
     protected pointsFormService: PointsFormService,
     protected userService: UserService,
-    protected activatedRoute: ActivatedRoute
+    protected activatedRoute: ActivatedRoute,
   ) {}
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);

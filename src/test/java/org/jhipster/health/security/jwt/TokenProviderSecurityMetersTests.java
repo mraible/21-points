@@ -144,8 +144,7 @@ class TokenProviderSecurityMetersTests {
             Decoders.BASE64.decode("Xfd54a45s65fds737b9aafcb3412e07ed99b267f33413274720ddbb7f6c5e64e9f14075f2d7ed041592f0b7657baf8")
         );
 
-        return Jwts
-            .builder()
+        return Jwts.builder()
             .setSubject("anonymous")
             .signWith(otherKey, SignatureAlgorithm.HS512)
             .setExpiration(new Date(new Date().getTime() + ONE_MINUTE))

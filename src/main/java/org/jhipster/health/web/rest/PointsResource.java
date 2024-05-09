@@ -87,8 +87,7 @@ public class PointsResource {
         }
         Points result = pointsRepository.save(points);
         pointsSearchRepository.index(result);
-        return ResponseEntity
-            .created(new URI("/api/points/" + result.getId()))
+        return ResponseEntity.created(new URI("/api/points/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
@@ -126,8 +125,7 @@ public class PointsResource {
 
         Points result = pointsRepository.save(points);
         pointsSearchRepository.index(result);
-        return ResponseEntity
-            .ok()
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, points.getId().toString()))
             .body(result);
     }
@@ -264,8 +262,7 @@ public class PointsResource {
         }
         pointsRepository.deleteById(id);
         pointsSearchRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }

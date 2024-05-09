@@ -1,4 +1,5 @@
 # 21-Points Health
+
 [![Build Status][github-actions-image]][github-actions-url] <!--[![Dependency Status][daviddm-image]][daviddm-url]--> <object id="badge" data="https://snyk-widget.herokuapp.com/badge/npm/%mraible%21-points/7.0.0/badge.svg" type="image/svg+xml"></object> [![Known Vulnerabilities][snyk-image]][snyk-url]
 
 > To track your health and improve your life. 😊

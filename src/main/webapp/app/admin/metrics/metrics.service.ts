@@ -7,7 +7,10 @@ import { Metrics, ThreadDump } from './metrics.model';
 
 @Injectable({ providedIn: 'root' })
 export class MetricsService {
-  constructor(private http: HttpClient, private applicationConfigService: ApplicationConfigService) {}
+  constructor(
+    private http: HttpClient,
+    private applicationConfigService: ApplicationConfigService,
+  ) {}
 
   getMetrics(): Observable<Metrics> {
     return this.http.get<Metrics>(this.applicationConfigService.getEndpointFor('management/jhimetrics'));
