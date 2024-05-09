@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.util.IterableUtil;
 import org.jhipster.health.IntegrationTest;
 import org.jhipster.health.domain.Points;
@@ -538,8 +539,16 @@ class PointsResourceIT {
             .andExpect(jsonPath("$.[*].notes").value(hasItem(DEFAULT_NOTES)));
     }
 
+    private User createUser() {
+        User newuser = new User();
+        newuser.setLogin("user"); // username used by @WithMockUser
+        newuser.setPassword(RandomStringUtils.randomAlphanumeric(60));
+        userRepository.saveAndFlush(newuser);
+        return newuser;
+    }
+
     private void createPointsByWeek(LocalDate thisMonday, LocalDate lastMonday) {
-        User user = userRepository.findOneByLogin("user").get();
+        User user = userRepository.findOneByLogin("user").orElseGet(this::createUser);
         // Create points in two separate weeks
         points = new Points(thisMonday.plusDays(2), 1, 1, 1, user); // <1>
         pointsRepository.saveAndFlush(points);
@@ -571,7 +580,7 @@ class PointsResourceIT {
 
         // Get the points for this week only
         restPointsMockMvc
-            .perform(get("/api/points-this-week"))
+            .perform(get("/api/points/this-week"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.week").value(thisMonday.toString()))
@@ -588,7 +597,7 @@ class PointsResourceIT {
 
         // Get the points for last week
         restPointsMockMvc
-            .perform(get("/api/points-by-week/{startDate}", aPreviousMonday.toString()))
+            .perform(get("/api/points/by-week/{startDate}", aPreviousMonday.toString()))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.week").value(aPreviousMonday.toString()))
@@ -600,7 +609,7 @@ class PointsResourceIT {
     public void getPointsOnSunday() throws Exception {
         LocalDate today = LocalDate.now();
         LocalDate sunday = today.with(DayOfWeek.SUNDAY);
-        User user = userRepository.findOneByLogin("user").get();
+        User user = userRepository.findOneByLogin("user").orElseGet(this::createUser);
         points = new Points(sunday, 1, 1, 0, user);
         pointsRepository.saveAndFlush(points);
 
@@ -613,7 +622,7 @@ class PointsResourceIT {
 
         // Get the points for this week only
         restPointsMockMvc
-            .perform(get("/api/points-this-week"))
+            .perform(get("/api/points/this-week"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.week").value(sunday.with(DayOfWeek.MONDAY).toString()))
@@ -650,7 +659,7 @@ class PointsResourceIT {
         }
 
         restPointsMockMvc
-            .perform(get("/api/points-by-month/{yearWithMonth}", startDate))
+            .perform(get("/api/points/by-month/{yearWithMonth}", startDate))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
