@@ -3,15 +3,13 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { PreferencesFormService } from './preferences-form.service';
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/service/user.service';
 import { PreferencesService } from '../service/preferences.service';
 import { IPreferences } from '../preferences.model';
-
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { PreferencesFormService } from './preferences-form.service';
 
 import { PreferencesUpdateComponent } from './preferences-update.component';
 
@@ -25,8 +23,7 @@ describe('Preferences Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [PreferencesUpdateComponent],
+      imports: [HttpClientTestingModule, PreferencesUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -52,10 +49,10 @@ describe('Preferences Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call User query and add missing value', () => {
       const preferences: IPreferences = { id: 456 };
-      const user: IUser = { id: 76797 };
+      const user: IUser = { id: 15163 };
       preferences.user = user;
 
-      const userCollection: IUser[] = [{ id: 99188 }];
+      const userCollection: IUser[] = [{ id: 24024 }];
       jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
       const additionalUsers = [user];
       const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
@@ -67,14 +64,14 @@ describe('Preferences Management Update Component', () => {
       expect(userService.query).toHaveBeenCalled();
       expect(userService.addUserToCollectionIfMissing).toHaveBeenCalledWith(
         userCollection,
-        ...additionalUsers.map(expect.objectContaining)
+        ...additionalUsers.map(expect.objectContaining),
       );
       expect(comp.usersSharedCollection).toEqual(expectedCollection);
     });
 
     it('Should update editForm', () => {
       const preferences: IPreferences = { id: 456 };
-      const user: IUser = { id: 79175 };
+      const user: IUser = { id: 3932 };
       preferences.user = user;
 
       activatedRoute.data = of({ preferences });

@@ -1,8 +1,8 @@
 package org.jhipster.health.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.DayOfWeek;
@@ -12,10 +12,6 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.jhipster.health.domain.Points;
 import org.jhipster.health.repository.PointsRepository;
 import org.jhipster.health.repository.UserRepository;
@@ -23,6 +19,7 @@ import org.jhipster.health.repository.search.PointsSearchRepository;
 import org.jhipster.health.security.AuthoritiesConstants;
 import org.jhipster.health.security.SecurityUtils;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+import org.jhipster.health.web.rest.errors.ElasticsearchExceptionMapper;
 import org.jhipster.health.web.rest.vm.PointsPerMonth;
 import org.jhipster.health.web.rest.vm.PointsPerWeek;
 import org.slf4j.Logger;
@@ -45,7 +42,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link org.jhipster.health.domain.Points}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/points")
 @Transactional
 public class PointsResource {
 
@@ -75,7 +72,7 @@ public class PointsResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new points, or with status {@code 400 (Bad Request)} if the points has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/points")
+    @PostMapping("")
     public ResponseEntity<Points> createPoints(@Valid @RequestBody Points points) throws URISyntaxException {
         log.debug("REST request to save Points : {}", points);
         if (points.getId() != null) {
@@ -85,12 +82,11 @@ public class PointsResource {
             log.debug("No user passed in, using current user: {}", SecurityUtils.getCurrentUserLogin().orElse(""));
             points.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().orElse("")).orElse(null));
         }
-        Points result = pointsRepository.save(points);
-        pointsSearchRepository.index(result);
-        return ResponseEntity
-            .created(new URI("/api/points/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        points = pointsRepository.save(points);
+        pointsSearchRepository.index(points);
+        return ResponseEntity.created(new URI("/api/points/" + points.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, points.getId().toString()))
+            .body(points);
     }
 
     /**
@@ -103,7 +99,7 @@ public class PointsResource {
      * or with status {@code 500 (Internal Server Error)} if the points couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/points/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updatePoints(@PathVariable(value = "id", required = false) final Long id, @Valid @RequestBody Points points)
         throws URISyntaxException {
         log.debug("REST request to update Points : {}, {}", id, points);
@@ -124,12 +120,11 @@ public class PointsResource {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
 
-        Points result = pointsRepository.save(points);
-        pointsSearchRepository.index(result);
-        return ResponseEntity
-            .ok()
+        points = pointsRepository.save(points);
+        pointsSearchRepository.index(points);
+        return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, points.getId().toString()))
-            .body(result);
+            .body(points);
     }
 
     /**
@@ -143,7 +138,7 @@ public class PointsResource {
      * or with status {@code 500 (Internal Server Error)} if the points couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/points/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<?> partialUpdatePoints(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Points points
@@ -189,8 +184,7 @@ public class PointsResource {
             })
             .map(pointsRepository::save)
             .map(savedPoints -> {
-                pointsSearchRepository.save(savedPoints);
-
+                pointsSearchRepository.index(savedPoints);
                 return savedPoints;
             });
 
@@ -207,15 +201,19 @@ public class PointsResource {
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of points in body.
      */
-    @GetMapping("/points")
+    @GetMapping("")
     public ResponseEntity<List<Points>> getAllPoints(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
     ) {
         log.debug("REST request to get a page of Points");
         Page<Points> page;
         if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            page = pointsRepository.findAllByOrderByDateDesc(pageable);
+            if (eagerload) {
+                page = pointsRepository.findAllWithEagerRelationships(pageable);
+            } else {
+                page = pointsRepository.findAll(pageable);
+            }
         } else {
             page = pointsRepository.findByUserIsCurrentUser(pageable);
         }
@@ -229,8 +227,8 @@ public class PointsResource {
      * @param id the id of the points to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the points, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/points/{id}")
-    public ResponseEntity<?> getPoints(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPoints(@PathVariable("id") Long id) {
         log.debug("REST request to get Points : {}", id);
         Optional<Points> points = pointsRepository.findOneWithEagerRelationships(id);
         if (
@@ -250,8 +248,8 @@ public class PointsResource {
      * @param id the id of the points to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/points/{id}")
-    public ResponseEntity<?> deletePoints(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePoints(@PathVariable("id") Long id) {
         log.debug("REST request to delete Points : {}", id);
         Optional<Points> points = pointsRepository.findById(id);
         if (
@@ -263,42 +261,50 @@ public class PointsResource {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         pointsRepository.deleteById(id);
-        pointsSearchRepository.deleteById(id);
-        return ResponseEntity
-            .noContent()
+        pointsSearchRepository.deleteFromIndexById(id);
+        return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
 
     /**
-     * {@code SEARCH  /_search/points?query=:query} : search for the points corresponding
+     * {@code SEARCH  /points/_search?query=:query} : search for the points corresponding
      * to the query.
      *
      * @param query the query of the points search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */
-    @GetMapping("/_search/points")
+    @GetMapping("/_search")
     public ResponseEntity<List<Points>> searchPoints(
-        @RequestParam String query,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         log.debug("REST request to search for a page of Points for query {}", query);
-        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(queryStringQuery(query));
         if (SecurityUtils.isAuthenticated() && !SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            queryBuilder = queryBuilder.filter(matchQuery("user.login", SecurityUtils.getCurrentUserLogin().orElse("")));
+            QueryVariant filterByUser = new MatchQuery.Builder()
+                .field("user.login")
+                .query(SecurityUtils.getCurrentUserLogin().orElse(""))
+                .build();
+            BoolQuery.Builder boolQueryBuilder = QueryBuilders.bool();
+            boolQueryBuilder.should(new Query(filterByUser));
+            query = new Query(boolQueryBuilder.build()).toString();
         }
-        Page<Points> page = pointsSearchRepository.search(queryBuilder, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        try {
+            Page<Points> page = pointsSearchRepository.search(query, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 
     /**
-     * {@code GET  /points-by-week/yyyy-MM-dd} : get all the points for a particular week.
+     * {@code GET  /points/by-week/yyyy-MM-dd} : get all the points for a particular week.
      *
      * @param date a date in a week to find points for.
      */
-    @GetMapping("/points-by-week/{date}")
+    @GetMapping("/by-week/{date}")
     public ResponseEntity<PointsPerWeek> getPointsByWeek(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         // Get first and last days of week
         LocalDate startOfWeek = date.with(DayOfWeek.MONDAY);
@@ -312,11 +318,11 @@ public class PointsResource {
     }
 
     /**
-     * {@code GET  /points-by-month} : get all the points for a particular current month.
+     * {@code GET  /points/by-month} : get all the points for a particular current month.
      *
      * @param yearWithMonth the year and month to find points for.
      */
-    @GetMapping("/points-by-month/{yearWithMonth}")
+    @GetMapping("/by-month/{yearWithMonth}")
     public ResponseEntity<PointsPerMonth> getPointsByMonth(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearWithMonth) {
         // Get last day of the month
         LocalDate endOfMonth = yearWithMonth.atEndOfMonth();
@@ -330,12 +336,12 @@ public class PointsResource {
     }
 
     /**
-     * {@code GET  /points-this-week} : get all the points for the current week
+     * {@code GET  /points/this-week} : get all the points for the current week
      *
      * @param timezone the user's timezone
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a count of points in body.
      */
-    @GetMapping("/points-this-week")
+    @GetMapping("/this-week")
     public ResponseEntity<PointsPerWeek> getPointsThisWeek(@RequestParam(value = "tz", required = false) String timezone) {
         // Get current date (with timezone if passed in)
         LocalDate now = LocalDate.now();

@@ -1,33 +1,28 @@
 <div class="d-flex justify-content-center">
   <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-points-heading"
-        data-cy="PointsCreateUpdateHeading"
-        jhiTranslate="twentyOnePointsApp.points.home.createOrEditLabel"
-        *ngIf="editForm.controls.id.value"
-      >
-        Create or edit a Points
-      </h2>
-      <h2
-        id="jhi-points-heading"
-        data-cy="PointsCreateUpdateHeading"
-        jhiTranslate="twentyOnePointsApp.points.home.createLabel"
-        *ngIf="!editForm.controls.id.value"
-      >
-        Add Points
-      </h2>
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      @if (editForm.controls.id.value) {
+        <h2 id="jhi-points-heading" data-cy="PointsCreateUpdateHeading" jhiTranslate="twentyOnePointsApp.points.home.createOrEditLabel">
+          Create or edit a Points
+        </h2>
+      } @else {
+        <h2 id="jhi-points-heading" data-cy="PointsCreateUpdateHeading" jhiTranslate="twentyOnePointsApp.points.home.createLabel">
+          Add Points
+        </h2>
+      }
 
       <div>
         <jhi-alert-error></jhi-alert-error>
 
-        <div class="mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="twentyOnePointsApp.points.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
 
         <div class="mb-3">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.date" for="field_date">Date</label>
+          <label class="form-label" for="field_date" jhiTranslate="twentyOnePointsApp.points.date">Date</label>
           <div class="input-group">
             <input
               id="field_date"
@@ -41,11 +36,13 @@
             />
             <button type="button" class="btn btn-secondary" (click)="dateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
           </div>
-          <div *ngIf="editForm.get('date')!.invalid && (editForm.get('date')!.dirty || editForm.get('date')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('date')?.errors?.required" jhiTranslate="entity.validation.required">
-              This field is required.
-            </small>
-          </div>
+          @if (editForm.get('date')!.invalid && (editForm.get('date')!.dirty || editForm.get('date')!.touched)) {
+            <div>
+              @if (editForm.get('date')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
         </div>
 
         <div class="form-check">
@@ -71,33 +68,26 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.notes" for="field_notes">Notes</label>
-          <textarea
-            class="form-control"
-            name="notes"
-            id="field_notes"
-            data-cy="notes"
-            formControlName="notes"
-            maxlength="140"
-            rows="3"
-          ></textarea>
-          <div *ngIf="editForm.get('notes')!.invalid && (editForm.get('notes')!.dirty || editForm.get('notes')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('notes')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 140 }"
-            >
-              This field cannot be longer than 140 characters.
-            </small>
-          </div>
+          <label class="form-label" for="field_notes" jhiTranslate="twentyOnePointsApp.points.notes">Notes</label>
+          <input type="text" class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes" />
+          @if (editForm.get('notes')!.invalid && (editForm.get('notes')!.dirty || editForm.get('notes')!.touched)) {
+            <div>
+              @if (editForm.get('notes')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '140' }"
+                  >This field cannot be longer than 140 characters.</small
+                >
+              }
+            </div>
+          }
         </div>
 
         <div class="form-group" *jhiHasAnyAuthority="'ROLE_ADMIN'">
-          <label class="form-label" jhiTranslate="twentyOnePointsApp.points.user" for="field_user">User</label>
+          <label class="form-label" for="field_user" jhiTranslate="twentyOnePointsApp.points.user">User</label>
           <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
             <option [ngValue]="null"></option>
-            <option [ngValue]="userOption" *ngFor="let userOption of usersSharedCollection">{{ userOption.login }}</option>
+            @for (userOption of usersSharedCollection; track $index) {
+              <option [ngValue]="userOption">{{ userOption.login }}</option>
+            }
           </select>
         </div>
       </div>

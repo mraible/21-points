@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 import { PointsService } from '../entities/points/service/points.service';
@@ -14,16 +15,19 @@ import { IBloodPressure, IBloodPressureByPeriod } from '../entities/blood-pressu
 import { WeightService } from '../entities/weight/service/weight.service';
 import { IWeight, IWeightByPeriod } from '../entities/weight/weight.model';
 
+import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import dayjs from 'dayjs/esm';
 
 @Component({
+  standalone: true,
   selector: 'jhi-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  styleUrl: './home.component.scss',
+  imports: [SharedModule, RouterModule, BaseChartDirective],
 })
-export class HomeComponent implements OnInit, OnDestroy {
-  account: Account | null = null;
+export default class HomeComponent implements OnInit, OnDestroy {
+  account = signal<Account | null>(null);
   pointsThisWeek: IPointsPerWeek = { points: 0 };
   pointsPercentage?: number;
   preferences!: IPreferences;
@@ -36,21 +40,19 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
 
-  constructor(
-    private accountService: AccountService,
-    private router: Router,
-    private pointsService: PointsService,
-    private preferencesService: PreferencesService,
-    private bloodPressureService: BloodPressureService,
-    private weightService: WeightService
-  ) {}
+  private accountService = inject(AccountService);
+  private router = inject(Router);
+  private pointsService = inject(PointsService);
+  private preferencesService = inject(PreferencesService);
+  private bloodPressureService = inject(BloodPressureService);
+  private weightService = inject(WeightService);
 
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => {
-        this.account = account;
+        this.account.set(account);
         this.getUserData();
       });
   }
@@ -61,7 +63,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.preferences = preferences.body;
 
       // Get points for the current week
-      this.pointsService.thisWeek().subscribe(response => {
+      this.pointsService.thisWeek().subscribe((response: any) => {
         if (response.body) {
           this.pointsThisWeek = response.body;
           this.pointsPercentage = (this.pointsThisWeek.points / 21) * 100;

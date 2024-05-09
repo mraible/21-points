@@ -15,7 +15,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface BloodPressureRepository extends JpaRepository<BloodPressure, Long> {
-    @Query("select bloodPressure from BloodPressure bloodPressure where bloodPressure.user.login = ?#{principal.username}")
+    @Query(
+        "select bloodPressure from BloodPressure bloodPressure left join fetch bloodPressure.user where bloodPressure.user.login = ?#{authentication.name}"
+    )
     Page<BloodPressure> findByUserIsCurrentUser(Pageable pageable);
 
     default Optional<BloodPressure> findOneWithEagerRelationships(Long id) {
@@ -31,12 +33,12 @@ public interface BloodPressureRepository extends JpaRepository<BloodPressure, Lo
     }
 
     @Query(
-        value = "select distinct bloodPressure from BloodPressure bloodPressure left join fetch bloodPressure.user",
-        countQuery = "select count(distinct bloodPressure) from BloodPressure bloodPressure"
+        value = "select bloodPressure from BloodPressure bloodPressure left join fetch bloodPressure.user",
+        countQuery = "select count(bloodPressure) from BloodPressure bloodPressure"
     )
     Page<BloodPressure> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select distinct bloodPressure from BloodPressure bloodPressure left join fetch bloodPressure.user")
+    @Query("select bloodPressure from BloodPressure bloodPressure left join fetch bloodPressure.user")
     List<BloodPressure> findAllWithToOneRelationships();
 
     @Query("select bloodPressure from BloodPressure bloodPressure left join fetch bloodPressure.user where bloodPressure.id =:id")
@@ -47,8 +49,6 @@ public interface BloodPressureRepository extends JpaRepository<BloodPressure, Lo
         ZonedDateTime secondDate,
         String login
     );
-
-    Page<BloodPressure> findAllByOrderByTimestampDesc(Pageable pageable);
 
     List<BloodPressure> findAllByTimestampBetweenAndUserLoginOrderByTimestampDesc(
         ZonedDateTime atStartOfDay,

@@ -3,19 +3,19 @@ package org.jhipster.health.web.rest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
+import static org.jhipster.health.domain.PreferencesAsserts.*;
+import static org.jhipster.health.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Stream;
-import javax.persistence.EntityManager;
-import org.apache.commons.collections4.IterableUtils;
 import org.assertj.core.util.IterableUtil;
 import org.jhipster.health.IntegrationTest;
 import org.jhipster.health.domain.Preferences;
@@ -32,8 +32,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,10 +56,13 @@ class PreferencesResourceIT {
 
     private static final String ENTITY_API_URL = "/api/preferences";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/_search/preferences";
+    private static final String ENTITY_SEARCH_API_URL = "/api/preferences/_search";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private PreferencesRepository preferencesRepository;
@@ -114,25 +117,29 @@ class PreferencesResourceIT {
     @Test
     @Transactional
     void createPreferences() throws Exception {
-        int databaseSizeBeforeCreate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         // Create the Preferences
-        restPreferencesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(preferences)))
-            .andExpect(status().isCreated());
+        var returnedPreferences = om.readValue(
+            restPreferencesMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(preferences)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Preferences.class
+        );
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeCreate + 1);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertPreferencesUpdatableFieldsEquals(returnedPreferences, getPersistedPreferences(returnedPreferences));
+
         await()
             .atMost(5, TimeUnit.SECONDS)
             .untilAsserted(() -> {
                 int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
                 assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
             });
-        Preferences testPreferences = preferencesList.get(preferencesList.size() - 1);
-        assertThat(testPreferences.getWeeklyGoal()).isEqualTo(DEFAULT_WEEKLY_GOAL);
-        assertThat(testPreferences.getWeightUnits()).isEqualTo(DEFAULT_WEIGHT_UNITS);
     }
 
     @Test
@@ -141,17 +148,16 @@ class PreferencesResourceIT {
         // Create the Preferences with an existing ID
         preferences.setId(1L);
 
-        int databaseSizeBeforeCreate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPreferencesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(preferences)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(preferences)))
             .andExpect(status().isBadRequest());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -159,7 +165,7 @@ class PreferencesResourceIT {
     @Test
     @Transactional
     void checkWeeklyGoalIsRequired() throws Exception {
-        int databaseSizeBeforeTest = preferencesRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         // set the field null
         preferences.setWeeklyGoal(null);
@@ -167,11 +173,11 @@ class PreferencesResourceIT {
         // Create the Preferences, which fails.
 
         restPreferencesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(preferences)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(preferences)))
             .andExpect(status().isBadRequest());
 
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -179,7 +185,7 @@ class PreferencesResourceIT {
     @Test
     @Transactional
     void checkWeightUnitsIsRequired() throws Exception {
-        int databaseSizeBeforeTest = preferencesRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         // set the field null
         preferences.setWeightUnits(null);
@@ -187,11 +193,11 @@ class PreferencesResourceIT {
         // Create the Preferences, which fails.
 
         restPreferencesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(preferences)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(preferences)))
             .andExpect(status().isBadRequest());
 
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -259,12 +265,12 @@ class PreferencesResourceIT {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
 
-        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         preferencesSearchRepository.save(preferences);
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
 
         // Update the preferences
-        Preferences updatedPreferences = preferencesRepository.findById(preferences.getId()).get();
+        Preferences updatedPreferences = preferencesRepository.findById(preferences.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedPreferences are not directly saved in db
         em.detach(updatedPreferences);
         updatedPreferences.weeklyGoal(UPDATED_WEEKLY_GOAL).weightUnits(UPDATED_WEIGHT_UNITS);
@@ -273,47 +279,44 @@ class PreferencesResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, updatedPreferences.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedPreferences))
+                    .content(om.writeValueAsBytes(updatedPreferences))
             )
             .andExpect(status().isOk());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
-        Preferences testPreferences = preferencesList.get(preferencesList.size() - 1);
-        assertThat(testPreferences.getWeeklyGoal()).isEqualTo(UPDATED_WEEKLY_GOAL);
-        assertThat(testPreferences.getWeightUnits()).isEqualTo(UPDATED_WEIGHT_UNITS);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedPreferencesToMatchAllProperties(updatedPreferences);
+
         await()
             .atMost(5, TimeUnit.SECONDS)
             .untilAsserted(() -> {
                 int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
                 assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-                List<Preferences> preferencesSearchList = IterableUtils.toList(preferencesSearchRepository.findAll());
+                List<Preferences> preferencesSearchList = Streamable.of(preferencesSearchRepository.findAll()).toList();
                 Preferences testPreferencesSearch = preferencesSearchList.get(searchDatabaseSizeAfter - 1);
-                assertThat(testPreferencesSearch.getWeeklyGoal()).isEqualTo(UPDATED_WEEKLY_GOAL);
-                assertThat(testPreferencesSearch.getWeightUnits()).isEqualTo(UPDATED_WEIGHT_UNITS);
+
+                assertPreferencesAllPropertiesEquals(testPreferencesSearch, updatedPreferences);
             });
     }
 
     @Test
     @Transactional
     void putNonExistingPreferences() throws Exception {
-        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
-        preferences.setId(count.incrementAndGet());
+        preferences.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPreferencesMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, preferences.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(preferences))
+                    .content(om.writeValueAsBytes(preferences))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -321,22 +324,21 @@ class PreferencesResourceIT {
     @Test
     @Transactional
     void putWithIdMismatchPreferences() throws Exception {
-        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
-        preferences.setId(count.incrementAndGet());
+        preferences.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPreferencesMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(preferences))
+                    .content(om.writeValueAsBytes(preferences))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -344,18 +346,17 @@ class PreferencesResourceIT {
     @Test
     @Transactional
     void putWithMissingIdPathParamPreferences() throws Exception {
-        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
-        preferences.setId(count.incrementAndGet());
+        preferences.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPreferencesMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(preferences)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(preferences)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -366,7 +367,7 @@ class PreferencesResourceIT {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
 
-        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the preferences using partial update
         Preferences partialUpdatedPreferences = new Preferences();
@@ -378,16 +379,17 @@ class PreferencesResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedPreferences.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedPreferences))
+                    .content(om.writeValueAsBytes(partialUpdatedPreferences))
             )
             .andExpect(status().isOk());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
-        Preferences testPreferences = preferencesList.get(preferencesList.size() - 1);
-        assertThat(testPreferences.getWeeklyGoal()).isEqualTo(DEFAULT_WEEKLY_GOAL);
-        assertThat(testPreferences.getWeightUnits()).isEqualTo(UPDATED_WEIGHT_UNITS);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPreferencesUpdatableFieldsEquals(
+            createUpdateProxyForBean(partialUpdatedPreferences, preferences),
+            getPersistedPreferences(preferences)
+        );
     }
 
     @Test
@@ -396,7 +398,7 @@ class PreferencesResourceIT {
         // Initialize the database
         preferencesRepository.saveAndFlush(preferences);
 
-        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the preferences using partial update
         Preferences partialUpdatedPreferences = new Preferences();
@@ -408,37 +410,34 @@ class PreferencesResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedPreferences.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedPreferences))
+                    .content(om.writeValueAsBytes(partialUpdatedPreferences))
             )
             .andExpect(status().isOk());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
-        Preferences testPreferences = preferencesList.get(preferencesList.size() - 1);
-        assertThat(testPreferences.getWeeklyGoal()).isEqualTo(UPDATED_WEEKLY_GOAL);
-        assertThat(testPreferences.getWeightUnits()).isEqualTo(UPDATED_WEIGHT_UNITS);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPreferencesUpdatableFieldsEquals(partialUpdatedPreferences, getPersistedPreferences(partialUpdatedPreferences));
     }
 
     @Test
     @Transactional
     void patchNonExistingPreferences() throws Exception {
-        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
-        preferences.setId(count.incrementAndGet());
+        preferences.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPreferencesMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, preferences.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(preferences))
+                    .content(om.writeValueAsBytes(preferences))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -446,22 +445,21 @@ class PreferencesResourceIT {
     @Test
     @Transactional
     void patchWithIdMismatchPreferences() throws Exception {
-        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
-        preferences.setId(count.incrementAndGet());
+        preferences.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPreferencesMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(preferences))
+                    .content(om.writeValueAsBytes(preferences))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -469,20 +467,17 @@ class PreferencesResourceIT {
     @Test
     @Transactional
     void patchWithMissingIdPathParamPreferences() throws Exception {
-        int databaseSizeBeforeUpdate = preferencesRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
-        preferences.setId(count.incrementAndGet());
+        preferences.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPreferencesMockMvc
-            .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(preferences))
-            )
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(preferences)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Preferences in the database
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -495,7 +490,7 @@ class PreferencesResourceIT {
         preferencesRepository.save(preferences);
         preferencesSearchRepository.save(preferences);
 
-        int databaseSizeBeforeDelete = preferencesRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
@@ -505,8 +500,7 @@ class PreferencesResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Preferences> preferencesList = preferencesRepository.findAll();
-        assertThat(preferencesList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(preferencesSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
     }
@@ -527,5 +521,33 @@ class PreferencesResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(preferences.getId().intValue())))
             .andExpect(jsonPath("$.[*].weeklyGoal").value(hasItem(DEFAULT_WEEKLY_GOAL)))
             .andExpect(jsonPath("$.[*].weightUnits").value(hasItem(DEFAULT_WEIGHT_UNITS.toString())));
+    }
+
+    protected long getRepositoryCount() {
+        return preferencesRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Preferences getPersistedPreferences(Preferences preferences) {
+        return preferencesRepository.findById(preferences.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedPreferencesToMatchAllProperties(Preferences expectedPreferences) {
+        assertPreferencesAllPropertiesEquals(expectedPreferences, getPersistedPreferences(expectedPreferences));
+    }
+
+    protected void assertPersistedPreferencesToMatchUpdatableProperties(Preferences expectedPreferences) {
+        assertPreferencesAllUpdatablePropertiesEquals(expectedPreferences, getPersistedPreferences(expectedPreferences));
     }
 }

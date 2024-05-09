@@ -4,7 +4,7 @@ import { Units } from 'app/entities/enumerations/units.model';
 export interface IPreferences {
   id: number;
   weeklyGoal?: number | null;
-  weightUnits?: Units | null;
+  weightUnits?: keyof typeof Units | null;
   user?: Pick<IUser, 'id' | 'login'> | null;
 }
 

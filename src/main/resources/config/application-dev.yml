@@ -37,7 +37,7 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:file:./build/h2db/db/twentyonepoints;DB_CLOSE_DELAY=-1;MODE=LEGACY
+    url: jdbc:h2:file:./build/h2db/db/TwentyOnePoints;DB_CLOSE_DELAY=-1
     username: TwentyOnePoints
     password:
     hikari:
@@ -47,7 +47,6 @@ spring:
     console:
       # disable spring boot built-in h2-console since we start it manually with correct configuration
       enabled: false
-  jpa:
   elasticsearch:
     uris: http://localhost:9200
   liquibase:
@@ -104,7 +103,7 @@ jhipster:
       enabled: false
       host: localhost
       port: 5000
-      queue-size: 512
+      ring-buffer-size: 512
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

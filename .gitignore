@@ -1,12 +1,4 @@
 ######################
-# Project Specific
-######################
-/src/main/webapp/content/css/main.css
-/build/resources/main/static/**
-/src/test/javascript/coverage/
-/src/main/generated/
-
-######################
 # Node
 ######################
 /node/
@@ -38,7 +30,6 @@ local.properties
 .settings/
 .loadpath
 .factorypath
-/src/main/resources/rebel.xml
 
 # External tool builders
 .externalToolBuilders/**
@@ -88,6 +79,8 @@ out/
 ######################
 .gradle/
 /build/
+/buildSrc/.gradle/
+/buildSrc/build/
 
 ######################
 # Package Files

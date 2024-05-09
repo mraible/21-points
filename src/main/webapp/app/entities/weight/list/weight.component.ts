@@ -1,64 +1,86 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, NgZone, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
-import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
-import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
+import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
+import { combineLatest, filter, Observable, Subscription, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { IWeight } from '../weight.model';
+import SharedModule from 'app/shared/shared.module';
+import { sortStateSignal, SortDirective, SortByDirective, type SortState, SortService } from 'app/shared/sort';
+import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
+import { FormsModule } from '@angular/forms';
 
 import { ITEMS_PER_PAGE } from 'app/config/pagination.constants';
-import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { ParseLinks } from 'app/core/util/parse-links.service';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { EntityArrayResponseType, WeightService } from '../service/weight.service';
 import { WeightDeleteDialogComponent } from '../delete/weight-delete-dialog.component';
-import { ParseLinks } from 'app/core/util/parse-links.service';
+import { IWeight } from '../weight.model';
 
 @Component({
+  standalone: true,
   selector: 'jhi-weight',
   templateUrl: './weight.component.html',
+  imports: [
+    RouterModule,
+    FormsModule,
+    SharedModule,
+    SortDirective,
+    SortByDirective,
+    DurationPipe,
+    FormatMediumDatetimePipe,
+    FormatMediumDatePipe,
+    InfiniteScrollModule,
+  ],
 })
 export class WeightComponent implements OnInit {
+  subscription: Subscription | null = null;
   weights?: IWeight[];
   isLoading = false;
 
-  predicate = 'id';
-  ascending = true;
+  sortState = sortStateSignal({});
   currentSearch = '';
 
   itemsPerPage = ITEMS_PER_PAGE;
-  links: { [key: string]: number } = {
-    last: 0,
-  };
-  page = 1;
+  links: WritableSignal<{ [key: string]: undefined | { [key: string]: string | undefined } }> = signal({});
+  hasMorePage = computed(() => !!this.links().next);
+  isFirstFetch = computed(() => Object.keys(this.links()).length === 0);
 
-  constructor(
-    protected weightService: WeightService,
-    protected activatedRoute: ActivatedRoute,
-    public router: Router,
-    protected parseLinks: ParseLinks,
-    protected modalService: NgbModal
-  ) {}
-
-  reset(): void {
-    this.page = 1;
-    this.weights = [];
-    this.load();
-  }
-
-  loadPage(page: number): void {
-    this.page = page;
-    this.load();
-  }
+  public router = inject(Router);
+  protected weightService = inject(WeightService);
+  protected activatedRoute = inject(ActivatedRoute);
+  protected sortService = inject(SortService);
+  protected parseLinks = inject(ParseLinks);
+  protected modalService = inject(NgbModal);
+  protected ngZone = inject(NgZone);
 
   trackId = (_index: number, item: IWeight): number => this.weightService.getWeightIdentifier(item);
 
-  search(query: string): void {
-    this.page = 1;
-    this.currentSearch = query;
-    this.navigateToWithComponentValues();
+  ngOnInit(): void {
+    this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
+      .pipe(
+        tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
+        tap(() => this.reset()),
+        tap(() => this.load()),
+      )
+      .subscribe();
   }
 
-  ngOnInit(): void {
+  reset(): void {
+    this.weights = [];
+  }
+
+  loadNextPage(): void {
     this.load();
+  }
+
+  search(query: string): void {
+    this.currentSearch = query;
+    this.navigateToWithComponentValues(this.sortState());
+  }
+
+  loadDefaultSortState(): void {
+    this.sortState.set(this.sortService.parseSortParam(this.activatedRoute.snapshot.data[DEFAULT_SORT_DATA]));
   }
 
   delete(weight: IWeight): void {
@@ -68,42 +90,25 @@ export class WeightComponent implements OnInit {
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
-        switchMap(() => this.loadFromBackendWithRouteInformations())
+        tap(() => this.load()),
       )
-      .subscribe({
-        next: (res: EntityArrayResponseType) => {
-          this.onResponseSuccess(res);
-        },
-      });
+      .subscribe();
   }
 
   load(): void {
-    this.loadFromBackendWithRouteInformations().subscribe({
+    this.queryBackend().subscribe({
       next: (res: EntityArrayResponseType) => {
         this.onResponseSuccess(res);
       },
     });
   }
 
-  navigateToWithComponentValues(): void {
-    this.handleNavigation(this.page, this.predicate, this.ascending, this.currentSearch);
-  }
-
-  navigateToPage(page = this.page): void {
-    this.handleNavigation(page, this.predicate, this.ascending, this.currentSearch);
-  }
-
-  protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
-    return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
-      tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending, this.currentSearch))
-    );
+  navigateToWithComponentValues(event: SortState): void {
+    this.handleNavigation(event, this.currentSearch);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
-    const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
-    this.predicate = sort[0];
-    this.ascending = sort[1] === ASC;
+    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
     if (params.has('search') && params.get('search') !== '') {
       this.currentSearch = params.get('search') as string;
     }
@@ -116,7 +121,8 @@ export class WeightComponent implements OnInit {
   }
 
   protected fillComponentAttributesFromResponseBody(data: IWeight[] | null): IWeight[] {
-    if ('prev' in this.links) {
+    // If there is previous link, data is a infinite scroll pagination content.
+    if (this.links().prev) {
       const weightsNew = this.weights ?? [];
       if (data) {
         for (const d of data) {
@@ -133,29 +139,27 @@ export class WeightComponent implements OnInit {
   protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {
     const linkHeader = headers.get('link');
     if (linkHeader) {
-      this.links = this.parseLinks.parse(linkHeader);
+      this.links.set(this.parseLinks.parseAll(linkHeader));
     } else {
-      this.links = {
-        last: 0,
-      };
+      this.links.set({});
     }
   }
 
-  protected queryBackend(
-    page?: number,
-    predicate?: string,
-    ascending?: boolean,
-    currentSearch?: string
-  ): Observable<EntityArrayResponseType> {
+  protected queryBackend(): Observable<EntityArrayResponseType> {
+    const { currentSearch } = this;
+
     this.isLoading = true;
-    const pageToLoad: number = page ?? 1;
     const queryObject: any = {
-      page: pageToLoad - 1,
       size: this.itemsPerPage,
       eagerload: true,
       query: currentSearch,
-      sort: this.getSortQueryParam(predicate, ascending),
     };
+    if (this.hasMorePage()) {
+      Object.assign(queryObject, this.links().next);
+    } else if (this.isFirstFetch()) {
+      Object.assign(queryObject, { sort: this.sortService.buildSortParam(this.sortState()) });
+    }
+
     if (this.currentSearch && this.currentSearch !== '') {
       return this.weightService.search(queryObject).pipe(tap(() => (this.isLoading = false)));
     } else {
@@ -163,26 +167,19 @@ export class WeightComponent implements OnInit {
     }
   }
 
-  protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean, currentSearch?: string): void {
+  protected handleNavigation(sortState: SortState, currentSearch?: string): void {
+    this.links.set({});
+
     const queryParamsObj = {
       search: currentSearch,
-      page,
-      size: this.itemsPerPage,
-      sort: this.getSortQueryParam(predicate, ascending),
+      sort: this.sortService.buildSortParam(sortState),
     };
 
-    this.router.navigate(['./'], {
-      relativeTo: this.activatedRoute,
-      queryParams: queryParamsObj,
+    this.ngZone.run(() => {
+      this.router.navigate(['./'], {
+        relativeTo: this.activatedRoute,
+        queryParams: queryParamsObj,
+      });
     });
-  }
-
-  protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {
-    const ascendingQueryParam = ascending ? ASC : DESC;
-    if (predicate === '') {
-      return [];
-    } else {
-      return [predicate + ',' + ascendingQueryParam];
-    }
   }
 }

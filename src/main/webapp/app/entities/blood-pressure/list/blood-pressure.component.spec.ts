@@ -1,10 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, inject, tick } from '@angular/core/testing';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { sampleWithRequiredData } from '../blood-pressure.test-samples';
 import { BloodPressureService } from '../service/blood-pressure.service';
 
 import { BloodPressureComponent } from './blood-pressure.component';
@@ -18,8 +19,7 @@ describe('BloodPressure Management Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([{ path: 'blood-pressure', component: BloodPressureComponent }]), HttpClientTestingModule],
-      declarations: [BloodPressureComponent],
+      imports: [HttpClientTestingModule, BloodPressureComponent],
       providers: [
         {
           provide: ActivatedRoute,
@@ -32,9 +32,16 @@ describe('BloodPressure Management Component', () => {
                 page: '1',
                 size: '1',
                 sort: 'id,desc',
-              })
+              }),
             ),
-            snapshot: { queryParams: {} },
+            snapshot: {
+              queryParams: {},
+              queryParamMap: jest.requireActual('@angular/router').convertToParamMap({
+                page: '1',
+                size: '1',
+                sort: 'id,desc',
+              }),
+            },
           },
         },
       ],
@@ -47,15 +54,28 @@ describe('BloodPressure Management Component', () => {
     service = TestBed.inject(BloodPressureService);
     routerNavigateSpy = jest.spyOn(comp.router, 'navigate');
 
-    const headers = new HttpHeaders();
-    jest.spyOn(service, 'query').mockReturnValue(
-      of(
-        new HttpResponse({
-          body: [{ id: 123 }],
-          headers,
-        })
+    jest
+      .spyOn(service, 'query')
+      .mockReturnValueOnce(
+        of(
+          new HttpResponse({
+            body: [{ id: 123 }],
+            headers: new HttpHeaders({
+              link: '<http://localhost/api/foo?page=1&size=20>; rel="next"',
+            }),
+          }),
+        ),
       )
-    );
+      .mockReturnValueOnce(
+        of(
+          new HttpResponse({
+            body: [{ id: 456 }],
+            headers: new HttpHeaders({
+              link: '<http://localhost/api/foo?page=0&size=20>; rel="prev",<http://localhost/api/foo?page=2&size=20>; rel="next"',
+            }),
+          }),
+        ),
+      );
   });
 
   it('Should call load all on init', () => {
@@ -77,12 +97,19 @@ describe('BloodPressure Management Component', () => {
     });
   });
 
-  it('should load a page', () => {
+  it('should calculate the sort attribute for a non-id attribute', () => {
     // WHEN
-    comp.navigateToPage(1);
+    comp.navigateToWithComponentValues({ predicate: 'non-existing-column', order: 'asc' });
 
     // THEN
-    expect(routerNavigateSpy).toHaveBeenCalled();
+    expect(routerNavigateSpy).toHaveBeenLastCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        queryParams: expect.objectContaining({
+          sort: ['non-existing-column,asc'],
+        }),
+      }),
+    );
   });
 
   it('should calculate the sort attribute for an id', () => {
@@ -93,32 +120,62 @@ describe('BloodPressure Management Component', () => {
     expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ sort: ['id,desc'] }));
   });
 
-  it('should calculate the sort attribute for a non-id attribute', () => {
+  it('should infinite scroll', () => {
     // GIVEN
-    comp.predicate = 'name';
-
-    // WHEN
-    comp.navigateToWithComponentValues();
+    comp.loadNextPage();
+    comp.loadNextPage();
+    comp.loadNextPage();
 
     // THEN
-    expect(routerNavigateSpy).toHaveBeenLastCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        queryParams: expect.objectContaining({
-          sort: ['name,asc'],
-        }),
-      })
-    );
+    expect(service.query).toHaveBeenCalledTimes(3);
+    expect(service.query).toHaveBeenNthCalledWith(2, expect.objectContaining({ page: '1' }));
+    expect(service.query).toHaveBeenLastCalledWith(expect.objectContaining({ page: '2' }));
   });
 
-  it('should re-initialize the page', () => {
-    // WHEN
-    comp.loadPage(1);
-    comp.reset();
+  describe('delete', () => {
+    let ngbModal: NgbModal;
+    let deleteModalMock: any;
 
-    // THEN
-    expect(comp.page).toEqual(1);
-    expect(service.query).toHaveBeenCalledTimes(2);
-    expect(comp.bloodPressures?.[0]).toEqual(expect.objectContaining({ id: 123 }));
+    beforeEach(() => {
+      deleteModalMock = { componentInstance: {}, closed: new Subject() };
+      // NgbModal is not a singleton using TestBed.inject.
+      // ngbModal = TestBed.inject(NgbModal);
+      ngbModal = (comp as any).modalService;
+      jest.spyOn(ngbModal, 'open').mockReturnValue(deleteModalMock);
+    });
+
+    it('on confirm should call load', inject(
+      [],
+      fakeAsync(() => {
+        // GIVEN
+        jest.spyOn(comp, 'load');
+
+        // WHEN
+        comp.delete(sampleWithRequiredData);
+        deleteModalMock.closed.next('deleted');
+        tick();
+
+        // THEN
+        expect(ngbModal.open).toHaveBeenCalled();
+        expect(comp.load).toHaveBeenCalled();
+      }),
+    ));
+
+    it('on dismiss should call load', inject(
+      [],
+      fakeAsync(() => {
+        // GIVEN
+        jest.spyOn(comp, 'load');
+
+        // WHEN
+        comp.delete(sampleWithRequiredData);
+        deleteModalMock.closed.next();
+        tick();
+
+        // THEN
+        expect(ngbModal.open).toHaveBeenCalled();
+        expect(comp.load).not.toHaveBeenCalled();
+      }),
+    ));
   });
 });

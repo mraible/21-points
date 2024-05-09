@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
+import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 import { LANGUAGES } from 'app/config/language.constants';
@@ -9,11 +10,13 @@ import { LANGUAGES } from 'app/config/language.constants';
 const initialAccount: Account = {} as Account;
 
 @Component({
+  standalone: true,
   selector: 'jhi-settings',
+  imports: [SharedModule, FormsModule, ReactiveFormsModule],
   templateUrl: './settings.component.html',
 })
-export class SettingsComponent implements OnInit {
-  success = false;
+export default class SettingsComponent implements OnInit {
+  success = signal(false);
   languages = LANGUAGES;
 
   settingsForm = new FormGroup({
@@ -37,7 +40,8 @@ export class SettingsComponent implements OnInit {
     login: new FormControl(initialAccount.login, { nonNullable: true }),
   });
 
-  constructor(private accountService: AccountService, private translateService: TranslateService) {}
+  private accountService = inject(AccountService);
+  private translateService = inject(TranslateService);
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => {
@@ -48,11 +52,11 @@ export class SettingsComponent implements OnInit {
   }
 
   save(): void {
-    this.success = false;
+    this.success.set(false);
 
     const account = this.settingsForm.getRawValue();
     this.accountService.save(account).subscribe(() => {
-      this.success = true;
+      this.success.set(true);
 
       this.accountService.authenticate(account);
 

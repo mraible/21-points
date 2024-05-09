@@ -8,7 +8,7 @@ import { of, throwError } from 'rxjs';
 
 import { AccountService } from 'app/core/auth/account.service';
 
-import { PasswordComponent } from './password.component';
+import PasswordComponent from './password.component';
 import { PasswordService } from './password.service';
 
 describe('PasswordComponent', () => {
@@ -18,8 +18,7 @@ describe('PasswordComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [PasswordComponent],
+      imports: [HttpClientTestingModule, PasswordComponent],
       providers: [FormBuilder, AccountService],
     })
       .overrideTemplate(PasswordComponent, '')
@@ -41,9 +40,9 @@ describe('PasswordComponent', () => {
     // WHEN
     comp.changePassword();
     // THEN
-    expect(comp.doNotMatch).toBe(true);
-    expect(comp.error).toBe(false);
-    expect(comp.success).toBe(false);
+    expect(comp.doNotMatch()).toBe(true);
+    expect(comp.error()).toBe(false);
+    expect(comp.success()).toBe(false);
   });
 
   it('should call Auth.changePassword when passwords match', () => {
@@ -80,9 +79,9 @@ describe('PasswordComponent', () => {
     comp.changePassword();
 
     // THEN
-    expect(comp.doNotMatch).toBe(false);
-    expect(comp.error).toBe(false);
-    expect(comp.success).toBe(true);
+    expect(comp.doNotMatch()).toBe(false);
+    expect(comp.error()).toBe(false);
+    expect(comp.success()).toBe(true);
   });
 
   it('should notify of error if change password fails', () => {
@@ -97,8 +96,8 @@ describe('PasswordComponent', () => {
     comp.changePassword();
 
     // THEN
-    expect(comp.doNotMatch).toBe(false);
-    expect(comp.success).toBe(false);
-    expect(comp.error).toBe(true);
+    expect(comp.doNotMatch()).toBe(false);
+    expect(comp.success()).toBe(false);
+    expect(comp.error()).toBe(true);
   });
 });

@@ -1,14 +1,12 @@
 package org.jhipster.health.security;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jhipster.health.domain.Authority;
 import org.jhipster.health.domain.User;
 import org.jhipster.health.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -53,12 +51,12 @@ public class DomainUserDetailsService implements UserDetailsService {
         if (!user.isActivated()) {
             throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
         }
-        List<GrantedAuthority> grantedAuthorities = user
+        List<SimpleGrantedAuthority> grantedAuthorities = user
             .getAuthorities()
             .stream()
             .map(Authority::getName)
             .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());
+            .toList();
         return new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(), grantedAuthorities);
     }
 }

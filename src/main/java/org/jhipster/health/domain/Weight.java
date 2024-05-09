@@ -1,9 +1,9 @@
 package org.jhipster.health.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -33,7 +33,7 @@ public class Weight implements Serializable {
     @Column(name = "weight", nullable = false)
     private Double weight;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -108,7 +108,7 @@ public class Weight implements Serializable {
         if (!(o instanceof Weight)) {
             return false;
         }
-        return id != null && id.equals(((Weight) o).id);
+        return getId() != null && getId().equals(((Weight) o).getId());
     }
 
     @Override

@@ -3,15 +3,13 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
-import { BloodPressureFormService } from './blood-pressure-form.service';
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/service/user.service';
 import { BloodPressureService } from '../service/blood-pressure.service';
 import { IBloodPressure } from '../blood-pressure.model';
-
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { BloodPressureFormService } from './blood-pressure-form.service';
 
 import { BloodPressureUpdateComponent } from './blood-pressure-update.component';
 
@@ -25,8 +23,7 @@ describe('BloodPressure Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [BloodPressureUpdateComponent],
+      imports: [HttpClientTestingModule, BloodPressureUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -52,10 +49,10 @@ describe('BloodPressure Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call User query and add missing value', () => {
       const bloodPressure: IBloodPressure = { id: 456 };
-      const user: IUser = { id: 3909 };
+      const user: IUser = { id: 7862 };
       bloodPressure.user = user;
 
-      const userCollection: IUser[] = [{ id: 46631 }];
+      const userCollection: IUser[] = [{ id: 30520 }];
       jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
       const additionalUsers = [user];
       const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
@@ -67,14 +64,14 @@ describe('BloodPressure Management Update Component', () => {
       expect(userService.query).toHaveBeenCalled();
       expect(userService.addUserToCollectionIfMissing).toHaveBeenCalledWith(
         userCollection,
-        ...additionalUsers.map(expect.objectContaining)
+        ...additionalUsers.map(expect.objectContaining),
       );
       expect(comp.usersSharedCollection).toEqual(expectedCollection);
     });
 
     it('Should update editForm', () => {
       const bloodPressure: IBloodPressure = { id: 456 };
-      const user: IUser = { id: 72703 };
+      const user: IUser = { id: 16387 };
       bloodPressure.user = user;
 
       activatedRoute.data = of({ bloodPressure });

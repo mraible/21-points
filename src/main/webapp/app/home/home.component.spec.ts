@@ -2,13 +2,12 @@ jest.mock('app/core/auth/account.service');
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject } from 'rxjs';
 
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
-import { HomeComponent } from './home.component';
+import HomeComponent from './home.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('Home Component', () => {
@@ -29,8 +28,7 @@ describe('Home Component', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([]), HttpClientTestingModule],
-      declarations: [HomeComponent],
+      imports: [HomeComponent, HttpClientTestingModule],
       providers: [AccountService],
     })
       .overrideTemplate(HomeComponent, '')
@@ -58,19 +56,19 @@ describe('Home Component', () => {
       comp.ngOnInit();
 
       // THEN
-      expect(comp.account).toBeNull();
+      expect(comp.account()).toBeNull();
 
       // WHEN
       authenticationState.next(account);
 
       // THEN
-      expect(comp.account).toEqual(account);
+      expect(comp.account()).toEqual(account);
 
       // WHEN
       authenticationState.next(null);
 
       // THEN
-      expect(comp.account).toBeNull();
+      expect(comp.account()).toBeNull();
     });
   });
 
@@ -94,20 +92,20 @@ describe('Home Component', () => {
       comp.ngOnInit();
 
       // THEN
-      expect(comp.account).toBeNull();
+      expect(comp.account()).toBeNull();
 
       // WHEN
       authenticationState.next(account);
 
       // THEN
-      expect(comp.account).toEqual(account);
+      expect(comp.account()).toEqual(account);
 
       // WHEN
       comp.ngOnDestroy();
       authenticationState.next(null);
 
       // THEN
-      expect(comp.account).toEqual(account);
+      expect(comp.account()).toEqual(account);
     });
   });
 });
