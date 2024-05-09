@@ -8,7 +8,7 @@ import { Authority } from 'app/config/authority.constants';
 import { UserManagementService } from '../service/user-management.service';
 import { User } from '../user-management.model';
 
-import { UserManagementUpdateComponent } from './user-management-update.component';
+import UserManagementUpdateComponent from './user-management-update.component';
 
 describe('User Management Update Component', () => {
   let comp: UserManagementUpdateComponent;
@@ -17,8 +17,7 @@ describe('User Management Update Component', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [UserManagementUpdateComponent],
+      imports: [HttpClientTestingModule, UserManagementUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -51,7 +50,7 @@ describe('User Management Update Component', () => {
 
         // THEN
         expect(service.authorities).toHaveBeenCalled();
-        expect(comp.authorities).toEqual(['USER']);
+        expect(comp.authorities()).toEqual(['USER']);
       }),
     ));
   });
@@ -70,7 +69,7 @@ describe('User Management Update Component', () => {
 
         // THEN
         expect(service.update).toHaveBeenCalledWith(expect.objectContaining(entity));
-        expect(comp.isSaving).toEqual(false);
+        expect(comp.isSaving()).toEqual(false);
       }),
     ));
 
@@ -88,7 +87,7 @@ describe('User Management Update Component', () => {
         // THEN
         expect(comp.editForm.getRawValue().id).toBeNull();
         expect(service.create).toHaveBeenCalledWith(expect.objectContaining(entity));
-        expect(comp.isSaving).toEqual(false);
+        expect(comp.isSaving()).toEqual(false);
       }),
     ));
   });

@@ -1,22 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
+import SharedModule from 'app/shared/shared.module';
+import { DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe } from 'app/shared/date';
 import { IPreferences } from '../preferences.model';
 
 @Component({
+  standalone: true,
   selector: 'jhi-preferences-detail',
   templateUrl: './preferences-detail.component.html',
+  imports: [SharedModule, RouterModule, DurationPipe, FormatMediumDatetimePipe, FormatMediumDatePipe],
 })
-export class PreferencesDetailComponent implements OnInit {
-  preferences: IPreferences | null = null;
-
-  constructor(protected activatedRoute: ActivatedRoute) {}
-
-  ngOnInit(): void {
-    this.activatedRoute.data.subscribe(({ preferences }) => {
-      this.preferences = preferences;
-    });
-  }
+export class PreferencesDetailComponent {
+  preferences = input<IPreferences | null>(null);
 
   previousState(): void {
     window.history.back();

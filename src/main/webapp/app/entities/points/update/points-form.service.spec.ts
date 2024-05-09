@@ -49,7 +49,6 @@ describe('Points Form Service', () => {
 
     describe('getPoints', () => {
       it('should return NewPoints for default Points initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createPointsFormGroup(sampleWithNewData);
 
         const points = service.getPoints(formGroup) as any;

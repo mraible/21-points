@@ -27,12 +27,12 @@ public interface PreferencesRepository extends JpaRepository<Preferences, Long> 
     }
 
     @Query(
-        value = "select distinct preferences from Preferences preferences left join fetch preferences.user",
-        countQuery = "select count(distinct preferences) from Preferences preferences"
+        value = "select preferences from Preferences preferences left join fetch preferences.user",
+        countQuery = "select count(preferences) from Preferences preferences"
     )
     Page<Preferences> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select distinct preferences from Preferences preferences left join fetch preferences.user")
+    @Query("select preferences from Preferences preferences left join fetch preferences.user")
     List<Preferences> findAllWithToOneRelationships();
 
     @Query("select preferences from Preferences preferences left join fetch preferences.user where preferences.id =:id")

@@ -15,7 +15,7 @@ describe('Preferences e2e test', () => {
   const preferencesPageUrlPattern = new RegExp('/preferences(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const preferencesSample = { weeklyGoal: 20, weightUnits: 'LB' };
+  const preferencesSample = { weeklyGoal: 10, weightUnits: 'LB' };
 
   let preferences;
 
@@ -157,9 +157,10 @@ describe('Preferences e2e test', () => {
     });
 
     it('should create an instance of Preferences', () => {
-      cy.get(`[data-cy="weeklyGoal"]`).type('17').should('have.value', '17');
+      cy.get(`[data-cy="weeklyGoal"]`).type('21');
+      cy.get(`[data-cy="weeklyGoal"]`).should('have.value', '21');
 
-      cy.get(`[data-cy="weightUnits"]`).select('LB');
+      cy.get(`[data-cy="weightUnits"]`).select('KG');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

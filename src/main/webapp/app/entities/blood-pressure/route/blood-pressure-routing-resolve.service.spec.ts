@@ -2,24 +2,22 @@ import { TestBed } from '@angular/core/testing';
 import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRouteSnapshot, ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { IBloodPressure } from '../blood-pressure.model';
 import { BloodPressureService } from '../service/blood-pressure.service';
 
-import { BloodPressureRoutingResolveService } from './blood-pressure-routing-resolve.service';
+import bloodPressureResolve from './blood-pressure-routing-resolve.service';
 
 describe('BloodPressure routing resolve service', () => {
   let mockRouter: Router;
   let mockActivatedRouteSnapshot: ActivatedRouteSnapshot;
-  let routingResolveService: BloodPressureRoutingResolveService;
   let service: BloodPressureService;
   let resultBloodPressure: IBloodPressure | null | undefined;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
+      imports: [HttpClientTestingModule],
       providers: [
         {
           provide: ActivatedRoute,
@@ -34,7 +32,6 @@ describe('BloodPressure routing resolve service', () => {
     mockRouter = TestBed.inject(Router);
     jest.spyOn(mockRouter, 'navigate').mockImplementation(() => Promise.resolve(true));
     mockActivatedRouteSnapshot = TestBed.inject(ActivatedRoute).snapshot;
-    routingResolveService = TestBed.inject(BloodPressureRoutingResolveService);
     service = TestBed.inject(BloodPressureService);
     resultBloodPressure = undefined;
   });
@@ -46,8 +43,12 @@ describe('BloodPressure routing resolve service', () => {
       mockActivatedRouteSnapshot.params = { id: 123 };
 
       // WHEN
-      routingResolveService.resolve(mockActivatedRouteSnapshot).subscribe(result => {
-        resultBloodPressure = result;
+      TestBed.runInInjectionContext(() => {
+        bloodPressureResolve(mockActivatedRouteSnapshot).subscribe({
+          next(result) {
+            resultBloodPressure = result;
+          },
+        });
       });
 
       // THEN
@@ -61,8 +62,12 @@ describe('BloodPressure routing resolve service', () => {
       mockActivatedRouteSnapshot.params = {};
 
       // WHEN
-      routingResolveService.resolve(mockActivatedRouteSnapshot).subscribe(result => {
-        resultBloodPressure = result;
+      TestBed.runInInjectionContext(() => {
+        bloodPressureResolve(mockActivatedRouteSnapshot).subscribe({
+          next(result) {
+            resultBloodPressure = result;
+          },
+        });
       });
 
       // THEN
@@ -76,8 +81,12 @@ describe('BloodPressure routing resolve service', () => {
       mockActivatedRouteSnapshot.params = { id: 123 };
 
       // WHEN
-      routingResolveService.resolve(mockActivatedRouteSnapshot).subscribe(result => {
-        resultBloodPressure = result;
+      TestBed.runInInjectionContext(() => {
+        bloodPressureResolve(mockActivatedRouteSnapshot).subscribe({
+          next(result) {
+            resultBloodPressure = result;
+          },
+        });
       });
 
       // THEN

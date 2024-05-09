@@ -19,5 +19,17 @@ export default async (on: Cypress.PluginEvents, config: Cypress.PluginConfigOpti
     }
   });
 
+  // Allows logging with cy.task('log', 'message') or cy.task('table', object)
+  on('task', {
+    log(message) {
+      console.log(message);
+      return null;
+    },
+    table(message) {
+      console.table(message);
+      return null;
+    },
+  });
+
   return config;
 };

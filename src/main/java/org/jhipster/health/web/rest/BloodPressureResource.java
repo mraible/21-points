@@ -1,18 +1,17 @@
 package org.jhipster.health.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.jhipster.health.domain.BloodPressure;
 import org.jhipster.health.repository.BloodPressureRepository;
 import org.jhipster.health.repository.search.BloodPressureSearchRepository;
 import org.jhipster.health.web.rest.errors.BadRequestAlertException;
+import org.jhipster.health.web.rest.errors.ElasticsearchExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +30,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link org.jhipster.health.domain.BloodPressure}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/blood-pressures")
 @Transactional
 public class BloodPressureResource {
 
@@ -61,17 +60,17 @@ public class BloodPressureResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new bloodPressure, or with status {@code 400 (Bad Request)} if the bloodPressure has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/blood-pressures")
+    @PostMapping("")
     public ResponseEntity<BloodPressure> createBloodPressure(@Valid @RequestBody BloodPressure bloodPressure) throws URISyntaxException {
         log.debug("REST request to save BloodPressure : {}", bloodPressure);
         if (bloodPressure.getId() != null) {
             throw new BadRequestAlertException("A new bloodPressure cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        BloodPressure result = bloodPressureRepository.save(bloodPressure);
-        bloodPressureSearchRepository.index(result);
-        return ResponseEntity.created(new URI("/api/blood-pressures/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        bloodPressure = bloodPressureRepository.save(bloodPressure);
+        bloodPressureSearchRepository.index(bloodPressure);
+        return ResponseEntity.created(new URI("/api/blood-pressures/" + bloodPressure.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, bloodPressure.getId().toString()))
+            .body(bloodPressure);
     }
 
     /**
@@ -84,7 +83,7 @@ public class BloodPressureResource {
      * or with status {@code 500 (Internal Server Error)} if the bloodPressure couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/blood-pressures/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<BloodPressure> updateBloodPressure(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody BloodPressure bloodPressure
@@ -101,11 +100,11 @@ public class BloodPressureResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        BloodPressure result = bloodPressureRepository.save(bloodPressure);
-        bloodPressureSearchRepository.index(result);
+        bloodPressure = bloodPressureRepository.save(bloodPressure);
+        bloodPressureSearchRepository.index(bloodPressure);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, bloodPressure.getId().toString()))
-            .body(result);
+            .body(bloodPressure);
     }
 
     /**
@@ -119,7 +118,7 @@ public class BloodPressureResource {
      * or with status {@code 500 (Internal Server Error)} if the bloodPressure couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/blood-pressures/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<BloodPressure> partialUpdateBloodPressure(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody BloodPressure bloodPressure
@@ -153,8 +152,7 @@ public class BloodPressureResource {
             })
             .map(bloodPressureRepository::save)
             .map(savedBloodPressure -> {
-                bloodPressureSearchRepository.save(savedBloodPressure);
-
+                bloodPressureSearchRepository.index(savedBloodPressure);
                 return savedBloodPressure;
             });
 
@@ -171,10 +169,10 @@ public class BloodPressureResource {
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of bloodPressures in body.
      */
-    @GetMapping("/blood-pressures")
+    @GetMapping("")
     public ResponseEntity<List<BloodPressure>> getAllBloodPressures(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(required = false, defaultValue = "false") boolean eagerload
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
     ) {
         log.debug("REST request to get a page of BloodPressures");
         Page<BloodPressure> page;
@@ -193,8 +191,8 @@ public class BloodPressureResource {
      * @param id the id of the bloodPressure to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bloodPressure, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/blood-pressures/{id}")
-    public ResponseEntity<BloodPressure> getBloodPressure(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<BloodPressure> getBloodPressure(@PathVariable("id") Long id) {
         log.debug("REST request to get BloodPressure : {}", id);
         Optional<BloodPressure> bloodPressure = bloodPressureRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(bloodPressure);
@@ -206,32 +204,36 @@ public class BloodPressureResource {
      * @param id the id of the bloodPressure to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/blood-pressures/{id}")
-    public ResponseEntity<Void> deleteBloodPressure(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBloodPressure(@PathVariable("id") Long id) {
         log.debug("REST request to delete BloodPressure : {}", id);
         bloodPressureRepository.deleteById(id);
-        bloodPressureSearchRepository.deleteById(id);
+        bloodPressureSearchRepository.deleteFromIndexById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
 
     /**
-     * {@code SEARCH  /_search/blood-pressures?query=:query} : search for the bloodPressure corresponding
+     * {@code SEARCH  /blood-pressures/_search?query=:query} : search for the bloodPressure corresponding
      * to the query.
      *
      * @param query the query of the bloodPressure search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */
-    @GetMapping("/_search/blood-pressures")
+    @GetMapping("/_search")
     public ResponseEntity<List<BloodPressure>> searchBloodPressures(
-        @RequestParam String query,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         log.debug("REST request to search for a page of BloodPressures for query {}", query);
-        Page<BloodPressure> page = bloodPressureSearchRepository.search(query, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        try {
+            Page<BloodPressure> page = bloodPressureSearchRepository.search(query, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

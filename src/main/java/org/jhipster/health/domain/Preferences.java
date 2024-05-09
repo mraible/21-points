@@ -1,8 +1,8 @@
 package org.jhipster.health.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jhipster.health.domain.enumeration.Units;
@@ -29,14 +29,16 @@ public class Preferences implements Serializable {
     @Min(value = 10)
     @Max(value = 21)
     @Column(name = "weekly_goal", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
     private Integer weeklyGoal;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "weight_units", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
     private Units weightUnits;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(unique = true)
     private User user;
 
@@ -104,7 +106,7 @@ public class Preferences implements Serializable {
         if (!(o instanceof Preferences)) {
             return false;
         }
-        return id != null && id.equals(((Preferences) o).id);
+        return getId() != null && getId().equals(((Preferences) o).getId());
     }
 
     @Override

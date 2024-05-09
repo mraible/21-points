@@ -18,8 +18,7 @@ describe('BloodPressure Management Delete Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [BloodPressureDeleteDialogComponent],
+      imports: [HttpClientTestingModule, BloodPressureDeleteDialogComponent],
       providers: [NgbActiveModal],
     })
       .overrideTemplate(BloodPressureDeleteDialogComponent, '')

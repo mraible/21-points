@@ -1,0 +1,63 @@
+plugins {
+    id "com.github.node-gradle.node"
+}
+
+if (project.hasProperty("nodeInstall")) {
+    node {
+        version = "20.12.2"
+        npmVersion = "10.6.0"
+        download = true
+    }
+
+    // Copy local node and npm to a fixed location for npmw
+    def deleteOldNpm = tasks.register("deleteOldNpm", Delete) {
+        delete 'build/node/lib/node_modules/npm'
+    }
+    def fixedNode = tasks.register("fixedNode", Copy) {
+        from nodeSetup
+        into 'build/node'
+        finalizedBy deleteOldNpm
+    }
+    tasks.named("nodeSetup").configure { finalizedBy fixedNode }
+
+    def fixedNpm = tasks.register("fixedNpm", Copy) {
+        from npmSetup
+        into 'build/node'
+    }
+    tasks.named("npmSetup").configure { finalizedBy fixedNpm }
+}
+
+task webapp_test(type: NpmTask) {
+    inputs.property('appVersion', project.version)
+    inputs.files("package-lock.json")
+        .withPropertyName('package-lock')
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.files("build.gradle")
+        .withPropertyName('build.gradle')
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.files("angular.json")
+        .withPropertyName('angular.json')
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.files("tsconfig.json", "tsconfig.app.json")
+        .withPropertyName("tsconfig")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir("webpack/")
+        .withPropertyName("webpack/")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir("src/main/webapp/")
+        .withPropertyName("webapp-source-dir")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+
+    outputs.dir("build/test-results/jest/")
+        .withPropertyName("jest-result-dir")
+    outputs.file("build/test-results/TESTS-results-jest.xml")
+        .withPropertyName("jest-result")
+        outputs.file("build/test-results/clover.xml")
+        .withPropertyName("clover-result")
+
+    dependsOn npmInstall,compileTestJava
+    args = ["run", "webapp:test"]
+}
+
+test.dependsOn webapp_test
+

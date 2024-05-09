@@ -175,7 +175,7 @@ class UserServiceIT {
         assertThat(users).isEmpty();
 
         // Verify Elasticsearch mock
-        verify(spiedUserSearchRepository, times(1)).delete(user);
+        verify(spiedUserSearchRepository, times(1)).deleteFromIndex(user);
     }
 
     @Test
@@ -195,6 +195,6 @@ class UserServiceIT {
         assertThat(maybeDbUser).contains(dbUser);
 
         // Verify Elasticsearch mock
-        verify(spiedUserSearchRepository, never()).delete(user);
+        verify(spiedUserSearchRepository, never()).deleteFromIndex(user);
     }
 }

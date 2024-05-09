@@ -43,7 +43,6 @@ describe('Weight Form Service', () => {
 
     describe('getWeight', () => {
       it('should return NewWeight for default Weight initial value', () => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const formGroup = service.createWeightFormGroup(sampleWithNewData);
 
         const weight = service.getWeight(formGroup) as any;

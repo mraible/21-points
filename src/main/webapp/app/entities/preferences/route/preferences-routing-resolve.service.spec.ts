@@ -2,24 +2,22 @@ import { TestBed } from '@angular/core/testing';
 import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRouteSnapshot, ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { IPreferences } from '../preferences.model';
 import { PreferencesService } from '../service/preferences.service';
 
-import { PreferencesRoutingResolveService } from './preferences-routing-resolve.service';
+import preferencesResolve from './preferences-routing-resolve.service';
 
 describe('Preferences routing resolve service', () => {
   let mockRouter: Router;
   let mockActivatedRouteSnapshot: ActivatedRouteSnapshot;
-  let routingResolveService: PreferencesRoutingResolveService;
   let service: PreferencesService;
   let resultPreferences: IPreferences | null | undefined;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
+      imports: [HttpClientTestingModule],
       providers: [
         {
           provide: ActivatedRoute,
@@ -34,7 +32,6 @@ describe('Preferences routing resolve service', () => {
     mockRouter = TestBed.inject(Router);
     jest.spyOn(mockRouter, 'navigate').mockImplementation(() => Promise.resolve(true));
     mockActivatedRouteSnapshot = TestBed.inject(ActivatedRoute).snapshot;
-    routingResolveService = TestBed.inject(PreferencesRoutingResolveService);
     service = TestBed.inject(PreferencesService);
     resultPreferences = undefined;
   });
@@ -46,8 +43,12 @@ describe('Preferences routing resolve service', () => {
       mockActivatedRouteSnapshot.params = { id: 123 };
 
       // WHEN
-      routingResolveService.resolve(mockActivatedRouteSnapshot).subscribe(result => {
-        resultPreferences = result;
+      TestBed.runInInjectionContext(() => {
+        preferencesResolve(mockActivatedRouteSnapshot).subscribe({
+          next(result) {
+            resultPreferences = result;
+          },
+        });
       });
 
       // THEN
@@ -61,8 +62,12 @@ describe('Preferences routing resolve service', () => {
       mockActivatedRouteSnapshot.params = {};
 
       // WHEN
-      routingResolveService.resolve(mockActivatedRouteSnapshot).subscribe(result => {
-        resultPreferences = result;
+      TestBed.runInInjectionContext(() => {
+        preferencesResolve(mockActivatedRouteSnapshot).subscribe({
+          next(result) {
+            resultPreferences = result;
+          },
+        });
       });
 
       // THEN
@@ -76,8 +81,12 @@ describe('Preferences routing resolve service', () => {
       mockActivatedRouteSnapshot.params = { id: 123 };
 
       // WHEN
-      routingResolveService.resolve(mockActivatedRouteSnapshot).subscribe(result => {
-        resultPreferences = result;
+      TestBed.runInInjectionContext(() => {
+        preferencesResolve(mockActivatedRouteSnapshot).subscribe({
+          next(result) {
+            resultPreferences = result;
+          },
+        });
       });
 
       // THEN

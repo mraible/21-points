@@ -4,14 +4,13 @@ import { ComponentFixture, TestBed, waitForAsync, inject, fakeAsync, tick } from
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { AccountService } from 'app/core/auth/account.service';
 import { UserManagementService } from '../service/user-management.service';
 import { User } from '../user-management.model';
 
-import { UserManagementComponent } from './user-management.component';
+import UserManagementComponent from './user-management.component';
 
 describe('User Management Component', () => {
   let comp: UserManagementComponent;
@@ -31,8 +30,7 @@ describe('User Management Component', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [UserManagementComponent],
+      imports: [HttpClientTestingModule, UserManagementComponent],
       providers: [{ provide: ActivatedRoute, useValue: { data, queryParamMap } }, AccountService],
     })
       .overrideTemplate(UserManagementComponent, '')
@@ -68,7 +66,7 @@ describe('User Management Component', () => {
 
         // THEN
         expect(service.query).toHaveBeenCalled();
-        expect(comp.users?.[0]).toEqual(expect.objectContaining({ id: 123 }));
+        expect(comp.users()?.[0]).toEqual(expect.objectContaining({ id: 123 }));
       }),
     ));
   });
@@ -97,7 +95,7 @@ describe('User Management Component', () => {
         // THEN
         expect(service.update).toHaveBeenCalledWith({ ...user, activated: true });
         expect(service.query).toHaveBeenCalled();
-        expect(comp.users?.[0]).toEqual(expect.objectContaining({ id: 123 }));
+        expect(comp.users()?.[0]).toEqual(expect.objectContaining({ id: 123 }));
       }),
     ));
   });

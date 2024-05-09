@@ -1,28 +1,26 @@
-import { Units } from 'app/entities/enumerations/units.model';
-
 import { IPreferences, NewPreferences } from './preferences.model';
 
 export const sampleWithRequiredData: IPreferences = {
-  id: 97604,
-  weeklyGoal: 13,
-  weightUnits: Units['LB'],
+  id: 11210,
+  weeklyGoal: 16,
+  weightUnits: 'LB',
 };
 
 export const sampleWithPartialData: IPreferences = {
-  id: 73829,
-  weeklyGoal: 12,
-  weightUnits: Units['KG'],
+  id: 8696,
+  weeklyGoal: 20,
+  weightUnits: 'LB',
 };
 
 export const sampleWithFullData: IPreferences = {
-  id: 80916,
-  weeklyGoal: 18,
-  weightUnits: Units['KG'],
+  id: 14979,
+  weeklyGoal: 15,
+  weightUnits: 'LB',
 };
 
 export const sampleWithNewData: NewPreferences = {
-  weeklyGoal: 14,
-  weightUnits: Units['LB'],
+  weeklyGoal: 21,
+  weightUnits: 'KG',
   id: null,
 };
 

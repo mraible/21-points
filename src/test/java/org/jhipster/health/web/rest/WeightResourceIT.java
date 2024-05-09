@@ -3,11 +3,15 @@ package org.jhipster.health.web.rest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
+import static org.jhipster.health.domain.WeightAsserts.*;
+import static org.jhipster.health.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.jhipster.health.web.rest.TestUtil.sameInstant;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -17,8 +21,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.persistence.EntityManager;
-import org.apache.commons.collections4.IterableUtils;
 import org.assertj.core.util.IterableUtil;
 import org.jhipster.health.IntegrationTest;
 import org.jhipster.health.domain.Weight;
@@ -34,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,10 +59,13 @@ class WeightResourceIT {
 
     private static final String ENTITY_API_URL = "/api/weights";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/_search/weights";
+    private static final String ENTITY_SEARCH_API_URL = "/api/weights/_search";
 
     private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+
+    @Autowired
+    private ObjectMapper om;
 
     @Autowired
     private WeightRepository weightRepository;
@@ -114,25 +120,29 @@ class WeightResourceIT {
     @Test
     @Transactional
     void createWeight() throws Exception {
-        int databaseSizeBeforeCreate = weightRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
         // Create the Weight
-        restWeightMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(weight)))
-            .andExpect(status().isCreated());
+        var returnedWeight = om.readValue(
+            restWeightMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(weight)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(),
+            Weight.class
+        );
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeCreate + 1);
+        assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        assertWeightUpdatableFieldsEquals(returnedWeight, getPersistedWeight(returnedWeight));
+
         await()
             .atMost(5, TimeUnit.SECONDS)
             .untilAsserted(() -> {
                 int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
                 assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
             });
-        Weight testWeight = weightList.get(weightList.size() - 1);
-        assertThat(testWeight.getTimestamp()).isEqualTo(DEFAULT_TIMESTAMP);
-        assertThat(testWeight.getWeight()).isEqualTo(DEFAULT_WEIGHT);
     }
 
     @Test
@@ -141,17 +151,16 @@ class WeightResourceIT {
         // Create the Weight with an existing ID
         weight.setId(1L);
 
-        int databaseSizeBeforeCreate = weightRepository.findAll().size();
+        long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restWeightMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(weight)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(weight)))
             .andExpect(status().isBadRequest());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeCreate);
+        assertSameRepositoryCount(databaseSizeBeforeCreate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -159,7 +168,7 @@ class WeightResourceIT {
     @Test
     @Transactional
     void checkTimestampIsRequired() throws Exception {
-        int databaseSizeBeforeTest = weightRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
         // set the field null
         weight.setTimestamp(null);
@@ -167,11 +176,11 @@ class WeightResourceIT {
         // Create the Weight, which fails.
 
         restWeightMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(weight)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(weight)))
             .andExpect(status().isBadRequest());
 
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -179,7 +188,7 @@ class WeightResourceIT {
     @Test
     @Transactional
     void checkWeightIsRequired() throws Exception {
-        int databaseSizeBeforeTest = weightRepository.findAll().size();
+        long databaseSizeBeforeTest = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
         // set the field null
         weight.setWeight(null);
@@ -187,11 +196,11 @@ class WeightResourceIT {
         // Create the Weight, which fails.
 
         restWeightMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(weight)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(weight)))
             .andExpect(status().isBadRequest());
 
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeTest);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -258,12 +267,12 @@ class WeightResourceIT {
         // Initialize the database
         weightRepository.saveAndFlush(weight);
 
-        int databaseSizeBeforeUpdate = weightRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         weightSearchRepository.save(weight);
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
 
         // Update the weight
-        Weight updatedWeight = weightRepository.findById(weight.getId()).get();
+        Weight updatedWeight = weightRepository.findById(weight.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedWeight are not directly saved in db
         em.detach(updatedWeight);
         updatedWeight.timestamp(UPDATED_TIMESTAMP).weight(UPDATED_WEIGHT);
@@ -272,47 +281,40 @@ class WeightResourceIT {
             .perform(
                 put(ENTITY_API_URL_ID, updatedWeight.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedWeight))
+                    .content(om.writeValueAsBytes(updatedWeight))
             )
             .andExpect(status().isOk());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
-        Weight testWeight = weightList.get(weightList.size() - 1);
-        assertThat(testWeight.getTimestamp()).isEqualTo(UPDATED_TIMESTAMP);
-        assertThat(testWeight.getWeight()).isEqualTo(UPDATED_WEIGHT);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertPersistedWeightToMatchAllProperties(updatedWeight);
+
         await()
             .atMost(5, TimeUnit.SECONDS)
             .untilAsserted(() -> {
                 int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
                 assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-                List<Weight> weightSearchList = IterableUtils.toList(weightSearchRepository.findAll());
+                List<Weight> weightSearchList = Streamable.of(weightSearchRepository.findAll()).toList();
                 Weight testWeightSearch = weightSearchList.get(searchDatabaseSizeAfter - 1);
-                assertThat(testWeightSearch.getTimestamp()).isEqualTo(UPDATED_TIMESTAMP);
-                assertThat(testWeightSearch.getWeight()).isEqualTo(UPDATED_WEIGHT);
+
+                assertWeightAllPropertiesEquals(testWeightSearch, updatedWeight);
             });
     }
 
     @Test
     @Transactional
     void putNonExistingWeight() throws Exception {
-        int databaseSizeBeforeUpdate = weightRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
-        weight.setId(count.incrementAndGet());
+        weight.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restWeightMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, weight.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(weight))
-            )
+            .perform(put(ENTITY_API_URL_ID, weight.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(weight)))
             .andExpect(status().isBadRequest());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -320,22 +322,21 @@ class WeightResourceIT {
     @Test
     @Transactional
     void putWithIdMismatchWeight() throws Exception {
-        int databaseSizeBeforeUpdate = weightRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
-        weight.setId(count.incrementAndGet());
+        weight.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restWeightMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(weight))
+                    .content(om.writeValueAsBytes(weight))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -343,18 +344,17 @@ class WeightResourceIT {
     @Test
     @Transactional
     void putWithMissingIdPathParamWeight() throws Exception {
-        int databaseSizeBeforeUpdate = weightRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
-        weight.setId(count.incrementAndGet());
+        weight.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restWeightMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(weight)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(weight)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -365,28 +365,24 @@ class WeightResourceIT {
         // Initialize the database
         weightRepository.saveAndFlush(weight);
 
-        int databaseSizeBeforeUpdate = weightRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the weight using partial update
         Weight partialUpdatedWeight = new Weight();
         partialUpdatedWeight.setId(weight.getId());
 
-        partialUpdatedWeight.weight(UPDATED_WEIGHT);
-
         restWeightMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedWeight.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedWeight))
+                    .content(om.writeValueAsBytes(partialUpdatedWeight))
             )
             .andExpect(status().isOk());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
-        Weight testWeight = weightList.get(weightList.size() - 1);
-        assertThat(testWeight.getTimestamp()).isEqualTo(DEFAULT_TIMESTAMP);
-        assertThat(testWeight.getWeight()).isEqualTo(UPDATED_WEIGHT);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertWeightUpdatableFieldsEquals(createUpdateProxyForBean(partialUpdatedWeight, weight), getPersistedWeight(weight));
     }
 
     @Test
@@ -395,7 +391,7 @@ class WeightResourceIT {
         // Initialize the database
         weightRepository.saveAndFlush(weight);
 
-        int databaseSizeBeforeUpdate = weightRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
 
         // Update the weight using partial update
         Weight partialUpdatedWeight = new Weight();
@@ -407,37 +403,32 @@ class WeightResourceIT {
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedWeight.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedWeight))
+                    .content(om.writeValueAsBytes(partialUpdatedWeight))
             )
             .andExpect(status().isOk());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
-        Weight testWeight = weightList.get(weightList.size() - 1);
-        assertThat(testWeight.getTimestamp()).isEqualTo(UPDATED_TIMESTAMP);
-        assertThat(testWeight.getWeight()).isEqualTo(UPDATED_WEIGHT);
+
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        assertWeightUpdatableFieldsEquals(partialUpdatedWeight, getPersistedWeight(partialUpdatedWeight));
     }
 
     @Test
     @Transactional
     void patchNonExistingWeight() throws Exception {
-        int databaseSizeBeforeUpdate = weightRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
-        weight.setId(count.incrementAndGet());
+        weight.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restWeightMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, weight.getId())
-                    .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(weight))
+                patch(ENTITY_API_URL_ID, weight.getId()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(weight))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -445,22 +436,21 @@ class WeightResourceIT {
     @Test
     @Transactional
     void patchWithIdMismatchWeight() throws Exception {
-        int databaseSizeBeforeUpdate = weightRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
-        weight.setId(count.incrementAndGet());
+        weight.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restWeightMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(weight))
+                    .content(om.writeValueAsBytes(weight))
             )
             .andExpect(status().isBadRequest());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -468,18 +458,17 @@ class WeightResourceIT {
     @Test
     @Transactional
     void patchWithMissingIdPathParamWeight() throws Exception {
-        int databaseSizeBeforeUpdate = weightRepository.findAll().size();
+        long databaseSizeBeforeUpdate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
-        weight.setId(count.incrementAndGet());
+        weight.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restWeightMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(weight)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(weight)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Weight in the database
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeUpdate);
+        assertSameRepositoryCount(databaseSizeBeforeUpdate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
@@ -492,7 +481,7 @@ class WeightResourceIT {
         weightRepository.save(weight);
         weightSearchRepository.save(weight);
 
-        int databaseSizeBeforeDelete = weightRepository.findAll().size();
+        long databaseSizeBeforeDelete = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
@@ -502,8 +491,7 @@ class WeightResourceIT {
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
-        List<Weight> weightList = weightRepository.findAll();
-        assertThat(weightList).hasSize(databaseSizeBeforeDelete - 1);
+        assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(weightSearchRepository.findAll());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
     }
@@ -523,5 +511,33 @@ class WeightResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(weight.getId().intValue())))
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
             .andExpect(jsonPath("$.[*].weight").value(hasItem(DEFAULT_WEIGHT.doubleValue())));
+    }
+
+    protected long getRepositoryCount() {
+        return weightRepository.count();
+    }
+
+    protected void assertIncrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore + 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertDecrementedRepositoryCount(long countBefore) {
+        assertThat(countBefore - 1).isEqualTo(getRepositoryCount());
+    }
+
+    protected void assertSameRepositoryCount(long countBefore) {
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Weight getPersistedWeight(Weight weight) {
+        return weightRepository.findById(weight.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedWeightToMatchAllProperties(Weight expectedWeight) {
+        assertWeightAllPropertiesEquals(expectedWeight, getPersistedWeight(expectedWeight));
+    }
+
+    protected void assertPersistedWeightToMatchUpdatableProperties(Weight expectedWeight) {
+        assertWeightAllUpdatablePropertiesEquals(expectedWeight, getPersistedWeight(expectedWeight));
     }
 }

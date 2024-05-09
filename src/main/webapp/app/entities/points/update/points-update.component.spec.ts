@@ -3,14 +3,12 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
 import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { UserService } from 'app/entities/user/service/user.service';
 import { PointsService } from '../service/points.service';
 import { IPoints } from '../points.model';
-
 import { PointsFormService } from './points-form.service';
 
 import { PointsUpdateComponent } from './points-update.component';
@@ -25,8 +23,7 @@ describe('Points Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [PointsUpdateComponent],
+      imports: [HttpClientTestingModule, PointsUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -52,10 +49,10 @@ describe('Points Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call User query and add missing value', () => {
       const points: IPoints = { id: 456 };
-      const user: IUser = { id: 30273 };
+      const user: IUser = { id: 29075 };
       points.user = user;
 
-      const userCollection: IUser[] = [{ id: 92271 }];
+      const userCollection: IUser[] = [{ id: 19957 }];
       jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
       const additionalUsers = [user];
       const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
@@ -74,7 +71,7 @@ describe('Points Management Update Component', () => {
 
     it('Should update editForm', () => {
       const points: IPoints = { id: 456 };
-      const user: IUser = { id: 97538 };
+      const user: IUser = { id: 14201 };
       points.user = user;
 
       activatedRoute.data = of({ points });

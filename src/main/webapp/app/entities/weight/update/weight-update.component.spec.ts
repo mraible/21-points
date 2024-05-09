@@ -3,14 +3,12 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, Subject, from } from 'rxjs';
 
 import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/user.service';
+import { UserService } from 'app/entities/user/service/user.service';
 import { WeightService } from '../service/weight.service';
 import { IWeight } from '../weight.model';
-
 import { WeightFormService } from './weight-form.service';
 
 import { WeightUpdateComponent } from './weight-update.component';
@@ -25,8 +23,7 @@ describe('Weight Management Update Component', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [WeightUpdateComponent],
+      imports: [HttpClientTestingModule, WeightUpdateComponent],
       providers: [
         FormBuilder,
         {
@@ -52,10 +49,10 @@ describe('Weight Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call User query and add missing value', () => {
       const weight: IWeight = { id: 456 };
-      const user: IUser = { id: 19261 };
+      const user: IUser = { id: 25832 };
       weight.user = user;
 
-      const userCollection: IUser[] = [{ id: 48569 }];
+      const userCollection: IUser[] = [{ id: 23694 }];
       jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
       const additionalUsers = [user];
       const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
@@ -74,7 +71,7 @@ describe('Weight Management Update Component', () => {
 
     it('Should update editForm', () => {
       const weight: IWeight = { id: 456 };
-      const user: IUser = { id: 30575 };
+      const user: IUser = { id: 23506 };
       weight.user = user;
 
       activatedRoute.data = of({ weight });

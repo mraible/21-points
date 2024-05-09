@@ -160,15 +160,21 @@ describe('Points e2e test', () => {
     });
 
     it('should create an instance of Points', () => {
-      cy.get(`[data-cy="date"]`).type('2022-11-07').blur().should('have.value', '2022-11-07');
+      cy.get(`[data-cy="date"]`).type('2022-11-07');
+      cy.get(`[data-cy="date"]`).blur();
+      cy.get(`[data-cy="date"]`).should('have.value', '2022-11-07');
 
-      cy.get(`[data-cy="exercise"]`).type('58383').should('have.value', '58383');
+      cy.get(`[data-cy="exercise"]`).type('29985');
+      cy.get(`[data-cy="exercise"]`).should('have.value', '29985');
 
-      cy.get(`[data-cy="meals"]`).type('96341').should('have.value', '96341');
+      cy.get(`[data-cy="meals"]`).type('16338');
+      cy.get(`[data-cy="meals"]`).should('have.value', '16338');
 
-      cy.get(`[data-cy="alcohol"]`).type('43411').should('have.value', '43411');
+      cy.get(`[data-cy="alcohol"]`).type('274');
+      cy.get(`[data-cy="alcohol"]`).should('have.value', '274');
 
-      cy.get(`[data-cy="notes"]`).type('Response').should('have.value', 'Response');
+      cy.get(`[data-cy="notes"]`).type('emotional for');
+      cy.get(`[data-cy="notes"]`).should('have.value', 'emotional for');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

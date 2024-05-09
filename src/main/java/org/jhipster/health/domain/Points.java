@@ -1,9 +1,9 @@
 package org.jhipster.health.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -30,19 +30,23 @@ public class Points implements Serializable {
     private LocalDate date;
 
     @Column(name = "exercise")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
     private Integer exercise;
 
     @Column(name = "meals")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
     private Integer meals;
 
     @Column(name = "alcohol")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
     private Integer alcohol;
 
     @Size(max = 140)
     @Column(name = "notes", length = 140)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String notes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -148,7 +152,7 @@ public class Points implements Serializable {
         if (!(o instanceof Points)) {
             return false;
         }
-        return id != null && id.equals(((Points) o).id);
+        return getId() != null && getId().equals(((Points) o).getId());
     }
 
     @Override
