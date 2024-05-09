@@ -209,7 +209,11 @@ public class PointsResource {
         log.debug("REST request to get a page of Points");
         Page<Points> page;
         if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            page = pointsRepository.findAllByOrderByDateDesc(pageable);
+            if (eagerload) {
+                page = pointsRepository.findAllWithEagerRelationships(pageable);
+            } else {
+                page = pointsRepository.findAll(pageable);
+            }
         } else {
             page = pointsRepository.findByUserIsCurrentUser(pageable);
         }

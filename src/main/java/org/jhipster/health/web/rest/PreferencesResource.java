@@ -197,7 +197,11 @@ public class PreferencesResource {
         log.debug("REST request to get all Preferences");
         List<Preferences> preferences = new ArrayList<>();
         if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            preferences = preferencesRepository.findAll();
+            if (eagerload) {
+                preferences = preferencesRepository.findAllWithEagerRelationships();
+            } else {
+                preferences = preferencesRepository.findAll();
+            }
         } else {
             Preferences userPreferences = getUserPreferences().getBody();
             // don't return default value of 10 points in this method

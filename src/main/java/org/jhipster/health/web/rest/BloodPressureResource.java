@@ -209,7 +209,11 @@ public class BloodPressureResource {
         log.debug("REST request to get a page of BloodPressures");
         Page<BloodPressure> page;
         if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            page = bloodPressureRepository.findAllByOrderByTimestampDesc(pageable);
+            if (eagerload) {
+                page = bloodPressureRepository.findAllWithEagerRelationships(pageable);
+            } else {
+                page = bloodPressureRepository.findAll(pageable);
+            }
         } else {
             page = bloodPressureRepository.findByUserIsCurrentUser(pageable);
         }

@@ -89,7 +89,7 @@
                 }
               </div>
             </th>
-            <th scope="col" jhiSortBy="user.login">
+            <th *jhiHasAnyAuthority="'ROLE_ADMIN'" scope="col" jhiSortBy="user.login">
               <div class="d-flex">
                 <span jhiTranslate="twentyOnePointsApp.preferences.user">User</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
@@ -108,7 +108,7 @@
               <td [jhiTranslate]="'twentyOnePointsApp.Units.' + (preferences.weightUnits ?? 'null')">
                 {{ { null: '', KG: 'KG', LB: 'LB' }[preferences.weightUnits ?? 'null'] }}
               </td>
-              <td>
+              <td *jhiHasAnyAuthority="'ROLE_ADMIN'">
                 {{ preferences.user?.login }}
               </td>
               <td class="text-end">

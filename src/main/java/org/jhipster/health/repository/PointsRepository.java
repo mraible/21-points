@@ -15,10 +15,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PointsRepository extends JpaRepository<Points, Long> {
-    @Query("select points from Points points where points.user.login = ?#{authentication.name} order by points.date desc")
+    @Query(
+        "select points from Points points left join fetch points.user where points.user.login = ?#{authentication.name} order by points.date desc"
+    )
     Page<Points> findByUserIsCurrentUser(Pageable pageable);
-
-    Page<Points> findAllByOrderByDateDesc(Pageable pageable);
 
     default Optional<Points> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);

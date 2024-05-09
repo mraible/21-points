@@ -199,7 +199,11 @@ public class WeightResource {
         log.debug("REST request to get a page of Weights");
         Page<Weight> page;
         if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            page = weightRepository.findAllByOrderByTimestampDesc(pageable);
+            if (eagerload) {
+                page = weightRepository.findAllWithEagerRelationships(pageable);
+            } else {
+                page = weightRepository.findAll(pageable);
+            }
         } else {
             page = weightRepository.findByUserIsCurrentUser(pageable);
         }
