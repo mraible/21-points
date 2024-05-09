@@ -18,7 +18,9 @@ import org.springframework.scheduling.annotation.Async;
 /**
  * Spring Data Elasticsearch repository for the {@link Points} entity.
  */
-public interface PointsSearchRepository extends ElasticsearchRepository<Points, Long>, PointsSearchRepositoryInternal {}
+public interface PointsSearchRepository extends ElasticsearchRepository<Points, Long>, PointsSearchRepositoryInternal {
+    Page<Points> findByUserLogin(String username, Pageable pageable);
+}
 
 interface PointsSearchRepositoryInternal {
     Page<Points> search(String query, Pageable pageable);

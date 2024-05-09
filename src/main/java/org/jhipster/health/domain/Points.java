@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
  * A Points.
@@ -30,23 +32,24 @@ public class Points implements Serializable {
     private LocalDate date;
 
     @Column(name = "exercise")
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
+    @Field(type = FieldType.Integer)
     private Integer exercise;
 
     @Column(name = "meals")
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Integer)
     private Integer meals;
 
     @Column(name = "alcohol")
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Integer)
     private Integer alcohol;
 
     @Size(max = 140)
     @Column(name = "notes", length = 140)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    @org.springframework.data.elasticsearch.annotations.Field(type = FieldType.Text)
     private String notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @Field(type = FieldType.Nested, includeInParent = true)
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
