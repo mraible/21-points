@@ -22,25 +22,25 @@
           <dt><span jhiTranslate="twentyOnePointsApp.points.exercise">Exercise</span></dt>
           <dd>
             <fa-icon
-              [icon]="points.exercise ? 'check' : 'times'"
+              [icon]="points()!.exercise ? 'check' : 'times'"
               aria-hidden="true"
-              class="{{ points.exercise ? 'text-success' : 'text-danger' }} ms-2"
+              class="{{ points()!.exercise ? 'text-success' : 'text-danger' }} ms-2"
             ></fa-icon>
           </dd>
           <dt><span jhiTranslate="twentyOnePointsApp.points.meals">Meals</span></dt>
           <dd>
             <fa-icon
-              [icon]="points.meals ? 'check' : 'times'"
+              [icon]="points()!.meals ? 'check' : 'times'"
               aria-hidden="true"
-              class="{{ points.meals ? 'text-success' : 'text-danger' }} ms-2"
+              class="{{ points()!.meals ? 'text-success' : 'text-danger' }} ms-2"
             ></fa-icon>
           </dd>
           <dt><span jhiTranslate="twentyOnePointsApp.points.alcohol">Alcohol</span></dt>
           <dd>
             <fa-icon
-              [icon]="points.alcohol ? 'check' : 'times'"
+              [icon]="points()!.alcohol ? 'check' : 'times'"
               aria-hidden="true"
-              class="{{ points.alcohol ? 'text-success' : 'text-danger' }} ms-2"
+              class="{{ points()!.alcohol ? 'text-success' : 'text-danger' }} ms-2"
             ></fa-icon>
           </dd>
           <dt><span jhiTranslate="twentyOnePointsApp.points.notes">Notes</span></dt>

@@ -7,8 +7,10 @@
     </h2>
   </div>
   <div class="col-md-4 col-sm-8 text-right d-flex flex-row-reverse">
-    <button class="btn btn-info ms-2" (click)="loadAll()" [disabled]="isLoading" [ngbTooltip]="refreshTooltip" placement="bottom">
-      <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+    <button class="btn btn-info ms-2" (click)="loadAll()" [disabled]="isLoading()" [ngbTooltip]="refreshTooltip" placement="bottom">
+      @if (isLoading()) {
+        <fa-icon icon="sync" animation="spin"></fa-icon>
+      }
       <ng-template #refreshTooltip>
         <span jhiTranslate="userManagement.home.refreshListLabel">Refresh list</span>
       </ng-template>
