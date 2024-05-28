@@ -99,7 +99,7 @@ public class WeightResource {
     /**
      * {@code PUT  /weights/:id} : Updates an existing weight.
      *
-     * @param id     the id of the weight to save.
+     * @param id the id of the weight to save.
      * @param weight the weight to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated weight,
      * or with status {@code 400 (Bad Request)} if the weight is not valid,
@@ -138,7 +138,7 @@ public class WeightResource {
     /**
      * {@code PATCH  /weights/:id} : Partial updates given fields of an existing weight, field will ignore if it is null
      *
-     * @param id     the id of the weight to save.
+     * @param id the id of the weight to save.
      * @param weight the weight to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated weight,
      * or with status {@code 400 (Bad Request)} if the weight is not valid,
@@ -197,7 +197,7 @@ public class WeightResource {
     /**
      * {@code GET  /weights} : get all the weights.
      *
-     * @param pageable  the pagination information.
+     * @param pageable the pagination information.
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of weights in body.
      */
@@ -268,7 +268,7 @@ public class WeightResource {
      * {@code SEARCH  /_search/weights?query=:query} : search for the weight corresponding
      * to the query.
      *
-     * @param query    the query of the weight search.
+     * @param query the query of the weight search.
      * @param pageable the pagination information.
      * @return the result of the search.
      */

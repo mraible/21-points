@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="col-md-4">
-    <h3>{{ viewDate | calendarDate: view + 'ViewTitle':'en' }}</h3>
+    <h3>{{ viewDate | calendarDate: view + 'ViewTitle' : 'en' }}</h3>
   </div>
   <div class="col-md-4">
     <div class="btn-group">
@@ -37,7 +37,7 @@
     <span class="cal-day-badge bg-{{ day.dayPoints[0].meta.value >= 2 ? 'success' : 'warning' }}" *ngIf="day.dayPoints?.length">
       {{ day.dayPoints[0].meta.value }}
     </span>
-    <span class="cal-day-number">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
+    <span class="cal-day-number">{{ day.date | calendarDate: 'monthViewDayNumber' : locale }}</span>
     <div
       class="cal-day-notes"
       *ngIf="day.dayPoints?.length"
@@ -56,7 +56,7 @@
       [ngClass]="event?.cssClass"
       (mouseenter)="highlightDay.emit({ event: event })"
       (mouseleave)="unhighlightDay.emit({ event: event })"
-      [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip':event"
+      [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip' : event"
       [tooltipPlacement]="tooltipPlacement"
       [tooltipEvent]="event"
       [tooltipTemplate]="tooltipTemplate"

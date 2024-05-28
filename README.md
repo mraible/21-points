@@ -1,9 +1,10 @@
 # 21-Points Health
+
 [![Build Status][github-actions-image]][github-actions-url] <!--[![Dependency Status][daviddm-image]][daviddm-url]--> <object id="badge" data="https://snyk-widget.herokuapp.com/badge/npm/%mraible%21-points/7.0.0/badge.svg" type="image/svg+xml"></object> [![Known Vulnerabilities][snyk-image]][snyk-url]
 
 > To track your health and improve your life. 😊
 
-This application was generated using [JHipster 7.9.3](https://www.jhipster.tech/documentation-archive/v7.9.3), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
+This application was generated using [JHipster 7.9.4](https://www.jhipster.tech/documentation-archive/v7.9.4), and serves as the sample application in the [JHipster Mini-Book](https://www.infoq.com/minibooks/jhipster-mini-book).
 
 ## Project Structure
 
@@ -240,13 +241,13 @@ For more information refer to [Using Docker and Docker-Compose][], this page als
 To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
 
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 7.9.3 archive]: https://www.jhipster.tech/documentation-archive/v7.9.3
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v7.9.3/development/
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v7.9.3/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v7.9.3/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v7.9.3/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v7.9.3/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v7.9.3/setting-up-ci/
+[jhipster 7.9.4 archive]: https://www.jhipster.tech/documentation-archive/v7.9.4
+[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v7.9.4/development/
+[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v7.9.4/docker-compose
+[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v7.9.4/production/
+[running tests page]: https://www.jhipster.tech/documentation-archive/v7.9.4/running-tests/
+[code quality page]: https://www.jhipster.tech/documentation-archive/v7.9.4/code-quality/
+[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v7.9.4/setting-up-ci/
 [node.js]: https://nodejs.org/
 [npm]: https://www.npmjs.com/
 [webpack]: https://webpack.github.io/
